@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Source_Code_Pro, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
+import Background from "@/components/shared/Background";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -30,9 +31,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased`}
+        className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased w-full h-screen relative var(--background)`}
       >
         {children}
+        <Background />
       </body>
     </html>
   );
