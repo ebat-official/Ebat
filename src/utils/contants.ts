@@ -1,0 +1,14 @@
+export const SOMETHING_WENT_WRONG = "Something went Wrong !!!";
+export const EMAIL_NOT_VERIFIED = "EmailNotVerified";
+export const EMAIL_VERIFICATION = "EmailVerification";
+export const SUCCESS = "success";
+export const FAIL = "fail";
+export const ERROR = "error";
+export const INVALID_TOKEN_ERROR = "Invalid token";
+export const TOKEN_EXPIRED = "Token expired";
+export const RESET_PASSWORD = "reset password";
+export const EMAIL_VALIDATION = "email validation";
+export const LOADING = "loading";
+export const TOKEN = "token";
+export const VERIFICATION_SUCCESSFULL = "Verification successfull";
+export const TOKEN_NOT_FOUND = "Token not found";

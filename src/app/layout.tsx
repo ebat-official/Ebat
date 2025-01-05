@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Source_Code_Pro, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Background from "@/components/shared/Background";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { Toaster } from "@/components/ui/toaster"
+import Nav from "@/components/shared/nav";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,8 +36,17 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased w-full h-screen relative var(--background)`}
       >
-        {children}
-        <Background />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Nav />
+          {children}
+          <Background />
+        </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
