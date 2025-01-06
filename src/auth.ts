@@ -1,6 +1,9 @@
 import bcrypt from "bcryptjs";
 import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaClient, UserRole } from "@prisma/client";
 import { authFormSchema } from "./schemas/authForm";
 import { findUserByEmail, findUserById, setEmailVerified } from "./actions/user";
 import Google from "next-auth/providers/google";
@@ -20,8 +23,11 @@ declare module "next-auth" {
   }
 }
 
+const prisma = new PrismaClient();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...PrismaAdapter(prisma),
+  trustHost: true,
   events: {
     async linkAccount({ user }) {
       await setEmailVerified(user.email!);
@@ -51,11 +57,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+ 
   session: { strategy: "jwt" },
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID ??'',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ??"",
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
     Facebook({
