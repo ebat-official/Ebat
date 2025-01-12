@@ -10,6 +10,7 @@ import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook";
 import Linkedin from "next-auth/providers/linkedin";
 import { EMAIL_NOT_VERIFIED } from "./utils/contants";
+import { prisma } from "@/prismaAdapter";
 
 declare module "next-auth" {
   interface Session {
@@ -23,10 +24,8 @@ declare module "next-auth" {
   }
 }
 
-const prisma = new PrismaClient();
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma),
   trustHost: true,
   events: {
     async linkAccount({ user }) {

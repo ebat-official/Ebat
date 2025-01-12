@@ -55,7 +55,6 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Account" (
-    "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
     "type" TEXT NOT NULL,
     "provider" TEXT NOT NULL,
@@ -70,7 +69,7 @@ CREATE TABLE "Account" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Account_pkey" PRIMARY KEY ("provider","providerAccountId")
 );
 
 -- CreateTable
@@ -101,9 +100,6 @@ CREATE UNIQUE INDEX "Form_name_userId_key" ON "Form"("name", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_email_key" ON "VerificationToken"("email");

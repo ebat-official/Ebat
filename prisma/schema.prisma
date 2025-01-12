@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Form {
@@ -54,7 +55,7 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(uuid()) @db.Uuid
+  id                String   @id @default(uuid()) @db.Uuid
   userId            String  @db.Uuid
   type              String
   provider          String
@@ -71,7 +72,6 @@ model Account {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@unique([provider, providerAccountId])
 }
 

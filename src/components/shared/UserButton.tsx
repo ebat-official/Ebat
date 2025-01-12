@@ -31,13 +31,14 @@ import {
 import { Session } from "next-auth";
 
 const UserButton: FC<UserButtonProps> = ({ session }) => {
+  console.log(session,session?.user.image )
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className="rounded-full select-none focus-visible:ring-0 w-9 h-9" variant="ghost" size="icon">
             <Avatar>
-              <AvatarImage src={session?.user.image || undefined} />
+              <AvatarImage src={session?.user.image || undefined} alt="avatar"/>
               <AvatarFallback>
                 <Image className="rounded-full outline-none" src={fallbackImg} alt="AB" />
               </AvatarFallback>
