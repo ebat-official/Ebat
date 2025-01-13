@@ -37,7 +37,7 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
         <DropdownMenuTrigger asChild>
           <Button className="rounded-full select-none focus-visible:ring-0 w-9 h-9" variant="ghost" size="icon">
             <Avatar>
-              <AvatarImage src={session?.userProfile?.image || undefined} alt="avatar" referrerPolicy="no-referrer"/>
+              <AvatarImage src={session?.user?.image || undefined} alt="avatar" referrerPolicy="no-referrer"/>
               <AvatarFallback>
                 <Image className="rounded-full outline-none" src={fallbackImg} alt="AB" />
               </AvatarFallback>

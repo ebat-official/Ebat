@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 const prisma = globalForPrisma.prisma || new PrismaClient()
 
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { generateUniqueUsername } from "./utils/generateUniqueUsername";
+import { generateUniqueUsername } from "./lib/generateUniqueUsername";
 import type { AdapterUser } from "next-auth/adapters";
 
 export const prismaCustomAdapter = () => {

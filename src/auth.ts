@@ -1,23 +1,14 @@
-import bcrypt from "bcryptjs";
 import NextAuth, { type DefaultSession } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient, UserRole,UserProfile } from "@prisma/client";
-import { authFormSchema } from "./schemas/authForm";
-import { findUserByEmail, findUserById, setEmailVerified } from "./actions/user";
-import Google from "next-auth/providers/google";
-import Facebook from "next-auth/providers/facebook";
-import Linkedin from "next-auth/providers/linkedin";
-import { EMAIL_NOT_VERIFIED } from "./utils/contants";
+import { UserRole,UserProfile } from "@prisma/client";
 import {  prismaCustomAdapter } from "@/prismaAdapter";
-import { findUserProfile } from "./actions/userProfile";
+import authConfig from "@/utils/auth.config";
 
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
       role: UserRole;
+      image:string | unknown
     } & DefaultSession["user"]; // To keep the default types
     userProfile:UserProfile | null;
   }
@@ -28,88 +19,6 @@ declare module "next-auth" {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: prismaCustomAdapter(),
-  trustHost: true,
-  events: {
-    async linkAccount({ user }) {
-      await setEmailVerified(user.email!);
-    },
-  },
-  callbacks: {
-    async signIn({ user, account, email,...rem }) {
-      //allow signin iff email verified
-      if (account?.provider === "credentials" && !user.emailVerified) {
-        throw new Error(EMAIL_NOT_VERIFIED);
-      }
-      return true;
-    },
-    async jwt({ token, account }) {
-      if (!token.sub) return token;
-
-      const user = await findUserById(token.sub);
-      if (!user) return token;
-      token.role = user.role;
-      return token;
-    },
-    async session({ token, session }) {
-      if (session.user) {
-        const userProfile = await findUserProfile(token.sub||"");
-        session.user.id = token.sub || "";
-        session.user.role = token.role as UserRole;
-        session.userProfile=userProfile
-      }
-      return session;
-    },
-  },
- 
   session: { strategy: "jwt" },
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
-    Facebook({
-      clientId: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
-    Linkedin({
-      clientId: process.env.LINKEDIN_CLIENT_ID,
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
-
-    Credentials({
-      authorize: async (credentials) => {
-        let user = null;
-        const validateFields = authFormSchema.safeParse(credentials);
-        if (!validateFields.success) {
-          throw new Error("Invalid input data");
-        }
-        const { email, password } = validateFields.data;
-
-        user = await findUserByEmail(email);
-
-        if (!user || !user.password) {
-          throw new Error("User email or password is incorrect");
-        }
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-          throw new Error("User email or password is incorrect");
-        }
-        return user;
-      },
-    }),
-  ],
-  cookies: {
-    pkceCodeVerifier: {
-      name: "next-auth.pkce.code_verifier",
-      options: {
-        httpOnly: true,
-        sameSite: "none",
-        path: "/",
-        secure: true,
-      },
-    },
-  },
+  ...authConfig
 });

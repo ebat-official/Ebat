@@ -2,6 +2,9 @@
 import bcrypt from "bcryptjs";
 
 import prisma from "@/lib/prisma";
+import { User, UserProfile } from "@prisma/client";
+
+type UserWithProfile = User & { userProfile: UserProfile | null };
 
 export async function findUserByEmail(email: string) {
   try {
@@ -15,15 +18,18 @@ export async function findUserByEmail(email: string) {
     return null;
   }
 }
-export async function findUserById(id: string) {
+export async function findUserById(id: string, includeProfile = false): Promise<User | UserWithProfile | null> {
   try {
     const user = await prisma.user.findUnique({
       where: {
         id,
       },
+      include: includeProfile ? { userProfile: true } : undefined,
     });
-    return user;
+
+    return user as UserWithProfile | User | null; 
   } catch (error) {
+    console.error("Error finding user by ID:", error);
     return null;
   }
 }
