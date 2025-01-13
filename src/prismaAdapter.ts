@@ -1,8 +1,50 @@
 // Prisma instance to ensure only one instance is created throughout the project
 import { PrismaClient } from "@prisma/client"
+
  
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
  
-export const prisma = globalForPrisma.prisma || new PrismaClient()
+const prisma = globalForPrisma.prisma || new PrismaClient()
+
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { generateUniqueUsername } from "./utils/generateUniqueUsername";
+import type { AdapterUser } from "next-auth/adapters";
+
+export const prismaCustomAdapter = () => {
+    const adapter = PrismaAdapter(prisma);
+    return {
+      ...adapter,
+      async createUser(user: AdapterUser) {
+        const userName = generateUniqueUsername(user.email);
+        const { image, ...userWithoutImage } = user;
+  
+        try {
+          const userDetails = await prisma.$transaction(async (prisma) => {
+            const createdUser = await prisma.user.create({
+              data: {
+                ...userWithoutImage,
+                userName,
+              },
+            });
+  
+            const userProfile = await prisma.userProfile.create({
+              data: {
+                userId: createdUser.id,
+                image: image || null,  // Explicitly set to null if undefined
+              },
+            });
+  
+            return { ...createdUser, userProfile };
+          });
+  
+          return userDetails;
+        } catch (error) {
+          console.error('Error creating user and profile:', error);
+          throw new Error('Failed to create user and profile.');
+        }
+      },
+    };
+  };
+  
  
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma

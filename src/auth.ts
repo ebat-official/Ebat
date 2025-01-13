@@ -3,14 +3,15 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient, UserRole,UserProfile } from "@prisma/client";
 import { authFormSchema } from "./schemas/authForm";
 import { findUserByEmail, findUserById, setEmailVerified } from "./actions/user";
 import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook";
 import Linkedin from "next-auth/providers/linkedin";
 import { EMAIL_NOT_VERIFIED } from "./utils/contants";
-import { prisma } from "@/prismaAdapter";
+import {  prismaCustomAdapter } from "@/prismaAdapter";
+import { findUserProfile } from "./actions/userProfile";
 
 declare module "next-auth" {
   interface Session {
@@ -18,6 +19,7 @@ declare module "next-auth" {
       id: string;
       role: UserRole;
     } & DefaultSession["user"]; // To keep the default types
+    userProfile:UserProfile | null;
   }
   interface User {
     emailVerified: Date | null;
@@ -25,7 +27,7 @@ declare module "next-auth" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: prismaCustomAdapter(),
   trustHost: true,
   events: {
     async linkAccount({ user }) {
@@ -33,7 +35,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   callbacks: {
-    async signIn({ user, account, email }) {
+    async signIn({ user, account, email,...rem }) {
       //allow signin iff email verified
       if (account?.provider === "credentials" && !user.emailVerified) {
         throw new Error(EMAIL_NOT_VERIFIED);
@@ -50,8 +52,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ token, session }) {
       if (session.user) {
+        const userProfile = await findUserProfile(token.sub||"");
         session.user.id = token.sub || "";
         session.user.role = token.role as UserRole;
+        session.userProfile=userProfile
       }
       return session;
     },

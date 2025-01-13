@@ -54,3 +54,18 @@ export async function updateUserPassword(email: string, password: string) {
     return null;
   }
 }
+export async function updateUserName(id: string, userName: string) {
+  try {
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: { userName},
+    });
+    return true;
+  } catch (error) {
+    return null;
+  }
+}
+
+

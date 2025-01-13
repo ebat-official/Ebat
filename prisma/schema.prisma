@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -40,18 +39,31 @@ model User {
   id                  String           @id @default(uuid()) @db.Uuid
   name                String?
   email               String           @unique
-  phoneNumber         String?
-  companyName         String?
+  userName            String?          @unique
   password            String?
   emailVerified       DateTime?
-  subscriptionEndDate DateTime?
-  image               String?
   accounts            Account[]
   role                UserRole         @default(USER)
-  subscriptionType    SubscriptionPlan @default(BASIC)
   accountStatus       AccountStatus    @default(ACTIVE)
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
+  karmaPoints         Int              @default(0)
+  userProfile         UserProfile?     @relation("UserToProfile")
+}
+
+model UserProfile {
+  id          String  @id @default(uuid()) @db.Uuid
+  userId      String  @unique @db.Uuid
+  name        String?
+  jobTitle    String?
+  description String?
+  companyName String?
+  phoneNumber String?
+  image       String?   
+  coverImage  String?   
+  location    String?   
+  externalLinks Json?
+  user         User     @relation("UserToProfile", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -60,12 +72,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
 
   createdAt DateTime @default(now())
