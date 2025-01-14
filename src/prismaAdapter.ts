@@ -1,14 +1,14 @@
 // Prisma instance to ensure only one instance is created throughout the project
 import { PrismaClient } from "@prisma/client"
 
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { generateUniqueUsername } from "./lib/generateUniqueUsername";
+import type { AdapterUser } from "next-auth/adapters";
  
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
  
 const prisma = globalForPrisma.prisma || new PrismaClient()
 
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { generateUniqueUsername } from "./lib/generateUniqueUsername";
-import type { AdapterUser } from "next-auth/adapters";
 
 export const prismaCustomAdapter = () => {
     const adapter = PrismaAdapter(prisma);

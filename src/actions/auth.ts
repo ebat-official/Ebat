@@ -24,6 +24,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { findUserByEmail } from "@/actions/user";
 import mailer from "@/lib/mailer";
+import { prismaCustomAdapter } from '@/prismaAdapter'
 
 type AuthReturnType = {
   type: string;
@@ -32,6 +33,7 @@ type AuthReturnType = {
 };
 
 export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> {
+  
   const validateFields = authFormSchema.safeParse(data);
   if (!validateFields.success) {
     return INVALID_USERNAME_PASSWORD_ERROR;
@@ -45,14 +47,14 @@ export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> 
   if (userExist) {
     return EMAIL_ALREADY_EXISTS_ERROR;
   }
-  const user = await prisma.user.create({
-    data: {
-      name: data.name,
-      email: data.email,
-      password: bcrypt.hashSync(data.password, 12),
-    },
+  const customAdapter = prismaCustomAdapter();
+ 
+  const user = await customAdapter.createUser({
+    name: data.name,
+    email: data.email,
+     // @ts-ignore
+    password: bcrypt.hashSync(data.password, 12),
   });
-
   if (!user) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -69,7 +71,7 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
   }
   const { email, password } = validateFields.data;
   try {
-    await signIn("credentials", { email, password, redirectTo: defaultLoginRedirect });
+    await signIn("credentials", { email, password});
     return { type: SUCCESS, data: "" };
   } catch (error) {
     if (error instanceof AuthError) {
@@ -172,6 +174,7 @@ export async function validateResetToken(token: string) {
         return { type: ERROR, data: TOKEN_EXPIRED };
       }
     }
+    
     return { type: ERROR, data: INVALID_TOKEN_ERROR };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
@@ -189,5 +192,29 @@ export async function deleteResetToken(email: string) {
     return { type: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
+  }
+}
+
+export async function updateUserPasswordWithToken(token: string, password: string) {
+  try {
+    const tokenData = await prisma.resetToken.findFirst({
+      where: {
+        token: token,
+      },
+    });
+    if(!tokenData){
+      return { type: ERROR, data: INVALID_TOKEN_ERROR }
+    }
+    
+    await prisma.user.update({
+      where: {
+        email:tokenData.email,
+      },
+      data: { password: bcrypt.hashSync(password, 12) },
+    });
+    deleteResetToken(tokenData.email);
+    return true;
+  } catch (error) {
+    return null;
   }
 }

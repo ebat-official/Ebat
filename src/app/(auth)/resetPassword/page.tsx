@@ -9,9 +9,8 @@ import { useRouter } from "next/navigation";
 import { ERROR, LOADING, SUCCESS, TOKEN, TOKEN_NOT_FOUND, VERIFICATION_SUCCESSFULL } from "@/utils/contants";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import { deleteResetToken, validateResetToken } from "@/actions/auth";
+import { updateUserPasswordWithToken, validateResetToken } from "@/actions/auth";
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
-import { updateUserPassword } from "@/actions/user";
 import FormSuccess from "@/components/shared/FormSuccess";
 import FormError from "@/components/shared/FormError";
 interface pageProps {}
@@ -79,12 +78,11 @@ const ResetPassword: FC<pageProps> = ({}) => {
       return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
     }
     // const setVerifyEmail = await setEmailVerified(data.data?.email);
-    const updatePassword = await updateUserPassword(data.data.email, formData.password);
+    const updatePassword = await updateUserPasswordWithToken(verificationToken, formData.password);
     if (!updatePassword) {
       return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
     }
     setVerificationStatus({ type: SUCCESS, data: VERIFICATION_SUCCESSFULL });
-    deleteResetToken(data.data.email);
   });
 
   if (timer === 0) {
