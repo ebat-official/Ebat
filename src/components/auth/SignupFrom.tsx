@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { signUp } from "@/actions/auth";
 import { useServerAction } from "@/hooks/useServerAction";
 import EmailVerificationModal from "./EmailVerificationModal";
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 
 type FormValues = {
   name: string;
@@ -74,11 +76,11 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
     <>
       <form onSubmit={onSubmit} className="text-left" noValidate>
         <div className="mb-4">
-          <input
+          <Input
             {...register("name")}
             type="text"
             className={cn(
-              "text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
+
               { "border-red-500": errors?.name },
             )}
             placeholder="Name"
@@ -87,11 +89,11 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
           {errors?.name && <p className="text-sm text-red-500 dark:text-red-900">{errors.name.message}</p>}
         </div>
         <div className="mb-4">
-          <input
+          <Input
             {...register("email")}
             type="email"
             className={cn(
-              "text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
+
               { "border-red-500": errors?.email },
             )}
             placeholder="Email"
@@ -100,11 +102,11 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
           {errors?.email && <p className="text-sm text-red-500 dark:text-red-900">{errors.email.message}</p>}
         </div>
         <div className="mb-4">
-          <input
+          <Input
             {...register("password")}
             type="password"
             className={cn(
-              "text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
+
               { "border-red-500": errors?.password },
             )}
             placeholder="Password"
@@ -117,14 +119,14 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
             {...register("termsAccepted")}
             id="terms"
             className={cn(
-              "w-5 h-5 ease-soft  rounded-md checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left  cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100",
+              "w-4 h-4 ease-soft  rounded-md",
               { " border-red-500 ": errors.termsAccepted },
             )}
             type="checkbox"
           />
-          <label className=" text-sm font-normal cursor-pointer select-none text-slate-700" htmlFor="terms">
+          <label className="text-sm font-normal cursor-pointer select-none " htmlFor="terms">
             I agree the{" "}
-            <Link href="#" passHref={true} onClick={() => {}} className="font-bold text-slate-700">
+            <Link href="#" passHref={true} onClick={() => {}} className="font-bold ">
               Terms and Conditions
             </Link>
           </label>

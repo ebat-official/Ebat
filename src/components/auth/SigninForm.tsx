@@ -20,6 +20,7 @@ import { logIn, upsertVerificationToken } from "@/actions/auth";
 import EmailVerificationModal from "./EmailVerificationModal";
 import { useServerAction } from "@/hooks/useServerAction";
 import mailer from "@/lib/mailer";
+import { Input } from "@/components/ui/input"
 
 type FormValues = {
   email: string;
@@ -107,11 +108,10 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
     <>
       <form onSubmit={onSubmit} className="text-left" noValidate>
         <div className="mb-4">
-          <input
+          <Input
             {...register("email")}
             type="email"
             className={cn(
-              "text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
               { "border-red-500": errors?.email }
             )}
             placeholder="Email"
@@ -126,12 +126,11 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
           )}
         </div>
         <div className="mb-4">
-          <input
+          <Input
             {...register("password")}
             type="password"
             name="password"
             className={cn(
-              "text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
               { "border-red-500": errors?.password }
             )}
             placeholder="Password"
