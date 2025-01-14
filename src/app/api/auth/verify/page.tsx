@@ -11,7 +11,7 @@ import FormSuccess from "@/components/shared/FormSuccess";
 import { ERROR, LOADING, SUCCESS, TOKEN, TOKEN_NOT_FOUND, VERIFICATION_SUCCESSFULL } from "@/utils/contants";
 import { useRouter, useSearchParams } from "next/navigation";
 import { deleteVerificationToken, validateVerificationToken } from "@/actions/auth";
-import { setEmailVerified } from "@/actions/user";
+import { setEmailVerified, setEmailVerifiedUsingToken } from "@/actions/user";
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 
 interface UserVerificationProps {}
@@ -49,7 +49,7 @@ const UserVerification: FC<UserVerificationProps> = () => {
     if (!(typeof data.data === "object")) {
       return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
     }
-    const setVerifyEmail = await setEmailVerified(data.data?.email);
+    const setVerifyEmail = await setEmailVerifiedUsingToken(verificationToken);
     if (!setVerifyEmail) {
       return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
     }

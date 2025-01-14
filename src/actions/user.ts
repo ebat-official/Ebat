@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 import prisma from "@/lib/prisma";
 import { User, UserProfile } from "@prisma/client";
+import { validateVerificationToken } from "./auth";
 
 type UserWithProfile = User & { userProfile: UserProfile | null };
 
@@ -47,7 +48,27 @@ export async function setEmailVerified(email: string) {
     return null;
   }
 }
+export async function setEmailVerifiedUsingToken(token: string) {
+  const user=await validateVerificationToken(token)
+
+  if (typeof user.data !== "object" || !user.data?.email) {
+    return null
+  }
+
+  try {
+    await prisma.user.update({
+      where: {
+        email:user.data.email,
+      },
+      data: { emailVerified: new Date() },
+    });
+    return true;
+  } catch (error) {
+    return null;
+  }
+}
 export async function updateUserPassword(email: string, password: string) {
+  //get email from session
   try {
     await prisma.user.update({
       where: {
