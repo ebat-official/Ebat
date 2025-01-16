@@ -7,6 +7,7 @@ import UserButton from "./UserButton";
 import { Session } from "next-auth";
 import LoginModal from "@/components/auth/LoginModal";
 import logo from "@/assets/img/logo.webp";
+import { SheetMenu } from "@/components/sidebar/sheet-menu";
 
 export default function NavBar({ session }: { session: Session | null }) {
   const scrolled = useScroll(50);
@@ -21,16 +22,7 @@ export default function NavBar({ session }: { session: Session | null }) {
         } z-30 transition-all`}
       >
         <div className="flex items-center justify-between w-full h-16 max-w-screen-xl mx-5">
-          <Link href="/" className="flex items-center text-2xl font-display">
-            <Image
-              src={logo}
-              alt="Precedent logo"
-              width="30"
-              height="30"
-              className="mr-2 rounded-sm"
-            ></Image>
-            {/* <p>Precedent</p> */}
-          </Link>
+        <SheetMenu />
           <div className="flex gap-4">
             <ThemeSwitcher />
 
