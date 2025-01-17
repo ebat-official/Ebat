@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import icon from '@/assets/svg/oops404.svg';
 import Link from "next/link";
+import ButtonBlue from '@/components/shared/ButtonBlue';
 
 export default function Component() {
   return (
@@ -12,12 +13,12 @@ export default function Component() {
           Our robot guide got a bit too curious and broke down.  
           You seem to have landed on a page that doesn’t exist!
           </p>
+          
           <Link
             href="/"
-            className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-6 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
             prefetch={false}
           >
-            Go to Homepage
+            <ButtonBlue type="submit" title="Go to Homepage" className='w-30' />
           </Link>
         </div>
         <div className="flex flex-1 justify-center">
