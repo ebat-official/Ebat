@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster"
 import Nav from "@/components/shared/nav";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/sidebar/sidebar";
-import SidePanelLayout from "@/components/sidebar/admin-panel-layout";
+import SidePanelLayout from "@/components/sidebar/panelLayout";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,15 +36,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased w-full h-screen relative var(--background)`}
-      >
-        <ThemeProvider
+              <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
+      <body
+        className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased w-full h-screen relative var(--background)`}
+      >
           <SidebarProvider>
             <SidePanelLayout>
           <Nav />
@@ -52,9 +52,9 @@ export default function RootLayout({
           </SidePanelLayout>
           </SidebarProvider>
           <Background />
-        </ThemeProvider>
         <Toaster />
       </body>
+        </ThemeProvider>
     </html>
   );
 }
