@@ -5,8 +5,8 @@ import ButtonBlue from '@/components/shared/ButtonBlue';
 
 export default function Component() {
   return (
-    <div className="flex min-h-[100dvh] flex-col items-center justify-center  px-4 py-12 ">
-      <div className="container mx-auto flex max-w-4xl flex-col-reverse items-center gap-8 md:flex-row md:gap-12">
+    <div className="flex min-h-[90dvh] flex-col items-center justify-center  px-4 py-12 ">
+      <div className="container mx-auto flex max-w-4xl flex-col-reverse items-center gap-2 md:flex-row md:gap-12">
         <div className="flex flex-1 flex-col items-center justify-center space-y-4 text-center md:items-start md:text-left">
           <h1 className="text-2xl font-bold tracking-tighter sm:text-5xl">Hey Coder! 👨‍💻</h1>
           <p className="max-w-[450px] text-gray-500 dark:text-gray-400">

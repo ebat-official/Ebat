@@ -38,7 +38,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased w-full h-screen relative var(--background)`}
       >
-        <main className="w-full">
+        <main>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -47,9 +47,10 @@ export default function RootLayout({
         >
         <SidebarProvider>
           <AppSidebar/>
-          
+          <main className="w-full">
           <Nav />
           {children}
+          </main>
           <Background />
         <Toaster />
        
