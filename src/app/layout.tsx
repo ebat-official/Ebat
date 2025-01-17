@@ -5,9 +5,6 @@ import Background from "@/components/shared/Background";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster"
 import Nav from "@/components/shared/nav";
-import { SidebarProvider } from "@/context/SidebarContext";
-import { Sidebar } from "@/components/sidebar/sidebar";
-import SidePanelLayout from "@/components/sidebar/panelLayout";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,12 +42,8 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased w-full h-screen relative var(--background)`}
       >
-          <SidebarProvider>
-            <SidePanelLayout>
           <Nav />
           {children}
-          </SidePanelLayout>
-          </SidebarProvider>
           <Background />
         <Toaster />
       </body>
