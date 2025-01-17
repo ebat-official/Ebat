@@ -187,7 +187,7 @@ const Sidebar = React.forwardRef<
 
 		if (collapsible === "none") {
 			return (
-				<div
+				<aside
 					className={cn(
 						"flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
 						className,
@@ -196,7 +196,7 @@ const Sidebar = React.forwardRef<
 					{...props}
 				>
 					{children}
-				</div>
+				</aside>
 			);
 		}
 
@@ -221,7 +221,7 @@ const Sidebar = React.forwardRef<
 		}
 
 		return (
-			<div
+			<aside
 				ref={ref}
 				className="group peer hidden md:block text-sidebar-foreground relative"
 				data-state={state}
@@ -262,7 +262,7 @@ const Sidebar = React.forwardRef<
 						{children}
 					</div>
 				</div>
-			</div>
+			</aside>
 		);
 	},
 );
