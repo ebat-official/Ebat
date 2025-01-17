@@ -19,10 +19,12 @@ export default function NavBar({ session }: { session: Session | null }) {
           scrolled
             ? "border-b dark:border-gray-900 border-gray-200 bg-white/50 dark:bg-black/80 backdrop-blur-xl"
             : "bg-white/0"
-        } z-30 transition-all`}
+        } z-10 transition-all`}
       >
         <div className="flex items-center justify-between w-full h-16 max-w-screen-xl mx-5">
+          <div>
         <SheetMenu />
+          </div>
           <div className="flex gap-4">
             <ThemeSwitcher />
 
