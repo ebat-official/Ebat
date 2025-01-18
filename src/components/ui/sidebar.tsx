@@ -298,7 +298,7 @@ function SidebarToggle() {
   const { state,toggleSidebar } = useSidebar();
   const isOpen=state === "expanded";
   return (
-    <div className="invisible md:visible absolute top-[46px] -right-[16px] z-20">
+    <div className="invisible md:visible absolute top-[66px] -right-[16px] z-20">
       <Button
         onClick={toggleSidebar}
         className="rounded-md w-8 h-8"
