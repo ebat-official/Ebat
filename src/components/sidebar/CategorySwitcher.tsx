@@ -22,6 +22,9 @@ import {
 import { Card } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import useLocalStorage from "@/hooks/useLocalStorage";
+
+
 export function CategorySwitcher({
 	categories,
 }: {
@@ -36,26 +39,26 @@ export function CategorySwitcher({
 	const { isMobile } = useSidebar();
 	const router = useRouter();
 	const pathname = usePathname();
+	const [activeCategoryLocalIndex, setActiveCategoryLocalIndex] = useLocalStorage<number>('categoryIndex',0);
 	const [activeCategory, setActiveCategory] = useState(
 		() =>
 			categories.find((category) => pathname.startsWith(category.route)) ||
-			categories[0],
+			categories[activeCategoryLocalIndex],
 	);
 
 	useEffect(() => {
 		if (pathname.startsWith(activeCategory.route)) return;
-		console.log("activeCategory", activeCategory);
 		router.push(activeCategory.route);
 	}, [activeCategory]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      console.log("event", event,event.altKey);
       if (event.altKey) {
         const key = event.code ;
         const index = Number.parseInt(key.at(-1) as string, 10) - 1;
         if (index >= 0 && index < categories.length) {
           setActiveCategory(categories[index]);
+		  setActiveCategoryLocalIndex(index);
         }
       }
     };
@@ -65,7 +68,6 @@ export function CategorySwitcher({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -102,7 +104,11 @@ export function CategorySwitcher({
 						{categories.map((team, index) => (
 							<DropdownMenuItem
 								key={team.name}
-								onClick={() => setActiveCategory(team)}
+								onClick={() => {
+									setActiveCategory(team)
+									setActiveCategoryLocalIndex(index)
+								}
+							}
 								className="gap-2 p-2"
 							>
 								<div className="flex items-center justify-center border rounded-sm size-6">
