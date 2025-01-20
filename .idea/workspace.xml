@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e55a3d77-3903-47ba-ae35-6c531a0b183f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webcrafterhub.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/launch.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/sidebar/CategorySwitcher.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar/CategorySwitcher.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/sidebar/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar/Sidebar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -60,7 +54,7 @@
       <option name="presentableId" value="Default" />
       <updated>1736762606067</updated>
       <workItem from="1736762607121" duration="1581000" />
-      <workItem from="1737394626397" duration="885000" />
+      <workItem from="1737394626397" duration="1273000" />
     </task>
     <servers />
   </component>

@@ -91,9 +91,7 @@ export function CategorySwitcher({
 								</span>
 								<span className="text-xs truncate">{activeCategory.plan}</span>
 							</div>
-
 							<ChevronsUpDown className="ml-auto p-2 mr-4" />
-
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
