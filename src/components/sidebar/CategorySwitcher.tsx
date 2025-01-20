@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { ChevronsUpDown, Plus } from "lucide-react";
 
 import {
@@ -17,12 +17,13 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	useSidebar,
 } from "@/components/ui/sidebar";
 import { Card } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { useSidebar } from "@/context/SidebarContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 export function CategorySwitcher({
@@ -36,10 +37,11 @@ export function CategorySwitcher({
 		route: string;
 	}[];
 }) {
-	const { isMobile } = useSidebar();
+	const isMobile= useIsMobile();
 	const router = useRouter();
 	const pathname = usePathname();
 	const [activeCategoryLocalIndex, setActiveCategoryLocalIndex] = useLocalStorage<number>('categoryIndex',0);
+	const {isOpen}=useSidebar();
 	const [activeCategory, setActiveCategory] = useState(
 		() =>
 			categories.find((category) => pathname.startsWith(category.route)) ||
@@ -78,7 +80,7 @@ export function CategorySwitcher({
 							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
-							<Card className="flex items-center gap-2 p-1 mr-4 rounded-lg">
+							<Card className={cn("flex items-center gap-2 p-1 rounded-lg",{"mr-4":isOpen})}>
 								<activeCategory.logo
 									className={cn("size-6", activeCategory.logoClassName)}
 								/>
@@ -89,7 +91,9 @@ export function CategorySwitcher({
 								</span>
 								<span className="text-xs truncate">{activeCategory.plan}</span>
 							</div>
-							<ChevronsUpDown className="ml-auto" />
+
+							<ChevronsUpDown className="ml-auto p-2 mr-4" />
+
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent

@@ -51,7 +51,6 @@ export function Sidebar() {
   const sidebar = useSidebar();
   if (!sidebar) return null;
   const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
-  console.log("sidebar", sidebar);
   return (
     <aside
       className={cn(
