@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { Inter, Source_Code_Pro, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Background from "@/components/shared/Background";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster"
 import Nav from "@/components/shared/nav";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/sidebar/Sidebar";
+import { SidebarProvider as SidebarProviderShadcn, SidebarTrigger } from "@/components/ui/sidebar"
+import {SidebarProvider} from "@/context/SidebarContext";
+import { Sidebar} from "@/components/sidebar/sidebar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,14 +46,15 @@ export default function RootLayout({
           enableSystem
         >
         <SidebarProvider>
-          <AppSidebar/>
+          <SidebarProviderShadcn>
+          <Sidebar/>
           <main className="w-full ">
           <Nav />
           {children}
           </main>
           <Background />
         <Toaster />
-       
+        </SidebarProviderShadcn>
         </SidebarProvider>
         </ThemeProvider>
         </main>

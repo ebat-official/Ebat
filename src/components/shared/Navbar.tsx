@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import useScroll from "@/components/hooks/useScroll";
+import useScroll from "@/hooks/useScroll";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserButton from "./UserButton";
 import type { Session } from "next-auth";

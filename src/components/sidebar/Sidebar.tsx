@@ -1,186 +1,55 @@
 "use client";
+import { Menu } from "./menu";
+import { SidebarToggle } from "./sidebar-toggle";
+import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/context/SidebarContext";
+import { cn } from "@/lib/utils";
+import { PanelsTopLeft } from "lucide-react";
+import Link from "next/link";
 
-import type * as React from "react";
-import {
-	AudioWaveform,
-	BookOpen,
-	Bot,
-	Command,
-	Frame,
-	GalleryVerticalEnd,
-	Map,
-	PieChart,
-	Settings2,
-	SquareTerminal,
-} from "lucide-react";
-import { FaReact } from "react-icons/fa";
-
-import { NavMain } from "@/components/sidebar/NavMain";
-import { NavProjects } from "@/components/sidebar/NavProjects";
-import { NavUser } from "@/components/sidebar/NavUser";
-import { CategorySwitcher } from "@/components/sidebar/CategorySwitcher";
-import {
-	Sidebar,
-	SidebarContent,
-	SidebarFooter,
-	SidebarHeader,
-	SidebarRail,
-} from "@/components/ui/sidebar";
-
-// This is sample data.
-const data = {
-	user: {
-		name: "shadcn",
-		email: "m@example.com",
-		avatar: "/avatars/shadcn.jpg",
-	},
-	category: [
-		{
-			name: "FrontEnd",
-			logo: FaReact,
-			logoClassName: "text-blue-500",
-			// plan: "Enterprise",
-      route:'/frontend'
-		},
-		{
-			name: "Backend",
-			logo: AudioWaveform,
-      route:'/backend'
-			// plan: "Startup",
-		},
-		{
-			name: "Tools",
-			logo: Command,
-      route:'/tools'
-			// plan: "Free",
-		},
-	],
-	navMain: [
-		{
-			title: "Dashboard",
-			url: "#",
-			icon: SquareTerminal,
-			isActive: true,
-		},
-		{
-			title: "Playground",
-			url: "#",
-			icon: SquareTerminal,
-			isActive: false,
-			items: [
-				{
-					title: "History",
-					url: "#",
-				},
-				{
-					title: "Starred",
-					url: "#",
-				},
-				{
-					title: "Settings",
-					url: "#",
-				},
-			],
-		},
-		{
-			title: "Models",
-			url: "#",
-			icon: Bot,
-			items: [
-				{
-					title: "Genesis",
-					url: "#",
-				},
-				{
-					title: "Explorer",
-					url: "#",
-				},
-				{
-					title: "Quantum",
-					url: "#",
-				},
-			],
-		},
-		{
-			title: "Documentation",
-			url: "#",
-			icon: BookOpen,
-			items: [
-				{
-					title: "Introduction",
-					url: "#",
-				},
-				{
-					title: "Get Started",
-					url: "#",
-				},
-				{
-					title: "Tutorials",
-					url: "#",
-				},
-				{
-					title: "Changelog",
-					url: "#",
-				},
-			],
-		},
-		{
-			title: "Settings",
-			url: "#",
-			icon: Settings2,
-			items: [
-				{
-					title: "General",
-					url: "#",
-				},
-				{
-					title: "Team",
-					url: "#",
-				},
-				{
-					title: "Billing",
-					url: "#",
-				},
-				{
-					title: "Limits",
-					url: "#",
-				},
-			],
-		},
-	],
-	projects: [
-		{
-			name: "Design Engineering",
-			url: "#",
-			icon: Frame,
-		},
-		{
-			name: "Sales & Marketing",
-			url: "#",
-			icon: PieChart,
-		},
-		{
-			name: "Travel",
-			url: "#",
-			icon: Map,
-		},
-	],
-};
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-	return (
-		<Sidebar collapsible="icon" {...props}>
-			<SidebarHeader>
-				<CategorySwitcher categories={data.category} />
-			</SidebarHeader>
-			<SidebarContent>
-				<NavMain items={data.navMain} />
-				<NavProjects projects={data.projects} />
-			</SidebarContent>
-			<SidebarFooter>
-				<NavUser user={data.user} />
-			</SidebarFooter>
-			<SidebarRail />
-		</Sidebar>
-	);
+export function Sidebar() {
+  const sidebar = useSidebar();
+  if (!sidebar) return null;
+  const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
+  console.log("sidebar", sidebar);
+  return (
+    <aside
+      className={cn(
+        " bg-background fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
+        !getOpenState() ? "w-[90px]" : "w-72",
+        settings.disabled && "hidden"
+      )}
+    >
+      <SidebarToggle isOpen={isOpen} setIsOpen={toggleOpen} />
+      <div
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800"
+      >
+        <Button
+          className={cn(
+            "transition-transform ease-in-out duration-300 mb-1",
+            !getOpenState() ? "translate-x-1" : "translate-x-0"
+          )}
+          variant="link"
+          asChild
+        >
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <PanelsTopLeft className="w-6 h-6 mr-1" />
+            <h1
+              className={cn(
+                "font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300",
+                !getOpenState()
+                  ? "-translate-x-96 opacity-0 hidden"
+                  : "translate-x-0 opacity-100"
+              )}
+            >
+              Brand
+            </h1>
+          </Link>
+        </Button>
+        <Menu isOpen={getOpenState()} />
+      </div>
+    </aside>
+  );
 }
