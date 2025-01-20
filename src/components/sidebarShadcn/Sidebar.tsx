@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import { FaReact } from "react-icons/fa";
 
-import { NavMain } from "@/components/sidebar/NavMain";
-import { NavProjects } from "@/components/sidebar/NavProjects";
-import { NavUser } from "@/components/sidebar/NavUser";
-import { CategorySwitcher } from "@/components/sidebar/CategorySwitcher";
+import { NavMain } from "@/components/sidebarShadcn/NavMain";
+import { NavProjects } from "@/components/sidebarShadcn/NavProjects";
+import { NavUser } from "@/components/sidebarShadcn/NavUser";
+import { CategorySwitcher } from "@/components/sidebarShadcn/CategorySwitcher";
 import {
 	Sidebar,
 	SidebarContent,

@@ -1,13 +1,10 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
 import useScroll from "@/hooks/useScroll";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserButton from "./UserButton";
 import type { Session } from "next-auth";
 import LoginModal from "@/components/auth/LoginModal";
-import logo from "@/assets/img/logo.webp";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SheetMenu } from "../sidebar/sheet-menu";
 
 export default function NavBar({ session }: { session: Session | null }) {
   const scrolled = useScroll(50);
@@ -23,7 +20,7 @@ export default function NavBar({ session }: { session: Session | null }) {
       >
         <div className="flex items-center justify-between w-full h-16 max-w-screen-xl mx-5">
           <div>
-            <SidebarTrigger/>
+          <SheetMenu />
           </div>
           <div className="flex gap-4">
             <ThemeSwitcher />

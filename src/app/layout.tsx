@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster"
 import Nav from "@/components/shared/nav";
 import { SidebarProvider as SidebarProviderShadcn, SidebarTrigger } from "@/components/ui/sidebar"
 import {SidebarProvider} from "@/context/SidebarContext";
-import { Sidebar} from "@/components/sidebar/sidebar";
+import { Sidebar} from "@/components/sidebar/Sidebar";
 
 const inter = Inter({
   variable: "--font-inter",
