@@ -40,23 +40,21 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased relative var(--background)`}
+				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased  relative var(--background)`}
 			>
-				<main className="w-full font-source-serif ">
+				<main className="font-source-serif ">
 					<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-						<SidebarProviderShadcn>
-							<SidebarProvider>
-								<div className="flex w-full bg-red-500">
-									<Sidebar />
-									<main className="bg-green-500 flex-1">
-										<Nav />
-										{children}
-									</main>
-								</div>
-								{/* <Background /> */}
-								<Toaster />
-							</SidebarProvider>
-						</SidebarProviderShadcn>
+						{/* <SidebarProviderShadcn> */}
+						<SidebarProvider className="flex">
+							<Sidebar />
+							<main className="bg-green-500 flex-1">
+								<Nav />
+								{children}
+							</main>
+							<Background />
+							<Toaster />
+						</SidebarProvider>
+						{/* </SidebarProviderShadcn> */}
 					</ThemeProvider>
 				</main>
 			</body>
