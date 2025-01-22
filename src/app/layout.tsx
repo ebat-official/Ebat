@@ -44,17 +44,15 @@ export default function RootLayout({
 			>
 				<main className="font-source-serif ">
 					<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-						{/* <SidebarProviderShadcn> */}
 						<SidebarProvider className="flex">
 							<Sidebar />
-							<main className="bg-green-500 flex-1">
+							<main className="flex-1">
 								<Nav />
 								{children}
 							</main>
 							<Background />
 							<Toaster />
 						</SidebarProvider>
-						{/* </SidebarProviderShadcn> */}
 					</ThemeProvider>
 				</main>
 			</body>

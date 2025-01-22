@@ -18,7 +18,7 @@ export function Sidebar() {
 	return (
 		<aside
 			className={cn(
-				"font-inter bg-background fixed lg:relative top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
+				"font-inter bg-background fixed lg:relative top-0 left-0 z-20 max-h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
 				!getOpenState() ? "w-[90px]" : "w-72",
 				settings.disabled && "hidden",
 			)}
@@ -29,7 +29,7 @@ export function Sidebar() {
 				onMouseLeave={() => setIsHover(false)}
 				className="relative  flex flex-col px-3 py-4 shadow-md dark:shadow-zinc-800"
 			>
-				{/* <CategorySwitcher /> */}
+				<CategorySwitcher />
 				<Menu isOpen={getOpenState()} />
 			</div>
 		</aside>
