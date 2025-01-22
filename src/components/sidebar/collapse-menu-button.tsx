@@ -27,6 +27,7 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
+import { IconTypes } from "@/lib/sidebarConfig";
 
 type Submenu = {
   href: string;
@@ -35,7 +36,7 @@ type Submenu = {
 };
 
 interface CollapseMenuButtonProps {
-  icon: LucideIcon;
+  icon: IconTypes;
   label: string;
   active: boolean;
   submenus: Submenu[];

@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e55a3d77-3903-47ba-ae35-6c531a0b183f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/components/sidebar/CategorySwitcher.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/sidebar/CategorySwitcher.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.ts" afterDir="false" />
-    </list>
+    <list default="true" id="e55a3d77-3903-47ba-ae35-6c531a0b183f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,7 +51,7 @@
       <option name="presentableId" value="Default" />
       <updated>1736762606067</updated>
       <workItem from="1736762607121" duration="1581000" />
-      <workItem from="1737394626397" duration="1273000" />
+      <workItem from="1737394626397" duration="1766000" />
     </task>
     <servers />
   </component>

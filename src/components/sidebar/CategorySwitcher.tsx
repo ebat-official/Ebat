@@ -26,17 +26,9 @@ import { useSidebar } from "@/context/SidebarContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 
-export function CategorySwitcher({
-	categories,
-}: {
-	categories: {
-		name: string;
-		logo: React.ElementType;
-		plan?: string;
-		logoClassName?: string;
-		route: string;
-	}[];
-}) {
+export function CategorySwitcher() {
+	const {config}=useSidebar()
+	const {categories}=config
 	const isMobile= useIsMobile();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -88,8 +80,7 @@ export function CategorySwitcher({
 							<div className="grid flex-1 text-base leading-tight text-left">
 								<span className="font-semibold truncate">
 									{activeCategory.name}
-								</span>
-								<span className="text-xs truncate">{activeCategory.plan}</span>
+								</span> 
 							</div>
 							<ChevronsUpDown className="ml-auto p-2 mr-4" />
 						</SidebarMenuButton>

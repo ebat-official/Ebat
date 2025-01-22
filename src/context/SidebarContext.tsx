@@ -1,4 +1,5 @@
 "use client"
+import { getSidebarConfig, SidebarConfigType } from '@/lib/sidebarConfig';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type SidebarSettings = { disabled: boolean; isHoverOpen: boolean };
@@ -11,6 +12,7 @@ type SidebarContextType = {
   setIsHover: (isHover: boolean) => void;
   getOpenState: () => boolean;
   setSettings: (settings: Partial<SidebarSettings>) => void;
+  config: SidebarConfigType;
 };
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -19,9 +21,9 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isHover, setIsHover] = useState(false);
   const [settings, setSettings] = useState<SidebarSettings>({ disabled: false, isHoverOpen: false });
+  const [sideBarConfig, setSideBarConfig] = useState<SidebarConfigType>(getSidebarConfig());
 
   const toggleOpen = () => {
-    console.log(isOpen,"mmm")
     setIsOpen(!isOpen);
   };
 
@@ -44,6 +46,7 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
         setIsHover,
         getOpenState,
         setSettings: updateSettings,
+        config:sideBarConfig
       }}
     >
       {children}

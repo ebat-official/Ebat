@@ -9,48 +9,15 @@ import Link from "next/link";
 import { CategorySwitcher } from "./CategorySwitcher";
 
 
-import {
-	AudioWaveform,
-	BookOpen,
-	Bot,
-	Command,
-	Frame,
-	GalleryVerticalEnd,
-	Map,
-	PieChart,
-	Settings2,
-	SquareTerminal,
-} from "lucide-react";
+
 import { FaReact } from "react-icons/fa";
 
 export function Sidebar() {
 
-  const category=[
-    {
-      name: "FrontEnd",
-      logo: FaReact,
-      logoClassName: "text-blue-500",
-      // plan: "Enterprise",
-      route:'/frontend'
-    },
-    {
-      name: "Backend",
-      logo: AudioWaveform,
-      route:'/backend'
-      // plan: "Startup",
-    },
-    {
-      name: "Tools",
-      logo: Command,
-      route:'/tools'
-      // plan: "Free",
-    },
-  ]
-
-
   const sidebar = useSidebar();
   if (!sidebar) return null;
-  const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
+
+  const { isOpen, toggleOpen, getOpenState, setIsHover, settings} = sidebar;
   return (
     <aside
       className={cn(
@@ -65,7 +32,7 @@ export function Sidebar() {
         onMouseLeave={() => setIsHover(false)}
         className="relative  flex flex-col px-3 py-4 shadow-md dark:shadow-zinc-800"
       >
-        <CategorySwitcher categories={category} />
+        <CategorySwitcher />
         <Menu isOpen={getOpenState()} />
       </div>
     </aside>

@@ -21,10 +21,14 @@
 		"rules": {
 			"recommended": true,
 			"correctness": {
-                "useExhaustiveDependencies": "warn"
+                "useExhaustiveDependencies": "info"
+				
             },
 			"style": {
 				"useImportType": "off"
+			  },
+			  "suspicious": {
+				"noArrayIndexKey": "off"
 			  }
 		}
 	},
