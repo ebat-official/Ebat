@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter),Arial, Helvetica, sans-serif;
 }
 
 @layer base {
@@ -80,7 +80,7 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border font-inter;
   }
   body {
     @apply bg-background text-foreground;
