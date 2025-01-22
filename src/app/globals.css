@@ -90,4 +90,7 @@ body {
   .blue-gradient {
     @apply bg-gradient-to-tl from-blue-600 to-cyan-400
   }
+  .containerMain {
+    @apply container m-2;
+  }
 }

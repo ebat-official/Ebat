@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
 function page() {
-  return (<>
-    <div className='container font-inter'>pagejoiddfgkl;kgfhjlhgfdghkjlkhgfdzxjklhgfdxhlkjhgfdzxcvbkjklhgfxdzghlkjhgfdfxcghvjklhgfdzxgckjhhgcfxdzxgchvjbkbhgfdzxcghvjkhgcfxdzxgchvjbkhgfxdzxcgvhjbkjnbhvcgfxdðcvhjbk</div>
-    <div className='container font-code'>pagejoiddfgkl;kgfhjlhgfdghkjlkhgfdzxjklhgfdxhlkjhgfdzxcvbkjklhgfxdzghlkjhgfdfxcghvjklhgfdzxgckjhhgcfxdzxgchvjbkbhgfdzxcghvjkhgcfxdzxgchvjbkhgfxdzxcgvhjbkjnbhvcgfxdðcvhjbk</div>
-  </>
-  )
+	return (
+		<div className="flex">
+			<div className="containerMain w-full bg-green-200">a</div>
+		</div>
+	);
 }
 
-export default page
+export default page;
