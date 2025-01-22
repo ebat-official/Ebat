@@ -48,7 +48,7 @@ export default function RootLayout({
         <SidebarProvider>
           <SidebarProviderShadcn>
           <Sidebar/>
-          <main className="w-full ">
+          <main className="w-full  ">
           <Nav />
           {children}
           </main>
