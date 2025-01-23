@@ -28,7 +28,6 @@ export default {
       if (!token.sub) return token;
 
       const user = await findUserById(token.sub,true);
-      console.log(user,"user")
       if (!user) return token;
       token.role = user.role;
       if (user && 'userProfile' in user) {

@@ -13,6 +13,22 @@ export async function findUserByEmail(email: string) {
       where: {
         email,
       },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        userName:true,
+        emailVerified:true,
+        userProfile: {
+          select: {
+            id: true,
+            image: true,
+          },
+        },
+        role: true,
+        karmaPoints: true,
+        accountStatus: true,
+      },
     });
     return user;
   } catch (error) {
@@ -22,10 +38,18 @@ export async function findUserByEmail(email: string) {
 export async function findUserById(id: string, includeProfile = false): Promise<User | UserWithProfile | null> {
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        id,
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        userName: true,
+        emailVerified: true,
+        role: true,
+        karmaPoints: true,
+        accountStatus: true,
+        userProfile: !!includeProfile,
       },
-      include: includeProfile ? { userProfile: true } : undefined,
     });
 
     return user as UserWithProfile | User | null; 
