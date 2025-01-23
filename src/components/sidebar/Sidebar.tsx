@@ -9,6 +9,7 @@ import Link from "next/link";
 import { CategorySwitcher } from "./CategorySwitcher";
 
 import { FaReact } from "react-icons/fa";
+import { Navigation } from "./Navigation";
 
 export function Sidebar() {
 	const sidebar = useSidebar();
@@ -18,7 +19,7 @@ export function Sidebar() {
 	return (
 		<aside
 			className={cn(
-				"font-inter bg-background fixed lg:relative top-0 left-0 z-20 max-h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
+				"font-inter bg-background fixed top-0 left-0 z-20 h-screen  -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
 				!getOpenState() ? "w-[90px]" : "w-72",
 				settings.disabled && "hidden",
 			)}
@@ -27,9 +28,10 @@ export function Sidebar() {
 			<div
 				onMouseEnter={() => setIsHover(true)}
 				onMouseLeave={() => setIsHover(false)}
-				className="relative  flex flex-col px-3 py-4 shadow-md dark:shadow-zinc-800"
+				className="relative gap-2 justify-between  flex flex-col px-3 py-4 shadow-md dark:shadow-zinc-800"
 			>
 				<CategorySwitcher />
+				<Navigation isOpen={getOpenState()} />
 				<Menu isOpen={getOpenState()} />
 			</div>
 		</aside>

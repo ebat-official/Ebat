@@ -24,11 +24,10 @@ export function Menu({ isOpen }: MenuProps) {
 	const pathname = usePathname();
 	const { config } = useSidebar();
 	const { menuList } = config;
-
 	return (
 		<ScrollArea className="[&>div>div[style]]:!block">
-			<nav className="mt-8 h-full w-full">
-				<ul className="flex flex-col min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)] items-start space-y-1 px-2">
+			<nav className="h-full w-full">
+				<ul className="flex flex-col  lg:h-[calc(79vh+10px)] items-start space-y-1 px-2">
 					{menuList.map(({ groupLabel, menus }, index) => (
 						<li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
 							{(isOpen && groupLabel) || isOpen === undefined ? (
@@ -114,34 +113,6 @@ export function Menu({ isOpen }: MenuProps) {
 							)}
 						</li>
 					))}
-					<li className="w-full grow flex items-end">
-						<TooltipProvider disableHoverableContent>
-							<Tooltip delayDuration={100}>
-								<TooltipTrigger asChild>
-									<Button
-										onClick={() => {}}
-										variant="outline"
-										className="w-full justify-center h-10 mt-5"
-									>
-										<span className={cn(isOpen === false ? "" : "mr-4")}>
-											<LogOut size={18} />
-										</span>
-										<p
-											className={cn(
-												"whitespace-nowrap",
-												isOpen === false ? "opacity-0 hidden" : "opacity-100",
-											)}
-										>
-											Sign out
-										</p>
-									</Button>
-								</TooltipTrigger>
-								{isOpen === false && (
-									<TooltipContent side="right">Sign out</TooltipContent>
-								)}
-							</Tooltip>
-						</TooltipProvider>
-					</li>
 				</ul>
 			</nav>
 		</ScrollArea>

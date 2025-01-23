@@ -40,6 +40,7 @@ export type SidebarConfigType = {
     route: string;
   }[];
   menuList: Group[];
+  navigation: Group[];
 }
 
 const SidebarConfig={
@@ -64,7 +65,7 @@ const SidebarConfig={
       // plan: "Free",
     },
   ],
-  menuList:[
+  navigation:[
     {
       groupLabel: "",
       menus: [
@@ -82,6 +83,8 @@ const SidebarConfig={
         }
       ]
     },
+  ],
+  menuList:[
     {
       groupLabel: "Contents",
       menus: [
@@ -90,6 +93,14 @@ const SidebarConfig={
           label: "Javascript",
           icon: DiJavascript1,
           submenus: [
+            {
+              href: "/posts",
+              label: "All Posts"
+            },
+            {
+              href: "/posts/new",
+              label: "New Post"
+            },
             {
               href: "/posts",
               label: "All Posts"

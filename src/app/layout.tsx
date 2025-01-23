@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/sidebar/Sidebar";
+import SidePanelLayout from "@/components/sidebar/panelLayout";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -40,21 +41,16 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} antialiased  relative var(--background)`}
+				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} font-source-serif antialiased  relative var(--background)`}
 			>
-				<main className="font-source-serif ">
-					<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-						<SidebarProvider className="flex">
-							<Sidebar />
-							<main className="flex-1">
-								<Nav />
-								{children}
-							</main>
-							<Background />
-							<Toaster />
-						</SidebarProvider>
-					</ThemeProvider>
-				</main>
+				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+					<SidebarProvider>
+						<Nav />
+						<SidePanelLayout>{children}</SidePanelLayout>
+						<Background />
+						<Toaster />
+					</SidebarProvider>
+				</ThemeProvider>
 			</body>
 		</html>
 	);
