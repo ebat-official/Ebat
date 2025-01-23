@@ -76,7 +76,7 @@ export function CategorySwitcher() {
 								className={cn(
 									"max-w-[150px] truncate",
 									isOpen
-										? "translate-x-0 opacity-100 delay-75"
+										? "translate-x-0 opacity-100 transition-opacity duration-100"
 										: "-translate-x-96 opacity-0",
 								)}
 							>
@@ -87,7 +87,7 @@ export function CategorySwitcher() {
 							className={cn(
 								"whitespace-nowrap",
 								isOpen
-									? "translate-x-0 opacity-100 delay-100"
+									? "translate-x-0 opacity-100 delay-75"
 									: "-translate-x-96 opacity-0",
 							)}
 						>
