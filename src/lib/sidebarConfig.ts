@@ -7,10 +7,11 @@ import {
   AudioWaveform,
 	Command,
 } from "lucide-react";
-import { FaProjectDiagram, FaReact, FaSitemap} from "react-icons/fa";
+import { FaCss3, FaHtml5, FaProjectDiagram, FaReact, FaSitemap} from "react-icons/fa";
 import { IconType } from 'react-icons';
 import { IoLogoJavascript } from "react-icons/io";
 import { DiJavascript1 } from "react-icons/di";
+import { ImHtmlFive2 } from "react-icons/im";
 type Submenu = {
   href: string;
   label: string;
@@ -42,6 +43,7 @@ export type SidebarConfigType = {
   menuList: Group[];
   navigation: Group[];
 }
+
 
 const SidebarConfig={
   categories:[
@@ -88,6 +90,52 @@ const SidebarConfig={
     {
       groupLabel: "Contents",
       menus: [
+        {
+          href: "",
+          label: "HTML",
+          icon: ImHtmlFive2,
+          submenus: [
+            {
+              href: "/posts",
+              label: "Questions"
+            },
+            {
+              href: "/posts/new",
+              label: "Coding Challaenges"
+            },
+            {
+              href: "/posts",
+              label: "blogs"
+            },
+            {
+              href: "/posts/new",
+              label: "New Post"
+            }
+          ]
+        },
+        {
+          href: "",
+          label: "CSS",
+          icon: FaCss3,
+          submenus: [
+            {
+              href: "/posts",
+              label: "All Posts"
+            },
+            {
+              href: "/posts/new",
+              label: "New Post"
+            },
+            {
+              href: "/posts",
+              label: "All Posts"
+            },
+            {
+              href: "/posts/new",
+              label: "New Post"
+            }
+          ]
+        },
         {
           href: "",
           label: "Javascript",

@@ -102,7 +102,7 @@ export function CollapseMenuButton({
 					</div>
 				</Button>
 			</CollapsibleTrigger>
-			<CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+			<CollapsibleContent className=" relative overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
 				{submenus.map(({ href, label, active }, index) => (
 					<Button
 						key={index}
@@ -111,13 +111,13 @@ export function CollapseMenuButton({
 								? "secondary"
 								: "ghost"
 						}
-						className="w-full justify-start h-10 mb-1"
+						className="w-full justify-start h-10 mb-1 ml-8 mr-2"
 						asChild
 					>
-						<Link href={href}>
-							<div className="mr-4 ml-2">
+						<Link href={href} className="relative">
+							{/* <div className="mr-4 ml-2">
 								<Dot size={18} />
-							</div>
+							</div> */}
 							<p
 								className={cn(
 									"max-w-[170px] truncate",
@@ -128,9 +128,11 @@ export function CollapseMenuButton({
 							>
 								{label}
 							</p>
+							<div className="absolute left-0 top-1/4 -translate-x-full w-3 h-3 bg-transparent border-b-[1px] border-zinc-400 rounded-b-sm" />
 						</Link>
 					</Button>
 				))}
+				<div className="h-[90%] w-[1px] bg-zinc-400 absolute left-5 top-0" />
 			</CollapsibleContent>
 		</Collapsible>
 	) : (
