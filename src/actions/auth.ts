@@ -84,6 +84,7 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
           if (error.cause?.err?.message === EMAIL_NOT_VERIFIED) {
             return EMAIL_NOT_VERIFIED_ERROR;
           }
+          return SOMETHING_WENT_WRONG_ERROR;
         default:
           return SOMETHING_WENT_WRONG_ERROR;
       }

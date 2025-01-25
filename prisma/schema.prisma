@@ -3,71 +3,112 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-model Form {
-  id          String   @id @default(uuid()) @db.Uuid
-  userId      String   @db.Uuid
-  createdAt   DateTime @default(now())
-  published   Boolean  @default(false)
-  name        String
-  description String   @default("")
-  content     String   @default("[]")
-
-  visits      Int      @default(0)
-  submissions Int      @default(0)
-
-  shareURL        String            @unique @default(uuid())
-  FormSubmissions FormSubmissions[]
-
-  @@unique([name, userId])
+enum UserRole {
+  ADMIN
+  USER
 }
 
-model FormSubmissions {
-  id        String   @id @default(uuid()) @db.Uuid
-  createdAt DateTime @default(now())
-  formId    String   @db.Uuid
-  form      Form     @relation(fields: [formId], references: [id])
+enum SubscriptionPlan {
+  BASIC
+  PREMIUM
+}
 
-  content String
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+enum PostType {
+  BLOG
+  QUESTION
+  CODING
+}
+
+enum Difficulty {
+  LOW
+  MEDIUM
+  HARD
+}
+
+enum PostCategory {
+  FRONTEND
+  BACKEND
+  ANDROID
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
 }
 
 model User {
-  id                  String           @id @default(uuid()) @db.Uuid
-  name                String?
-  email               String           @unique
-  userName            String?          @unique
-  password            String?
-  emailVerified       DateTime?
-  accounts            Account[]
-  role                UserRole         @default(USER)
-  accountStatus       AccountStatus    @default(ACTIVE)
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
-  karmaPoints         Int              @default(0)
-  userProfile         UserProfile?     @relation("UserToProfile")
+  id               String             @id @default(uuid()) @db.Uuid
+  name             String?
+  email            String             @unique
+  userName         String?            @unique
+  password         String?
+  emailVerified    DateTime?
+  accounts         Account[]
+  role             UserRole           @default(USER)
+  accountStatus    AccountStatus      @default(ACTIVE)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  karmaPoints      Int                @default(0)
+  userProfile      UserProfile?       @relation("UserToProfile")
+  Post             Post[]
+  Comment          Comment[]
+  Vote             Vote[]
+  CommentVote      CommentVote[]
+  CommentMention   CommentMention[]
+  CompletionStatus CompletionStatus[]
+  following        Follow[]           @relation("Following") // Users the user follows
+  followers        Follow[]           @relation("Followers") // Users who follow this user
+  Bookmark         Bookmark[]
+  Report           Report[]
+  Notification     Notification[]
 }
 
 model UserProfile {
-  id          String  @id @default(uuid()) @db.Uuid
-  userId      String  @unique @db.Uuid
-  name        String?
-  jobTitle    String?
-  description String?
-  companyName String?
-  phoneNumber String?
-  image       String?   
-  coverImage  String?   
-  location    String?   
-  externalLinks Json?
-  user         User     @relation("UserToProfile", fields: [userId], references: [id], onDelete: Cascade)
+  id               String           @id @default(uuid()) @db.Uuid
+  userId           String           @unique @db.Uuid
+  name             String?
+  jobTitle         String?
+  description      String?
+  companyName      String?
+  phoneNumber      String?
+  image            String?
+  coverImage       String?
+  location         String?
+  subscriptionPlan SubscriptionPlan @default(BASIC)
+  externalLinks    Json?
+  user             User             @relation("UserToProfile", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id         String   @id @default(uuid()) @db.Uuid
+  followerId String   @db.Uuid
+  followedId String   @db.Uuid
+  createdAt  DateTime @default(now())
+
+  follower User @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade)
+  followed User @relation("Following", fields: [followedId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followedId]) // Prevent a user from following the same user multiple times
 }
 
 model Account {
-  id                String   @id @default(uuid()) @db.Uuid
+  id                String  @id @default(uuid()) @db.Uuid
   userId            String  @db.Uuid
   type              String
   provider          String
@@ -84,6 +125,7 @@ model Account {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
 }
 
@@ -101,18 +143,122 @@ model ResetToken {
   expires DateTime
 }
 
-enum UserRole {
-  ADMIN
-  USER
+model Post {
+  id               String             @id @default(uuid()) @db.Uuid
+  title            String
+  content          Json
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  author           User               @relation(fields: [authorId], references: [id])
+  authorId         String             @db.Uuid
+  comments         Comment[]
+  votes            Vote[]
+  type             PostType
+  difficulty       Difficulty?
+  companies        String[]
+  karmaPoints      Int?
+  tags             String[]
+  CompletionStatus CompletionStatus[]
+  category         PostCategory?
+  status           PostStatus         @default(DRAFT)
+  viewCount        Int                @default(0)
+
+  Bookmark Bookmark[]
+  Report   Report[]
 }
 
-enum SubscriptionPlan {
-  BASIC
-  PREMIUM
+model Comment {
+  id        String           @id @default(uuid()) @db.Uuid
+  text      String
+  createdAt DateTime         @default(now())
+  path      String           @unique
+  author    User             @relation(fields: [authorId], references: [id])
+  authorId  String           @db.Uuid
+  post      Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String           @db.Uuid
+  votes     CommentVote[]
+  mentions  CommentMention[] @relation("CommentMentions")
+  isAnswer  Boolean          @default(false)
+  Report    Report[]
 }
 
-enum AccountStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
+model Vote {
+  user   User     @relation(fields: [userId], references: [id])
+  userId String   @db.Uuid
+  post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String   @db.Uuid
+  type   VoteType
+
+  @@id([userId, postId])
+}
+
+model CommentVote {
+  id        String   @id @default(uuid()) @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String   @db.Uuid
+  type      VoteType
+
+  @@unique([userId, commentId])
+}
+
+model CommentMention {
+  id        String   @id @default(uuid()) @db.Uuid
+  user      User     @relation(fields: [userName], references: [userName])
+  userName  String
+  comment   Comment  @relation("CommentMentions", fields: [commentId], references: [id])
+  commentId String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  @@unique([userName, commentId]) // Ensure that a user can only be mentioned once in a comment
+}
+
+model CompletionStatus {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  postId      String   @db.Uuid
+  completedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Bookmark {
+  id     String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  postId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId]) // Ensure a user can only bookmark a post once
+}
+
+model Report {
+  id         String   @id @default(uuid()) @db.Uuid
+  reporter   User     @relation(fields: [reporterId], references: [id])
+  reporterId String   @db.Uuid
+  post       Post?    @relation(fields: [postId], references: [id])
+  postId     String?  @db.Uuid
+  comment    Comment? @relation(fields: [commentId], references: [id])
+  commentId  String?  @db.Uuid
+  reason     String
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  link      String?
+  relatedId String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead]) // Index for fetching unread notifications quickly
 }
