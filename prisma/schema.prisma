@@ -54,7 +54,6 @@ enum PostStatus {
 
 model User {
   id               String             @id @default(uuid()) @db.Uuid
-  name             String?
   email            String             @unique
   userName         String?            @unique
   password         String?
@@ -66,6 +65,7 @@ model User {
   updatedAt        DateTime           @updatedAt
   karmaPoints      Int                @default(0)
   userProfile      UserProfile?       @relation("UserToProfile")
+  lastLoginAt     DateTime?
   Post             Post[]
   Comment          Comment[]
   Vote             Vote[]

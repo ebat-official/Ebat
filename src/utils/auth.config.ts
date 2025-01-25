@@ -32,6 +32,7 @@ export default {
       token.role = user.role;
       if (user && 'userProfile' in user) {
         token.image=user?.userProfile?.image
+        token.name=user?.userProfile?.name
       }
       return token;
     },
@@ -40,6 +41,7 @@ export default {
         session.user.id = token.sub || "";
         session.user.role = token.role as UserRole;
         session.user.image=token.image as string
+        session.user.name=token.name as string
       }
       return session;
     },

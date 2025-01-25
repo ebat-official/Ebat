@@ -16,13 +16,13 @@ export const prismaCustomAdapter = () => {
       ...adapter,
       async createUser(user: AdapterUser) {
         const userName = generateUniqueUsername(user.email);
-        const { image, ...userWithoutImage } = user;
+        const { image,name, ...otherUserDetails } = user;
   
         try {
           const userDetails = await prisma.$transaction(async (prisma) => {
             const createdUser = await prisma.user.create({
               data: {
-                ...userWithoutImage,
+                ...otherUserDetails,
                 userName,
               },
             });
@@ -31,6 +31,7 @@ export const prismaCustomAdapter = () => {
               data: {
                 userId: createdUser.id,
                 image: image || null,  // Explicitly set to null if undefined
+                name: name || null,    
               },
             });
   
