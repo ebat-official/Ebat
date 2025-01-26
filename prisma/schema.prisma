@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -158,11 +159,11 @@ model Post {
   companies        String[]
   karmaPoints      Int?
   tags             String[]
-  CompletionStatus CompletionStatus[]
+  completionStatus CompletionStatus[]
   category         PostCategory?
+  subCategory      String?
   status           PostStatus         @default(DRAFT)
   viewCount        Int                @default(0)
-
   Bookmark Bookmark[]
   Report   Report[]
 }
