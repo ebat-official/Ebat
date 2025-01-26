@@ -42,7 +42,6 @@ export async function findUserById(id: string, includeProfile = false): Promise<
       select: {
         id: true,
         email: true,
-        name: true,
         userName: true,
         emailVerified: true,
         role: true,
