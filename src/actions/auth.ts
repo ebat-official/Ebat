@@ -3,7 +3,7 @@
 import { signIn } from "@/auth";
 import prisma from "@/lib/prisma";
 import { defaultLoginRedirect } from "@/utils/routes";
-import { authFormSchema, authFormSchemaType } from "@/schemas/authForm";
+import { authFormSchema, authFormSchemaType } from "@/lib/validators/authForm";
 import {
   EMAIL_ALREADY_EXISTS_ERROR,
   EMAIL_NOT_VERIFIED_ERROR,

@@ -1,5 +1,5 @@
 import type { NextAuthConfig } from "next-auth"
-import { authFormSchema } from "@/schemas/authForm";
+import { authFormSchema } from "@/lib/validators/authForm";
 import { findUserByEmail, findUserById, setEmailVerified } from "@/actions/user";
 import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook";

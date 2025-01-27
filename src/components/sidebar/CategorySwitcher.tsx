@@ -36,10 +36,10 @@ export function CategorySwitcher() {
 			categories[activeCategoryLocalIndex],
 	);
 
-	useEffect(() => {
-		if (pathname.startsWith(activeCategory.route)) return;
-		router.push(activeCategory.route);
-	}, [activeCategory]);
+	// useEffect(() => {
+	// 	if (pathname.startsWith(activeCategory.route)) return;
+	// 	router.push(activeCategory.route);
+	// }, [activeCategory]);
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -63,9 +63,9 @@ export function CategorySwitcher() {
 			<DropdownMenuTrigger asChild>
 				<Button
 					variant="outline"
-					className="w-full justify-start h-12 focus-visible:ring-0"
+					className="justify-start w-full h-12 focus-visible:ring-0"
 				>
-					<div className="w-full items-center flex justify-between">
+					<div className="flex items-center justify-between w-full">
 						<div className="flex items-center">
 							<span className="mr-4">
 								<activeCategory.logo
@@ -118,7 +118,7 @@ export function CategorySwitcher() {
 							{activeCategory.name}
 						</span>
 					</div>
-					<ChevronsUpDown className="ml-auto p-2 mr-4" />
+					<ChevronsUpDown className="p-2 ml-auto mr-4" />
 				</Button> */}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent

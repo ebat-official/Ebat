@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { formSchema, formSchemaType } from "@/schemas/form";
+import { formSchema, formSchemaType } from "@/lib/validators/form";
 // import { currentUser } from "@clerk/nextjs";
 
 //change to nextauth
