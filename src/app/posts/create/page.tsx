@@ -2,14 +2,27 @@ import { Editor } from "@/components/shared/Editor/Editor";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import React from "react";
 
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+
 function page() {
 	return (
 		<RightPanelLayout>
 			<RightPanelLayout.MainPanel>
-				<Editor subredditId={"9786543567890"} />
+				<Card className="">
+					<CardContent className="flex justify-center">
+						<Editor subredditId={"9786543567890"} />
+					</CardContent>
+				</Card>
 			</RightPanelLayout.MainPanel>
 			<RightPanelLayout.SidePanel>
-				<div className="h-9" />
+				<Card className=" h-screen" />
 			</RightPanelLayout.SidePanel>
 		</RightPanelLayout>
 	);

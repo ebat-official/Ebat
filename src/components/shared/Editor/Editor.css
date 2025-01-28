@@ -146,6 +146,12 @@
   background: #1a1a1a;
 }
 
+.dark .ce-code__textarea {
+  background-color: hsl(var(--background));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
 @media (max-width: 650px) {
   .dark .ce-toolbar__settings-btn,
   .dark .ce-toolbar__plus {

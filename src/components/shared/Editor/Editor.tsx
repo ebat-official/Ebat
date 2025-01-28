@@ -170,13 +170,13 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 	const { ref: titleRef, ...rest } = register("title");
 
 	return (
-		<div className="w-full p-4 border rounded-lg">
+		<div className="pt-8  min-w-[73%]">
 			<form
 				id="subreddit-post-form"
 				className="w-fit"
 				onSubmit={handleSubmit(onSubmit)}
 			>
-				<div className="prose prose-stone dark:prose-invert">
+				<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
 					<TextareaAutosize
 						ref={(e) => {
 							titleRef(e);

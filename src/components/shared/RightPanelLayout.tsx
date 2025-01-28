@@ -9,14 +9,14 @@ function RightPanelLayout({ children }: { children: React.ReactNode }) {
 }
 function MainPanel({ children }: { children: React.ReactNode }) {
 	return (
-		<div className="content container justify-self-center self-center">
+		<div className="content container justify-self-center flex-1">
 			{children}
 		</div>
 	);
 }
 function SidePanel({ children }: { children: React.ReactNode }) {
 	return (
-		<div className="rightsidebar  bg-background w-full md:w-[250px] lg:w-[360px] self-start">
+		<div className="rightsidebar  bg-background min-w-full md:min-w-[250px] lg:min-w-[340px] xl:min-w-[400px] self-start">
 			{children}
 		</div>
 	);
