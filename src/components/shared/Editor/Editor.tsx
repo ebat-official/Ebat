@@ -170,7 +170,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 	const { ref: titleRef, ...rest } = register("title");
 
 	return (
-		<div className="w-full p-4 border rounded-lg bg-zinc-50 border-zinc-200">
+		<div className="w-full p-4 border rounded-lg">
 			<form
 				id="subreddit-post-form"
 				className="w-fit"

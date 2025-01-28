@@ -1,7 +1,7 @@
 import Navbar from "./Navbar";
-import { handlers, auth, signIn, signOut } from "@/auth";
+import { useSession } from "next-auth/react";
 
-export default async function Nav() {
-  const session = await auth();
-  return <Navbar session={session} />;
+export default function Nav() {
+	const { data: session } = useSession();
+	return <Navbar session={session} />;
 }
