@@ -9,7 +9,6 @@ import TextareaAutosize from "react-textarea-autosize";
 import type { z } from "zod";
 
 import { toast } from "@/hooks/use-toast";
-import { uploadFiles } from "@/lib/uploadthing";
 import { type PostCreationRequest, PostValidator } from "@/lib/validators/post";
 // import { useMutation } from '@tanstack/react-query'
 
