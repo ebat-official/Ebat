@@ -35,7 +35,7 @@ const LoginModal: FC<LoginModalProps> = ({
 	const [loading, setLoading] = useState(false);
 
 	function onCloseHanlder() {
-		setOpen((prev) => !prev);
+		setOpen(!open);
 		closeHandler();
 	}
 	return (

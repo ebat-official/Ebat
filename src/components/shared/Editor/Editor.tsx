@@ -17,6 +17,7 @@ import "./Editor.css";
 import useFileUpload from "@/hooks/useFileUpload";
 import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
+import Loader from "../Loader/Loader";
 
 type FormData = z.infer<typeof PostValidator>;
 
@@ -177,12 +178,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 		createPost(payload);
 	}
 
-	if (!isMounted) {
-		return null;
-	}
-
 	const { ref: titleRef, ...rest } = register("title");
-
 	return (
 		<>
 			{uploadError && uploadError === UNAUTHENTICATED && (
@@ -191,33 +187,40 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 					message="Sign in to upload an image."
 				/>
 			)}
-			<div className="pt-8  min-w-[73%]">
-				<form
-					id="subreddit-post-form"
-					className="w-fit"
-					onSubmit={handleSubmit(onSubmit)}
-				>
-					<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
-						<TextareaAutosize
-							ref={(e) => {
-								titleRef(e);
-								// @ts-ignore
-								_titleRef.current = e;
-							}}
-							{...rest}
-							placeholder="Title"
-							className="w-full overflow-hidden text-5xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
-						/>
-						<div id="editor" className="min-h-[500px]" />
-						<p className="text-sm text-gray-500">
-							Use{" "}
-							<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
-								Tab
-							</kbd>{" "}
-							to open the command menu.
-						</p>
+
+			<div className="pt-8  min-w-[73%] min-h-[75vh]">
+				{!isMounted ? (
+					<div className="flex items-center justify-center w-full h-full">
+						<Loader />
 					</div>
-				</form>
+				) : (
+					<form
+						id="subreddit-post-form"
+						className="w-fit"
+						onSubmit={handleSubmit(onSubmit)}
+					>
+						<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
+							<TextareaAutosize
+								ref={(e) => {
+									titleRef(e);
+									// @ts-ignore
+									_titleRef.current = e;
+								}}
+								{...rest}
+								placeholder="Title"
+								className="w-full overflow-hidden text-5xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+							/>
+							<div id="editor" className="min-h-[500px]" />
+							<p className="text-sm text-gray-500">
+								Use{" "}
+								<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
+									Tab
+								</kbd>{" "}
+								to open the command menu.
+							</p>
+						</div>
+					</form>
+				)}
 			</div>
 		</>
 	);

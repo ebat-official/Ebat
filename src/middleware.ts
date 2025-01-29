@@ -8,13 +8,13 @@ export default middleware((req) => {
   //api authentication URL shouldnt be blocked
   if (nextUrl.pathname.startsWith(apiAuthRoutes)) return;
 
-  if (authRoutes.includes(nextUrl.pathname)) {
-    if (isLoggedIn) {
-      const absoluteURL = new URL(defaultLoginRedirect, nextUrl);
-      return Response.redirect(absoluteURL);
-    }
-    return;
-  }
+  // if (authRoutes.includes(nextUrl.pathname)) {
+  //   if (isLoggedIn) {
+  //     const absoluteURL = new URL(defaultLoginRedirect, nextUrl);
+  //     return Response.redirect(absoluteURL);
+  //   }
+  //   return;
+  // }
 
   if (!isLoggedIn && privateRoutes.includes(nextUrl.pathname)) {
     const absoluteURL = new URL("/signin", nextUrl);
