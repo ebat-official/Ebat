@@ -14,6 +14,9 @@ import { type PostCreationRequest, PostValidator } from "@/lib/validators/post";
 // import { useMutation } from '@tanstack/react-query'
 
 import "./Editor.css";
+import useFileUpload from "@/hooks/useFileUpload";
+import { UNAUTHENTICATED } from "@/utils/contants";
+import LoginModal from "@/components/auth/LoginModal";
 
 type FormData = z.infer<typeof PostValidator>;
 
@@ -39,6 +42,10 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 	const router = useRouter();
 	const [isMounted, setIsMounted] = useState<boolean>(false);
 	const pathname = usePathname();
+	const { uploadFile } = useFileUpload();
+	const [uploadError, setUploadError] = useState<string | null | undefined>(
+		null,
+	);
 
 	function createPost(payload: PostCreationRequest) {
 		console.log(payload);
@@ -75,21 +82,28 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 					image: {
 						class: ImageTool,
 						config: {
+							features: {
+								caption: "optional",
+							},
 							uploader: {
 								async uploadByFile(file: File) {
 									try {
 										// Upload the file using the `uploadFiles` function
-										const [res] = await uploadFiles("imageUploader", {
-											files: [file],
+										const { status, data, ...rem } = await uploadFile(file, {
+											postid: "pranavpost",
 										});
 
-										console.log("Uploaded file response:", res);
+										console.log("Uploaded file response:", status, data, rem);
+										if (status === "error") {
+											setUploadError(data.message);
+											throw new Error(data.message);
+										}
 
 										// Return the format expected by Editor.js
 										return {
 											success: 1,
 											file: {
-												url: res.url, // The URL of the uploaded file
+												url: data.url,
 											},
 										};
 									} catch (error) {
@@ -170,33 +184,41 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 	const { ref: titleRef, ...rest } = register("title");
 
 	return (
-		<div className="pt-8  min-w-[73%]">
-			<form
-				id="subreddit-post-form"
-				className="w-fit"
-				onSubmit={handleSubmit(onSubmit)}
-			>
-				<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
-					<TextareaAutosize
-						ref={(e) => {
-							titleRef(e);
-							// @ts-ignore
-							_titleRef.current = e;
-						}}
-						{...rest}
-						placeholder="Title"
-						className="w-full overflow-hidden text-5xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
-					/>
-					<div id="editor" className="min-h-[500px]" />
-					<p className="text-sm text-gray-500">
-						Use{" "}
-						<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
-							Tab
-						</kbd>{" "}
-						to open the command menu.
-					</p>
-				</div>
-			</form>
-		</div>
+		<>
+			{uploadError && uploadError === UNAUTHENTICATED && (
+				<LoginModal
+					closeHandler={() => setUploadError(null)}
+					message="Sign in to upload an image."
+				/>
+			)}
+			<div className="pt-8  min-w-[73%]">
+				<form
+					id="subreddit-post-form"
+					className="w-fit"
+					onSubmit={handleSubmit(onSubmit)}
+				>
+					<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
+						<TextareaAutosize
+							ref={(e) => {
+								titleRef(e);
+								// @ts-ignore
+								_titleRef.current = e;
+							}}
+							{...rest}
+							placeholder="Title"
+							className="w-full overflow-hidden text-5xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+						/>
+						<div id="editor" className="min-h-[500px]" />
+						<p className="text-sm text-gray-500">
+							Use{" "}
+							<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
+								Tab
+							</kbd>{" "}
+							to open the command menu.
+						</p>
+					</div>
+				</form>
+			</div>
+		</>
 	);
 };

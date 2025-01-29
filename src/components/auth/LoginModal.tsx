@@ -15,24 +15,42 @@ import ButtonDark from "@/components/shared/ButtonDark";
 import SocialAuth from "./SocialAuth";
 import SignupForm from "./SignupFrom";
 import Loader from "@/components/shared/Loader/Loader";
+import FormSuccess from "../shared/FormSuccess";
+import FormError from "../shared/FormError";
 
-type LoginModalProps = {};
+type LoginModalProps = {
+	isOpen?: boolean;
+	dialogTrigger?: boolean;
+	closeHandler?: () => void;
+	message?: string;
+};
 
-const LoginModal: FC<LoginModalProps> = ({}) => {
+const LoginModal: FC<LoginModalProps> = ({
+	dialogTrigger = false,
+	closeHandler = () => {},
+	message,
+}) => {
 	const [isLoginForm, setIsLoginForm] = useState<boolean>(true);
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(!dialogTrigger);
 	const [loading, setLoading] = useState(false);
+
+	function onCloseHanlder() {
+		setOpen((prev) => !prev);
+		closeHandler();
+	}
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button
-					onClick={() => setOpen(true)}
-					variant={"outline"}
-					className="w-full ml-2 font-medium whitespace-nowrap"
-				>
-					Login
-				</Button>
-			</DialogTrigger>
+		<Dialog open={open} onOpenChange={onCloseHanlder}>
+			{dialogTrigger && (
+				<DialogTrigger asChild>
+					<Button
+						onClick={() => setOpen(true)}
+						variant={"outline"}
+						className="w-full ml-2 font-medium whitespace-nowrap"
+					>
+						Login
+					</Button>
+				</DialogTrigger>
+			)}
 			<DialogContent className="max-w-[425px] p-8 border rounded-xl sm:rounded-3xl">
 				{loading && (
 					<div className="absolute inset-0 z-50 flex items-center justify-center w-full h-full bg-white bg-opacity-50 dark:bg-black dark:bg-opacity-50 backdrop-blur-md rounded-3xl">
@@ -40,8 +58,9 @@ const LoginModal: FC<LoginModalProps> = ({}) => {
 					</div>
 				)}
 				<>
-					<DialogHeader>
+					<DialogHeader className="flex flex-col items-center justify-center gap-4">
 						<DialogTitle className="text-center">Welcome Back !</DialogTitle>
+						{message && <FormError message={message} />}
 					</DialogHeader>
 					<SocialAuth loadingHandler={setLoading} />
 					{isLoginForm ? (

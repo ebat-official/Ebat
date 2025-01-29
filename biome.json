@@ -25,7 +25,8 @@
 				
             },
 			"style": {
-				"useImportType": "off"
+				"useImportType": "off",
+				"noNonNullAssertion": "off"
 			  },
 			  "suspicious": {
 				"noArrayIndexKey": "off"

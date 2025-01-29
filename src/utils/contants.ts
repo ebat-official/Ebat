@@ -12,3 +12,5 @@ export const LOADING = "loading";
 export const TOKEN = "token";
 export const VERIFICATION_SUCCESSFULL = "Verification successfull";
 export const TOKEN_NOT_FOUND = "Token not found";
+export const UNAUTHORIZED = "Unauthorized";
+export const UNAUTHENTICATED = "Unauthenticated";

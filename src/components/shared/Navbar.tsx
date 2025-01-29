@@ -29,7 +29,11 @@ export default function NavBar({ session }: { session: Session | null }) {
 					<div className="flex gap-4 absolute right-16">
 						<ThemeSwitcher />
 
-						{session ? <UserButton session={session} /> : <LoginModal />}
+						{session ? (
+							<UserButton session={session} />
+						) : (
+							<LoginModal dialogTrigger />
+						)}
 					</div>
 				</div>
 				<Background shadow={false} />

@@ -5,8 +5,7 @@ import { getSignedURL } from "@/actions/fileUpload";
 const useFileUpload = () => {
 	const [progress, setProgress] = useState<number>(0); // Upload progress percentage
 	const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
-	const [error, setError] = useState<string | null>(null); // Error message
-	const [isSuccess, setIsSuccess] = useState<boolean>(false); // Success state
+	const [fileKey, setFileKey] = useState<string | null>(null); // File key
 
 	// Function to compute SHA-256 checksum
 	const computeSHA256 = async (file: File) => {
@@ -22,8 +21,6 @@ const useFileUpload = () => {
 	// Function to upload a file
 	const uploadFile = async (file: File, metadata?: Record<string, string>) => {
 		setIsLoading(true);
-		setError(null);
-		setIsSuccess(false);
 
 		try {
 			// Step 1: Compute checksum
@@ -38,11 +35,19 @@ const useFileUpload = () => {
 			});
 
 			if (signedURLResult.status !== "success") {
-				throw new Error(signedURLResult.data.message);
+				console.log("errormyre", signedURLResult);
+				throw new Error(signedURLResult.cause || signedURLResult.data.message);
 			}
 
 			// Step 3: Upload the file to S3 using the signed URL
+			const filekey = signedURLResult.data.fileKey;
 			const signedUrl = signedURLResult.data.url;
+			let imageUrl = signedURLResult.data.url.split("?")[0];
+
+			if (process.env.NODE_ENV === "development") {
+				imageUrl = `${process.env.NEXT_PUBLIC_AWS_BUCKET_PUBLIC_URL}/${filekey}`;
+			}
+
 			const response = await axios.put(signedUrl, file, {
 				headers: {
 					"Content-Type": file.type,
@@ -55,15 +60,15 @@ const useFileUpload = () => {
 				},
 			});
 
-			if (response.status === 200) {
-				setIsSuccess(true);
-			} else {
+			if (response.status !== 200) {
 				throw new Error("Failed to upload file");
 			}
+			setFileKey(filekey);
+			return { status: "success", data: { url: imageUrl } };
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "An unknown error occurred",
-			);
+			const errMsg =
+				err instanceof Error ? err.message : "An unknown error occurred";
+			return { status: "error", data: { message: errMsg } };
 		} finally {
 			setIsLoading(false);
 		}
@@ -72,9 +77,8 @@ const useFileUpload = () => {
 	return {
 		progress,
 		isLoading,
-		error,
-		isSuccess,
 		uploadFile,
+		fileKey,
 	};
 };
 
