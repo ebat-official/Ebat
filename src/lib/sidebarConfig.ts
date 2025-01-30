@@ -105,7 +105,7 @@ const SidebarConfig={
             },
             {
               href: "/posts",
-              label: "blogs"
+              label: "Articles"
             },
             {
               href: "/posts/new",

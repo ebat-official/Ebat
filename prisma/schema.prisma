@@ -31,9 +31,10 @@ enum VoteType {
 }
 
 enum PostType {
-  BLOG
+  ARTICLE
   QUESTION
-  CODING
+  CHALLENGE
+  SYSTEM_DESIGN
 }
 
 enum Difficulty {
