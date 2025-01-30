@@ -1,53 +1,53 @@
 "use client";
 
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import type EditorJS from "@editorjs/editorjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+
 import { useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
-import type { z } from "zod";
-
+import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
-import { type PostCreationRequest, PostValidator } from "@/lib/validators/post";
-// import { useMutation } from '@tanstack/react-query'
-
-import "./Editor.css";
 import useFileUpload from "@/hooks/useFileUpload";
 import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import Loader from "../Loader/Loader";
+import { Path } from "react-hook-form";
 
-type FormData = z.infer<typeof PostValidator>;
-
-interface EditorProps {
-	subredditId: string;
+interface EditorProps<T extends z.ZodType> {
+	onSave: (data: z.infer<T>) => void;
+	editorId?: string; // if multiple editor required in same page.
+	validator: T;
+	defaultValues: z.infer<T>;
+	showTitleField?: boolean; // New prop
 }
 
-export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<FormData>({
-		resolver: zodResolver(PostValidator),
-		defaultValues: {
-			subredditId,
-			title: "",
-			content: null,
-		},
-	});
+export const Editor = <T extends z.ZodType>({
+	onSave,
+	editorId = "editor",
+	validator,
+	defaultValues = {},
+	showTitleField = true,
+}: EditorProps<T>) => {
+	type FormData = z.infer<typeof validator>;
 	const ref = useRef<EditorJS>(null);
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
-	const router = useRouter();
 	const [isMounted, setIsMounted] = useState<boolean>(false);
-	const pathname = usePathname();
 	const { uploadFile } = useFileUpload();
 	const [uploadError, setUploadError] = useState<string | null | undefined>(
 		null,
 	);
 
-	function createPost(payload: PostCreationRequest) {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<FormData>({
+		resolver: zodResolver(validator),
+		defaultValues,
+	});
+
+	function createPost(payload: FormData) {
 		console.log(payload);
 	}
 
@@ -64,7 +64,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 
 		if (!ref.current) {
 			const editor = new EditorJS({
-				holder: "editor",
+				holder: editorId,
 				onReady() {
 					ref.current = editor;
 				},
@@ -88,7 +88,6 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 							uploader: {
 								async uploadByFile(file: File) {
 									try {
-										// Upload the file using the `uploadFiles` function
 										const { status, data, ...rem } = await uploadFile(file, {
 											postid: "pranavpost",
 										});
@@ -99,7 +98,6 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 											throw new Error(data.message);
 										}
 
-										// Return the format expected by Editor.js
 										return {
 											success: 1,
 											file: {
@@ -125,7 +123,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 				},
 			});
 		}
-	}, []);
+	}, [editorId, uploadFile]); // Add editorId to dependencies
 
 	useEffect(() => {
 		if (Object.keys(errors).length) {
@@ -168,16 +166,18 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 	async function onSubmit(data: FormData) {
 		const blocks = await ref.current?.save();
 
-		const payload: PostCreationRequest = {
+		const payload: FormData = {
 			title: data.title,
 			content: blocks,
-			subredditId,
 		};
 
 		createPost(payload);
 	}
 
-	const { ref: titleRef, ...rest } = register("title");
+	const titleRegister = showTitleField
+		? register("title" as Path<FormData>)
+		: null;
+
 	return (
 		<>
 			{uploadError && uploadError === UNAUTHENTICATED && (
@@ -199,17 +199,18 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
 						onSubmit={handleSubmit(onSubmit)}
 					>
 						<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
-							<TextareaAutosize
-								ref={(e) => {
-									titleRef(e);
-									// @ts-ignore
-									_titleRef.current = e;
-								}}
-								{...rest}
-								placeholder="Title"
-								className="w-full overflow-hidden text-5xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
-							/>
-							<div id="editor" className="min-h-[500px]" />
+							{showTitleField && (
+								<TextareaAutosize
+									ref={(e) => {
+										titleRegister?.ref(e);
+										_titleRef.current = e;
+									}}
+									{...titleRegister}
+									placeholder="Title"
+									className="w-full overflow-hidden text-5xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+								/>
+							)}
+							<div id={editorId} className="min-h-[500px]" />{" "}
 							<p className="text-sm text-gray-500">
 								Use{" "}
 								<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">

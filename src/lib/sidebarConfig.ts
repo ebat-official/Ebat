@@ -96,7 +96,7 @@ const SidebarConfig={
           icon: ImHtmlFive2,
           submenus: [
             {
-              href: "/posts",
+              href: "/frontend/html/questions/create",
               label: "Questions"
             },
             {
@@ -107,10 +107,6 @@ const SidebarConfig={
               href: "/posts",
               label: "Articles"
             },
-            {
-              href: "/posts/new",
-              label: "New Post"
-            }
           ]
         },
         {
