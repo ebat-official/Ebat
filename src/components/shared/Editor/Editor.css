@@ -152,6 +152,7 @@
   color: hsl(var(--foreground));
 }
 
+
 @media (max-width: 650px) {
   .dark .ce-toolbar__settings-btn,
   .dark .ce-toolbar__plus {

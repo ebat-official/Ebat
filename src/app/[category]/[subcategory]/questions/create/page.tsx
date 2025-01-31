@@ -11,21 +11,28 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import EditorQuestion from "@/components/shared/Editor/EditorQuestion";
+import { Button } from "@/components/ui/button";
+import ButtonBlue from "@/components/shared/ButtonBlue";
 
 function page() {
 	return (
-		<RightPanelLayout>
-			<RightPanelLayout.MainPanel>
-				<Card className="">
-					<CardContent className="flex justify-center">
+		<div className="mt-8">
+			<RightPanelLayout>
+				<RightPanelLayout.MainPanel>
+					<div className="relative ">
+						<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 right-0 -translate-y-full">
+							<Button variant="outline">Save</Button>
+							<Button variant="outline">Preview</Button>
+							<ButtonBlue title="Publish" />
+						</div>
 						<EditorQuestion />
-					</CardContent>
-				</Card>
-			</RightPanelLayout.MainPanel>
-			<RightPanelLayout.SidePanel>
-				<Card className=" h-screen" />
-			</RightPanelLayout.SidePanel>
-		</RightPanelLayout>
+					</div>
+				</RightPanelLayout.MainPanel>
+				<RightPanelLayout.SidePanel>
+					<Card className=" h-screen" />
+				</RightPanelLayout.SidePanel>
+			</RightPanelLayout>
+		</div>
 	);
 }
 

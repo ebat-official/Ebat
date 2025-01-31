@@ -19,7 +19,10 @@ interface EditorProps<T extends z.ZodType> {
 	editorId?: string; // if multiple editor required in same page.
 	validator: T;
 	defaultValues: z.infer<T>;
-	showTitleField?: boolean; // New prop
+	showTitleField?: boolean;
+	showCommandDetail?: boolean;
+	titlePlaceHolder?: string;
+	contentPlaceHolder?: string;
 }
 
 export const Editor = <T extends z.ZodType>({
@@ -28,6 +31,9 @@ export const Editor = <T extends z.ZodType>({
 	validator,
 	defaultValues = {},
 	showTitleField = true,
+	titlePlaceHolder = "Title",
+	contentPlaceHolder = "Type here to write your post...",
+	showCommandDetail,
 }: EditorProps<T>) => {
 	type FormData = z.infer<typeof validator>;
 	const ref = useRef<EditorJS>(null);
@@ -68,7 +74,7 @@ export const Editor = <T extends z.ZodType>({
 				onReady() {
 					ref.current = editor;
 				},
-				placeholder: "Type here to write your post...",
+				placeholder: contentPlaceHolder,
 				inlineToolbar: true,
 				data: { blocks: [] },
 				tools: {
@@ -123,7 +129,7 @@ export const Editor = <T extends z.ZodType>({
 				},
 			});
 		}
-	}, [editorId, uploadFile]); // Add editorId to dependencies
+	}, [editorId]);
 
 	useEffect(() => {
 		if (Object.keys(errors).length) {
@@ -187,7 +193,7 @@ export const Editor = <T extends z.ZodType>({
 				/>
 			)}
 
-			<div className="pt-8  min-w-[73%] min-h-[75vh]">
+			<div className="pt-8  min-w-[73%]">
 				{!isMounted ? (
 					<div className="flex items-center justify-center w-full h-full">
 						<Loader />
@@ -195,7 +201,7 @@ export const Editor = <T extends z.ZodType>({
 				) : (
 					<form
 						id="subreddit-post-form"
-						className="w-fit"
+						className="w-full"
 						onSubmit={handleSubmit(onSubmit)}
 					>
 						<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
@@ -206,22 +212,37 @@ export const Editor = <T extends z.ZodType>({
 										_titleRef.current = e;
 									}}
 									{...titleRegister}
-									placeholder="Title"
-									className="w-full overflow-hidden text-5xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+									placeholder={titlePlaceHolder}
+									className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
 								/>
 							)}
-							<div id={editorId} className="min-h-[500px]" />{" "}
-							<p className="text-sm text-gray-500">
-								Use{" "}
-								<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
-									Tab
-								</kbd>{" "}
-								to open the command menu.
-							</p>
+							<div id={editorId} />
+							{showCommandDetail && (
+								<p className="text-sm text-gray-500">
+									Use{" "}
+									<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
+										Enter
+									</kbd>{" "}
+									to open the command menu.
+								</p>
+							)}
 						</div>
 					</form>
 				)}
 			</div>
+			<style>
+				{`
+          .codex-editor__redactor {
+            padding-bottom: 200px !important; 
+          }
+
+		  .codex-editor [data-placeholder-active]:empty:before, .codex-editor [data-placeholder-active][data-empty=true]:before {
+		   color: hsl(var(--color-text-primary)) !important;
+		   background-color: hsl(var(--background)) !important;
+		   }
+
+        `}
+			</style>
 		</>
 	);
 };
