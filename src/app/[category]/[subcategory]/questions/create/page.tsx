@@ -13,6 +13,7 @@ import {
 import EditorQuestion from "@/components/shared/Editor/EditorQuestion";
 import { Button } from "@/components/ui/button";
 import ButtonBlue from "@/components/shared/ButtonBlue";
+import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 
 function page() {
 	return (
@@ -29,7 +30,7 @@ function page() {
 					</div>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>
-					<Card className=" h-screen" />
+					<QuestionSidebar />
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
 		</div>
