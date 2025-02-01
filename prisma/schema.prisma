@@ -160,7 +160,7 @@ model Post {
   difficulty       Difficulty?
   companies        String[]
   karmaPoints      Int?
-  tags             String[]
+  topics           String[]
   completionStatus CompletionStatus[]
   category         PostCategory?
   subCategory      String?

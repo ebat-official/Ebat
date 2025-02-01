@@ -12,6 +12,11 @@ import RadioGroupGrid from "./RadioGrid";
 import { CommandInput } from "../ui/command";
 import useCompanies from "@/hooks/useCompanyList";
 import useTopics from "@/hooks/useTopicList";
+import DurationPicker from "../shared/DurationPicker";
+import { MdOutlineGpsFixed } from "react-icons/md";
+import { RiBuilding2Line } from "react-icons/ri";
+import { AiOutlineTag } from "react-icons/ai";
+import { IoMdTime } from "react-icons/io";
 
 function QuestionSidebar() {
 	const { companies, searchCompanies } = useCompanies();
@@ -25,7 +30,7 @@ function QuestionSidebar() {
 	}
 
 	return (
-		<Card className="h-screen">
+		<Card>
 			<CardContent>
 				<Accordion
 					defaultValue={["diffuculty", "companies"]}
@@ -33,7 +38,12 @@ function QuestionSidebar() {
 					className="w-full"
 				>
 					<AccordionItem value="diffuculty">
-						<AccordionTrigger>Diffuculty *</AccordionTrigger>
+						<AccordionTrigger>
+							<div className="flex items-center justify-center gap-1">
+								<span>Diffuculty </span>
+								<MdOutlineGpsFixed size={16} />
+							</div>
+						</AccordionTrigger>
 						<AccordionContent>
 							<RadioGroupGrid
 								options={["Easy", "Medium", "Hard"]}
@@ -44,7 +54,12 @@ function QuestionSidebar() {
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="companies">
-						<AccordionTrigger>Companies</AccordionTrigger>
+						<AccordionTrigger>
+							<div className="flex items-center justify-center gap-1">
+								<span>Companies</span>
+								<RiBuilding2Line size={16} />
+							</div>
+						</AccordionTrigger>
 						<AccordionContent>
 							<CheckboxGrid
 								options={[...selectedCompanies, ...companies]}
@@ -55,7 +70,12 @@ function QuestionSidebar() {
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="topics">
-						<AccordionTrigger>Topics</AccordionTrigger>
+						<AccordionTrigger>
+							<div className="flex items-center justify-center gap-1">
+								<span>Topics</span>
+								<AiOutlineTag size={16} />
+							</div>
+						</AccordionTrigger>
 						<AccordionContent>
 							<CheckboxGrid
 								options={topics}
@@ -66,10 +86,14 @@ function QuestionSidebar() {
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="item-3">
-						<AccordionTrigger>Is it animated?</AccordionTrigger>
+						<AccordionTrigger>
+							<div className="flex items-center justify-center gap-1">
+								<span>Duration</span>
+								<IoMdTime size={16} />
+							</div>
+						</AccordionTrigger>
 						<AccordionContent>
-							Yes. It's animated by default, but you can disable it if you
-							prefer.
+							<DurationPicker />
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>
