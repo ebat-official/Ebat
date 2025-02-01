@@ -25,6 +25,11 @@ function QuestionSidebar() {
 		[],
 	);
 	const [selectedTopics, setSelectedTopics] = useState<InternalOption[]>([]);
+	const [duration, setDuration] = useState({
+		days: "0",
+		minutes: "5",
+		hours: "0",
+	});
 	function getSelectedCompaniesLabel() {
 		return selectedCompanies.map((company) => company.label);
 	}
@@ -93,7 +98,7 @@ function QuestionSidebar() {
 							</div>
 						</AccordionTrigger>
 						<AccordionContent>
-							<DurationPicker />
+							<DurationPicker duration={duration} onChange={setDuration} />
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>

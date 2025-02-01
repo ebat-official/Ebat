@@ -10,18 +10,34 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-const DurationPicker = () => {
-	const [duration, setDuration] = useState({
-		days: "0",
-		hours: "0",
-		minutes: "0",
-	});
+// Define prop types for the component
+interface DurationPickerProps {
+	duration?: {
+		days: string;
+		hours: string;
+		minutes: string;
+	};
+	onChange?: (duration: {
+		days: string;
+		hours: string;
+		minutes: string;
+	}) => void;
+}
 
-	const handleChange = (value: string, unit: keyof typeof duration) => {
-		setDuration((prev) => ({
-			...prev,
-			[unit]: value,
-		}));
+const DurationPicker: React.FC<DurationPickerProps> = ({
+	duration = { days: "0", hours: "0", minutes: "0" },
+	onChange,
+}) => {
+	const [localDuration, setLocalDuration] = useState(duration);
+
+	const handleChange = (value: string, unit: keyof typeof localDuration) => {
+		const updatedDuration = { ...localDuration, [unit]: value };
+		setLocalDuration(updatedDuration);
+
+		// If onChange is provided, notify the parent component with the updated duration object
+		if (onChange) {
+			onChange(updatedDuration);
+		}
 	};
 
 	return (
@@ -31,11 +47,11 @@ const DurationPicker = () => {
 				<div className="flex flex-col gap-2">
 					<span className="text-sm text-muted-foreground mb-1">Days</span>
 					<Select
-						value={duration.days}
+						value={localDuration.days}
 						onValueChange={(val) => handleChange(val, "days")}
 					>
 						<SelectTrigger className="gap-2">
-							<SelectValue>{duration.days}</SelectValue>
+							<SelectValue>{localDuration.days}</SelectValue>
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
@@ -53,11 +69,11 @@ const DurationPicker = () => {
 				<div className="flex flex-col gap-2">
 					<span className="text-sm text-muted-foreground mb-1">Hours</span>
 					<Select
-						value={duration.hours}
+						value={localDuration.hours}
 						onValueChange={(val) => handleChange(val, "hours")}
 					>
 						<SelectTrigger className="gap-2">
-							<SelectValue>{duration.hours}</SelectValue>
+							<SelectValue>{localDuration.hours}</SelectValue>
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
@@ -75,11 +91,11 @@ const DurationPicker = () => {
 				<div className="flex flex-col gap-2">
 					<span className="text-sm text-muted-foreground mb-1">Minutes</span>
 					<Select
-						value={duration.minutes}
+						value={localDuration.minutes}
 						onValueChange={(val) => handleChange(val, "minutes")}
 					>
 						<SelectTrigger className="gap-2">
-							<SelectValue>{duration.minutes}</SelectValue>
+							<SelectValue>{localDuration.minutes}</SelectValue>
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
@@ -98,8 +114,8 @@ const DurationPicker = () => {
 			<div className="text-sm flex gap-2">
 				<span>Duration:</span>
 				<span className="font-medium">
-					{duration.days} days, {duration.hours} hours, {duration.minutes}{" "}
-					minutes
+					{localDuration.days} days, {localDuration.hours} hours {"and "}
+					{localDuration.minutes} minutes
 				</span>
 			</div>
 		</div>
