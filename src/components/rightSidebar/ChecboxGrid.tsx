@@ -1,24 +1,33 @@
-import { useEffect, useState } from "react";
+"use client";
+import { useEffect, useRef, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { MdOutlineExpandMore } from "react-icons/md";
+import { Input } from "../shared/Input";
+import { MagnifyingGlassIcon as SearchIcon } from "@radix-ui/react-icons";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { MdAddTask } from "react-icons/md";
+import { toast } from "sonner";
 
 type OptionInput =
 	| string
 	| { label: string; icon?: React.ReactNode; checked?: boolean };
-type InternalOption = {
+
+export type InternalOption = {
 	label: string;
 	icon?: React.ReactNode;
-	checked: boolean;
+	checked?: boolean;
 };
 
 interface CheckboxGridProps {
 	options: OptionInput[];
-	onChange: (checkedItems: string[]) => void;
+	getSelectedOptons: (checkedItems: InternalOption[]) => void;
 	disabled?: boolean;
 	className?: string;
 	itemOffset?: number;
+	searchHandler?: (query: string) => void;
 }
 
 const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
@@ -30,57 +39,103 @@ const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
 
 const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	options: initialOptions,
-	onChange,
+	getSelectedOptons,
 	disabled,
 	className,
 	itemOffset = Number.POSITIVE_INFINITY,
+	searchHandler,
 }) => {
 	const [options, setOptions] = useState<InternalOption[]>(() =>
-		normalizeOptions([]),
+		normalizeOptions(initialOptions),
 	);
+	const [selectedOptions, setSelectedOptions] = useState<InternalOption[]>([]);
 	const [offset, setOffset] = useState(itemOffset);
-	// ✅ Hydrate state after mount
+	const searchStr = useRef("");
+
 	useEffect(() => {
-		setOptions(normalizeOptions(initialOptions));
+		const selectedOptions = [];
+		const nonSelectedOptions = [];
+		const selectedOptionLables = new Set();
+		for (const option of normalizeOptions(initialOptions)) {
+			if (option.checked) {
+				selectedOptions.push(option);
+				selectedOptionLables.add(option.label);
+			} else if (!selectedOptionLables.has(option.label)) {
+				nonSelectedOptions.push(option);
+			}
+		}
+		setSelectedOptions(selectedOptions);
+		setOptions(nonSelectedOptions);
 	}, [initialOptions]);
 
-	const handleCheckboxChange = (index: number, checked: boolean) => {
-		const updated = options.map((opt, i) =>
-			i === index ? { ...opt, checked } : opt,
-		);
-		setOptions(updated);
+	useEffect(() => {
+		//cleanup search results on unmount
+		return () => {
+			if (searchHandler) searchHandler("");
+		};
+	}, []);
 
-		// Convert back to original format for parent
-		const checkedItems = [];
-		for (const optn of updated) {
-			if (optn.checked) checkedItems.push(optn.label);
+	const handleCheckboxChange = (option: InternalOption) => {
+		if (option.checked) {
+			option.checked = false;
+			const checkedOptions = selectedOptions.filter(
+				(opt) => option.label !== opt.label,
+			);
+			setOptions((prev) => [option, ...prev]);
+			setSelectedOptions(checkedOptions);
+		} else {
+			option.checked = true;
+			const unCheckedOptions = options.filter(
+				(opt) => option.label !== opt.label,
+			);
+			setOptions(unCheckedOptions);
+			setSelectedOptions((prev) => [option, ...prev]);
+			//callback to parent
+			getSelectedOptons([option, ...selectedOptions]);
 		}
+	};
 
-		onChange(checkedItems);
+	const addLabel = () => {
+		const option = normalizeOptions([searchStr.current])[0];
+		const isLableExist = [...options, ...selectedOptions].some(
+			(optn) => optn.label === option.label,
+		);
+		option.checked = true;
+		if (isLableExist) {
+			toast.error("Label already exists");
+			return;
+		}
+		setSelectedOptions((prev) => [option, ...prev]);
 	};
 
 	return (
 		<div className="flex flex-col items-center gap-4">
 			<div className={cn("flex flex-wrap gap-x-8 gap-y-4", className)}>
-				{options.slice(0, offset).map((option, index) => (
-					<div
-						key={option.label}
-						className="flex gap-1 items-center justify-center"
-					>
-						<Checkbox
-							checked={option.checked}
-							onCheckedChange={(checked) =>
-								handleCheckboxChange(index, !!checked)
-							}
-							disabled={disabled}
-							id={option.label}
-						/>
-						{option.icon && <div>{option.icon}</div>}
-						<label htmlFor={option.label}>{option.label}</label>
-					</div>
-				))}
+				{[...selectedOptions, ...options]
+					.slice(0, searchHandler ? Math.min(itemOffset * 1.5, offset) : offset)
+					.map((option, index) => (
+						<div
+							key={option.label}
+							className="flex gap-2 items-center justify-center"
+						>
+							<Checkbox
+								checked={option.checked}
+								onCheckedChange={() => handleCheckboxChange(option)}
+								disabled={disabled}
+								id={option.label}
+							/>
+							<div className="flex gap-1 justify-center items-center">
+								{option.icon && <div>{option.icon}</div>}
+								<label htmlFor={option.label}>{option.label}</label>
+							</div>
+						</div>
+					))}
 			</div>
-			{offset < options.length && (
+
+			{((offset < options.length && !searchHandler) || //if search not enabled, show view more until offset < options.length
+				(offset < options.length &&
+					offset === itemOffset && //if search enabled, show only if its first page and offset < options.length
+					searchHandler)) && (
 				<Button
 					onClick={() => setOffset((prev) => prev + itemOffset)}
 					variant="link"
@@ -89,6 +144,39 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 					<span>View More</span>
 					<MdOutlineExpandMore className="animate-bounce" />
 				</Button>
+			)}
+			{searchHandler && offset > itemOffset && (
+				<div className="flex gap-2 mt-4">
+					<Input
+						type="search"
+						icon={SearchIcon}
+						iconProps={{ behavior: "prepend" }}
+						placeholder="Search..."
+						onChange={(e) => {
+							const str = e.target.value;
+							searchStr.current = str;
+							searchHandler(str);
+						}}
+					/>
+
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									disabled={!searchStr.current}
+									variant="ghost"
+									size="icon"
+									onClick={addLabel}
+								>
+									<MdAddTask />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Add to the list</p>
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
+				</div>
 			)}
 		</div>
 	);

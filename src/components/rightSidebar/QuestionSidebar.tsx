@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import {
 	Accordion,
@@ -7,45 +7,28 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import CheckboxGrid from "./ChecboxGrid";
+import CheckboxGrid, { InternalOption } from "./ChecboxGrid";
 import RadioGroupGrid from "./RadioGrid";
 import { CommandInput } from "../ui/command";
-
-const javascriptQuestionTopics = [
-	"ControlFlow",
-	"ES6",
-	"Async",
-	"DOM",
-	"ErrorHandling",
-	"Objects",
-	"Closures",
-	"OOP",
-	"Functional",
-	"Libraries",
-	"Testing",
-	"Performance",
-	"WebAPIs",
-	"Events",
-	"Modules",
-	"Promises",
-	"StateManagement",
-	"Regex",
-	"Destructuring",
-	"SpreadOperator",
-	"TypeCoercion",
-	"Memory",
-	"EventLoop",
-	"Polyfills",
-	"AsyncAwait",
-	"PromiseChain",
-].sort();
+import useCompanies from "@/hooks/useCompanyList";
+import useTopics from "@/hooks/useTopicList";
 
 function QuestionSidebar() {
+	const { companies, searchCompanies } = useCompanies();
+	const { topics, searchTopics } = useTopics("javascript");
+	const [selectedCompanies, setSelectedCompanies] = useState<InternalOption[]>(
+		[],
+	);
+	const [selectedTopics, setSelectedTopics] = useState<InternalOption[]>([]);
+	function getSelectedCompaniesLabel() {
+		return selectedCompanies.map((company) => company.label);
+	}
+
 	return (
 		<Card className="h-screen">
 			<CardContent>
 				<Accordion
-					defaultValue={["diffuculty", "topics"]}
+					defaultValue={["diffuculty", "companies"]}
 					type="multiple"
 					className="w-full"
 				>
@@ -60,15 +43,25 @@ function QuestionSidebar() {
 							/>
 						</AccordionContent>
 					</AccordionItem>
+					<AccordionItem value="companies">
+						<AccordionTrigger>Companies</AccordionTrigger>
+						<AccordionContent>
+							<CheckboxGrid
+								options={[...selectedCompanies, ...companies]}
+								itemOffset={15}
+								getSelectedOptons={setSelectedCompanies}
+								searchHandler={searchCompanies}
+							/>
+						</AccordionContent>
+					</AccordionItem>
 					<AccordionItem value="topics">
 						<AccordionTrigger>Topics</AccordionTrigger>
 						<AccordionContent>
 							<CheckboxGrid
-								options={javascriptQuestionTopics}
-								itemOffset={15}
-								onChange={(it) => {
-									console.log(it);
-								}}
+								options={topics}
+								itemOffset={21}
+								getSelectedOptons={setSelectedTopics}
+								searchHandler={searchTopics}
 							/>
 						</AccordionContent>
 					</AccordionItem>

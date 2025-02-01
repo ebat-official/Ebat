@@ -1,0 +1,31 @@
+ const topics={
+    javascript:[
+        "Async",
+        "AsyncAwait",
+        "Closures",
+        "ControlFlow",
+        "DOM",
+        "Destructuring",
+        "ES6",
+        "ErrorHandling",
+        "EventLoop",
+        "Events",
+        "Functional",
+        "Libraries",
+        "Memory",
+        "Modules",
+        "OOP",
+        "Objects",
+        "Performance",
+        "Polyfills",
+        "PromiseChain",
+        "Promises",
+        "Regex",
+        "SpreadOperator",
+        "StateManagement",
+        "Testing",
+        "TypeCoercion",
+        "WebAPIs"
+    ]
+}
+export default topics

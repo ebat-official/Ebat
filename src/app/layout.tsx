@@ -4,6 +4,7 @@ import "./globals.css";
 import Background from "@/components/shared/Background";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import Nav from "@/components/shared/nav";
 import {
 	SidebarProvider as SidebarProviderShadcn,
@@ -49,6 +50,7 @@ export default function RootLayout({
 							<SidePanelLayout>{children}</SidePanelLayout>
 							<Background />
 							<Toaster />
+							<Sonner />
 						</SidebarProvider>
 					</ThemeProvider>
 				</SessionProvider>
