@@ -44,7 +44,7 @@ const RadioGrid: React.FC<RadioGridProps> = ({
 		<RadioGroup
 			value={selected}
 			onValueChange={handleRadioChange}
-			className={cn("flex flex-wrap justify-around", className)}
+			className={cn("flex justify-around", className)}
 		>
 			{options.map((option) => (
 				<div

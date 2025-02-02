@@ -16,7 +16,7 @@ function MainPanel({ children }: { children: React.ReactNode }) {
 }
 function SidePanel({ children }: { children: React.ReactNode }) {
 	return (
-		<div className="rightsidebar  bg-background w-full md:w-[250px] lg:w-[340px] xl:w-[400px] self-start">
+		<div className="rightsidebar  bg-background w-full md:w-[340px] xl:w-[400px] self-start">
 			{children}
 		</div>
 	);
