@@ -54,6 +54,12 @@ enum PostStatus {
   PUBLISHED
 }
 
+enum PostEditStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id               String             @id @default(uuid()) @db.Uuid
   name             String?
@@ -70,6 +76,7 @@ model User {
   userProfile      UserProfile?       @relation("UserToProfile")
   lastLoginAt      DateTime?
   Post             Post[]
+  collaborators    Post[]             @relation("PostCollaborators")
   Comment          Comment[]
   Vote             Vote[]
   CommentVote      CommentVote[]
@@ -148,8 +155,8 @@ model ResetToken {
 
 model Post {
   id                 String             @id @default(uuid()) @db.Uuid
-  title              String
-  content            Json
+  title              String?
+  content            Json?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   author             User               @relation(fields: [authorId], references: [id])
@@ -158,17 +165,37 @@ model Post {
   votes              Vote[]
   type               PostType
   difficulty         Difficulty?
-  companies          String[]
+  companies          String[]           @default([])
   completionDuration Int?
   karmaPoints        Int?
-  topics             String[]
+  topics             String[]           @default([])
   completionStatus   CompletionStatus[]
-  category           PostCategory?
-  subCategory        String?
+  category           PostCategory
+  subCategory        String
   status             PostStatus         @default(DRAFT)
   viewCount          Int                @default(0)
   Bookmark           Bookmark[]
   Report             Report[]
+  collaborators      User[]             @relation("PostCollaborators")
+}
+
+model PostEdit {
+  id                 String         @id @default(uuid())
+  postId             String         @db.Uuid // Original post being edited
+  authorId           String         @db.Uuid
+  content            Json // Suggested new content
+  status             PostEditStatus @default(PENDING)
+  approvalLogs       Json // Array of approval/rejection logs
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  title              String?
+  type               PostType
+  difficulty         Difficulty?
+  companies          String[]       @default([])
+  completionDuration Int?
+  topics             String[]       @default([])
+  category           PostCategory
+  subCategory        String
 }
 
 model Comment {
