@@ -1,71 +1,185 @@
-import { useEffect, useState } from "react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { MdOutlineExpandMore } from "react-icons/md";
+import { Input } from "../shared/Input";
+import { MagnifyingGlassIcon as SearchIcon } from "@radix-ui/react-icons";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { MdAddTask } from "react-icons/md";
+import { toast } from "sonner";
 
 type OptionInput =
 	| string
-	| { label: string; icon?: React.ReactNode; value?: string };
-type InternalOption = {
+	| { label: string; icon?: React.ReactNode; checked?: boolean };
+
+export type InternalOption = {
 	label: string;
 	icon?: React.ReactNode;
+	checked?: boolean;
 };
 
-interface RadioGroupGridProps {
+interface CheckboxGridProps {
 	options: OptionInput[];
-	onChange: (selectedLabel: string) => void;
+	getSelectedOptons: (checkedItems: InternalOption[]) => void;
 	disabled?: boolean;
 	className?: string;
-	defaultLabel?: string;
+	itemOffset?: number;
+	searchHandler?: (query: string) => void;
 }
 
 const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
-	options.map((opt, index) =>
-		typeof opt === "string" ? { label: opt } : { ...opt },
+	options.map((opt) =>
+		typeof opt === "string"
+			? { label: opt, checked: false }
+			: { ...opt, checked: opt.checked || false },
 	);
 
-const RadioGroupGrid: React.FC<RadioGroupGridProps> = ({
+const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	options: initialOptions,
-	onChange,
+	getSelectedOptons,
 	disabled,
 	className,
-	defaultLabel,
+	itemOffset = Number.POSITIVE_INFINITY,
+	searchHandler,
 }) => {
 	const [options, setOptions] = useState<InternalOption[]>(() =>
-		normalizeOptions([]),
+		normalizeOptions(initialOptions),
 	);
-	const [selectedLabel, setSelectedLabel] = useState<string | undefined>(
-		defaultLabel,
-	);
+	const [selectedOptions, setSelectedOptions] = useState<InternalOption[]>([]);
+	const [offset, setOffset] = useState(itemOffset);
+	const searchStr = useRef("");
 
-	// ✅ Hydrate state after mount
 	useEffect(() => {
-		setOptions(normalizeOptions(initialOptions));
+		const selectedOptions = [];
+		const nonSelectedOptions = [];
+		const selectedOptionLables = new Set();
+		for (const option of normalizeOptions(initialOptions)) {
+			if (option.checked) {
+				selectedOptions.push(option);
+				selectedOptionLables.add(option.label);
+			} else if (!selectedOptionLables.has(option.label)) {
+				nonSelectedOptions.push(option);
+			}
+		}
+		setSelectedOptions(selectedOptions);
+		setOptions(nonSelectedOptions);
 	}, [initialOptions]);
 
-	const handleRadioChange = (label: string) => {
-		setSelectedLabel(label);
-		onChange(label);
+	useEffect(() => {
+		//cleanup search results on unmount
+		return () => {
+			if (searchHandler) searchHandler("");
+		};
+	}, []);
+
+	const handleCheckboxChange = (option: InternalOption) => {
+		if (option.checked) {
+			option.checked = false;
+			const checkedOptions = selectedOptions.filter(
+				(opt) => option.label !== opt.label,
+			);
+			setOptions((prev) => [option, ...prev]);
+			setSelectedOptions(checkedOptions);
+		} else {
+			option.checked = true;
+			const unCheckedOptions = options.filter(
+				(opt) => option.label !== opt.label,
+			);
+			setOptions(unCheckedOptions);
+			setSelectedOptions((prev) => [option, ...prev]);
+			//callback to parent
+			getSelectedOptons([option, ...selectedOptions]);
+		}
+	};
+
+	const addLabel = () => {
+		const option = normalizeOptions([searchStr.current])[0];
+		const isLableExist = [...options, ...selectedOptions].some(
+			(optn) => optn.label === option.label,
+		);
+		option.checked = true;
+		if (isLableExist) {
+			toast.error("Label already exists");
+			return;
+		}
+		setSelectedOptions((prev) => [option, ...prev]);
 	};
 
 	return (
-		<RadioGroup
-			value={selectedLabel}
-			onValueChange={handleRadioChange}
-			className={cn("grid grid-cols-3 gap-4", className)}
-			disabled={disabled}
-		>
-			{options.map((option) => (
-				<div key={option.label} className="flex items-center">
-					<RadioGroupItem value={option.label} id={option.label} />
-					{option.icon && <span className="ml-2">{option.icon}</span>}
-					<Label htmlFor={option.label} className="ml-2">
-						{option.label}
-					</Label>
+		<div className="flex flex-col items-center gap-4">
+			<div className={cn("flex flex-wrap gap-x-8 gap-y-4", className)}>
+				{[...selectedOptions, ...options]
+					.slice(0, searchHandler ? Math.min(itemOffset * 1.5, offset) : offset)
+					.map((option, index) => (
+						<div
+							key={option.label}
+							className="flex gap-2 items-center justify-center"
+						>
+							<Checkbox
+								checked={option.checked}
+								onCheckedChange={() => handleCheckboxChange(option)}
+								disabled={disabled}
+								id={option.label}
+							/>
+							<div className="flex gap-1 justify-center items-center">
+								{option.icon && <div>{option.icon}</div>}
+								<label htmlFor={option.label}>{option.label}</label>
+							</div>
+						</div>
+					))}
+			</div>
+
+			{((offset < options.length && !searchHandler) || //if search not enabled, show view more until offset < options.length
+				(offset < options.length &&
+					offset === itemOffset && //if search enabled, show only if its first page and offset < options.length
+					searchHandler)) && (
+				<Button
+					onClick={() => setOffset((prev) => prev + itemOffset)}
+					variant="link"
+					className="flex gap-2 items-center justify-center "
+				>
+					<span>View More</span>
+					<MdOutlineExpandMore className="animate-bounce" />
+				</Button>
+			)}
+			{searchHandler && offset > itemOffset && (
+				<div className="flex gap-2 mt-4">
+					<Input
+						type="search"
+						icon={SearchIcon}
+						iconProps={{ behavior: "prepend" }}
+						placeholder="Search..."
+						onChange={(e) => {
+							const str = e.target.value;
+							searchStr.current = str;
+							searchHandler(str);
+						}}
+					/>
+
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									disabled={!searchStr.current}
+									variant="ghost"
+									size="icon"
+									onClick={addLabel}
+								>
+									<MdAddTask />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Add to the list</p>
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
 				</div>
-			))}
-		</RadioGroup>
+			)}
+		</div>
 	);
 };
 
-export default RadioGroupGrid;
+export default CheckboxGrid;
