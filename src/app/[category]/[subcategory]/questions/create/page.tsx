@@ -12,7 +12,14 @@ import {
 	SubCategory,
 	subCategorySupportedTypes,
 } from "@/utils/subCategoryConfig";
-
+import { CiSaveDown2 } from "react-icons/ci";
+import { MdOutlinePublish } from "react-icons/md";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 // Type guard to narrow down the type
 function isValidSubcategory(subcategory: string): subcategory is SubCategory {
 	return subCategorySupportedTypes.has(subcategory);
@@ -34,9 +41,27 @@ function page() {
 			<RightPanelLayout.MainPanel className="relative">
 				<>
 					<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 right-0 -translate-y-full">
-						<Button variant="outline">Save</Button>
-						<Button variant="outline">Preview</Button>
-						<ButtonBlue title="Publish" />
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										variant="outline"
+										className="justify-center items-center flex ga-2"
+									>
+										<CiSaveDown2 />
+										<span>Save</span>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Save as draft</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+
+						<Button className="bg-gradient-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center">
+							<MdOutlinePublish />
+							<span>Publish</span>
+						</Button>
 					</div>
 					<EditorQuestion />
 				</>
