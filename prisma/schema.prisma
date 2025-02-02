@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearchPostgres"]
 }
 
@@ -68,7 +68,7 @@ model User {
   updatedAt        DateTime           @updatedAt
   karmaPoints      Int                @default(0)
   userProfile      UserProfile?       @relation("UserToProfile")
-  lastLoginAt     DateTime?
+  lastLoginAt      DateTime?
   Post             Post[]
   Comment          Comment[]
   Vote             Vote[]
@@ -147,27 +147,28 @@ model ResetToken {
 }
 
 model Post {
-  id               String             @id @default(uuid()) @db.Uuid
-  title            String
-  content          Json
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  author           User               @relation(fields: [authorId], references: [id])
-  authorId         String             @db.Uuid
-  comments         Comment[]
-  votes            Vote[]
-  type             PostType
-  difficulty       Difficulty?
-  companies        String[]
-  karmaPoints      Int?
-  topics           String[]
-  completionStatus CompletionStatus[]
-  category         PostCategory?
-  subCategory      String?
-  status           PostStatus         @default(DRAFT)
-  viewCount        Int                @default(0)
-  Bookmark Bookmark[]
-  Report   Report[]
+  id                 String             @id @default(uuid()) @db.Uuid
+  title              String
+  content            Json
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  author             User               @relation(fields: [authorId], references: [id])
+  authorId           String             @db.Uuid
+  comments           Comment[]
+  votes              Vote[]
+  type               PostType
+  difficulty         Difficulty?
+  companies          String[]
+  completionDuration Int?
+  karmaPoints        Int?
+  topics             String[]
+  completionStatus   CompletionStatus[]
+  category           PostCategory?
+  subCategory        String?
+  status             PostStatus         @default(DRAFT)
+  viewCount          Int                @default(0)
+  Bookmark           Bookmark[]
+  Report             Report[]
 }
 
 model Comment {
