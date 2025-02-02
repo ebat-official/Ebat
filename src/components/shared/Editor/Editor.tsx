@@ -13,6 +13,8 @@ import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import Loader from "../Loader/Loader";
 import { Path } from "react-hook-form";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface EditorProps<T extends z.ZodType> {
 	onSave: (data: z.infer<T>) => void;
@@ -33,12 +35,13 @@ export const Editor = <T extends z.ZodType>({
 	showTitleField = true,
 	titlePlaceHolder = "Title",
 	contentPlaceHolder = "Type here to write your post...",
-	showCommandDetail,
+	showCommandDetail = true,
 }: EditorProps<T>) => {
 	type FormData = z.infer<typeof validator>;
 	const ref = useRef<EditorJS>(null);
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
 	const [isMounted, setIsMounted] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const { uploadFile } = useFileUpload();
 	const [uploadError, setUploadError] = useState<string | null | undefined>(
 		null,
@@ -153,7 +156,7 @@ export const Editor = <T extends z.ZodType>({
 	useEffect(() => {
 		const init = async () => {
 			await initializeEditor();
-
+			setIsLoading(false);
 			setTimeout(() => {
 				_titleRef?.current?.focus();
 			}, 0);
@@ -194,18 +197,16 @@ export const Editor = <T extends z.ZodType>({
 			)}
 
 			<div className="pt-8  min-w-[73%]">
-				{!isMounted ? (
-					<div className="flex items-center justify-center w-full h-full">
-						<Loader />
-					</div>
-				) : (
-					<form
-						id="subreddit-post-form"
-						className="w-full"
-						onSubmit={handleSubmit(onSubmit)}
-					>
-						<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
-							{showTitleField && (
+				<form
+					id={`editor-${editorId}`}
+					className="w-full"
+					onSubmit={handleSubmit(onSubmit)}
+				>
+					<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
+						{showTitleField &&
+							(isLoading ? (
+								<Skeleton className="h-10 w-52" />
+							) : (
 								<TextareaAutosize
 									ref={(e) => {
 										titleRegister?.ref(e);
@@ -215,9 +216,15 @@ export const Editor = <T extends z.ZodType>({
 									placeholder={titlePlaceHolder}
 									className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
 								/>
-							)}
-							<div id={editorId} />
-							{showCommandDetail && (
+							))}
+						<div id={editorId} />
+						{isLoading && (
+							<Skeleton className="ml-6 -mt-6 h-5 w-64 mb-[200px]" />
+						)}
+						{showCommandDetail &&
+							(isLoading ? (
+								<Skeleton className="px-1 h-5 w-64 mt-6" />
+							) : (
 								<p className="text-sm text-gray-500">
 									Use{" "}
 									<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
@@ -225,15 +232,15 @@ export const Editor = <T extends z.ZodType>({
 									</kbd>{" "}
 									to open the command menu.
 								</p>
-							)}
-						</div>
-					</form>
-				)}
+							))}
+					</div>
+				</form>
 			</div>
 			<style>
 				{`
           .codex-editor__redactor {
-            padding-bottom: 200px !important; 
+            padding-bottom: 200px !important;
+			min-height:200px;
           }
 
 		  .codex-editor [data-placeholder-active]:empty:before, .codex-editor [data-placeholder-active][data-empty=true]:before {

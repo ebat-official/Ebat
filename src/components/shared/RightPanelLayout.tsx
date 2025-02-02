@@ -1,22 +1,47 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
-function RightPanelLayout({ children }: { children: React.ReactNode }) {
+function RightPanelLayout({
+	children,
+	className,
+}: { children: React.ReactNode; className?: string }) {
 	return (
-		<div className="flex-col md:flex-row flex w-full gap-2 justify-around p-2">
+		<div
+			className={cn(
+				"flex-col md:flex-row flex w-full gap-2 justify-around p-2",
+				className,
+			)}
+		>
 			{children}
 		</div>
 	);
 }
-function MainPanel({ children }: { children: React.ReactNode }) {
+function MainPanel({
+	children,
+	className,
+}: { children: React.ReactNode; className?: string }) {
 	return (
-		<div className="content md:container justify-self-center flex-1">
+		<div
+			className={cn(
+				"content md:container justify-self-center flex-1",
+				className,
+			)}
+		>
 			{children}
 		</div>
 	);
 }
-function SidePanel({ children }: { children: React.ReactNode }) {
+function SidePanel({
+	children,
+	className,
+}: { children: React.ReactNode; className?: string }) {
 	return (
-		<div className="rightsidebar  bg-background w-full md:w-[340px] xl:w-[400px] self-start">
+		<div
+			className={cn(
+				"rightsidebar  bg-background w-full md:w-[340px] xl:w-[400px] self-start",
+				className,
+			)}
+		>
 			{children}
 		</div>
 	);
