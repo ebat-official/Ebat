@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import {
@@ -23,10 +22,27 @@ import { MdOutlineGpsFixed } from "react-icons/md";
 import { RiBuilding2Line } from "react-icons/ri";
 import { AiOutlineTag } from "react-icons/ai";
 import { IoMdTime } from "react-icons/io";
+import { SubCategory } from "@/utils/subCategoryConfig";
+import { convertToMinutes } from "@/utils/converToMinutes";
 
-function QuestionSidebar() {
+type ConsolidatedData = {
+	companies: string[];
+	topics: string[];
+	difficulty: string;
+	duration: number;
+};
+
+interface QuestionSidebarProps {
+	subcategory: SubCategory;
+	getSidebarData: (args: ConsolidatedData) => void;
+}
+
+function QuestionSidebar({
+	subcategory,
+	getSidebarData,
+}: QuestionSidebarProps) {
 	const { companies, searchCompanies } = useCompanies();
-	const { topics, searchTopics } = useTopics("javascript");
+	const { topics, searchTopics } = useTopics(subcategory);
 	const [selectedCompanies, setSelectedCompanies] = useState<InternalOption[]>(
 		[],
 	);
@@ -37,8 +53,22 @@ function QuestionSidebar() {
 		minutes: "5",
 		hours: "0",
 	});
-	function getSelectedCompaniesLabel() {
-		return selectedCompanies.map((company) => company.label);
+
+	useEffect(() => {
+		getSidebarData(consolidateData());
+	}, [selectedCompanies, selectedTopics, difficulty, duration]);
+
+	function getSelectedLabels(options: InternalOption[] | []) {
+		return options.map((optn) => optn.label);
+	}
+
+	function consolidateData(): ConsolidatedData {
+		return {
+			companies: getSelectedLabels(selectedCompanies),
+			topics: getSelectedLabels(selectedTopics),
+			difficulty: difficulty.toUpperCase(),
+			duration: convertToMinutes(duration),
+		};
 	}
 
 	return (

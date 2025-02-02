@@ -1,8 +1,8 @@
 // hooks/useTopics.ts
 import { useState, useEffect, useCallback } from "react";
-import topicsData from "@/utils/TopicListConfig";
+import topicsData, { SubCategory } from "@/utils/subCategoryConfig";
 
-type TopicCategory = "javascript"; // Add more categories as needed
+type TopicCategory = SubCategory; // Add more categories as needed
 
 const useTopics = (category: TopicCategory) => {
 	// Use the raw data directly from topicsData based on the category

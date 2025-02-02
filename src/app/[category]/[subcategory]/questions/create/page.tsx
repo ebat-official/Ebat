@@ -1,21 +1,34 @@
-import { Editor } from "@/components/shared/Editor/Editor";
+"use client";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import EditorQuestion from "@/components/shared/Editor/EditorQuestion";
 import { Button } from "@/components/ui/button";
 import ButtonBlue from "@/components/shared/ButtonBlue";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
+import { useParams } from "next/navigation";
+import { notFound } from "next/navigation";
+import {
+	SubCategory,
+	subCategorySupportedTypes,
+} from "@/utils/subCategoryConfig";
+
+// Type guard to narrow down the type
+function isValidSubcategory(subcategory: string): subcategory is SubCategory {
+	return subCategorySupportedTypes.has(subcategory);
+}
 
 function page() {
+	const { category, subcategory: subcategoryRoute } = useParams();
+	const [sidebarData, setSidebatData] = useState({});
+	const subcategory = Array.isArray(subcategoryRoute)
+		? subcategoryRoute[0]
+		: subcategoryRoute;
+
+	if (!category || !subcategory || !isValidSubcategory(subcategory)) {
+		notFound();
+	}
+	console.log(sidebarData);
 	return (
 		<div className="mt-8">
 			<RightPanelLayout>
@@ -30,7 +43,10 @@ function page() {
 					</div>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>
-					<QuestionSidebar />
+					<QuestionSidebar
+						subcategory={subcategory}
+						getSidebarData={setSidebatData}
+					/>
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
 		</div>

@@ -72,6 +72,10 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 		};
 	}, []);
 
+	useEffect(() => {
+		getSelectedOptons(selectedOptions);
+	}, [selectedOptions]);
+
 	function getSelectedLabel() {
 		return selectedOptions.map((option) => option.label);
 	}
@@ -91,8 +95,6 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 			);
 			setOptions(unCheckedOptions);
 			setSelectedOptions((prev) => [option, ...prev]);
-			//callback to parent
-			getSelectedOptons([option, ...selectedOptions]);
 		}
 	};
 
