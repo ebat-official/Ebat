@@ -3,6 +3,8 @@ import React from "react";
 import { Editor } from "./Editor";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
+import { PostValidator } from "@/lib/validators/post";
+import { AnswerValidator } from "@/lib/validators/answer";
 
 function EditorQuestion() {
 	return (
@@ -12,7 +14,7 @@ function EditorQuestion() {
 					<Editor
 						key="question"
 						editorId="editor-question"
-						onSave={(data) => console.log(data)}
+						onChange={(data) => console.log(data)}
 						titlePlaceHolder="Question"
 						contentPlaceHolder="Add more info to clarify (optional)..."
 						showCommandDetail={false}
@@ -24,7 +26,7 @@ function EditorQuestion() {
 					<Editor
 						key="answer"
 						editorId="editor-answer"
-						onSave={(data) => console.log(data)}
+						onChange={(data) => console.log(data)}
 						showTitleField={false}
 						contentPlaceHolder="Provide a clear and helpful answer.."
 					/>

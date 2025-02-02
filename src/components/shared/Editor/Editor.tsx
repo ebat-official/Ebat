@@ -2,25 +2,19 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type EditorJS from "@editorjs/editorjs";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useForm } from "react-hook-form";
 import TextareaAutosize from "react-textarea-autosize";
 import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
 import useFileUpload from "@/hooks/useFileUpload";
 import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
-import Loader from "../Loader/Loader";
 import { Path } from "react-hook-form";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 interface EditorProps<T extends z.ZodType> {
-	onSave: (data: z.infer<T>) => void;
+	onChange: (data: z.infer<T>) => void;
 	editorId?: string; // if multiple editor required in same page.
-	validator: T;
-	defaultValues: z.infer<T>;
+	defaultValues?: z.infer<T>;
 	showTitleField?: boolean;
 	showCommandDetail?: boolean;
 	titlePlaceHolder?: string;
@@ -28,16 +22,14 @@ interface EditorProps<T extends z.ZodType> {
 }
 
 export const Editor = <T extends z.ZodType>({
-	onSave,
+	onChange,
 	editorId = "editor",
-	validator,
 	defaultValues = {},
 	showTitleField = true,
 	titlePlaceHolder = "Title",
 	contentPlaceHolder = "Type here to write your post...",
 	showCommandDetail = true,
 }: EditorProps<T>) => {
-	type FormData = z.infer<typeof validator>;
 	const ref = useRef<EditorJS>(null);
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
 	const [isMounted, setIsMounted] = useState<boolean>(false);
@@ -46,19 +38,6 @@ export const Editor = <T extends z.ZodType>({
 	const [uploadError, setUploadError] = useState<string | null | undefined>(
 		null,
 	);
-
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<FormData>({
-		resolver: zodResolver(validator),
-		defaultValues,
-	});
-
-	function createPost(payload: FormData) {
-		console.log(payload);
-	}
 
 	const initializeEditor = useCallback(async () => {
 		const EditorJS = (await import("@editorjs/editorjs")).default;
@@ -135,19 +114,6 @@ export const Editor = <T extends z.ZodType>({
 	}, [editorId]);
 
 	useEffect(() => {
-		if (Object.keys(errors).length) {
-			for (const [_key, value] of Object.entries(errors)) {
-				value;
-				toast({
-					title: "Something went wrong.",
-					description: (value as { message: string }).message,
-					variant: "destructive",
-				});
-			}
-		}
-	}, [errors]);
-
-	useEffect(() => {
 		if (typeof window !== "undefined") {
 			setIsMounted(true);
 		}
@@ -174,18 +140,7 @@ export const Editor = <T extends z.ZodType>({
 
 	async function onSubmit(data: FormData) {
 		const blocks = await ref.current?.save();
-
-		const payload: FormData = {
-			title: data.title,
-			content: blocks,
-		};
-
-		createPost(payload);
 	}
-
-	const titleRegister = showTitleField
-		? register("title" as Path<FormData>)
-		: null;
 
 	return (
 		<>
@@ -197,44 +152,34 @@ export const Editor = <T extends z.ZodType>({
 			)}
 
 			<div className="pt-8  min-w-[73%]">
-				<form
-					id={`editor-${editorId}`}
-					className="w-full"
-					onSubmit={handleSubmit(onSubmit)}
-				>
-					<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
-						{showTitleField &&
-							(isLoading ? (
-								<Skeleton className="h-10 w-52" />
-							) : (
-								<TextareaAutosize
-									ref={(e) => {
-										titleRegister?.ref(e);
-										_titleRef.current = e;
-									}}
-									{...titleRegister}
-									placeholder={titlePlaceHolder}
-									className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
-								/>
-							))}
-						<div id={editorId} />
-						{isLoading && (
-							<Skeleton className="ml-6 -mt-6 h-5 w-64 mb-[200px]" />
-						)}
-						{showCommandDetail &&
-							(isLoading ? (
-								<Skeleton className="px-1 h-5 w-64 mt-6" />
-							) : (
-								<p className="text-sm text-gray-500">
-									Use{" "}
-									<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
-										Enter
-									</kbd>{" "}
-									to open the command menu.
-								</p>
-							))}
-					</div>
-				</form>
+				<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
+					{showTitleField &&
+						(isLoading ? (
+							<Skeleton className="h-10 w-52" />
+						) : (
+							<TextareaAutosize
+								ref={(e) => {
+									_titleRef.current = e;
+								}}
+								placeholder={titlePlaceHolder}
+								className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+							/>
+						))}
+					<div id={editorId} />
+					{isLoading && <Skeleton className="ml-6 -mt-6 h-5 w-64 mb-[200px]" />}
+					{showCommandDetail &&
+						(isLoading ? (
+							<Skeleton className="px-1 h-5 w-64 mt-6" />
+						) : (
+							<p className="text-sm text-gray-500">
+								Use{" "}
+								<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
+									Enter
+								</kbd>{" "}
+								to open the command menu.
+							</p>
+						))}
+				</div>
 			</div>
 			<style>
 				{`
