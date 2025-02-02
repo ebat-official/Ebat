@@ -90,7 +90,7 @@ function QuestionSidebar({
 										</div>
 									</TooltipTrigger>
 									<TooltipContent>
-										<p>Choose the question difficulty</p>
+										<p>Question difficulty</p>
 									</TooltipContent>
 								</Tooltip>
 							</TooltipProvider>

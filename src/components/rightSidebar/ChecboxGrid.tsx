@@ -10,6 +10,7 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { MdAddTask } from "react-icons/md";
 import { toast } from "sonner";
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 
 type OptionInput =
 	| string
@@ -99,7 +100,9 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	};
 
 	const addLabel = () => {
-		const option = normalizeOptions([searchStr.current])[0];
+		const option = normalizeOptions([
+			capitalizeFirstLetter(searchStr.current),
+		])[0];
 		const isLableExist = [...options, ...selectedOptions].some(
 			(optn) => optn.label.toLowerCase() === option.label.toLowerCase(),
 		);
