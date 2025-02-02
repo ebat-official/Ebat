@@ -28,6 +28,7 @@ interface CheckboxGridProps {
 	className?: string;
 	itemOffset?: number;
 	searchHandler?: (query: string) => void;
+	selectedOptions?: OptionInput[];
 }
 
 const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
@@ -44,27 +45,23 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	className,
 	itemOffset = Number.POSITIVE_INFINITY,
 	searchHandler,
+	selectedOptions: initialSelected,
 }) => {
 	const [options, setOptions] = useState<InternalOption[]>(() =>
 		normalizeOptions(initialOptions),
 	);
-	const [selectedOptions, setSelectedOptions] = useState<InternalOption[]>([]);
+	const [selectedOptions, setSelectedOptions] = useState<InternalOption[]>(
+		normalizeOptions(initialSelected || []),
+	);
 	const [offset, setOffset] = useState(itemOffset);
 	const searchStr = useRef("");
 
 	useEffect(() => {
-		const selectedOptions = [];
-		const nonSelectedOptions = [];
-		const selectedOptionLables = new Set();
-		for (const option of normalizeOptions(initialOptions)) {
-			if (option.checked) {
-				selectedOptions.push(option);
-				selectedOptionLables.add(option.label);
-			} else if (!selectedOptionLables.has(option.label)) {
-				nonSelectedOptions.push(option);
-			}
-		}
-		setSelectedOptions(selectedOptions);
+		const selectedOptionsLabel = new Set(getSelectedLabel());
+
+		const nonSelectedOptions = normalizeOptions(initialOptions).filter(
+			(option) => !selectedOptionsLabel.has(option.label),
+		);
 		setOptions(nonSelectedOptions);
 	}, [initialOptions]);
 
@@ -74,6 +71,10 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 			if (searchHandler) searchHandler("");
 		};
 	}, []);
+
+	function getSelectedLabel() {
+		return selectedOptions.map((option) => option.label);
+	}
 
 	const handleCheckboxChange = (option: InternalOption) => {
 		if (option.checked) {
@@ -98,7 +99,7 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	const addLabel = () => {
 		const option = normalizeOptions([searchStr.current])[0];
 		const isLableExist = [...options, ...selectedOptions].some(
-			(optn) => optn.label === option.label,
+			(optn) => optn.label.toLowerCase() === option.label.toLowerCase(),
 		);
 		option.checked = true;
 		if (isLableExist) {
@@ -115,7 +116,7 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 					.slice(0, searchHandler ? Math.min(itemOffset * 1.5, offset) : offset)
 					.map((option, index) => (
 						<div
-							key={option.label}
+							key={`option.label-${index}`}
 							className="flex gap-2 items-center justify-center"
 						>
 							<Checkbox

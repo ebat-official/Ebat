@@ -7,6 +7,12 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import CheckboxGrid, { InternalOption } from "./ChecboxGrid";
 import RadioGroupGrid from "./RadioGrid";
 import { CommandInput } from "../ui/command";
@@ -25,6 +31,7 @@ function QuestionSidebar() {
 		[],
 	);
 	const [selectedTopics, setSelectedTopics] = useState<InternalOption[]>([]);
+	const [difficulty, setDifficulty] = useState("");
 	const [duration, setDuration] = useState({
 		days: "0",
 		minutes: "5",
@@ -44,30 +51,48 @@ function QuestionSidebar() {
 				>
 					<AccordionItem value="diffuculty">
 						<AccordionTrigger>
-							<div className="flex items-center justify-center gap-1">
-								<span>Diffuculty </span>
-								<MdOutlineGpsFixed size={16} />
-							</div>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<div className="flex items-center justify-center gap-1">
+											<span>Diffuculty</span>
+											<MdOutlineGpsFixed size={16} />
+										</div>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Choose the question difficulty</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						</AccordionTrigger>
 						<AccordionContent>
 							<RadioGroupGrid
+								selectedOption={difficulty}
 								options={["Easy", "Medium", "Hard"]}
-								onChange={(it) => {
-									console.log(it);
-								}}
+								getSelectedOption={setDifficulty}
 							/>
 						</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="companies">
 						<AccordionTrigger>
-							<div className="flex items-center justify-center gap-1">
-								<span>Companies</span>
-								<RiBuilding2Line size={16} />
-							</div>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<div className="flex items-center justify-center gap-1">
+											<span>Companies</span>
+											<RiBuilding2Line size={16} />
+										</div>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Companies asked this question</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						</AccordionTrigger>
 						<AccordionContent>
 							<CheckboxGrid
-								options={[...selectedCompanies, ...companies]}
+								selectedOptions={selectedCompanies}
+								options={companies}
 								itemOffset={15}
 								getSelectedOptons={setSelectedCompanies}
 								searchHandler={searchCompanies}
@@ -76,13 +101,23 @@ function QuestionSidebar() {
 					</AccordionItem>
 					<AccordionItem value="topics">
 						<AccordionTrigger>
-							<div className="flex items-center justify-center gap-1">
-								<span>Topics</span>
-								<AiOutlineTag size={16} />
-							</div>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<div className="flex items-center justify-center gap-1">
+											<span>Topics</span>
+											<AiOutlineTag size={16} />
+										</div>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Related topics for this question</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						</AccordionTrigger>
 						<AccordionContent>
 							<CheckboxGrid
+								selectedOptions={selectedTopics}
 								options={topics}
 								itemOffset={21}
 								getSelectedOptons={setSelectedTopics}
@@ -92,11 +127,21 @@ function QuestionSidebar() {
 					</AccordionItem>
 					<AccordionItem value="item-3">
 						<AccordionTrigger>
-							<div className="flex items-center justify-center gap-1">
-								<span>Duration</span>
-								<IoMdTime size={16} />
-							</div>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<div className="flex items-center justify-center gap-1">
+											<span>Duration</span>
+											<IoMdTime size={16} />
+										</div>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Question completion duration</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						</AccordionTrigger>
+
 						<AccordionContent>
 							<DurationPicker duration={duration} onChange={setDuration} />
 						</AccordionContent>
