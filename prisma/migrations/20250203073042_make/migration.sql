@@ -11,7 +11,7 @@ CREATE TYPE "AccountStatus" AS ENUM ('ACTIVE', 'INACTIVE', 'SUSPENDED');
 CREATE TYPE "VoteType" AS ENUM ('UP', 'DOWN');
 
 -- CreateEnum
-CREATE TYPE "PostType" AS ENUM ('BLOG', 'QUESTION', 'CODING');
+CREATE TYPE "PostType" AS ENUM ('ARTICLE', 'QUESTION', 'CHALLENGE', 'SYSTEM_DESIGN');
 
 -- CreateEnum
 CREATE TYPE "Difficulty" AS ENUM ('LOW', 'MEDIUM', 'HARD');
@@ -22,9 +22,13 @@ CREATE TYPE "PostCategory" AS ENUM ('FRONTEND', 'BACKEND', 'ANDROID');
 -- CreateEnum
 CREATE TYPE "PostStatus" AS ENUM ('DRAFT', 'PUBLISHED');
 
+-- CreateEnum
+CREATE TYPE "PostEditStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" UUID NOT NULL,
+    "name" TEXT,
     "email" TEXT NOT NULL,
     "userName" TEXT,
     "password" TEXT,
@@ -109,23 +113,46 @@ CREATE TABLE "ResetToken" (
 
 -- CreateTable
 CREATE TABLE "Post" (
-    "id" UUID NOT NULL,
-    "title" TEXT NOT NULL,
-    "content" JSONB NOT NULL,
+    "id" TEXT NOT NULL,
+    "title" TEXT,
+    "content" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "authorId" UUID NOT NULL,
     "type" "PostType" NOT NULL,
     "difficulty" "Difficulty",
-    "companies" TEXT[],
+    "companies" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "completionDuration" INTEGER,
     "karmaPoints" INTEGER,
-    "tags" TEXT[],
-    "category" "PostCategory",
-    "subCategory" TEXT,
+    "topics" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "category" "PostCategory" NOT NULL,
+    "subCategory" TEXT NOT NULL,
     "status" "PostStatus" NOT NULL DEFAULT 'DRAFT',
     "viewCount" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PostEdit" (
+    "id" TEXT NOT NULL,
+    "postId" TEXT NOT NULL,
+    "authorId" UUID NOT NULL,
+    "content" JSONB NOT NULL,
+    "status" "PostEditStatus" NOT NULL DEFAULT 'PENDING',
+    "approvalLogs" JSONB NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "title" TEXT,
+    "type" "PostType" NOT NULL,
+    "difficulty" "Difficulty",
+    "companies" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "completionDuration" INTEGER,
+    "topics" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "category" "PostCategory" NOT NULL,
+    "subCategory" TEXT NOT NULL,
+
+    CONSTRAINT "PostEdit_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -135,7 +162,7 @@ CREATE TABLE "Comment" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "path" TEXT NOT NULL,
     "authorId" UUID NOT NULL,
-    "postId" UUID NOT NULL,
+    "postId" TEXT NOT NULL,
     "isAnswer" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
@@ -144,7 +171,7 @@ CREATE TABLE "Comment" (
 -- CreateTable
 CREATE TABLE "Vote" (
     "userId" UUID NOT NULL,
-    "postId" UUID NOT NULL,
+    "postId" TEXT NOT NULL,
     "type" "VoteType" NOT NULL,
 
     CONSTRAINT "Vote_pkey" PRIMARY KEY ("userId","postId")
@@ -174,7 +201,7 @@ CREATE TABLE "CommentMention" (
 CREATE TABLE "CompletionStatus" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
-    "postId" UUID NOT NULL,
+    "postId" TEXT NOT NULL,
     "completedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "CompletionStatus_pkey" PRIMARY KEY ("id")
@@ -184,7 +211,7 @@ CREATE TABLE "CompletionStatus" (
 CREATE TABLE "Bookmark" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
-    "postId" UUID NOT NULL,
+    "postId" TEXT NOT NULL,
 
     CONSTRAINT "Bookmark_pkey" PRIMARY KEY ("id")
 );
@@ -193,7 +220,7 @@ CREATE TABLE "Bookmark" (
 CREATE TABLE "Report" (
     "id" UUID NOT NULL,
     "reporterId" UUID NOT NULL,
-    "postId" UUID,
+    "postId" TEXT,
     "commentId" UUID,
     "reason" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -213,6 +240,14 @@ CREATE TABLE "Notification" (
     "relatedId" TEXT,
 
     CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_PostCollaborators" (
+    "A" TEXT NOT NULL,
+    "B" UUID NOT NULL,
+
+    CONSTRAINT "_PostCollaborators_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -253,6 +288,9 @@ CREATE UNIQUE INDEX "Bookmark_userId_postId_key" ON "Bookmark"("userId", "postId
 
 -- CreateIndex
 CREATE INDEX "Notification_userId_isRead_idx" ON "Notification"("userId", "isRead");
+
+-- CreateIndex
+CREATE INDEX "_PostCollaborators_B_index" ON "_PostCollaborators"("B");
 
 -- AddForeignKey
 ALTER TABLE "UserProfile" ADD CONSTRAINT "UserProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -317,3 +355,8 @@ ALTER TABLE "Report" ADD CONSTRAINT "Report_commentId_fkey" FOREIGN KEY ("commen
 -- AddForeignKey
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- AddForeignKey
+ALTER TABLE "_PostCollaborators" ADD CONSTRAINT "_PostCollaborators_A_fkey" FOREIGN KEY ("A") REFERENCES "Post"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_PostCollaborators" ADD CONSTRAINT "_PostCollaborators_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 interface EditorProps<T extends z.ZodType> {
 	onChange: (data: z.infer<T>) => void;
 	editorId?: string; // if multiple editor required in same page.
-	defaultValues?: z.infer<T>;
+	defaultContent?: z.infer<T>;
 	showTitleField?: boolean;
 	showCommandDetail?: boolean;
 	titlePlaceHolder?: string;
@@ -25,7 +25,7 @@ interface EditorProps<T extends z.ZodType> {
 export const Editor = <T extends z.ZodType>({
 	onChange,
 	editorId = "editor",
-	defaultValues = {},
+	defaultContent = {},
 	showTitleField = true,
 	titlePlaceHolder = "Title",
 	contentPlaceHolder = "Type here to write your post...",
@@ -59,7 +59,9 @@ export const Editor = <T extends z.ZodType>({
 				},
 				placeholder: contentPlaceHolder,
 				inlineToolbar: true,
-				data: { blocks: [] },
+				data: defaultContent?.blocks
+					? { blocks: defaultContent.blocks }
+					: { blocks: [] },
 				tools: {
 					header: Header,
 					linkTool: {
@@ -110,6 +112,11 @@ export const Editor = <T extends z.ZodType>({
 					table: Table,
 					embed: Embed,
 				},
+				onChange: async () => {
+					const content = await editor.save();
+					const title = _titleRef.current?.value || "";
+					onChange({ title, ...content } as z.infer<T>);
+				},
 			});
 		}
 	}, [editorId]);
@@ -139,10 +146,6 @@ export const Editor = <T extends z.ZodType>({
 		}
 	}, [isMounted, initializeEditor]);
 
-	async function onSubmit(data: FormData) {
-		const blocks = await ref.current?.save();
-	}
-
 	return (
 		<>
 			{uploadError && uploadError === UNAUTHENTICATED && (
@@ -163,6 +166,7 @@ export const Editor = <T extends z.ZodType>({
 									ref={(e) => {
 										_titleRef.current = e;
 									}}
+									defaultValue={defaultContent?.title ?? ""}
 									placeholder={titlePlaceHolder}
 									className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
 								/>

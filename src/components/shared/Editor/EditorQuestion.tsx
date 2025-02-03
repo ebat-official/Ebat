@@ -18,6 +18,20 @@ function EditorQuestion() {
 						titlePlaceHolder="Question"
 						contentPlaceHolder="Add more info to clarify (optional)..."
 						showCommandDetail={false}
+						defaultContent={{
+							title: "pranvee",
+							time: 1738563917642,
+							blocks: [
+								{
+									id: "5-sj1hEKO0",
+									type: "paragraph",
+									data: {
+										text: "asdasd kettoda thendi",
+									},
+								},
+							],
+							version: "2.30.7",
+						}}
 					/>
 				</CardContent>
 			</Card>
