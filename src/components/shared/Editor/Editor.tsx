@@ -10,6 +10,7 @@ import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import { Path } from "react-hook-form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface EditorProps<T extends z.ZodType> {
 	onChange: (data: z.infer<T>) => void;
@@ -152,24 +153,30 @@ export const Editor = <T extends z.ZodType>({
 			)}
 
 			<div className="pt-8  min-w-[73%]">
-				<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full">
-					{showTitleField &&
-						(isLoading ? (
-							<Skeleton className="h-10 w-52" />
-						) : (
-							<TextareaAutosize
-								ref={(e) => {
-									_titleRef.current = e;
-								}}
-								placeholder={titlePlaceHolder}
-								className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
-							/>
-						))}
-					<div id={editorId} />
-					{isLoading && <Skeleton className="ml-6 -mt-6 h-5 w-64 mb-[200px]" />}
+				<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full h-full justify-between">
+					<div className="h-full flex flex-col">
+						{showTitleField &&
+							(isLoading ? (
+								<Skeleton className="h-10 w-52" />
+							) : (
+								<TextareaAutosize
+									ref={(e) => {
+										_titleRef.current = e;
+									}}
+									placeholder={titlePlaceHolder}
+									className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+								/>
+							))}
+						<div id={editorId} className="mt-6" />
+						{isLoading && (
+							<div className="h-full">
+								<Skeleton className={cn("ml-6 mt-4 h-5 w-64 mb-[200px]")} />
+							</div>
+						)}
+					</div>
 					{showCommandDetail &&
 						(isLoading ? (
-							<Skeleton className="px-1 h-5 w-64 mt-6" />
+							<Skeleton className="px-1 h-5 w-64 " />
 						) : (
 							<p className="text-sm text-gray-500">
 								Use{" "}
