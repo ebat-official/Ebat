@@ -141,6 +141,8 @@ export const Editor = <T extends z.ZodType>({
 			}, 0);
 		};
 
+		//If data is fetching, it shoyld wait before, init,
+		//bcz: once it initialized, data cant change
 		if (isMounted && !dataLoading) {
 			init();
 
