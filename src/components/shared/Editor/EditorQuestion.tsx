@@ -11,7 +11,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 export interface EditorContent extends OutputData {
 	title?: string;
 }
-interface QuestionAnswerType {
+export interface QuestionAnswerType {
 	post: EditorContent;
 	answer: EditorContent;
 }
