@@ -63,7 +63,11 @@ function page() {
 							<span>Publish</span>
 						</Button>
 					</div>
-					<EditorQuestion />
+					<EditorQuestion
+						postId="123456"
+						onChangeCallback={(data) => console.log(data)}
+						// dataLoading={true}
+					/>
 				</>
 			</RightPanelLayout.MainPanel>
 			<RightPanelLayout.SidePanel>

@@ -1,12 +1,56 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Editor } from "./Editor";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { PostValidator } from "@/lib/validators/post";
 import { AnswerValidator } from "@/lib/validators/answer";
+import { OutputData } from "@editorjs/editorjs";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
-function EditorQuestion() {
+export interface EditorContent extends OutputData {
+	title?: string;
+}
+interface QuestionAnswerType {
+	post: EditorContent;
+	answer: EditorContent;
+}
+interface EditorQuestionProps {
+	postId: string;
+	defaultContent?: QuestionAnswerType | undefined;
+	onChangeCallback: (data: QuestionAnswerType) => void;
+	dataLoading?: boolean;
+}
+function EditorQuestion({
+	postId,
+	defaultContent,
+	onChangeCallback,
+	dataLoading,
+}: EditorQuestionProps) {
+	const [question, setQuestion] = useState<EditorContent>({ blocks: [] });
+	const [answer, setAnswer] = useState<EditorContent>({ blocks: [] });
+	const [localstorageContent, setLocalstorageContent] =
+		useLocalStorage<QuestionAnswerType>(postId, {
+			post: question,
+			answer,
+		});
+
+	useEffect(() => {
+		const data = { post: question, answer };
+		onChangeCallback(data);
+		setLocalstorageContent(data);
+	}, [answer, question]);
+
+	useEffect(() => {
+		if (defaultContent) {
+			setQuestion(defaultContent.post);
+			setAnswer(defaultContent.answer);
+		} else if (localstorageContent) {
+			setQuestion(localstorageContent.post);
+			setAnswer(localstorageContent.answer);
+		}
+	}, [defaultContent]);
+
 	return (
 		<div className="flex flex-col gap-4 h-full">
 			<Card className="h-full">
@@ -14,24 +58,13 @@ function EditorQuestion() {
 					<Editor
 						key="question"
 						editorId="editor-question"
-						onChange={(data) => console.log(data)}
+						postId={postId}
+						onChange={setQuestion}
 						titlePlaceHolder="Question"
 						contentPlaceHolder="Add more info to clarify (optional)..."
 						showCommandDetail={false}
-						defaultContent={{
-							title: "pranvee",
-							time: 1738563917642,
-							blocks: [
-								{
-									id: "5-sj1hEKO0",
-									type: "paragraph",
-									data: {
-										text: "asdasd kettoda thendi",
-									},
-								},
-							],
-							version: "2.30.7",
-						}}
+						defaultContent={defaultContent?.post || localstorageContent.post}
+						dataLoading={dataLoading}
 					/>
 				</CardContent>
 			</Card>
@@ -39,10 +72,15 @@ function EditorQuestion() {
 				<CardContent className="flex justify-center h-full">
 					<Editor
 						key="answer"
+						postId={postId}
 						editorId="editor-answer"
-						onChange={(data) => console.log(data)}
+						onChange={setAnswer}
 						showTitleField={false}
 						contentPlaceHolder="Provide a clear and helpful answer.."
+						defaultContent={
+							defaultContent?.answer || localstorageContent.answer
+						}
+						dataLoading={dataLoading}
 					/>
 				</CardContent>
 			</Card>

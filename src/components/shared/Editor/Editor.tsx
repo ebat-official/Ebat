@@ -20,6 +20,8 @@ interface EditorProps<T extends z.ZodType> {
 	showCommandDetail?: boolean;
 	titlePlaceHolder?: string;
 	contentPlaceHolder?: string;
+	postId: string;
+	dataLoading?: boolean;
 }
 
 export const Editor = <T extends z.ZodType>({
@@ -30,6 +32,8 @@ export const Editor = <T extends z.ZodType>({
 	titlePlaceHolder = "Title",
 	contentPlaceHolder = "Type here to write your post...",
 	showCommandDetail = true,
+	postId,
+	dataLoading = false,
 }: EditorProps<T>) => {
 	const ref = useRef<EditorJS>(null);
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
@@ -80,7 +84,7 @@ export const Editor = <T extends z.ZodType>({
 								async uploadByFile(file: File) {
 									try {
 										const { status, data, ...rem } = await uploadFile(file, {
-											postid: "pranavpost",
+											postId,
 										});
 
 										console.log("Uploaded file response:", status, data, rem);
@@ -114,6 +118,7 @@ export const Editor = <T extends z.ZodType>({
 				},
 				onChange: async () => {
 					const content = await editor.save();
+					console.log("datuu", content);
 					const title = _titleRef.current?.value || "";
 					onChange({ title, ...content } as z.infer<T>);
 				},
@@ -136,7 +141,7 @@ export const Editor = <T extends z.ZodType>({
 			}, 0);
 		};
 
-		if (isMounted) {
+		if (isMounted && !dataLoading) {
 			init();
 
 			return () => {
@@ -144,7 +149,7 @@ export const Editor = <T extends z.ZodType>({
 				ref.current = null;
 			};
 		}
-	}, [isMounted, initializeEditor]);
+	}, [isMounted, initializeEditor, dataLoading]);
 
 	return (
 		<>
@@ -159,7 +164,7 @@ export const Editor = <T extends z.ZodType>({
 				<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full h-full justify-between">
 					<div className="h-full flex flex-col">
 						{showTitleField &&
-							(isLoading ? (
+							(isLoading || dataLoading ? (
 								<Skeleton className="h-10 w-52" />
 							) : (
 								<TextareaAutosize
@@ -171,15 +176,30 @@ export const Editor = <T extends z.ZodType>({
 									className="w-full overflow-hidden  text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
 								/>
 							))}
-						<div id={editorId} className="mt-6" />
-						{isLoading && (
-							<div className="h-full">
-								<Skeleton className={cn("ml-6 mt-4 h-5 w-64 mb-[200px]")} />
-							</div>
-						)}
+						{!dataLoading && <div id={editorId} className="mt-6" />}
+						{(isLoading || dataLoading) &&
+							(dataLoading ? (
+								<div className="h-full flex flex-col gap-2 mt-6">
+									<Skeleton className={cn("ml-6 h-5 w-full ")} />
+									<Skeleton className={cn("ml-6 h-5 w-[90%] ")} />
+									<Skeleton className={cn("ml-6 h-5 w-full ")} />
+									<Skeleton className={cn("ml-6 h-5 w-2/4 ")} />
+									<Skeleton className={cn("ml-6 h-5 w-3/4 ")} />
+									<Skeleton className={cn("ml-6 h-5 w-[90%] ")} />
+									<Skeleton className={cn("ml-6 h-5 w-3/4 ")} />
+									<Skeleton className={cn("ml-6 h-5 w-2/4 ")} />
+									<Skeleton className={cn("ml-6 h-5 w-full ")} />
+									<Skeleton className={cn("ml-6 h-5 w-3/4 ")} />
+									<Skeleton className={cn("ml-6 h-5 w-[90%] ")} />
+								</div>
+							) : (
+								<div className="h-full">
+									<Skeleton className={cn("ml-6 mt-4 h-5 w-64 mb-[200px]")} />
+								</div>
+							))}
 					</div>
 					{showCommandDetail &&
-						(isLoading ? (
+						(isLoading || dataLoading ? (
 							<Skeleton className="px-1 h-5 w-64 " />
 						) : (
 							<p className="text-sm text-gray-500">
