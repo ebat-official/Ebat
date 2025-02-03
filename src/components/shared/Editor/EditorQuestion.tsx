@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Editor } from "./Editor";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
-import { PostValidator } from "@/lib/validators/post";
 import { AnswerValidator } from "@/lib/validators/answer";
 import { OutputData } from "@editorjs/editorjs";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -52,7 +51,7 @@ function EditorQuestion({
 	}, [defaultContent]);
 
 	return (
-		<div className="flex flex-col gap-4 h-full">
+		<div className="flex flex-col gap-4">
 			<Card className="h-full">
 				<CardContent className="flex justify-center h-full">
 					<Editor

@@ -1,8 +1,8 @@
-// hooks/useTopics.ts
 import { useState, useEffect, useCallback } from "react";
-import topicsData, { SubCategory } from "@/utils/subCategoryConfig";
+import topicsData from "@/utils/subCategoryConfig";
+import { SubCategory } from "@prisma/client";
 
-type TopicCategory = SubCategory; // Add more categories as needed
+export type TopicCategory = keyof typeof topicsData;
 
 const useTopics = (category: TopicCategory) => {
 	// Use the raw data directly from topicsData based on the category
@@ -13,16 +13,14 @@ const useTopics = (category: TopicCategory) => {
 		setTopics(topicsData[category] || []);
 	}, [category]);
 
-	// Memoizing the search function for better performance on repeated renders
 	const searchedTopics = useCallback(
 		(query: string): string[] => {
 			if (!topics) return topicsData[category];
-			// Filtering topics based on the search query (case-insensitive)
 			return topics.filter((topic) =>
 				topic.toLowerCase().includes(query.toLowerCase()),
 			);
 		},
-		[topicsData],
+		[topics, category],
 	);
 
 	const searchTopics = (query: string) => {

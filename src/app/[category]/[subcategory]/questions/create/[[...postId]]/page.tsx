@@ -10,10 +10,10 @@ import ButtonBlue from "@/components/shared/ButtonBlue";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
-import {
-	SubCategory,
-	subCategorySupportedTypes,
-} from "@/utils/subCategoryConfig";
+// import {
+// 	SubCategory,
+// 	subCategorySupportedTypes,
+// } from "@/utils/subCategoryConfig";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
 import {
@@ -23,26 +23,32 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { generateNanoId } from "@/lib/generateNanoid";
-// Type guard to narrow down the type
-function isValidSubcategory(subcategory: string): subcategory is SubCategory {
-	return subCategorySupportedTypes.has(subcategory);
-}
+import isValidSubcategory from "@/utils/isValidSubCategory";
+import isValidCategory from "@/utils/isValidiCategory";
 
 function page() {
 	const {
-		category,
+		category: categoryRoute,
 		subcategory: subcategoryRoute,
 		postId: editPostId,
 	} = useParams();
 	const [sidebarData, setSidebatData] = useState({});
-	const subcategory = Array.isArray(subcategoryRoute)
-		? subcategoryRoute[0]
-		: subcategoryRoute;
+	const subcategory = (
+		Array.isArray(subcategoryRoute) ? subcategoryRoute[0] : subcategoryRoute
+	)?.toUpperCase();
+	const category = (
+		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
+	)?.toUpperCase();
 	const [loading, isLoading] = useState(!!editPostId);
 	const [postId, setPostId] = useState<string>("");
 	const [postContent, setPostContent] = useState<QuestionAnswerType>();
 
-	if (!category || !subcategory || !isValidSubcategory(subcategory)) {
+	if (
+		!category ||
+		!subcategory ||
+		!isValidSubcategory(subcategory) ||
+		!isValidCategory(category)
+	) {
 		notFound();
 	}
 	useEffect(() => {

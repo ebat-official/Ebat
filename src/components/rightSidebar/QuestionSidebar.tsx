@@ -22,7 +22,7 @@ import { MdOutlineGpsFixed } from "react-icons/md";
 import { RiBuilding2Line } from "react-icons/ri";
 import { AiOutlineTag } from "react-icons/ai";
 import { IoMdTime } from "react-icons/io";
-import { SubCategory } from "@/utils/subCategoryConfig";
+import { SubCategory } from "@prisma/client";
 import { convertToMinutes } from "@/utils/converToMinutes";
 
 type ConsolidatedData = {

@@ -1,5 +1,5 @@
 const subCategory = {
-    javascript: [
+    JAVASCRIPT: [
       "Async",
       "AsyncAwait",
       "Closures",
@@ -31,7 +31,7 @@ const subCategory = {
       "Debouncing",
       "Throttling",
     ],
-    html: [
+    HTML: [
       "HTML5",
       "SemanticHTML",
       "Forms",
@@ -48,7 +48,7 @@ const subCategory = {
       "ProgressiveWebApps",
       "WebPerformance",
     ],
-    css: [
+    CSS: [
       "CSS3",
       "Flexbox",
       "Grid",
@@ -68,7 +68,7 @@ const subCategory = {
       "CriticalCSS",
       "CSSGrid",
     ],
-    react: [
+    REACT: [
       "JSX",
       "Components",
       "Props",
@@ -95,7 +95,5 @@ const subCategory = {
     ],
   };
   
-  
-export type SubCategory = keyof typeof subCategory;
-export const subCategorySupportedTypes = new Set(Object.keys(subCategory));
+
 export default subCategory
