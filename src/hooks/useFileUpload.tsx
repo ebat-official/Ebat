@@ -35,7 +35,6 @@ const useFileUpload = () => {
 			});
 
 			if (signedURLResult.status !== "success") {
-				console.log("errormyre", signedURLResult);
 				throw new Error(signedURLResult.cause || signedURLResult.data.message);
 			}
 

@@ -44,7 +44,7 @@ function page() {
 	const editPostId = (
 		Array.isArray(postIdParam) ? postIdParam[0] : postIdParam
 	)?.toUpperCase();
-	const [loading, isLoading] = useState(false); //!!postIdParam it shoudl update, also if a post not available, make it as a new post
+	const [loading, isLoading] = useState(!!postIdParam);
 	const [postId, setPostId] = useState<string>("");
 	const [postContent, setPostContent] = useState<QuestionAnswerType>();
 	const currentPath = usePathname();
@@ -61,6 +61,8 @@ function page() {
 		if (editPostId) {
 			setPostId(editPostId);
 			console.log("fetch dataa");
+
+			isLoading(false);
 		} else {
 			const newPostId = generateNanoId();
 			setPostId(newPostId);

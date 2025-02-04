@@ -20,6 +20,7 @@ import { SubCategory } from "@prisma/client";
 import { convertFromMinutes, convertToMinutes } from "@/utils/converToMinutes";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
+import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 
 type ConsolidatedData = {
 	companies: string[];
@@ -59,25 +60,24 @@ function QuestionSidebar({
 	const [difficulty, setDifficulty] = useState("");
 	const [duration, setDuration] = useState(INITIAL_DURATION);
 
-	const [localstorageContent, setLocalstorageContent] =
-		useLocalStorage<ConsolidatedData | null>(
-			postId ? `sidebar-${postId}` : null,
-			null,
-		);
-
 	useEffect(() => {
+		if (!postId) return;
 		const data = consolidateData();
 		getSidebarData(data);
-		setLocalstorageContent(data);
+		setLocalStorage(`sidebar-${postId}`, data);
 	}, [selectedCompanies, selectedTopics, difficulty, duration]);
 
 	useEffect(() => {
-		if (defaultContent) initializeState(defaultContent);
-	}, [defaultContent]);
+		if (!postId) return;
 
-	useEffect(() => {
-		if (localstorageContent) initializeState(localstorageContent);
-	}, [postId]);
+		const savedData = getLocalStorage<ConsolidatedData>(`sidebar-${postId}`);
+
+		if (defaultContent) {
+			initializeState(defaultContent);
+		} else if (savedData) {
+			initializeState(savedData);
+		}
+	}, [postId, defaultContent]);
 
 	function initializeState(initialData: ConsolidatedData) {
 		if (!initialData) return;
