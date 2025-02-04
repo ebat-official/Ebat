@@ -79,8 +79,6 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 		});
 	}, []);
 
-	console.log("init0", defaultContent);
-
 	const initializeEditor = useCallback(
 		async (
 			editorId: string,
@@ -160,7 +158,6 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 		if (!isMounted || dataLoading) return;
 
 		const init = async () => {
-			console.log("init", defaultContent);
 			const editors = [
 				initializeEditor(
 					editorPostId,
