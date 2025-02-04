@@ -59,7 +59,7 @@ function EditorQuestion({
 						onChange={(data) => setQuestion(data)}
 						titlePlaceHolder="Question"
 						contentPlaceHolder="Add more info to clarify (optional)..."
-						defaultContent={{ post: question, answer }}
+						defaultContent={defaultContent || savedData}
 						dataLoading={dataLoading}
 						answerHandler={(data) => setAnswer(data)}
 						answerPlaceHolder="Provide a clear and helpful answer.."

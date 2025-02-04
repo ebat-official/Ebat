@@ -1,18 +1,18 @@
-export const getLocalStorage = <T>(key: string | null): T | null => {
-	if (!key) return null;
+export const getLocalStorage = <T>(key: string | undefined): T | undefined => {
+	if (!key) return undefined;
 	try {
 	  const item = window.localStorage.getItem(key);
-	  return item ? JSON.parse(item) : null;
+	  return item ? JSON.parse(item) : undefined;
 	} catch (error) {
 	  console.error(`Error reading localStorage key "${key}":`, error);
-	  return null;
+	  return undefined;
 	}
   };
   
-  export const setLocalStorage = <T>(key: string | null, value: T): void => {
+  export const setLocalStorage = <T>(key: string | undefined, value: T): void => {
 	if (!key) return;
 	try {
-	  if (value === null) {
+	  if (value === undefined) {
 		window.localStorage.removeItem(key);
 	  } else {
 		window.localStorage.setItem(key, JSON.stringify(value));
