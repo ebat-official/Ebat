@@ -78,7 +78,7 @@ function QuestionSidebar({
 	console.log(postId, "localstorage", localstorageContent);
 	useEffect(() => {
 		getSidebarData(consolidateData());
-		setLocalstorageContent(consolidateData());
+		// setLocalstorageContent(consolidateData());
 	}, [selectedCompanies, selectedTopics, difficulty, duration]);
 
 	useEffect(() => {
@@ -94,23 +94,19 @@ function QuestionSidebar({
 
 	function initializeState(initialData: ConsolidatedData) {
 		if (!initialData) return;
+		console.log("initial state", initialData);
+		// Companies initialization
+		const companySelection = companies
+			.filter((c) => initialData.companies.includes(c.label))
+			.map((c) => ({ ...c, checked: true }));
+		setSelectedCompanies(companySelection);
 
-		if (initialData.companies) {
-			const selected = companies
-				.filter((company) => initialData.companies.includes(company.label))
-				.map((company) => {
-					return { ...company, checked: true };
-				});
-			setSelectedCompanies(selected);
-		}
-
-		if (initialData.topics) {
-			const selected = initialData.topics.map((topic) => ({
-				label: topic,
-				checked: true,
-			}));
-			setSelectedTopics(selected);
-		}
+		// Topics initialization
+		const topicSelection = initialData.topics.map((t) => ({
+			label: t,
+			checked: true,
+		}));
+		setSelectedTopics(topicSelection);
 
 		if (initialData.duration) {
 			const duration = convertFromMinutes(initialData.duration);

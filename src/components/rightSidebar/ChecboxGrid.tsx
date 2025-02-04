@@ -24,12 +24,12 @@ export type InternalOption = {
 
 interface CheckboxGridProps {
 	options: OptionInput[];
+	selectedOptions: InternalOption[];
 	getSelectedOptons: (checkedItems: InternalOption[]) => void;
 	disabled?: boolean;
 	className?: string;
 	itemOffset?: number;
 	searchHandler?: (query: string) => void;
-	selectedOptions?: OptionInput[];
 }
 
 const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
@@ -41,77 +41,56 @@ const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
 
 const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	options: initialOptions,
+	selectedOptions,
 	getSelectedOptons,
 	disabled,
 	className,
 	itemOffset = Number.POSITIVE_INFINITY,
 	searchHandler,
-	selectedOptions: initialSelected,
 }) => {
 	const [options, setOptions] = useState<InternalOption[]>(() =>
 		normalizeOptions(initialOptions),
-	);
-	const [selectedOptions, setSelectedOptions] = useState<InternalOption[]>(
-		normalizeOptions(initialSelected || []),
 	);
 	const [offset, setOffset] = useState(itemOffset);
 	const searchStr = useRef("");
 
 	useEffect(() => {
-		const selectedOptionsLabel = new Set(getSelectedLabel());
-
+		const selectedOptionsLabel = new Set(
+			selectedOptions.map((opt) => opt.label),
+		);
 		const nonSelectedOptions = normalizeOptions(initialOptions).filter(
 			(option) => !selectedOptionsLabel.has(option.label),
 		);
 		setOptions(nonSelectedOptions);
-	}, [initialOptions]);
+	}, [initialOptions, selectedOptions]);
 
 	useEffect(() => {
-		//cleanup search results on unmount
+		// Cleanup search results on unmount
 		return () => {
 			if (searchHandler) searchHandler("");
 		};
 	}, []);
 
-	useEffect(() => {
-		getSelectedOptons(selectedOptions);
-	}, [selectedOptions]);
-
-	function getSelectedLabel() {
-		return selectedOptions.map((option) => option.label);
-	}
-
 	const handleCheckboxChange = (option: InternalOption) => {
-		if (option.checked) {
-			option.checked = false;
-			const checkedOptions = selectedOptions.filter(
-				(opt) => option.label !== opt.label,
-			);
-			setOptions((prev) => [option, ...prev]);
-			setSelectedOptions(checkedOptions);
-		} else {
-			option.checked = true;
-			const unCheckedOptions = options.filter(
-				(opt) => option.label !== opt.label,
-			);
-			setOptions(unCheckedOptions);
-			setSelectedOptions((prev) => [option, ...prev]);
-		}
+		const updatedSelectedOptions = option.checked
+			? selectedOptions.filter((opt) => opt.label !== option.label) // Uncheck
+			: [...selectedOptions, { ...option, checked: true }]; // Check
+
+		getSelectedOptons(updatedSelectedOptions);
 	};
 
 	const addLabel = () => {
 		const option = normalizeOptions([
 			capitalizeFirstLetter(searchStr.current),
 		])[0];
-		const isLableExist = [...options, ...selectedOptions].some(
+		const isLabelExist = [...options, ...selectedOptions].some(
 			(optn) => optn.label.toLowerCase() === option.label.toLowerCase(),
 		);
-		option.checked = true;
-		if (isLableExist) {
+		if (isLabelExist) {
 			toast.error("Label already exists");
 			return;
 		}
-		setSelectedOptions((prev) => [option, ...prev]);
+		getSelectedOptons([{ ...option, checked: true }, ...selectedOptions]);
 	};
 
 	return (
@@ -145,12 +124,13 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 				<Button
 					onClick={() => setOffset((prev) => prev + itemOffset)}
 					variant="link"
-					className="flex gap-2 items-center justify-center "
+					className="flex gap-2 items-center justify-center"
 				>
 					<span>View More</span>
 					<MdOutlineExpandMore className="animate-bounce" />
 				</Button>
 			)}
+
 			{searchHandler && offset > itemOffset && (
 				<div className="flex gap-2 mt-4">
 					<Input
@@ -164,7 +144,6 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 							searchHandler(str);
 						}}
 					/>
-
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
