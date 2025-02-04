@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Editor, InitialBlocks } from "./EditorQA"; // Assuming EditorQA exports the Editor component
 import { Card, CardContent } from "@/components/ui/card";
 import { OutputData } from "@editorjs/editorjs";
@@ -23,31 +23,36 @@ function EditorQuestion({
 	onChangeCallback,
 	dataLoading,
 }: EditorQuestionProps) {
-	const [question, setQuestion] = useState<EditorContent>({ blocks: [] });
-	const [answer, setAnswer] = useState<EditorContent>({ blocks: [] });
+	const [content, setContent] = useState<InitialBlocks>({
+		post: { blocks: [] },
+		answer: { blocks: [] },
+	});
 
 	const localStorageKey = `editor-${postId}`;
 	const savedData = getLocalStorage<InitialBlocks>(localStorageKey);
 
 	// Update parent and localStorage when state changes
-	useEffect(() => {
-		if (!postId) return;
 
-		const data: InitialBlocks = { post: question, answer };
-		onChangeCallback(data);
-		setLocalStorage(localStorageKey, data);
-	}, [answer, question]);
+	const updateContent = useCallback(
+		(newContent: Partial<InitialBlocks>) => {
+			setContent((prev) => {
+				const updated = { ...prev, ...newContent };
+				onChangeCallback(updated);
+				setLocalStorage(localStorageKey, updated);
+				return updated;
+			});
+		},
+		[onChangeCallback, localStorageKey],
+	);
 
 	// Initialize state from defaultContent or localStorage
 	useEffect(() => {
-		if (defaultContent) {
-			setQuestion(defaultContent.post || { blocks: [] });
-			setAnswer(defaultContent.answer || { blocks: [] });
-		} else if (savedData) {
-			setQuestion(savedData.post || { blocks: [] });
-			setAnswer(savedData.answer || { blocks: [] });
-		}
-	}, [defaultContent]);
+		const initialData = defaultContent || savedData || {};
+		setContent({
+			post: initialData.post || { blocks: [] },
+			answer: initialData.answer || { blocks: [] },
+		});
+	}, [defaultContent, savedData]);
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -56,12 +61,14 @@ function EditorQuestion({
 					<Editor
 						key="question"
 						postId={postId}
-						onChange={(data) => setQuestion(data)}
+						onChange={(data: EditorContent) => updateContent({ post: data })}
 						titlePlaceHolder="Question"
 						contentPlaceHolder="Add more info to clarify (optional)..."
 						defaultContent={defaultContent || savedData}
 						dataLoading={dataLoading}
-						answerHandler={(data) => setAnswer(data)}
+						answerHandler={(data: EditorContent) =>
+							updateContent({ answer: data })
+						}
 						answerPlaceHolder="Provide a clear and helpful answer.."
 					/>
 				</CardContent>
