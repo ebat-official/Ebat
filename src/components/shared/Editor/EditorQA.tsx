@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type EditorJS from "@editorjs/editorjs";
+import { OutputData } from "@editorjs/editorjs";
 import TextareaAutosize from "react-textarea-autosize";
 import { z } from "zod";
 import useFileUpload from "@/hooks/useFileUpload";
@@ -10,6 +11,17 @@ import LoginModal from "@/components/auth/LoginModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
+// Define core editor content types
+export interface EditorContent extends OutputData {
+	title?: string;
+}
+
+export interface InitialBlocks {
+	post?: EditorContent;
+	answer?: EditorContent;
+}
+
+// Dynamic imports for EditorJS modules
 const editorModules = {
 	EditorJS: import("@editorjs/editorjs").then((mod) => mod.default),
 	Header: import("@editorjs/header").then((mod) => mod.default),
@@ -22,21 +34,22 @@ const editorModules = {
 	ImageTool: import("@editorjs/image").then((mod) => mod.default),
 };
 
-interface EditorProps<T extends z.ZodType> {
+interface EditorProps<T extends z.ZodType<EditorContent>> {
 	onChange: (data: z.infer<T>) => void;
+	answerHandler?: (data: z.infer<T>) => void;
 	editorId?: string;
-	defaultContent?: z.infer<T>;
+	defaultContent?: InitialBlocks;
 	showTitleField?: boolean;
 	showCommandDetail?: boolean;
 	titlePlaceHolder?: string;
 	contentPlaceHolder?: string;
 	postId: string;
 	dataLoading?: boolean;
+	answerPlaceHolder?: string;
 }
 
-export const Editor = <T extends z.ZodType>({
+export const Editor = <T extends z.ZodType<EditorContent>>({
 	onChange,
-	editorId = "editor",
 	defaultContent = {},
 	showTitleField = true,
 	titlePlaceHolder = "Title",
@@ -44,6 +57,8 @@ export const Editor = <T extends z.ZodType>({
 	showCommandDetail = true,
 	postId,
 	dataLoading = false,
+	answerHandler,
+	answerPlaceHolder = "",
 }: EditorProps<T>) => {
 	const ref = useRef<EditorJS>(null);
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
@@ -54,88 +69,119 @@ export const Editor = <T extends z.ZodType>({
 		null,
 	);
 
-	// Preload modules on first render
+	const editorPostId = `editor-post-${postId}`;
+	const editorAnswerId = answerHandler ? `editor-answer-${postId}` : null;
+
 	useEffect(() => {
+		setIsMounted(typeof window !== "undefined");
 		Promise.all(Object.values(editorModules)).then(() => {
 			console.info("EditorJS modules preloaded");
 		});
 	}, []);
 
-	const initializeEditor = useCallback(async () => {
-		const [
-			EditorJSModule,
-			HeaderModule,
-			EmbedModule,
-			TableModule,
-			ListModule,
-			CodeModule,
-			LinkToolModule,
-			InlineCodeModule,
-			ImageToolModule,
-		] = await Promise.all(Object.values(editorModules));
+	console.log("init0", defaultContent);
 
-		if (!ref.current) {
-			const editor = new EditorJSModule({
-				holder: editorId,
-				onReady() {
-					ref.current = editor;
-				},
-				placeholder: contentPlaceHolder,
-				inlineToolbar: true,
-				data: defaultContent?.blocks
-					? { blocks: defaultContent.blocks }
-					: { blocks: [] },
-				tools: {
-					header: HeaderModule,
-					linkTool: {
-						class: LinkToolModule,
-						config: { endpoint: "/api/link" },
+	const initializeEditor = useCallback(
+		async (
+			editorId: string,
+			placeholder: string,
+			onChangeHandler: (data: EditorContent) => void,
+			initialBlocks?: EditorContent["blocks"],
+		) => {
+			const [
+				EditorJSModule,
+				HeaderModule,
+				EmbedModule,
+				TableModule,
+				ListModule,
+				CodeModule,
+				LinkToolModule,
+				InlineCodeModule,
+				ImageToolModule,
+			] = await Promise.all(Object.values(editorModules));
+
+			if (!ref.current) {
+				const editor = new EditorJSModule({
+					holder: editorId,
+					onReady() {
+						ref.current = editor;
 					},
-					image: {
-						class: ImageToolModule,
-						config: {
-							features: { caption: "optional" },
-							uploader: {
-								async uploadByFile(file: File) {
-									try {
-										const { status, data } = await uploadFile(file, { postId });
-										if (status === "error") {
-											setUploadError(data.message);
-											throw new Error(data.message);
+					placeholder,
+					inlineToolbar: true,
+					data: initialBlocks ? { blocks: initialBlocks } : { blocks: [] },
+					tools: {
+						header: HeaderModule,
+						linkTool: {
+							class: LinkToolModule,
+							config: { endpoint: "/api/link" },
+						},
+						image: {
+							class: ImageToolModule,
+							config: {
+								features: { caption: "optional" },
+								uploader: {
+									async uploadByFile(file: File) {
+										try {
+											const { status, data } = await uploadFile(file, {
+												postId,
+											});
+											if (status === "error") {
+												setUploadError(data.message);
+												throw new Error(data.message);
+											}
+											return { success: 1, file: { url: data.url } };
+										} catch (error) {
+											console.error("Image upload failed:", error);
+											return { success: 0, error: "Failed to upload image" };
 										}
-										return { success: 1, file: { url: data.url } };
-									} catch (error) {
-										console.error("Image upload failed:", error);
-										return { success: 0, error: "Failed to upload image" };
-									}
+									},
 								},
 							},
 						},
+						list: ListModule,
+						code: CodeModule,
+						inlineCode: InlineCodeModule,
+						table: TableModule,
+						embed: EmbedModule,
 					},
-					list: ListModule,
-					code: CodeModule,
-					inlineCode: InlineCodeModule,
-					table: TableModule,
-					embed: EmbedModule,
-				},
-				async onChange() {
-					const content = await editor.save();
-					const title = _titleRef.current?.value || "";
-					onChange({ title, ...content } as z.infer<T>);
-				},
-			});
-		}
-	}, [editorId]);
+					async onChange() {
+						const content = await editor.save();
+						const title = _titleRef.current?.value || "";
+						onChangeHandler({ title, blocks: content.blocks });
+					},
+				});
+			}
+		},
+		[postId],
+	);
 
-	useEffect(() => {
-		setIsMounted(typeof window !== "undefined");
-	}, []);
-
+	// Initialize all editors when mounted and data is ready
 	useEffect(() => {
 		if (!isMounted || dataLoading) return;
 
 		const init = async () => {
-			await initializeEditor();
+			console.log("init", defaultContent);
+			const editors = [
+				initializeEditor(
+					editorPostId,
+					contentPlaceHolder,
+					onChange,
+					defaultContent.post?.blocks,
+				),
+			];
+
+			if (editorAnswerId && answerHandler) {
+				editors.push(
+					initializeEditor(
+						editorAnswerId,
+						answerPlaceHolder,
+						answerHandler,
+						defaultContent.answer?.blocks,
+					),
+				);
+			}
+
+			await Promise.all(editors);
 			setIsLoading(false);
 			setTimeout(() => _titleRef.current?.focus(), 0);
 		};
@@ -145,7 +191,7 @@ export const Editor = <T extends z.ZodType>({
 			ref.current?.destroy();
 			ref.current = null;
 		};
-	}, [isMounted, initializeEditor, dataLoading]);
+	}, [isMounted, dataLoading, initializeEditor]);
 
 	return (
 		<>
@@ -165,13 +211,13 @@ export const Editor = <T extends z.ZodType>({
 							) : (
 								<TextareaAutosize
 									ref={_titleRef}
-									defaultValue={defaultContent?.title ?? ""}
+									defaultValue={defaultContent?.post?.title ?? ""}
 									placeholder={titlePlaceHolder}
 									className="w-full overflow-hidden text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
 								/>
 							))}
 
-						{!dataLoading && <div id={editorId} className="mt-6" />}
+						{!dataLoading && <div id={editorPostId} className="mt-6" />}
 
 						{(isLoading || dataLoading) &&
 							(dataLoading ? (
@@ -194,6 +240,10 @@ export const Editor = <T extends z.ZodType>({
 								</div>
 							))}
 					</div>
+
+					{!dataLoading && editorAnswerId && (
+						<div id={editorAnswerId} className="mt-6" />
+					)}
 
 					{showCommandDetail &&
 						(isLoading || dataLoading ? (

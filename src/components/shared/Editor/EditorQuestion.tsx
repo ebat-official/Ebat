@@ -1,9 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Editor } from "./Editor";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Editor, InitialBlocks } from "./EditorQA"; // Assuming EditorQA exports the Editor component
 import { Card, CardContent } from "@/components/ui/card";
-import { AnswerValidator } from "@/lib/validators/answer";
 import { OutputData } from "@editorjs/editorjs";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
@@ -11,16 +9,14 @@ import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 export interface EditorContent extends OutputData {
 	title?: string;
 }
-export interface QuestionAnswerType {
-	post: EditorContent;
-	answer: EditorContent;
-}
+
 interface EditorQuestionProps {
 	postId: string;
-	defaultContent?: QuestionAnswerType | undefined;
-	onChangeCallback: (data: QuestionAnswerType) => void;
+	defaultContent?: InitialBlocks;
+	onChangeCallback: (data: InitialBlocks) => void;
 	dataLoading?: boolean;
 }
+
 function EditorQuestion({
 	postId,
 	defaultContent,
@@ -29,23 +25,27 @@ function EditorQuestion({
 }: EditorQuestionProps) {
 	const [question, setQuestion] = useState<EditorContent>({ blocks: [] });
 	const [answer, setAnswer] = useState<EditorContent>({ blocks: [] });
-	const localStorageKey = `editor-${postId}`;
-	const savedData = getLocalStorage<QuestionAnswerType>(localStorageKey);
 
+	const localStorageKey = `editor-${postId}`;
+	const savedData = getLocalStorage<InitialBlocks>(localStorageKey);
+
+	// Update parent and localStorage when state changes
 	useEffect(() => {
 		if (!postId) return;
-		const data = { post: question, answer };
+
+		const data: InitialBlocks = { post: question, answer };
 		onChangeCallback(data);
 		setLocalStorage(localStorageKey, data);
 	}, [answer, question]);
 
+	// Initialize state from defaultContent or localStorage
 	useEffect(() => {
 		if (defaultContent) {
-			setQuestion(defaultContent.post);
-			setAnswer(defaultContent.answer);
+			setQuestion(defaultContent.post || { blocks: [] });
+			setAnswer(defaultContent.answer || { blocks: [] });
 		} else if (savedData) {
-			setQuestion(savedData.post);
-			setAnswer(savedData.answer);
+			setQuestion(savedData.post || { blocks: [] });
+			setAnswer(savedData.answer || { blocks: [] });
 		}
 	}, [defaultContent]);
 
@@ -55,31 +55,17 @@ function EditorQuestion({
 				<CardContent className="flex justify-center h-full">
 					<Editor
 						key="question"
-						editorId={`editor-question-${postId}`}
 						postId={postId}
-						onChange={setQuestion}
+						onChange={(data) => setQuestion(data)}
 						titlePlaceHolder="Question"
 						contentPlaceHolder="Add more info to clarify (optional)..."
-						showCommandDetail={false}
-						defaultContent={defaultContent?.post || savedData?.post}
+						defaultContent={{ post: question, answer }}
 						dataLoading={dataLoading}
+						answerHandler={(data) => setAnswer(data)}
+						answerPlaceHolder="Provide a clear and helpful answer.."
 					/>
 				</CardContent>
 			</Card>
-			{/* <Card className="h-full">
-				<CardContent className="flex justify-center h-full">
-					<Editor
-						key="answer"
-						postId={postId}
-						editorId={`editor-answer-${postId}`}
-						onChange={setAnswer}
-						showTitleField={false}
-						contentPlaceHolder="Provide a clear and helpful answer.."
-						defaultContent={defaultContent?.answer || savedData?.answer}
-						dataLoading={dataLoading}
-					/>
-				</CardContent>
-			</Card> */}
 		</div>
 	);
 }
