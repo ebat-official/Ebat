@@ -105,6 +105,9 @@ dependencies:
   axios:
     specifier: ^1.7.9
     version: 1.7.9
+  babel-plugin-react-compiler:
+    specifier: 19.0.0-beta-714736e-20250131
+    version: 19.0.0-beta-714736e-20250131
   bcryptjs:
     specifier: ^2.4.3
     version: 2.4.3
@@ -125,7 +128,7 @@ dependencies:
     version: 5.0.9
   next:
     specifier: 15.1.5
-    version: 15.1.5(react-dom@19.0.0)(react@19.0.0)
+    version: 15.1.5(babel-plugin-react-compiler@19.0.0-beta-714736e-20250131)(react-dom@19.0.0)(react@19.0.0)
   next-auth:
     specifier: 5.0.0-beta.25
     version: 5.0.0-beta.25(next@15.1.5)(react@19.0.0)
@@ -853,11 +856,29 @@ packages:
       tslib: 2.8.1
     dev: false
 
+  /@babel/helper-string-parser@7.25.9:
+    resolution: {integrity: sha512-4A/SCr/2KLd5jrtOMFzaKjVtAei3+2r/NChoBNoZ3EyP/+GlhoaEGoWOZUmFmoITP7zOJyHIMm+DYRd8o3PvHA==}
+    engines: {node: '>=6.9.0'}
+    dev: false
+
+  /@babel/helper-validator-identifier@7.25.9:
+    resolution: {integrity: sha512-Ed61U6XJc3CVRfkERJWDz4dJwKe7iLmmJsbOGu9wSloNSFttHV0I8g6UAgb7qnK5ly5bGLPd4oXZlxCdANBOWQ==}
+    engines: {node: '>=6.9.0'}
+    dev: false
+
   /@babel/runtime@7.26.0:
     resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
+    dev: false
+
+  /@babel/types@7.26.7:
+    resolution: {integrity: sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/helper-string-parser': 7.25.9
+      '@babel/helper-validator-identifier': 7.25.9
     dev: false
 
   /@biomejs/biome@1.9.4:
@@ -3187,6 +3208,12 @@ packages:
       - debug
     dev: false
 
+  /babel-plugin-react-compiler@19.0.0-beta-714736e-20250131:
+    resolution: {integrity: sha512-frj2l6fRWVi26iw9WthFKyFyE4u5ZSHH3KdKiscOOwpz210seTtwnp0QbJmi8Zoa5HK7Fk2fH40JffN2y8GvLg==}
+    dependencies:
+      '@babel/types': 7.26.7
+    dev: false
+
   /balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
@@ -3636,7 +3663,7 @@ packages:
         optional: true
     dependencies:
       '@auth/core': 0.37.2
-      next: 15.1.5(react-dom@19.0.0)(react@19.0.0)
+      next: 15.1.5(babel-plugin-react-compiler@19.0.0-beta-714736e-20250131)(react-dom@19.0.0)(react@19.0.0)
       react: 19.0.0
     dev: false
 
@@ -3650,7 +3677,7 @@ packages:
       react-dom: 19.0.0(react@19.0.0)
     dev: false
 
-  /next@15.1.5(react-dom@19.0.0)(react@19.0.0):
+  /next@15.1.5(babel-plugin-react-compiler@19.0.0-beta-714736e-20250131)(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-Cf/TEegnt01hn3Hoywh6N8fvkhbOuChO4wFje24+a86wKOubgVaWkDqxGVgoWlz2Hp9luMJ9zw3epftujdnUOg==}
     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
     hasBin: true
@@ -3674,6 +3701,7 @@ packages:
       '@next/env': 15.1.5
       '@swc/counter': 0.1.3
       '@swc/helpers': 0.5.15
+      babel-plugin-react-compiler: 19.0.0-beta-714736e-20250131
       busboy: 1.6.0
       caniuse-lite: 1.0.30001692
       postcss: 8.4.31
