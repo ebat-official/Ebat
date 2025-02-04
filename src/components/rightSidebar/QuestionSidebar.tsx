@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import {
@@ -6,15 +7,8 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
 import CheckboxGrid, { InternalOption } from "./ChecboxGrid";
 import RadioGroupGrid from "./RadioGrid";
-import { CommandInput } from "../ui/command";
 import useCompanies from "@/hooks/useCompanyList";
 import useTopics from "@/hooks/useTopicList";
 import DurationPicker from "../shared/DurationPicker";
@@ -25,6 +19,7 @@ import { IoMdTime } from "react-icons/io";
 import { SubCategory } from "@prisma/client";
 import { convertFromMinutes, convertToMinutes } from "@/utils/converToMinutes";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
 
 type ConsolidatedData = {
 	companies: string[];
@@ -32,16 +27,11 @@ type ConsolidatedData = {
 	difficulty: string;
 	duration: number;
 };
+
 export type Duration = {
 	days: string;
 	hours: string;
 	minutes: string;
-};
-type LocalStorageContent = {
-	selectedCompanies?: InternalOption[];
-	selectedTopics?: InternalOption[];
-	difficulty?: string;
-	duration?: Duration;
 };
 
 interface QuestionSidebarProps {
@@ -51,6 +41,8 @@ interface QuestionSidebarProps {
 	defaultContent?: ConsolidatedData | undefined;
 }
 
+const INITIAL_DURATION: Duration = { days: "0", minutes: "5", hours: "0" };
+
 function QuestionSidebar({
 	subCategory,
 	getSidebarData,
@@ -59,73 +51,58 @@ function QuestionSidebar({
 }: QuestionSidebarProps) {
 	const { companies, searchCompanies } = useCompanies();
 	const { topics, searchTopics } = useTopics(subCategory);
+
 	const [selectedCompanies, setSelectedCompanies] = useState<InternalOption[]>(
 		[],
 	);
 	const [selectedTopics, setSelectedTopics] = useState<InternalOption[]>([]);
 	const [difficulty, setDifficulty] = useState("");
-	const [duration, setDuration] = useState({
-		days: "0",
-		minutes: "5",
-		hours: "0",
-	});
+	const [duration, setDuration] = useState(INITIAL_DURATION);
+
 	const [localstorageContent, setLocalstorageContent] =
 		useLocalStorage<ConsolidatedData | null>(
 			postId ? `sidebar-${postId}` : null,
 			null,
 		);
 
-	console.log(postId, "localstorage", localstorageContent);
 	useEffect(() => {
-		getSidebarData(consolidateData());
-		// setLocalstorageContent(consolidateData());
+		const data = consolidateData();
+		getSidebarData(data);
+		setLocalstorageContent(data);
 	}, [selectedCompanies, selectedTopics, difficulty, duration]);
 
 	useEffect(() => {
-		if (!defaultContent) return;
-		initializeState(defaultContent);
+		if (defaultContent) initializeState(defaultContent);
 	}, [defaultContent]);
 
 	useEffect(() => {
-		console.log(postId, "localstorage initi", localstorageContent);
-		if (!localstorageContent) return;
-		initializeState(localstorageContent);
+		if (localstorageContent) initializeState(localstorageContent);
 	}, [postId]);
 
 	function initializeState(initialData: ConsolidatedData) {
 		if (!initialData) return;
-		console.log("initial state", initialData);
-		// Companies initialization
-		const companySelection = companies
-			.filter((c) => initialData.companies.includes(c.label))
-			.map((c) => ({ ...c, checked: true }));
-		setSelectedCompanies(companySelection);
 
-		// Topics initialization
-		const topicSelection = initialData.topics.map((t) => ({
-			label: t,
-			checked: true,
-		}));
-		setSelectedTopics(topicSelection);
+		// Initialize Companies
+		setSelectedCompanies(
+			companies
+				.filter((c) => initialData.companies.includes(c.label))
+				.map((c) => ({ ...c, checked: true })),
+		);
 
-		if (initialData.duration) {
-			const duration = convertFromMinutes(initialData.duration);
-			setDuration(duration);
-		}
+		// Initialize Topics
+		setSelectedTopics(
+			initialData.topics.map((t) => ({ label: t, checked: true })),
+		);
 
-		if (initialData.difficulty) {
-			setDifficulty(initialData.difficulty);
-		}
-	}
-
-	function getSelectedLabels(options: InternalOption[] | []) {
-		return options.map((optn) => optn.label);
+		if (initialData.duration)
+			setDuration(convertFromMinutes(initialData.duration));
+		if (initialData.difficulty) setDifficulty(initialData.difficulty);
 	}
 
 	function consolidateData(): ConsolidatedData {
 		return {
-			companies: getSelectedLabels(selectedCompanies),
-			topics: getSelectedLabels(selectedTopics),
+			companies: selectedCompanies.map((opt) => opt.label),
+			topics: selectedTopics.map((opt) => opt.label),
 			difficulty: difficulty.toUpperCase(),
 			duration: convertToMinutes(duration),
 		};
@@ -135,25 +112,16 @@ function QuestionSidebar({
 		<Card>
 			<CardContent>
 				<Accordion
-					defaultValue={["diffuculty", "companies"]}
+					defaultValue={["difficulty", "companies"]}
 					type="multiple"
 					className="w-full"
 				>
-					<AccordionItem value="diffuculty">
+					<AccordionItem value="difficulty">
 						<AccordionTrigger>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<div className="flex items-center justify-center gap-1">
-											<span>Diffuculty</span>
-											<MdOutlineGpsFixed size={16} />
-										</div>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Question difficulty</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
+							<TooltipAccordianTrigger
+								label="Difficulty"
+								icon={<MdOutlineGpsFixed size={16} />}
+							/>
 						</AccordionTrigger>
 						<AccordionContent>
 							<RadioGroupGrid
@@ -165,19 +133,10 @@ function QuestionSidebar({
 					</AccordionItem>
 					<AccordionItem value="companies">
 						<AccordionTrigger>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<div className="flex items-center justify-center gap-1">
-											<span>Companies</span>
-											<RiBuilding2Line size={16} />
-										</div>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Companies asked this question</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
+							<TooltipAccordianTrigger
+								label="Companies"
+								icon={<RiBuilding2Line size={16} />}
+							/>
 						</AccordionTrigger>
 						<AccordionContent>
 							<CheckboxGrid
@@ -191,19 +150,10 @@ function QuestionSidebar({
 					</AccordionItem>
 					<AccordionItem value="topics">
 						<AccordionTrigger>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<div className="flex items-center justify-center gap-1">
-											<span>Topics</span>
-											<AiOutlineTag size={16} />
-										</div>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Related topics for this question</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
+							<TooltipAccordianTrigger
+								label="Topics"
+								icon={<AiOutlineTag size={16} />}
+							/>
 						</AccordionTrigger>
 						<AccordionContent>
 							<CheckboxGrid
@@ -215,23 +165,13 @@ function QuestionSidebar({
 							/>
 						</AccordionContent>
 					</AccordionItem>
-					<AccordionItem value="item-3">
+					<AccordionItem value="duration">
 						<AccordionTrigger>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<div className="flex items-center justify-center gap-1">
-											<span>Duration</span>
-											<IoMdTime size={16} />
-										</div>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Question completion duration</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
+							<TooltipAccordianTrigger
+								label="Duration"
+								icon={<IoMdTime size={16} />}
+							/>
 						</AccordionTrigger>
-
 						<AccordionContent>
 							<DurationPicker duration={duration} onChange={setDuration} />
 						</AccordionContent>

@@ -52,7 +52,9 @@ const RadioGrid: React.FC<RadioGridProps> = ({
 					className="flex gap-2 items-center justify-center"
 				>
 					<RadioGroupItem value={option.label} id={option.label} />
-					<Label htmlFor={option.label}>{option.label}</Label>
+					<Label className="capitalize" htmlFor={option.label}>
+						{option.label.toLowerCase()}
+					</Label>
 				</div>
 			))}
 		</RadioGroup>
