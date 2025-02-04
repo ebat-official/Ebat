@@ -15,3 +15,17 @@ export const convertToMinutes = ({
 
 	return daysInMinutes + hoursInMinutes + minutesInMinutes;
 };
+
+export const convertFromMinutes = (totalMinutes: number) => {
+	const days = Math.floor(totalMinutes / (24 * 60));
+	const remainingMinutesAfterDays = totalMinutes % (24 * 60);
+
+	const hours = Math.floor(remainingMinutesAfterDays / 60);
+	const minutes = remainingMinutesAfterDays % 60;
+
+	return {
+		days: days.toString(),
+		hours: hours.toString(),
+		minutes: minutes.toString(),
+	};
+};

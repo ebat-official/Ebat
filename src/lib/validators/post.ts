@@ -1,24 +1,32 @@
 import { z } from "zod";
-import { PostType, Difficulty, PostCategory,  PostStatus,SubCategory } from "@prisma/client"; // Import enums from Prisma
+import { PostType, Difficulty, PostCategory, SubCategory } from "@prisma/client";
+import {
+  INVALID_CATEGORY,
+  INVALID_DIFFICULTY,
+  INVALID_POST_ID,
+  INVALID_POST_TYPE,
+  INVALID_SUBCATEGORY,
+} from "@/utils/contants";
 
-// PostDraftValidator using existing Prisma enums
-export const PostDraftValidator = z.object({
-  title: z.string().optional(), // Optional title field
-  content: z.any().optional(), // Optional content field (JSON)
-  authorId: z.string().min(1, { message: "Author ID is required" }), // Required authorId
-  comments: z.array(z.object({ id: z.string() })).optional(), // Optional array of comments with id
-  votes: z.array(z.object({ id: z.string() })).optional(), // Optional array of votes with id
-  type: z.enum(Object.values(PostType), { errorMap: () => ({ message: "Invalid post type" }) }), // Validates against PostType enum
-  difficulty: z.enum(Object.values(Difficulty), { errorMap: () => ({ message: "Invalid difficulty" }) }).optional(), // Optional difficulty field
-  companies: z.array(z.string()).optional(), // Optional array of companies
-  completionDuration: z.number().int().positive().optional(), // Optional duration (in minutes)
-  karmaPoints: z.number().int().nonnegative().default(0), // Karma points, must be non-negative (default 0)
-  topics: z.array(z.string()).optional(), // Optional array of topics
-  category: z.enum(Object.values(PostCategory), { errorMap: () => ({ message: "Invalid category" }) }), // Validates against PostCategory enum
-  subCategory: z.enum(Object.values(SubCategory), { errorMap: () => ({ message: "Invalid subCategory" }) }), // Validates against SubCategory enum
-  status: z.enum(Object.values(PostStatus), { errorMap: () => ({ message: "Invalid status" }) }).default(PostStatus.DRAFT), // Default status is DRAFT
-  viewCount: z.number().int().nonnegative().default(0), // Default view count is 0 (must be non-negative)
-  collaborators: z.array(z.object({ id: z.string() })).optional(), // Optional array of collaborators with id
+export const PostDraftValidatorUI = z.object({
+  id: z.string().regex(/^[\w-]{21}$/, { message: INVALID_POST_ID }),
+  title: z.string().optional(),
+  content: z.record(z.any()).optional(),
+  type: z.nativeEnum(PostType, { // Use native enum validation
+    errorMap: () => ({ message: INVALID_POST_TYPE }),
+  }),
+  difficulty: z.nativeEnum(Difficulty, { // For other enums too
+    errorMap: () => ({ message: INVALID_DIFFICULTY }),
+  }).nullable().optional(),
+  companies: z.array(z.string()).optional(),
+  completionDuration: z.number().int().positive().optional(),
+  topics: z.array(z.string()).optional(),
+  category: z.nativeEnum(PostCategory, {
+    errorMap: () => ({ message: INVALID_CATEGORY }),
+  }),
+  subCategory: z.nativeEnum(SubCategory, {
+    errorMap: () => ({ message: INVALID_SUBCATEGORY }),
+  }),
 });
 
-export type PostCreationRequest = z.infer<typeof PostDraftValidator>;
+export type PostDraftType = z.infer<typeof PostDraftValidatorUI>;

@@ -23,7 +23,8 @@ import { RiBuilding2Line } from "react-icons/ri";
 import { AiOutlineTag } from "react-icons/ai";
 import { IoMdTime } from "react-icons/io";
 import { SubCategory } from "@prisma/client";
-import { convertToMinutes } from "@/utils/converToMinutes";
+import { convertFromMinutes, convertToMinutes } from "@/utils/converToMinutes";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 type ConsolidatedData = {
 	companies: string[];
@@ -31,18 +32,33 @@ type ConsolidatedData = {
 	difficulty: string;
 	duration: number;
 };
+export type Duration = {
+	days: string;
+	hours: string;
+	minutes: string;
+};
+type LocalStorageContent = {
+	selectedCompanies?: InternalOption[];
+	selectedTopics?: InternalOption[];
+	difficulty?: string;
+	duration?: Duration;
+};
 
 interface QuestionSidebarProps {
-	subcategory: SubCategory;
+	subCategory: SubCategory;
 	getSidebarData: (args: ConsolidatedData) => void;
+	postId: string;
+	defaultContent?: ConsolidatedData | undefined;
 }
 
 function QuestionSidebar({
-	subcategory,
+	subCategory,
 	getSidebarData,
+	postId,
+	defaultContent,
 }: QuestionSidebarProps) {
 	const { companies, searchCompanies } = useCompanies();
-	const { topics, searchTopics } = useTopics(subcategory);
+	const { topics, searchTopics } = useTopics(subCategory);
 	const [selectedCompanies, setSelectedCompanies] = useState<InternalOption[]>(
 		[],
 	);
@@ -53,10 +69,58 @@ function QuestionSidebar({
 		minutes: "5",
 		hours: "0",
 	});
+	const [localstorageContent, setLocalstorageContent] =
+		useLocalStorage<ConsolidatedData | null>(
+			postId ? `sidebar-${postId}` : null,
+			null,
+		);
 
+	console.log(postId, "localstorage", localstorageContent);
 	useEffect(() => {
 		getSidebarData(consolidateData());
+		setLocalstorageContent(consolidateData());
 	}, [selectedCompanies, selectedTopics, difficulty, duration]);
+
+	useEffect(() => {
+		if (!defaultContent) return;
+		initializeState(defaultContent);
+	}, [defaultContent]);
+
+	useEffect(() => {
+		console.log(postId, "localstorage initi", localstorageContent);
+		if (!localstorageContent) return;
+		initializeState(localstorageContent);
+	}, [postId]);
+
+	function initializeState(initialData: ConsolidatedData) {
+		if (!initialData) return;
+
+		if (initialData.companies) {
+			const selected = companies
+				.filter((company) => initialData.companies.includes(company.label))
+				.map((company) => {
+					return { ...company, checked: true };
+				});
+			setSelectedCompanies(selected);
+		}
+
+		if (initialData.topics) {
+			const selected = initialData.topics.map((topic) => ({
+				label: topic,
+				checked: true,
+			}));
+			setSelectedTopics(selected);
+		}
+
+		if (initialData.duration) {
+			const duration = convertFromMinutes(initialData.duration);
+			setDuration(duration);
+		}
+
+		if (initialData.difficulty) {
+			setDifficulty(initialData.difficulty);
+		}
+	}
 
 	function getSelectedLabels(options: InternalOption[] | []) {
 		return options.map((optn) => optn.label);
@@ -98,7 +162,7 @@ function QuestionSidebar({
 						<AccordionContent>
 							<RadioGroupGrid
 								selectedOption={difficulty}
-								options={["Easy", "Medium", "Hard"]}
+								options={["EASY", "MEDIUM", "HARD"]}
 								getSelectedOption={setDifficulty}
 							/>
 						</AccordionContent>
