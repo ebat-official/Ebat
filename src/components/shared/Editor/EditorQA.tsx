@@ -212,7 +212,9 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 									ref={_titleRef}
 									defaultValue={defaultContent?.post?.title ?? ""}
 									placeholder={titlePlaceHolder}
-									className="w-full overflow-hidden text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+									className={cn(
+										"w-full overflow-hidden text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none",
+									)}
 								/>
 							))}
 
@@ -237,7 +239,7 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 								dataLoading ? (
 									<PostContentSkeleton
 										lines={9}
-										className="mt-8 min-h-[250px]"
+										className="mt-8 min-h-[250px] mb-4"
 									/>
 								) : (
 									<Skeleton className="ml-6 mt-6 h-5 w-64 mb-[240px]" />
@@ -250,7 +252,7 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 
 					{showCommandDetail &&
 						(isLoading || dataLoading ? (
-							<Skeleton className="px-1 h-6 w-64 " />
+							<Skeleton className="px-1 h-6 w-64" />
 						) : (
 							<p className="text-sm text-gray-500">
 								Use{" "}
