@@ -55,25 +55,23 @@ function EditorQuestion({
 	}, [defaultContent, savedData]);
 
 	return (
-		<div className="flex flex-col gap-4">
-			<Card className="h-full">
-				<CardContent className="flex justify-center h-full">
-					<Editor
-						key="question"
-						postId={postId}
-						onChange={(data: EditorContent) => updateContent({ post: data })}
-						titlePlaceHolder="Question"
-						contentPlaceHolder="Add more info to clarify (optional)..."
-						defaultContent={defaultContent || savedData}
-						dataLoading={dataLoading}
-						answerHandler={(data: EditorContent) =>
-							updateContent({ answer: data })
-						}
-						answerPlaceHolder="Provide a clear and helpful answer.."
-					/>
-				</CardContent>
-			</Card>
-		</div>
+		<Card>
+			<CardContent className="flex justify-center h-full  ">
+				<Editor
+					key="question"
+					postId={postId}
+					onChange={(data: EditorContent) => updateContent({ post: data })}
+					titlePlaceHolder="Question"
+					contentPlaceHolder="Add more info to clarify (optional)..."
+					defaultContent={defaultContent || savedData}
+					dataLoading={dataLoading}
+					answerHandler={(data: EditorContent) =>
+						updateContent({ answer: data })
+					}
+					answerPlaceHolder="Provide a clear and helpful answer (required)..."
+				/>
+			</CardContent>
+		</Card>
 	);
 }
 

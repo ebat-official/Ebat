@@ -10,6 +10,8 @@ import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import PostContentSkeleton from "./PostContentSkelton";
 
 // Define core editor content types
 export interface EditorContent extends OutputData {
@@ -200,7 +202,7 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 			)}
 
 			<div className="pt-8 min-w-[73%]">
-				<div className="prose prose-stone dark:prose-invert flex flex-col gap-8 w-full h-full justify-between">
+				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full justify-between ">
 					<div className="h-full flex flex-col">
 						{showTitleField &&
 							(isLoading || dataLoading ? (
@@ -218,33 +220,37 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 
 						{(isLoading || dataLoading) &&
 							(dataLoading ? (
-								<div className="h-full flex flex-col gap-2 mt-6">
-									<Skeleton className={cn("ml-6 h-5 w-full ")} />
-									<Skeleton className={cn("ml-6 h-5 w-[90%] ")} />
-									<Skeleton className={cn("ml-6 h-5 w-full ")} />
-									<Skeleton className={cn("ml-6 h-5 w-2/4 ")} />
-									<Skeleton className={cn("ml-6 h-5 w-3/4 ")} />
-									<Skeleton className={cn("ml-6 h-5 w-[90%] ")} />
-									<Skeleton className={cn("ml-6 h-5 w-3/4 ")} />
-									<Skeleton className={cn("ml-6 h-5 w-2/4 ")} />
-									<Skeleton className={cn("ml-6 h-5 w-full ")} />
-									<Skeleton className={cn("ml-6 h-5 w-3/4 ")} />
-									<Skeleton className={cn("ml-6 h-5 w-[90%] ")} />
-								</div>
+								<PostContentSkeleton
+									lines={10}
+									className="mt-6 mb-6 min-h-[250px]"
+								/>
 							) : (
-								<div className="h-full">
-									<Skeleton className="ml-6 mt-4 h-5 w-64 mb-[200px]" />
-								</div>
+								<Skeleton className="ml-6 mt-6 h-5 w-64 mb-[240px]" />
 							))}
 					</div>
 
-					{!dataLoading && editorAnswerId && (
-						<div id={editorAnswerId} className="mt-6" />
+					{editorAnswerId && (
+						<>
+							<Separator className="py-0.5" />
+
+							{isLoading || dataLoading ? (
+								dataLoading ? (
+									<PostContentSkeleton
+										lines={9}
+										className="mt-8 min-h-[250px]"
+									/>
+								) : (
+									<Skeleton className="ml-6 mt-6 h-5 w-64 mb-[240px]" />
+								)
+							) : null}
+
+							{!dataLoading && <div id={editorAnswerId} className="mt-6" />}
+						</>
 					)}
 
 					{showCommandDetail &&
 						(isLoading || dataLoading ? (
-							<Skeleton className="px-1 h-5 w-64" />
+							<Skeleton className="px-1 h-6 w-64 " />
 						) : (
 							<p className="text-sm text-gray-500">
 								Use{" "}
@@ -257,18 +263,18 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 				</div>
 			</div>
 
-			<style jsx>{`
-        .codex-editor__redactor {
-          padding-bottom: 200px !important;
-          min-height: 200px;
-        }
+			<style jsx global>{`
+            .codex-editor__redactor {
+                padding-bottom: 250px !important;
+                min-height: 200px;
+            }
         .codex-editor [data-placeholder-active]:empty:before,
-        .codex-editor [data-placeholder-active][data-empty=true]:before {
-          color: hsl(var(--color-text-primary)) !important;
-          background-color: hsl(var(--background)) !important;
-          opacity: 50%;
-        }
-      `}</style>
+        .codex-editor [data-placeholder-active][data-empty="true"]:before {
+            color: hsl(var(--color-text-primary)) !important;
+            background-color: hsl(var(--background)) !important;
+            opacity: 50%;
+            }
+`}</style>
 		</>
 	);
 };
