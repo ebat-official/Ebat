@@ -8,21 +8,24 @@ import { notFound } from "next/navigation";
 import { generateNanoId } from "@/lib/generateNanoid";
 import isValidSubCategory from "@/utils/isValidSubCategory";
 import isValidCategory from "@/utils/isValidiCategory";
-import { PostDraftType, PostDraftValidator } from "@/lib/validators/post";
+import {
+	PostDraftType,
+	PostDraftValidator,
+	PostValidator,
+} from "@/lib/validators/post";
 import { toast } from "@/hooks/use-toast";
-import { QUESTION_TYPE } from "@/utils/contants";
-import { createDraftPost } from "@/actions/post";
-import { UNAUTHENTICATED_ERROR, UNAUTHORIZED_ERROR } from "@/utils/errors";
+import { createDraftPost, createPost } from "@/actions/post";
 import LoginModal from "@/components/auth/LoginModal";
-import { ContentType } from "@/utils/types";
+import { CategoryType, ContentType, SubCategoryType } from "@/utils/types";
+import { handleError } from "@/utils/errorHandler";
 
-function page() {
+function Page() {
 	const {
 		category: categoryRoute,
 		subCategory: subCategoryRoute,
 		postId: postIdParam,
 	} = useParams();
-	const [sidebarData, setSidebatData] = useState({});
+	const [sidebarData, setSidebarData] = useState({});
 	const subCategory = (
 		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
 	)?.toUpperCase();
@@ -45,25 +48,30 @@ function page() {
 	) {
 		notFound();
 	}
+
 	useEffect(() => {
 		if (editPostId) {
 			setPostId(editPostId);
-			console.log("fetch dataa");
-
+			console.log("fetch data");
 			isLoading(false);
 		} else {
 			const newPostId = generateNanoId();
 			setPostId(newPostId);
-
 			const newRoute = `${currentPath}/${newPostId}`;
 			window.history.pushState({}, "", newRoute);
 		}
 	}, [editPostId]);
 
-	const consolidateData = (postContent: ContentType): PostDraftType => {
+	const consolidateData = (
+		postId: string,
+		category: CategoryType,
+		subCategory: SubCategoryType,
+		postContent: ContentType,
+		sidebarData: Record<string, unknown>,
+	): PostDraftType => {
 		return {
 			id: postId,
-			type: QUESTION_TYPE,
+			type: "QUESTION",
 			category,
 			subCategory,
 			title: postContent?.post?.title,
@@ -74,74 +82,65 @@ function page() {
 
 	const saveHandler = async (postContent: ContentType) => {
 		try {
-			const data = consolidateData(postContent);
-			// Validate client-side data first
+			const data = consolidateData(
+				postId,
+				category,
+				subCategory,
+				postContent,
+				sidebarData,
+			);
 			const result = PostDraftValidator.safeParse(data);
 			if (!result.success) {
 				const firstError = result.error.errors[0];
 				const errorMessage = `${firstError.path.join(".")}: ${firstError.message}`;
-				toast({
-					title: "Validation Error",
-					description: errorMessage,
-					variant: "destructive",
-				});
-				return;
+				throw new Error(`Validation Error: ${errorMessage}`);
 			}
 
-			const postId = await createDraftPost(result.data);
-
+			const savedPostId = await createDraftPost(result.data);
 			toast({
 				title: "Draft Saved",
 				description: "Your draft has been saved successfully",
 				variant: "default",
 			});
-
-			// Optional: Handle post-save navigation or state updates
-			return postId;
+			return savedPostId;
 		} catch (error) {
-			// Handle known error types
-			let title = "Error";
-			let description = "An unexpected error occurred";
-
-			if (error instanceof Error) {
-				// Check for authentication errors
-				if (error.message === UNAUTHENTICATED_ERROR.data.message) {
-					const description = "Please sign in to save your draft";
-					setLoginModalMessage(description);
-					return;
-				}
-				// Check for authorization errors (if implemented)
-				if (error.message === UNAUTHORIZED_ERROR.data.message) {
-					title = "Permission Denied";
-					description = "You don't have permission to perform this action";
-				}
-				// Check for server-side validation error (shouldn't normally hit this)
-				else if (error.message.includes("Draft post data is not valid")) {
-					title = "Invalid Data";
-					description = "Please check your input and try again";
-				}
-				// Check for database errors
-				else if (error.message.includes("Something went wrong while saving")) {
-					title = "Save Failed";
-					description = "Could not save draft. Please try again";
-				}
-				// Fallback to original error message
-				else {
-					description = error.message;
-				}
+			const { shouldShowLogin, message } = handleError(error);
+			if (shouldShowLogin) {
+				setLoginModalMessage(message || "Please sign in to save your draft");
 			}
-
-			toast({
-				title,
-				description,
-				variant: "destructive",
-			});
-
-			// For debugging purposes
-			console.error("Save Draft Error:", error);
 		}
 	};
-	const publishHanlder = (postContent: ContentType) => {};
+
+	const publishHandler = async (postContent: ContentType) => {
+		try {
+			const data = consolidateData(
+				postId,
+				category,
+				subCategory,
+				postContent,
+				sidebarData,
+			);
+			const result = PostValidator.safeParse(data);
+			if (!result.success) {
+				const firstError = result.error.errors[0];
+				const errorMessage = `${firstError.path.join(".")}: ${firstError.message}`;
+				throw new Error(`Validation Error: ${errorMessage}`);
+			}
+
+			const publishedPostId = await createPost(result.data);
+			toast({
+				title: "Post Published",
+				description: "Your post has been published successfully",
+				variant: "default",
+			});
+			return publishedPostId;
+		} catch (error) {
+			const { shouldShowLogin, message } = handleError(error);
+			if (shouldShowLogin) {
+				setLoginModalMessage(message || "Please sign in to publish your post");
+			}
+		}
+	};
 
 	return (
 		<>
@@ -156,7 +155,7 @@ function page() {
 					<EditorQuestion
 						postId={postId}
 						saveHandler={saveHandler}
-						publishHanlder={publishHanlder}
+						publishHandler={publishHandler}
 						dataLoading={loading}
 					/>
 				</RightPanelLayout.MainPanel>
@@ -164,7 +163,7 @@ function page() {
 					<QuestionSidebar
 						postId={postId}
 						subCategory={subCategory}
-						getSidebarData={setSidebatData}
+						getSidebarData={setSidebarData}
 					/>
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
@@ -172,4 +171,4 @@ function page() {
 	);
 }
 
-export default page;
+export default Page;

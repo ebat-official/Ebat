@@ -1,5 +1,5 @@
 import { OutputData } from "@editorjs/editorjs";
-
+import { PostCategory,SubCategory } from "@prisma/client";
 export interface EditorContent extends OutputData {
     title?: string;
 }
@@ -10,3 +10,7 @@ export interface ContentType  {
 }
 
 export type PrismaJson = ReturnType<typeof JSON.parse> | null | undefined;
+
+
+export type CategoryType = keyof typeof PostCategory;
+export type SubCategoryType = keyof typeof SubCategory;

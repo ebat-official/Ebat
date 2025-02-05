@@ -19,7 +19,7 @@ interface EditorQuestionProps {
 	defaultContent?: ContentType;
 	dataLoading?: boolean;
 	saveHandler: (data: ContentType) => void;
-	publishHanlder: (data: ContentType) => void;
+	publishHandler: (data: ContentType) => void;
 }
 
 function EditorQuestion({
@@ -27,7 +27,7 @@ function EditorQuestion({
 	defaultContent,
 	dataLoading,
 	saveHandler,
-	publishHanlder,
+	publishHandler,
 }: EditorQuestionProps) {
 	const [content, setContent] = useState<ContentType>({
 		post: { blocks: [] },
@@ -78,7 +78,7 @@ function EditorQuestion({
 						</TooltipProvider>
 
 						<Button
-							onClick={() => publishHanlder(content)}
+							onClick={() => publishHandler(content)}
 							className="bg-gradient-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center"
 						>
 							<MdOutlinePublish />

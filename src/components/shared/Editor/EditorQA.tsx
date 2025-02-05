@@ -14,10 +14,6 @@ import { Separator } from "@/components/ui/separator";
 import PostContentSkeleton from "./PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
 
-// Define core editor content types
-
-// Dynamic imports for EditorJS modules
-
 interface EditorProps<T extends z.ZodType<EditorContent>> {
 	onChange: (data: z.infer<T>) => void;
 	answerHandler?: (data: z.infer<T>) => void;
