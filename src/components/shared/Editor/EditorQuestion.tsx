@@ -1,9 +1,8 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Editor, InitialBlocks } from "./EditorQA"; // Assuming EditorQA exports the Editor component
 import { Card, CardContent } from "@/components/ui/card";
 import { OutputData } from "@editorjs/editorjs";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import {
 	Tooltip,

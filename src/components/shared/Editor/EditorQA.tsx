@@ -252,7 +252,7 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 
 					{showCommandDetail &&
 						(isLoading || dataLoading ? (
-							<Skeleton className="px-1 h-6 w-64" />
+							<Skeleton className="px-1 h-6 py-2 w-64" />
 						) : (
 							<p className="text-sm text-gray-500">
 								Use{" "}

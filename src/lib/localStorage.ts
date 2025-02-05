@@ -1,5 +1,5 @@
 export const getLocalStorage = <T>(key: string | undefined): T | undefined => {
-	if (!key) return undefined;
+	if (typeof window === "undefined" || !key) return undefined;
 	try {
 	  const item = window.localStorage.getItem(key);
 	  return item ? JSON.parse(item) : undefined;
@@ -10,7 +10,7 @@ export const getLocalStorage = <T>(key: string | undefined): T | undefined => {
   };
   
   export const setLocalStorage = <T>(key: string | undefined, value: T): void => {
-	if (!key) return;
+	if (typeof window === "undefined" || !key) return;
 	try {
 	  if (value === undefined) {
 		window.localStorage.removeItem(key);
@@ -21,3 +21,4 @@ export const getLocalStorage = <T>(key: string | undefined): T | undefined => {
 	  console.error(`Error writing to localStorage key "${key}":`, error);
 	}
   };
+  
