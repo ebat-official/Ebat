@@ -12,16 +12,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import PostContentSkeleton from "./PostContentSkelton";
+import { ContentType, EditorContent } from "@/utils/types";
 
 // Define core editor content types
-export interface EditorContent extends OutputData {
-	title?: string;
-}
-
-export interface InitialBlocks {
-	post?: EditorContent;
-	answer?: EditorContent;
-}
 
 // Dynamic imports for EditorJS modules
 
@@ -29,7 +22,7 @@ interface EditorProps<T extends z.ZodType<EditorContent>> {
 	onChange: (data: z.infer<T>) => void;
 	answerHandler?: (data: z.infer<T>) => void;
 	editorId?: string;
-	defaultContent?: InitialBlocks;
+	defaultContent?: ContentType;
 	showTitleField?: boolean;
 	showCommandDetail?: boolean;
 	titlePlaceHolder?: string;
@@ -72,7 +65,7 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 			editorId: string,
 			placeholder: string,
 			onChangeHandler: (data: EditorContent) => void,
-			initialBlocks?: EditorContent["blocks"],
+			ContentType?: EditorContent["blocks"],
 		) => {
 			const editorModules = {
 				EditorJS: import("@editorjs/editorjs").then((mod) => mod.default),
@@ -106,7 +99,7 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 					},
 					placeholder,
 					inlineToolbar: true,
-					data: initialBlocks ? { blocks: initialBlocks } : { blocks: [] },
+					data: ContentType ? { blocks: ContentType } : { blocks: [] },
 					tools: {
 						header: HeaderModule,
 						linkTool: {

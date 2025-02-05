@@ -8,12 +8,13 @@ import { notFound } from "next/navigation";
 import { generateNanoId } from "@/lib/generateNanoid";
 import isValidSubCategory from "@/utils/isValidSubCategory";
 import isValidCategory from "@/utils/isValidiCategory";
-import { PostDraftType, PostDraftValidatorUI } from "@/lib/validators/post";
+import { PostDraftType, PostDraftValidator } from "@/lib/validators/post";
 import { toast } from "@/hooks/use-toast";
 import { QUESTION_TYPE } from "@/utils/contants";
-import { CreateDraftPost } from "@/actions/post";
+import { createDraftPost } from "@/actions/post";
 import { UNAUTHENTICATED_ERROR, UNAUTHORIZED_ERROR } from "@/utils/errors";
-import { InitialBlocks as ContentBlocks } from "@/components/shared/Editor/EditorQA";
+import LoginModal from "@/components/auth/LoginModal";
+import { ContentType } from "@/utils/types";
 
 function page() {
 	const {
@@ -34,6 +35,7 @@ function page() {
 	const [loading, isLoading] = useState(!!postIdParam);
 	const [postId, setPostId] = useState<string>("");
 	const currentPath = usePathname();
+	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
 
 	if (
 		!category ||
@@ -58,7 +60,7 @@ function page() {
 		}
 	}, [editPostId]);
 
-	const consolidateData = (postContent: ContentBlocks): PostDraftType => {
+	const consolidateData = (postContent: ContentType): PostDraftType => {
 		return {
 			id: postId,
 			type: QUESTION_TYPE,
@@ -70,12 +72,11 @@ function page() {
 		};
 	};
 
-	const saveHandler = async (postContent: ContentBlocks) => {
+	const saveHandler = async (postContent: ContentType) => {
 		try {
 			const data = consolidateData(postContent);
-
 			// Validate client-side data first
-			const result = PostDraftValidatorUI.safeParse(data);
+			const result = PostDraftValidator.safeParse(data);
 			if (!result.success) {
 				const firstError = result.error.errors[0];
 				const errorMessage = `${firstError.path.join(".")}: ${firstError.message}`;
@@ -87,7 +88,7 @@ function page() {
 				return;
 			}
 
-			const postId = await CreateDraftPost(result.data);
+			const postId = await createDraftPost(result.data);
 
 			toast({
 				title: "Draft Saved",
@@ -105,11 +106,12 @@ function page() {
 			if (error instanceof Error) {
 				// Check for authentication errors
 				if (error.message === UNAUTHENTICATED_ERROR.data.message) {
-					title = "Authentication Required";
-					description = "Please sign in to save your draft";
+					const description = "Please sign in to save your draft";
+					setLoginModalMessage(description);
+					return;
 				}
 				// Check for authorization errors (if implemented)
-				else if (error.message === UNAUTHORIZED_ERROR.data.message) {
+				if (error.message === UNAUTHORIZED_ERROR.data.message) {
 					title = "Permission Denied";
 					description = "You don't have permission to perform this action";
 				}
@@ -139,26 +141,34 @@ function page() {
 			console.error("Save Draft Error:", error);
 		}
 	};
-	const publishHanlder = (postContent: ContentBlocks) => {};
+	const publishHanlder = (postContent: ContentType) => {};
 
 	return (
-		<RightPanelLayout className="mt-8 min-h-[75vh]">
-			<RightPanelLayout.MainPanel>
-				<EditorQuestion
-					postId={postId}
-					saveHandler={saveHandler}
-					publishHanlder={publishHanlder}
-					dataLoading={loading}
+		<>
+			{loginModalMessage && (
+				<LoginModal
+					closeHandler={() => setLoginModalMessage("")}
+					message={loginModalMessage}
 				/>
-			</RightPanelLayout.MainPanel>
-			<RightPanelLayout.SidePanel>
-				<QuestionSidebar
-					postId={postId}
-					subCategory={subCategory}
-					getSidebarData={setSidebatData}
-				/>
-			</RightPanelLayout.SidePanel>
-		</RightPanelLayout>
+			)}
+			<RightPanelLayout className="mt-8 min-h-[75vh]">
+				<RightPanelLayout.MainPanel>
+					<EditorQuestion
+						postId={postId}
+						saveHandler={saveHandler}
+						publishHanlder={publishHanlder}
+						dataLoading={loading}
+					/>
+				</RightPanelLayout.MainPanel>
+				<RightPanelLayout.SidePanel>
+					<QuestionSidebar
+						postId={postId}
+						subCategory={subCategory}
+						getSidebarData={setSidebatData}
+					/>
+				</RightPanelLayout.SidePanel>
+			</RightPanelLayout>
+		</>
 	);
 }
 

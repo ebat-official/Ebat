@@ -38,7 +38,7 @@ enum PostType {
 }
 
 enum Difficulty {
-  LOW
+  EASY
   MEDIUM
   HARD
 }

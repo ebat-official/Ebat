@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Editor, InitialBlocks } from "./EditorQA"; // Assuming EditorQA exports the Editor component
+import { Editor } from "./EditorQA"; // Assuming EditorQA exports the Editor component
 import { Card, CardContent } from "@/components/ui/card";
-import { OutputData } from "@editorjs/editorjs";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import {
 	Tooltip,
@@ -13,17 +12,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
-
-export interface EditorContent extends OutputData {
-	title?: string;
-}
+import { ContentType, EditorContent } from "@/utils/types";
 
 interface EditorQuestionProps {
 	postId: string;
-	defaultContent?: InitialBlocks;
+	defaultContent?: ContentType;
 	dataLoading?: boolean;
-	saveHandler: (data: InitialBlocks) => void;
-	publishHanlder: (data: InitialBlocks) => void;
+	saveHandler: (data: ContentType) => void;
+	publishHanlder: (data: ContentType) => void;
 }
 
 function EditorQuestion({
@@ -33,15 +29,15 @@ function EditorQuestion({
 	saveHandler,
 	publishHanlder,
 }: EditorQuestionProps) {
-	const [content, setContent] = useState<InitialBlocks>({
+	const [content, setContent] = useState<ContentType>({
 		post: { blocks: [] },
 		answer: { blocks: [] },
 	});
 
 	const localStorageKey = `editor-${postId}`;
-	const savedData = getLocalStorage<InitialBlocks>(localStorageKey);
+	const savedData = getLocalStorage<ContentType>(localStorageKey);
 
-	const updateContent = (newContent: Partial<InitialBlocks>) => {
+	const updateContent = (newContent: Partial<ContentType>) => {
 		setContent((prev) => {
 			const updated = { ...prev, ...newContent };
 			setLocalStorage(localStorageKey, updated);
