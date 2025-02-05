@@ -24,17 +24,6 @@ export interface InitialBlocks {
 }
 
 // Dynamic imports for EditorJS modules
-const editorModules = {
-	EditorJS: import("@editorjs/editorjs").then((mod) => mod.default),
-	Header: import("@editorjs/header").then((mod) => mod.default),
-	Embed: import("@editorjs/embed").then((mod) => mod.default),
-	Table: import("@editorjs/table").then((mod) => mod.default),
-	List: import("@editorjs/list").then((mod) => mod.default),
-	Code: import("@editorjs/code").then((mod) => mod.default),
-	LinkTool: import("@editorjs/link").then((mod) => mod.default),
-	InlineCode: import("@editorjs/inline-code").then((mod) => mod.default),
-	ImageTool: import("@editorjs/image").then((mod) => mod.default),
-};
 
 interface EditorProps<T extends z.ZodType<EditorContent>> {
 	onChange: (data: z.infer<T>) => void;
@@ -76,9 +65,6 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 
 	useEffect(() => {
 		setIsMounted(typeof window !== "undefined");
-		Promise.all(Object.values(editorModules)).then(() => {
-			console.info("EditorJS modules preloaded");
-		});
 	}, []);
 
 	const initializeEditor = useCallback(
@@ -88,6 +74,18 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 			onChangeHandler: (data: EditorContent) => void,
 			initialBlocks?: EditorContent["blocks"],
 		) => {
+			const editorModules = {
+				EditorJS: import("@editorjs/editorjs").then((mod) => mod.default),
+				Header: import("@editorjs/header").then((mod) => mod.default),
+				Embed: import("@editorjs/embed").then((mod) => mod.default),
+				Table: import("@editorjs/table").then((mod) => mod.default),
+				List: import("@editorjs/list").then((mod) => mod.default),
+				Code: import("@editorjs/code").then((mod) => mod.default),
+				LinkTool: import("@editorjs/link").then((mod) => mod.default),
+				InlineCode: import("@editorjs/inline-code").then((mod) => mod.default),
+				ImageTool: import("@editorjs/image").then((mod) => mod.default),
+			};
+
 			const [
 				EditorJSModule,
 				HeaderModule,
