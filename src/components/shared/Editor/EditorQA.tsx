@@ -196,6 +196,11 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 								<Skeleton className="h-10 w-52" />
 							) : (
 								<TextareaAutosize
+									onChange={async () => {
+										const content = await ref.current?.save();
+										const title = _titleRef.current?.value || "";
+										onChange({ title, blocks: content?.blocks ?? [] });
+									}}
 									ref={_titleRef}
 									defaultValue={defaultContent?.post?.title ?? ""}
 									placeholder={titlePlaceHolder}
