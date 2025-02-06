@@ -20,6 +20,7 @@ import { CategoryType, ContentType, SubCategoryType } from "@/utils/types";
 import { handleError } from "@/utils/handleError";
 import { UNAUTHENTICATED } from "@/utils/contants";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { useServerAction } from "@/hooks/useServerAction";
 
 function Page() {
 	const {
@@ -41,6 +42,10 @@ function Page() {
 	const [postId, setPostId] = useState<string>("");
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
+	const [actionCreateDraft, isCreateDraftActionLoading] =
+		useServerAction(createDraftPost);
+	const [actionCreatePost, isCreatePostActionLoading] =
+		useServerAction(createPost);
 
 	if (
 		!category ||
@@ -54,7 +59,6 @@ function Page() {
 	useEffect(() => {
 		if (editPostId) {
 			setPostId(editPostId);
-			console.log("fetch data");
 			isLoading(false);
 		} else {
 			const newPostId = generateNanoId();
@@ -96,8 +100,7 @@ function Page() {
 				postErrorHandler(result.error);
 				return;
 			}
-
-			const savedPostId = await createDraftPost(result.data);
+			const savedPostId = await actionCreateDraft(result.data);
 			toast({
 				title: "Draft Saved",
 				description: "Your draft has been saved successfully",
@@ -123,7 +126,7 @@ function Page() {
 				throw result.error;
 			}
 
-			const publishedPostId = await createPost(result.data);
+			const publishedPostId = await actionCreatePost(result.data);
 			toast({
 				title: "Post Published",
 				description: "Your post has been published successfully",
@@ -137,7 +140,6 @@ function Page() {
 
 	function postErrorHandler(error: unknown) {
 		const { cause, data } = handleError(error);
-		console.log("myrr", cause, data);
 
 		if (data.message === UNAUTHENTICATED_ERROR.data.message) {
 			setLoginModalMessage("Please sign in to publish your post");
@@ -165,6 +167,8 @@ function Page() {
 						saveHandler={saveHandler}
 						publishHandler={publishHandler}
 						dataLoading={loading}
+						actionDraftLoading={isCreateDraftActionLoading}
+						actionPublishLoading={isCreatePostActionLoading}
 					/>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>

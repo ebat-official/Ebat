@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
 import { ContentType, EditorContent } from "@/utils/types";
+import { Loader2 } from "lucide-react";
 
 interface EditorQuestionProps {
 	postId: string;
@@ -20,6 +21,8 @@ interface EditorQuestionProps {
 	dataLoading?: boolean;
 	saveHandler: (data: ContentType) => void;
 	publishHandler: (data: ContentType) => void;
+	actionDraftLoading?: boolean;
+	actionPublishLoading?: boolean;
 }
 
 function EditorQuestion({
@@ -28,6 +31,8 @@ function EditorQuestion({
 	dataLoading,
 	saveHandler,
 	publishHandler,
+	actionDraftLoading,
+	actionPublishLoading,
 }: EditorQuestionProps) {
 	const [content, setContent] = useState<ContentType>({
 		post: { blocks: [] },
@@ -54,6 +59,8 @@ function EditorQuestion({
 		});
 	}, [defaultContent, savedData]);
 
+	console.log("pranav", actionPublishLoading);
+
 	return (
 		<Card>
 			<CardContent className="flex justify-center h-full  relative">
@@ -66,9 +73,15 @@ function EditorQuestion({
 										variant="outline"
 										className="justify-center items-center flex ga-2"
 										onClick={() => saveHandler(content)}
+										disabled={actionDraftLoading || actionPublishLoading}
 									>
-										<CiSaveDown2 />
-										<span>Save</span>
+										{actionDraftLoading ? (
+											<Loader2 className="animate-spin" />
+										) : (
+											<CiSaveDown2 />
+										)}
+
+										<span className="invisible md:visible">Save</span>
 									</Button>
 								</TooltipTrigger>
 								<TooltipContent>
@@ -78,11 +91,16 @@ function EditorQuestion({
 						</TooltipProvider>
 
 						<Button
+							disabled={actionDraftLoading || actionPublishLoading}
 							onClick={() => publishHandler(content)}
-							className="bg-gradient-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center"
+							className="bg-gradient-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
 						>
-							<MdOutlinePublish />
-							<span>Publish</span>
+							{actionPublishLoading ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								<MdOutlinePublish />
+							)}
+							<span className="hidden md:block">Publish</span>
 						</Button>
 					</div>
 					<Editor
