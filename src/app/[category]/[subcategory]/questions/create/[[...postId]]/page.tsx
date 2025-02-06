@@ -18,9 +18,9 @@ import { createDraftPost, createPost } from "@/actions/post";
 import LoginModal from "@/components/auth/LoginModal";
 import { CategoryType, ContentType, SubCategoryType } from "@/utils/types";
 import { handleError } from "@/utils/handleError";
-import { UNAUTHENTICATED } from "@/utils/contants";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { useServerAction } from "@/hooks/useServerAction";
+import { PostType } from "@prisma/client";
 
 function Page() {
 	const {
@@ -77,7 +77,7 @@ function Page() {
 	): PostDraftType => {
 		return {
 			id: postId,
-			type: "QUESTION",
+			type: PostType.QUESTION,
 			category,
 			subCategory,
 			title: postContent?.post?.title,
@@ -139,15 +139,14 @@ function Page() {
 	};
 
 	function postErrorHandler(error: unknown) {
-		const { cause, data } = handleError(error);
+		const message = handleError(error, PostType.QUESTION);
 
-		if (data.message === UNAUTHENTICATED_ERROR.data.message) {
+		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
 			setLoginModalMessage("Please sign in to publish your post");
 			return;
 		}
 		toast({
-			title: cause || "Error",
-			description: data.message,
+			description: message,
 			variant: "destructive",
 		});
 	}

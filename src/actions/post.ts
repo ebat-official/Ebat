@@ -3,11 +3,9 @@ import { Difficulty, PostStatus, PostType } from '@prisma/client';
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
-import { FailedToPublishPostErr, FailedToSaveDraftErr, UserNotAuthenticatedErr, UserNotAuthorizedErr } from "@/utils/errors";
+import { FailedToEditPostErr, FailedToPublishPostErr, FailedToSaveDraftErr, UserNotAuthenticatedErr, UserNotAuthorizedErr } from "@/utils/errors";
 import { z } from "zod";
 import { PrismaJson } from '@/utils/types';
-
-
 
 // Shared utility functions
 const currentUser = async () => {
@@ -21,26 +19,36 @@ const validateUser = async () => {
   return user;
 };
 
-const checkPostOwnership = async (postId: string, userId: string) => {
-  const existingPost = await prisma.post.findUnique({
+const getPostDetails = async (postId: string) => {
+  return await prisma.post.findUnique({
     where: { id: postId },
-    select: { authorId: true }
+    select: { authorId: true, status: true }
   });
-  
-  if (existingPost && existingPost?.authorId !== userId) throw UserNotAuthorizedErr();
 };
 
+const checkPostOwnership = async (postId: string, userId: string) => {
+  const existingPost = await getPostDetails(postId);
+  
+  if (existingPost && existingPost.authorId !== userId) throw UserNotAuthorizedErr();
+};
+
+const checkPostStatus = async (postId: string, allowedStatus: PostStatus[]) => {
+  const existingPost = await getPostDetails(postId);
+  if (existingPost && !allowedStatus.includes(existingPost.status)) {
+    throw FailedToEditPostErr(`Post cannot be modified because it is in ${existingPost.status} status.`);
+  }
+};
 
 const buildBasePostData = (
   user: { id: string },
   data: z.infer<typeof PostDraftValidator> | z.infer<typeof PostValidator>,
   status: PostStatus
 ) => ({
-  id:data.id,
+  id: data.id,
   authorId: user.id,
   status,
   title: data.title || null,
-  content: data.content as PrismaJson, 
+  content: data.content as PrismaJson,
   type: data.type,
   difficulty: data.difficulty as Difficulty,
   companies: data.companies || [],
@@ -51,14 +59,15 @@ const buildBasePostData = (
 });
 
 // Draft Post Creation
-export async function createDraftPost(
-  data: z.infer<typeof PostDraftValidator>
-) {
+export async function createDraftPost(data: z.infer<typeof PostDraftValidator>) {
   const validation = PostDraftValidator.safeParse(data);
-  if (!validation.success) throw validation.error
+  if (!validation.success) throw validation.error;
 
   const user = await validateUser();
-  await checkPostOwnership(data.id, user.id);
+  if (data.id) {
+    await checkPostOwnership(data.id, user.id);
+    await checkPostStatus(data.id, ["DRAFT"]); // Only allow updates if the post is in DRAFT status
+  }
 
   const post = await prisma.post.upsert({
     where: { id: data.id || undefined },
@@ -73,10 +82,13 @@ export async function createDraftPost(
 // Published Post Creation
 export async function createPost(data: z.infer<typeof PostValidator>) {
   const validation = PostValidator.safeParse(data);
-  if (!validation.success) throw validation.error
+  if (!validation.success) throw validation.error;
 
   const user = await validateUser();
-  if (data.id) await checkPostOwnership(data.id, user.id);
+  if (data.id) {
+    await checkPostOwnership(data.id, user.id);
+    await checkPostStatus(data.id, ["DRAFT"]); // Only allow publishing if the post is in DRAFT status
+  }
 
   try {
     const post = await prisma.post.upsert({

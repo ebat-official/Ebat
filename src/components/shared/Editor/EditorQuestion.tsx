@@ -59,8 +59,6 @@ function EditorQuestion({
 		});
 	}, [defaultContent, savedData]);
 
-	console.log("pranav", actionPublishLoading);
-
 	return (
 		<Card>
 			<CardContent className="flex justify-center h-full  relative">

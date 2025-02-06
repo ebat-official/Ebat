@@ -1,3 +1,4 @@
+
 import {
     INVALID_CREDENTIALS,
     EMAIL_ALREADY_EXISTS,
@@ -86,6 +87,13 @@ import {
     cause: FAILED_TO_PUBLISH_POST,
     data: { message: "Failed to publish post" },
   };
+
+  export const FAILED_TO_EDIT_POST_ERROR = {
+    status: ERROR,
+    cause: "FAILED_TO_EDIT_POST",
+    data: { message: "Failed to edit the post" },
+  }
+  
   
   // ✅ Functions to throw structured errors
   export function UserNotAuthenticatedErr() {
@@ -114,6 +122,9 @@ import {
   
   export function FailedToPublishPostErr() {
     return Object.assign(new Error(FAILED_TO_PUBLISH_POST_ERROR.data.message), FAILED_TO_PUBLISH_POST_ERROR);
+  }
+  export function FailedToEditPostErr(message:string=FAILED_TO_EDIT_POST_ERROR.data.message) {
+    return Object.assign(new Error(message), { ...FAILED_TO_EDIT_POST_ERROR, data: { message } });
   }
   
   export function InvalidUsernamePasswordErr() {
