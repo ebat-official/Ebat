@@ -17,7 +17,9 @@ import { toast } from "@/hooks/use-toast";
 import { createDraftPost, createPost } from "@/actions/post";
 import LoginModal from "@/components/auth/LoginModal";
 import { CategoryType, ContentType, SubCategoryType } from "@/utils/types";
-import { handleError } from "@/utils/errorHandler";
+import { handleError } from "@/utils/handleError";
+import { UNAUTHENTICATED } from "@/utils/contants";
+import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 
 function Page() {
 	const {
@@ -91,9 +93,8 @@ function Page() {
 			);
 			const result = PostDraftValidator.safeParse(data);
 			if (!result.success) {
-				const firstError = result.error.errors[0];
-				const errorMessage = `${firstError.path.join(".")}: ${firstError.message}`;
-				throw new Error(`Validation Error: ${errorMessage}`);
+				postErrorHandler(result.error);
+				return;
 			}
 
 			const savedPostId = await createDraftPost(result.data);
@@ -104,10 +105,7 @@ function Page() {
 			});
 			return savedPostId;
 		} catch (error) {
-			const { shouldShowLogin, message } = handleError(error);
-			if (shouldShowLogin) {
-				setLoginModalMessage(message || "Please sign in to save your draft");
-			}
+			postErrorHandler(error);
 		}
 	};
 
@@ -122,9 +120,7 @@ function Page() {
 			);
 			const result = PostValidator.safeParse(data);
 			if (!result.success) {
-				const firstError = result.error.errors[0];
-				const errorMessage = `${firstError.path.join(".")}: ${firstError.message}`;
-				throw new Error(`Validation Error: ${errorMessage}`);
+				throw result.error;
 			}
 
 			const publishedPostId = await createPost(result.data);
@@ -135,12 +131,24 @@ function Page() {
 			});
 			return publishedPostId;
 		} catch (error) {
-			const { shouldShowLogin, message } = handleError(error);
-			if (shouldShowLogin) {
-				setLoginModalMessage(message || "Please sign in to publish your post");
-			}
+			postErrorHandler(error);
 		}
 	};
+
+	function postErrorHandler(error: unknown) {
+		const { cause, data } = handleError(error);
+		console.log("myrr", cause, data);
+
+		if (data.message === UNAUTHENTICATED_ERROR.data.message) {
+			setLoginModalMessage("Please sign in to publish your post");
+			return;
+		}
+		toast({
+			title: cause || "Error",
+			description: data.message,
+			variant: "destructive",
+		});
+	}
 
 	return (
 		<>

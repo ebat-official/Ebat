@@ -3,7 +3,7 @@ import { Difficulty, PostStatus, PostType } from '@prisma/client';
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
-import { UserNotAuthenticatedErr, UserNotAuthorizedErr } from "@/utils/errors";
+import { FailedToPublishPostErr, FailedToSaveDraftErr, UserNotAuthenticatedErr, UserNotAuthorizedErr } from "@/utils/errors";
 import { z } from "zod";
 import { PrismaJson } from '@/utils/types';
 
@@ -55,7 +55,7 @@ export async function createDraftPost(
   data: z.infer<typeof PostDraftValidator>
 ) {
   const validation = PostDraftValidator.safeParse(data);
-  if (!validation.success) throw new Error("Invalid draft post data");
+  if (!validation.success) throw validation.error
 
   const user = await validateUser();
   await checkPostOwnership(data.id, user.id);
@@ -66,14 +66,14 @@ export async function createDraftPost(
     update: buildBasePostData(user, data, "DRAFT"),
   });
 
-  if (!post) throw new Error("Failed to save draft");
+  if (!post) throw FailedToSaveDraftErr();
   return post.id;
 }
 
 // Published Post Creation
 export async function createPost(data: z.infer<typeof PostValidator>) {
   const validation = PostValidator.safeParse(data);
-  if (!validation.success) throw new Error("Invalid post data");
+  if (!validation.success) throw validation.error
 
   const user = await validateUser();
   if (data.id) await checkPostOwnership(data.id, user.id);
@@ -99,6 +99,6 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 
     return post.id;
   } catch (error) {
-    throw new Error("Failed to publish post");
+    throw FailedToPublishPostErr();
   }
 }
