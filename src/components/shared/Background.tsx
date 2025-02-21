@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 
 type BackgroundProps = {
-	shadow: boolean;
+	shadow?: boolean;
 };
 
 const Background: FC<BackgroundProps> = ({ shadow = true }) => {

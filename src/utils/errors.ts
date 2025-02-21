@@ -93,6 +93,11 @@ import {
     cause: "FAILED_TO_EDIT_POST",
     data: { message: "Failed to edit the post" },
   }
+  export const POST_NOT_EXIST_ERROR = {
+    status: ERROR,
+    cause: "FAILED_TO_EDIT_POST",
+    data: { message: "Post not exists" },
+  }
   
   
   // ✅ Functions to throw structured errors
