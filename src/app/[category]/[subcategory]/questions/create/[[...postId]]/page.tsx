@@ -129,7 +129,7 @@ function Page() {
 			const publishedPostId = await actionCreatePost(result.data);
 			toast({
 				title: "Post Published",
-				description: "Your post has been published successfully",
+				description: "Your post has been published and sent for approval",
 				variant: "default",
 			});
 			return publishedPostId;

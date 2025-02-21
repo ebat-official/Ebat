@@ -54,7 +54,7 @@ enum PostStatus {
   PUBLISHED
 }
 
-enum PostEditStatus {
+enum PostApprovalStatus {
   PENDING
   APPROVED
   REJECTED
@@ -183,6 +183,8 @@ model Post {
   Bookmark           Bookmark[]
   Report             Report[]
   collaborators      User[]             @relation("PostCollaborators")
+  approvalStatus     PostApprovalStatus @default(PENDING)
+  approvalLogs       Json? // Array of approval/rejection logs
 }
 
 model PostEdit {
@@ -190,8 +192,8 @@ model PostEdit {
   postId             String         
   authorId           String         @db.Uuid
   content            Json // Suggested new content
-  status             PostEditStatus @default(PENDING)
-  approvalLogs       Json // Array of approval/rejection logs
+  approvalStatus             PostApprovalStatus @default(PENDING)
+  approvalLogs       Json? // Array of approval/rejection logs
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
   title              String?
