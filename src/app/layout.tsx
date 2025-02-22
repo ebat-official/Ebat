@@ -9,6 +9,7 @@ import { SidebarProvider } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import SidePanelLayout from "@/components/sidebar/panelLayout";
 import { SessionProvider } from "next-auth/react";
+import QueryProvider from "@/providers/QueryProvider";
 const inter = Inter({
 	variable: "--font-inter",
 	subsets: ["latin"],
@@ -43,12 +44,14 @@ export default function RootLayout({
 			>
 				<SessionProvider>
 					<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-						<SidebarProvider>
-							<SidePanelLayout>{children}</SidePanelLayout>
-							<Background />
-							<Toaster />
-							<Sonner />
-						</SidebarProvider>
+						<QueryProvider>
+							<SidebarProvider>
+								<SidePanelLayout>{children}</SidePanelLayout>
+								<Background />
+								<Toaster />
+								<Sonner />
+							</SidebarProvider>
+						</QueryProvider>
 					</ThemeProvider>
 				</SessionProvider>
 			</body>

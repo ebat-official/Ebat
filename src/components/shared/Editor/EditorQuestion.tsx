@@ -52,7 +52,7 @@ function EditorQuestion({
 
 	// Initialize state from defaultContent or localStorage
 	useEffect(() => {
-		const initialData = defaultContent || savedData || {};
+		const initialData = savedData || defaultContent || {};
 		setContent({
 			post: initialData.post || { blocks: [] },
 			answer: initialData.answer || { blocks: [] },
@@ -107,7 +107,7 @@ function EditorQuestion({
 						onChange={(data: EditorContent) => updateContent({ post: data })}
 						titlePlaceHolder="Question"
 						contentPlaceHolder="Add more info to clarify (optional)..."
-						defaultContent={defaultContent || savedData}
+						defaultContent={savedData || defaultContent}
 						dataLoading={dataLoading}
 						answerHandler={(data: EditorContent) =>
 							updateContent({ answer: data })

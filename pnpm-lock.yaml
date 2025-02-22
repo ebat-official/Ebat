@@ -102,6 +102,9 @@ dependencies:
   '@radix-ui/react-tooltip':
     specifier: ^1.1.6
     version: 1.1.6(@types/react-dom@19.0.3)(@types/react@19.0.7)(react-dom@19.0.0)(react@19.0.0)
+  '@tanstack/react-query':
+    specifier: ^5.66.9
+    version: 5.66.9(react@19.0.0)
   axios:
     specifier: ^1.7.9
     version: 1.7.9
@@ -3121,6 +3124,19 @@ packages:
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
     dependencies:
       tslib: 2.8.1
+    dev: false
+
+  /@tanstack/query-core@5.66.4:
+    resolution: {integrity: sha512-skM/gzNX4shPkqmdTCSoHtJAPMTtmIJNS0hE+xwTTUVYwezArCT34NMermABmBVUg5Ls5aiUXEDXfqwR1oVkcA==}
+    dev: false
+
+  /@tanstack/react-query@5.66.9(react@19.0.0):
+    resolution: {integrity: sha512-NRI02PHJsP5y2gAuWKP+awamTIBFBSKMnO6UVzi03GTclmHHHInH5UzVgzi5tpu4+FmGfsdT7Umqegobtsp23A==}
+    peerDependencies:
+      react: ^18 || ^19
+    dependencies:
+      '@tanstack/query-core': 5.66.4
+      react: 19.0.0
     dev: false
 
   /@types/bcryptjs@2.4.6:

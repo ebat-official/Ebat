@@ -98,6 +98,21 @@ import {
     cause: "FAILED_TO_EDIT_POST",
     data: { message: "Post not exists" },
   }
+  export const ID_NOT_EXIST_ERROR = {
+    status: ERROR,
+    cause: "FAILED_TO_EDIT_POST",
+    data: { message: "Post Id is required" },
+  }
+  export const POST_NOT_PUBLISHED_ERROR = {
+    status: ERROR,
+    cause: "FAILED_TO_FETCH_POST",
+    data: { message: "This post is not availble yet" },
+  }
+  export const PUBLISHED_POST_EDIT_ERROR = {
+    status: ERROR,
+    cause: "CANNOT_EDIT_PUBLISHED_POST",
+    data: { message: "You cannot edit a published post here" },
+  }
   
   
   // ✅ Functions to throw structured errors

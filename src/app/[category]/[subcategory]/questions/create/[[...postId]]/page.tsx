@@ -1,6 +1,6 @@
 "use client";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import EditorQuestion from "@/components/shared/Editor/EditorQuestion";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 import { useParams, usePathname } from "next/navigation";
@@ -18,9 +18,10 @@ import { createDraftPost, createPost } from "@/actions/post";
 import LoginModal from "@/components/auth/LoginModal";
 import { CategoryType, ContentType, SubCategoryType } from "@/utils/types";
 import { handleError } from "@/utils/handleError";
-import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { useServerAction } from "@/hooks/useServerAction";
 import { PostType } from "@prisma/client";
+import { usePostDraft } from "@/hooks/query/usePostDraft";
 
 function Page() {
 	const {
@@ -35,13 +36,11 @@ function Page() {
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
 	)?.toUpperCase();
-	const editPostId = (
-		Array.isArray(postIdParam) ? postIdParam[0] : postIdParam
-	)?.toUpperCase();
-	const [loading, isLoading] = useState(!!postIdParam);
+	const editPostId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
 	const [postId, setPostId] = useState<string>("");
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
+	const isEditMode = useRef<boolean>(!!editPostId);
 	const [actionCreateDraft, isCreateDraftActionLoading] =
 		useServerAction(createDraftPost);
 	const [actionCreatePost, isCreatePostActionLoading] =
@@ -56,17 +55,45 @@ function Page() {
 		notFound();
 	}
 
+	const {
+		data: postData,
+		isLoading,
+		error: postFetchError,
+	} = usePostDraft(editPostId!, {
+		enabled: isEditMode.current,
+		retry: false,
+	});
+
 	useEffect(() => {
 		if (editPostId) {
 			setPostId(editPostId);
-			isLoading(false);
 		} else {
 			const newPostId = generateNanoId();
 			setPostId(newPostId);
 			const newRoute = `${currentPath}/${newPostId}`;
 			window.history.pushState({}, "", newRoute);
 		}
-	}, [editPostId]);
+	}, []);
+
+	useEffect(() => {
+		if (!postFetchError) return;
+		const message = handleError(postFetchError, PostType.QUESTION);
+
+		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
+			setLoginModalMessage("Please sign in to edit your post");
+			return;
+		}
+		if (message && message === POST_NOT_EXIST_ERROR.data.message) {
+			//user might reloaded without saving
+			return;
+		}
+
+		toast({
+			variant: "destructive",
+			title: "Error",
+			description: message,
+		});
+	}, [postFetchError]);
 
 	const consolidateData = (
 		postId: string,
@@ -97,7 +124,7 @@ function Page() {
 			);
 			const result = PostDraftValidator.safeParse(data);
 			if (!result.success) {
-				postErrorHandler(result.error);
+				postMutationErrorHandler(result.error);
 				return;
 			}
 			const savedPostId = await actionCreateDraft(result.data);
@@ -108,7 +135,7 @@ function Page() {
 			});
 			return savedPostId;
 		} catch (error) {
-			postErrorHandler(error);
+			postMutationErrorHandler(error);
 		}
 	};
 
@@ -134,11 +161,11 @@ function Page() {
 			});
 			return publishedPostId;
 		} catch (error) {
-			postErrorHandler(error);
+			postMutationErrorHandler(error);
 		}
 	};
 
-	function postErrorHandler(error: unknown) {
+	function postMutationErrorHandler(error: unknown) {
 		const message = handleError(error, PostType.QUESTION);
 
 		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
@@ -165,9 +192,10 @@ function Page() {
 						postId={postId}
 						saveHandler={saveHandler}
 						publishHandler={publishHandler}
-						dataLoading={loading}
+						dataLoading={isLoading}
 						actionDraftLoading={isCreateDraftActionLoading}
 						actionPublishLoading={isCreatePostActionLoading}
+						defaultContent={postData?.content}
 					/>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>
@@ -175,6 +203,7 @@ function Page() {
 						postId={postId}
 						subCategory={subCategory}
 						getSidebarData={setSidebarData}
+						// defaultContent={postData?.content}
 					/>
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
