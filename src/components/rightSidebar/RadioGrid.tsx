@@ -14,6 +14,7 @@ interface RadioGridProps {
 	getSelectedOption: (selected: string) => void;
 	selectedOption?: string | undefined; // New prop for selected option
 	className?: string;
+	disabled?: boolean;
 }
 
 const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
@@ -24,6 +25,7 @@ const RadioGrid: React.FC<RadioGridProps> = ({
 	getSelectedOption,
 	selectedOption, // Prop for the selected option
 	className,
+	disabled,
 }) => {
 	const [options] = useState<InternalOption[]>(() =>
 		normalizeOptions(initialOptions),
@@ -45,6 +47,7 @@ const RadioGrid: React.FC<RadioGridProps> = ({
 			value={selected}
 			onValueChange={handleRadioChange}
 			className={cn("flex justify-around", className)}
+			disabled={disabled}
 		>
 			{options.map((option) => (
 				<div

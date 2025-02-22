@@ -21,13 +21,7 @@ import { convertFromMinutes, convertToMinutes } from "@/utils/converToMinutes";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
-
-type ConsolidatedData = {
-	companies: string[];
-	topics: string[];
-	difficulty: string;
-	duration: number;
-};
+import { QuestionSidebarData } from "@/utils/types";
 
 export type Duration = {
 	days: string;
@@ -37,9 +31,10 @@ export type Duration = {
 
 interface QuestionSidebarProps {
 	subCategory: SubCategory;
-	getSidebarData: (args: ConsolidatedData) => void;
+	getSidebarData: (args: QuestionSidebarData) => void;
 	postId: string;
-	defaultContent?: ConsolidatedData | undefined;
+	defaultContent?: QuestionSidebarData | undefined;
+	dataLoading?: boolean;
 }
 
 const INITIAL_DURATION: Duration = { days: "0", minutes: "5", hours: "0" };
@@ -49,6 +44,7 @@ function QuestionSidebar({
 	getSidebarData,
 	postId,
 	defaultContent,
+	dataLoading,
 }: QuestionSidebarProps) {
 	const { companies, searchCompanies } = useCompanies();
 	const { topics, searchTopics } = useTopics(subCategory);
@@ -58,54 +54,70 @@ function QuestionSidebar({
 	);
 	const [selectedTopics, setSelectedTopics] = useState<InternalOption[]>([]);
 	const [difficulty, setDifficulty] = useState("");
-	const [duration, setDuration] = useState(INITIAL_DURATION);
+	const [completionDuration, setCompletionDuration] =
+		useState(INITIAL_DURATION);
 
 	useEffect(() => {
 		if (!postId) return;
 		const data = consolidateData();
 		getSidebarData(data);
 		setLocalStorage(`sidebar-${postId}`, data);
-	}, [selectedCompanies, selectedTopics, difficulty, duration]);
+	}, [selectedCompanies, selectedTopics, difficulty, completionDuration]);
 
 	useEffect(() => {
-		if (!postId) return;
+		if (!postId || dataLoading) return;
 
-		const savedData = getLocalStorage<ConsolidatedData>(`sidebar-${postId}`);
+		const savedData = getLocalStorage<QuestionSidebarData>(`sidebar-${postId}`);
 
-		if (defaultContent) {
-			initializeState(defaultContent);
-		} else if (savedData) {
+		if (savedData) {
 			initializeState(savedData);
+		} else if (defaultContent) {
+			initializeState(defaultContent);
 		}
-	}, [postId, defaultContent]);
+	}, [postId, dataLoading]);
 
-	function initializeState(initialData: ConsolidatedData) {
+	function initializeState(initialData: QuestionSidebarData) {
 		if (!initialData) return;
 
 		// Initialize Companies
 		setSelectedCompanies(
 			companies
-				.filter((c) => initialData.companies.includes(c.label))
+				.filter((c) => initialData?.companies?.includes(c.label))
 				.map((c) => ({ ...c, checked: true })),
 		);
 
 		// Initialize Topics
-		setSelectedTopics(
-			initialData.topics.map((t) => ({ label: t, checked: true })),
-		);
+		if (initialData.topics) {
+			setSelectedTopics(
+				initialData.topics.map((t) => ({ label: t, checked: true })),
+			);
+		}
 
-		if (initialData.duration)
-			setDuration(convertFromMinutes(initialData.duration));
+		if (initialData.completionDuration)
+			setCompletionDuration(convertFromMinutes(initialData.completionDuration));
 		if (initialData.difficulty) setDifficulty(initialData.difficulty);
 	}
 
-	function consolidateData(): ConsolidatedData {
-		return {
-			companies: selectedCompanies.map((opt) => opt.label),
-			topics: selectedTopics.map((opt) => opt.label),
-			difficulty: difficulty.toUpperCase(),
-			duration: convertToMinutes(duration),
-		};
+	function consolidateData(): QuestionSidebarData {
+		const data: QuestionSidebarData = {};
+
+		if (selectedCompanies.length > 0) {
+			data.companies = selectedCompanies.map((opt) => opt.label);
+		}
+
+		if (selectedTopics.length > 0) {
+			data.topics = selectedTopics.map((opt) => opt.label);
+		}
+
+		if (difficulty) {
+			data.difficulty = difficulty.toUpperCase();
+		}
+
+		if (completionDuration) {
+			data.completionDuration = convertToMinutes(completionDuration);
+		}
+
+		return data;
 	}
 
 	return (
@@ -128,6 +140,7 @@ function QuestionSidebar({
 								selectedOption={difficulty}
 								options={["EASY", "MEDIUM", "HARD"]}
 								getSelectedOption={setDifficulty}
+								disabled={dataLoading}
 							/>
 						</AccordionContent>
 					</AccordionItem>
@@ -145,6 +158,7 @@ function QuestionSidebar({
 								itemOffset={15}
 								getSelectedOptons={setSelectedCompanies}
 								searchHandler={searchCompanies}
+								disabled={dataLoading}
 							/>
 						</AccordionContent>
 					</AccordionItem>
@@ -162,6 +176,7 @@ function QuestionSidebar({
 								itemOffset={21}
 								getSelectedOptons={setSelectedTopics}
 								searchHandler={searchTopics}
+								disabled={dataLoading}
 							/>
 						</AccordionContent>
 					</AccordionItem>
@@ -173,7 +188,11 @@ function QuestionSidebar({
 							/>
 						</AccordionTrigger>
 						<AccordionContent>
-							<DurationPicker duration={duration} onChange={setDuration} />
+							<DurationPicker
+								duration={completionDuration}
+								onChange={setCompletionDuration}
+								disabled={dataLoading}
+							/>
 						</AccordionContent>
 					</AccordionItem>
 				</Accordion>

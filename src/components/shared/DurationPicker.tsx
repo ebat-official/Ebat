@@ -22,11 +22,13 @@ interface DurationPickerProps {
 		hours: string;
 		minutes: string;
 	}) => void;
+	disabled?: boolean;
 }
 
 const DurationPicker: React.FC<DurationPickerProps> = ({
 	duration = { days: "0", hours: "0", minutes: "0" },
 	onChange,
+	disabled,
 }) => {
 	const [localDuration, setLocalDuration] = useState(duration);
 
@@ -49,6 +51,7 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
 					<Select
 						value={localDuration.days}
 						onValueChange={(val) => handleChange(val, "days")}
+						disabled={disabled}
 					>
 						<SelectTrigger className="gap-2">
 							<SelectValue>{localDuration.days}</SelectValue>
@@ -71,6 +74,7 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
 					<Select
 						value={localDuration.hours}
 						onValueChange={(val) => handleChange(val, "hours")}
+						disabled={disabled}
 					>
 						<SelectTrigger className="gap-2">
 							<SelectValue>{localDuration.hours}</SelectValue>
@@ -93,6 +97,7 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
 					<Select
 						value={localDuration.minutes}
 						onValueChange={(val) => handleChange(val, "minutes")}
+						disabled={disabled}
 					>
 						<SelectTrigger className="gap-2">
 							<SelectValue>{localDuration.minutes}</SelectValue>

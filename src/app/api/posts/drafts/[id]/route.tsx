@@ -25,6 +25,10 @@ export async function getPostById(postId: string) {
 			authorId: true,
 			createdAt: true,
 			updatedAt: true,
+			difficulty: true,
+			companies: true,
+			completionDuration: true,
+			topics: true,
 		},
 	});
 }

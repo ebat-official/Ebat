@@ -16,11 +16,16 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { createDraftPost, createPost } from "@/actions/post";
 import LoginModal from "@/components/auth/LoginModal";
-import { CategoryType, ContentType, SubCategoryType } from "@/utils/types";
+import {
+	CategoryType,
+	ContentType,
+	QuestionSidebarData,
+	SubCategoryType,
+} from "@/utils/types";
 import { handleError } from "@/utils/handleError";
 import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { useServerAction } from "@/hooks/useServerAction";
-import { PostType } from "@prisma/client";
+import { Post, PostType } from "@prisma/client";
 import { usePostDraft } from "@/hooks/query/usePostDraft";
 
 function Page() {
@@ -110,6 +115,18 @@ function Page() {
 			title: postContent?.post?.title,
 			content: postContent,
 			...sidebarData,
+		};
+	};
+
+	const formatSidebarDefaultData = (
+		post: Post | undefined,
+	): QuestionSidebarData | undefined => {
+		if (!post) return;
+		return {
+			companies: post.companies || [],
+			topics: post.topics || [],
+			difficulty: post.difficulty || "",
+			completionDuration: post.completionDuration || 0,
 		};
 	};
 
@@ -203,7 +220,8 @@ function Page() {
 						postId={postId}
 						subCategory={subCategory}
 						getSidebarData={setSidebarData}
-						// defaultContent={postData?.content}
+						defaultContent={formatSidebarDefaultData(postData)}
+						dataLoading={isLoading}
 					/>
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>

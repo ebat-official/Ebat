@@ -14,3 +14,10 @@ export type PrismaJson = ReturnType<typeof JSON.parse> | null | undefined;
 
 export type CategoryType = keyof typeof PostCategory;
 export type SubCategoryType = keyof typeof SubCategory;
+
+export type QuestionSidebarData = {
+	companies?: string[];
+	topics?: string[];
+	difficulty?: string;
+	completionDuration?: number;
+};
