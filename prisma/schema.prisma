@@ -79,6 +79,7 @@ model User {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   karmaPoints      Int                @default(0)
+  coins            Int                @default(0)
   userProfile      UserProfile?       @relation("UserToProfile")
   lastLoginAt      DateTime?
   Post             Post[]
@@ -173,7 +174,7 @@ model Post {
   difficulty         Difficulty?
   companies          String[]           @default([])
   completionDuration Int?
-  karmaPoints        Int?
+  coins              Int?               @default(0)
   topics             String[]           @default([])
   completionStatus   CompletionStatus[]
   category           PostCategory

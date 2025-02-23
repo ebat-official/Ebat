@@ -48,6 +48,67 @@ const checkPostLiveStatus = async (postId: string) => {
   }
 };
 
+const getCompletionDuration = (data: z.infer<typeof PostValidator>) => {
+  if (data.completionDuration) {
+    return data.completionDuration;
+  }
+
+  switch (data.type) {
+    case PostType.QUESTION:
+      switch (data.difficulty) {
+        case Difficulty.EASY:
+          return 1;
+        case Difficulty.MEDIUM:
+          return 3;
+        case Difficulty.HARD:
+          return 5;
+        default:
+          return null;
+      }
+    case PostType.ARTICLE:
+      switch (data.difficulty) {
+        case Difficulty.EASY:
+          return 10;
+        case Difficulty.MEDIUM:
+          return 20;
+        case Difficulty.HARD:
+          return 45;
+        default:
+          return null;
+      }
+    default:
+      return null;
+  }
+};
+
+const getCoins = (data: z.infer<typeof PostValidator>) => {
+  switch (data.type) {
+    case PostType.QUESTION:
+      switch (data.difficulty) {
+        case Difficulty.EASY:
+          return 1;
+        case Difficulty.MEDIUM:
+          return 3;
+        case Difficulty.HARD:
+          return 5;
+        default:
+          return 0;
+      }
+    case PostType.ARTICLE:
+      switch (data.difficulty) {
+        case Difficulty.EASY:
+          return 5;
+        case Difficulty.MEDIUM:
+          return 10;
+        case Difficulty.HARD:
+          return 20;
+        default:
+          return 0;
+      }
+    default:
+      return 0;
+  }
+};
 const buildBasePostData = (
   user: { id: string },
   data: z.infer<typeof PostDraftValidator> | z.infer<typeof PostValidator>,
@@ -107,7 +168,8 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
   const postData={
     ...buildBasePostData(user, data, "PUBLISHED"),
     title: data.title, // Required in published post
-    completionDuration: data.completionDuration,
+    completionDuration: getCompletionDuration(data),
+    coins: getCoins(data),
     approvalStatus: PostApprovalStatus.PENDING,
     approvalLogs: []
   }
