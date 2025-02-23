@@ -9,6 +9,7 @@ import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import "./Editor.css";
 
 const editorModules = {
 	EditorJS: import("@editorjs/editorjs").then((mod) => mod.default),

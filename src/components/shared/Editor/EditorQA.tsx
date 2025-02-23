@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import PostContentSkeleton from "./PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
+import "./Editor.css";
 
 interface EditorProps<T extends z.ZodType<EditorContent>> {
 	onChange: (data: z.infer<T>) => void;
@@ -259,8 +260,8 @@ export const Editor = <T extends z.ZodType<EditorContent>>({
 
 			<style jsx global>{`
             .codex-editor__redactor {
-                padding-bottom: 250px !important;
-                min-height: 200px;
+                padding-bottom: 50px !important;
+                min-height: 250px !important;
             }
         .codex-editor [data-placeholder-active]:empty:before,
         .codex-editor [data-placeholder-active][data-empty="true"]:before {
