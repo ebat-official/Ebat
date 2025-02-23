@@ -210,19 +210,6 @@ export const Editor = <T extends z.ZodType>({
 						))}
 				</div>
 			</div>
-
-			<style jsx>{`
-        .codex-editor__redactor {
-          padding-bottom: 200px !important;
-          min-height: 200px;
-        }
-        .codex-editor [data-placeholder-active]:empty:before,
-        .codex-editor [data-placeholder-active][data-empty=true]:before {
-          color: hsl(var(--color-text-primary)) !important;
-          background-color: hsl(var(--background)) !important;
-          opacity: 50%;
-        }
-      `}</style>
 		</>
 	);
 };
