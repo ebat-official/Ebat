@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Source_Code_Pro, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
-import Background from "@/components/shared/Background";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { SidebarProvider } from "@/context/SidebarContext";
-import { Sidebar } from "@/components/sidebar/Sidebar";
-import SidePanelLayout from "@/components/sidebar/panelLayout";
 import { SessionProvider } from "next-auth/react";
 import QueryProvider from "@/providers/QueryProvider";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 const inter = Inter({
 	variable: "--font-inter",
 	subsets: ["latin"],
@@ -44,15 +40,10 @@ export default function RootLayout({
 			>
 				<SessionProvider>
 					<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-						<QueryProvider>
-							<SidebarProvider>
-								<SidePanelLayout>{children}</SidePanelLayout>
-								<Background />
-								<Toaster />
-								<Sonner />
-							</SidebarProvider>
-						</QueryProvider>
+						<QueryProvider>{children}</QueryProvider>
 					</ThemeProvider>
+					<Toaster />
+					<Sonner />
 				</SessionProvider>
 			</body>
 		</html>

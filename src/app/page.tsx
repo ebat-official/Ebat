@@ -1,9 +1,6 @@
 import React, { FC } from "react";
+import { redirect } from "next/navigation";
 
-interface pageProps {}
-
-const page: FC<pageProps> = ({}) => {
-  return <div className="text-white">page</div>;
-};
-
-export default page;
+export default function Page() {
+	redirect("/frontend");
+}
