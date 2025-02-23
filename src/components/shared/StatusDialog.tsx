@@ -79,10 +79,10 @@ const StatusDialog: React.FC<StatusDialogProps> & StatusDialogSubComponents = ({
 };
 
 StatusDialog.Title = ({ children }) => (
-	<h2 className="mt-4 text-lg font-semibold text-center">{children}</h2>
+	<h2 className="mt-4 text-lg font-bold text-center">{children}</h2>
 );
 StatusDialog.Content = ({ children }) => (
-	<p className="text-center text-gray-300">{children}</p>
+	<p className="text-center text-gray-300 font-medium">{children}</p>
 );
 StatusDialog.Footer = ({ children }) => (
 	<div className="flex justify-center mt-4">{children}</div>
