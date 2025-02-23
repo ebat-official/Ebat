@@ -1,4 +1,5 @@
 
+
 import {
     INVALID_CREDENTIALS,
     EMAIL_ALREADY_EXISTS,
@@ -12,7 +13,9 @@ import {
     FAILED_TO_SAVE_DRAFT,
     FAILED_TO_PUBLISH_POST,
     SOMETHING_WENT_WRONG,
-    ERROR
+    ERROR,
+    FAILED_TO_EDIT_POST,
+    CANNOT_EDIT_PUBLISHED_POST
   } from "@/utils/contants";
   
   // Define errors with more user-friendly cause names
@@ -90,27 +93,27 @@ import {
 
   export const FAILED_TO_EDIT_POST_ERROR = {
     status: ERROR,
-    cause: "FAILED_TO_EDIT_POST",
+    cause: FAILED_TO_EDIT_POST,
     data: { message: "Failed to edit the post" },
   }
   export const POST_NOT_EXIST_ERROR = {
     status: ERROR,
-    cause: "FAILED_TO_EDIT_POST",
+    cause: FAILED_TO_EDIT_POST,
     data: { message: "Post not exists" },
   }
   export const ID_NOT_EXIST_ERROR = {
     status: ERROR,
-    cause: "FAILED_TO_EDIT_POST",
+    cause: FAILED_TO_EDIT_POST,
     data: { message: "Post Id is required" },
   }
   export const POST_NOT_PUBLISHED_ERROR = {
     status: ERROR,
-    cause: "FAILED_TO_FETCH_POST",
+    cause: FAILED_TO_EDIT_POST,
     data: { message: "This post is not availble yet" },
   }
   export const PUBLISHED_POST_EDIT_ERROR = {
     status: ERROR,
-    cause: "CANNOT_EDIT_PUBLISHED_POST",
+    cause: FAILED_TO_EDIT_POST,
     data: { message: "You cannot edit a published post here" },
   }
   

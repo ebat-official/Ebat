@@ -1,5 +1,6 @@
 import { ZodError } from "zod";
 import { PostType } from "@prisma/client";
+import { CustomErrorType } from "./types";
 
 
 export const sanitizeErrorMessage = (message: string, postType?: PostType): string => {
@@ -29,6 +30,10 @@ export const handleError = (error: unknown, postType: PostType): string => {
     }
 
     return error.message;
+  }
+  const customError = error as CustomErrorType;
+  if(customError?.data?.message){
+    return customError.data.message;
   }
 
   return "Unknown error";

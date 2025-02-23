@@ -1,4 +1,5 @@
 import { UNKNOWN_ERROR } from "@/utils/contants";
+import { ID_NOT_EXIST_ERROR } from "@/utils/errors";
 import { ContentType } from "@/utils/types";
 import { Post } from "@prisma/client";
 import {
@@ -11,7 +12,7 @@ import {
 type PostWithContent = Post & { content: ContentType };
 
 const fetchPostDraftById = async (postId: string): Promise<PostWithContent> => {
-	if (!postId) throw new Error("Post ID is required");
+	if (!postId) throw ID_NOT_EXIST_ERROR;
 
 	const res = await fetch(`/api/posts/drafts/${postId}`);
 
@@ -19,9 +20,9 @@ const fetchPostDraftById = async (postId: string): Promise<PostWithContent> => {
 		let errorMessage = UNKNOWN_ERROR;
 		try {
 			const errorData = await res.json();
-			errorMessage = errorData?.data?.message || UNKNOWN_ERROR;
+			errorMessage = errorData || UNKNOWN_ERROR;
 		} catch {}
-		throw new Error(errorMessage);
+		throw errorMessage;
 	}
 
 	const post = await res.json();

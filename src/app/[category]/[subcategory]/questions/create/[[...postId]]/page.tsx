@@ -3,7 +3,7 @@ import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import React, { useEffect, useRef, useState } from "react";
 import EditorQuestion from "@/components/shared/Editor/EditorQuestion";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { generateNanoId } from "@/lib/generateNanoid";
 import isValidSubCategory from "@/utils/isValidSubCategory";
@@ -27,6 +27,9 @@ import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { useServerAction } from "@/hooks/useServerAction";
 import { Post, PostType } from "@prisma/client";
 import { usePostDraft } from "@/hooks/query/usePostDraft";
+import StatusDialog from "@/components/shared/StatusDialog";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 function Page() {
 	const {
@@ -41,10 +44,18 @@ function Page() {
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
 	)?.toUpperCase();
+
 	const editPostId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
+	const router = useRouter();
+
 	const [postId, setPostId] = useState<string>("");
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
+	const [postPublished, setPostPublished] = useState<boolean>(false);
+	const [blockUserAccess, setBlockUserAccess] = useState<{
+		message?: string;
+		title?: string;
+	} | null>();
 	const isEditMode = useRef<boolean>(!!editPostId);
 	const [actionCreateDraft, isCreateDraftActionLoading] =
 		useServerAction(createDraftPost);
@@ -92,11 +103,9 @@ function Page() {
 			//user might reloaded without saving
 			return;
 		}
-
-		toast({
-			variant: "destructive",
-			title: "Error",
-			description: message,
+		setBlockUserAccess({
+			message,
+			title: (postFetchError.cause as string) || "",
 		});
 	}, [postFetchError]);
 
@@ -171,11 +180,8 @@ function Page() {
 			}
 
 			const publishedPostId = await actionCreatePost(result.data);
-			toast({
-				title: "Post Published",
-				description: "Your post has been published and sent for approval",
-				variant: "default",
-			});
+			setPostPublished(true);
+
 			return publishedPostId;
 		} catch (error) {
 			postMutationErrorHandler(error);
@@ -193,6 +199,41 @@ function Page() {
 			description: message,
 			variant: "destructive",
 		});
+	}
+
+	if (blockUserAccess) {
+		return (
+			<StatusDialog type="error">
+				<StatusDialog.Title>{blockUserAccess?.title}</StatusDialog.Title>
+				<StatusDialog.Content>{blockUserAccess?.message}</StatusDialog.Content>
+				<StatusDialog.Footer>
+					<Button
+						className="w-[90%] blue-gradient text-white"
+						onClick={() => router.push("/")}
+					>
+						Go back to home
+					</Button>
+				</StatusDialog.Footer>
+			</StatusDialog>
+		);
+	}
+	if (postPublished) {
+		return (
+			<StatusDialog>
+				<StatusDialog.Title>Post Published</StatusDialog.Title>
+				<StatusDialog.Content>
+					Your post has been published and sent for approval
+				</StatusDialog.Content>
+				<StatusDialog.Footer>
+					<Button
+						className="w-[90%] blue-gradient text-white"
+						onClick={() => router.push("/")}
+					>
+						Go back to home
+					</Button>
+				</StatusDialog.Footer>
+			</StatusDialog>
+		);
 	}
 
 	return (

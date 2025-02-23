@@ -21,3 +21,8 @@ export type QuestionSidebarData = {
 	difficulty?: string;
 	completionDuration?: number;
 };
+export type CustomErrorType = {
+	status?: string;
+	cause?: string;
+	data?: { message: string };
+  };
