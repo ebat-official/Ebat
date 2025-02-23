@@ -111,10 +111,10 @@ import {
     cause: FAILED_TO_EDIT_POST,
     data: { message: "This post is not availble yet" },
   }
-  export const PUBLISHED_POST_EDIT_ERROR = {
+  export const LIVE_POST_EDIT_ERROR = {
     status: ERROR,
     cause: FAILED_TO_EDIT_POST,
-    data: { message: "You cannot edit a published post here" },
+    data: { message: "You cannot edit a live post in this route" },
   }
   
   

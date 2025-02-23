@@ -5,7 +5,7 @@ import { PostStatus, PostApprovalStatus } from "@prisma/client";
 import {
 	ID_NOT_EXIST_ERROR,
 	POST_NOT_EXIST_ERROR,
-	PUBLISHED_POST_EDIT_ERROR,
+	LIVE_POST_EDIT_ERROR,
 	UNAUTHENTICATED_ERROR,
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
@@ -47,13 +47,13 @@ export async function GET(req: Request, context: { params: { id: string } }) {
 			return NextResponse.json(POST_NOT_EXIST_ERROR, { status: 404 });
 		}
 
-		const isPublished = post.status === PostStatus.PUBLISHED;
+		const isLivePost = post.approvalStatus === PostApprovalStatus.APPROVED;
 
-		// Authorization: Only the author can see Draft/Not Approved posts
-		if (isPublished) {
-			return NextResponse.json(PUBLISHED_POST_EDIT_ERROR, { status: 403 });
+		if (isLivePost) {
+			return NextResponse.json(LIVE_POST_EDIT_ERROR, { status: 403 });
 		}
-		if (!isPublished) {
+		// Authorization: Only the author can see Draft/Not Live posts
+		if (!isLivePost) {
 			const session = await auth();
 			const user = session?.user;
 

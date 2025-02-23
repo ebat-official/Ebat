@@ -1,9 +1,9 @@
 "use server";
-import { Difficulty, PostStatus, PostType } from '@prisma/client';
+import { Difficulty, PostApprovalStatus, PostStatus, PostType } from '@prisma/client';
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
-import { FailedToEditPostErr, FailedToPublishPostErr, FailedToSaveDraftErr, UserNotAuthenticatedErr, UserNotAuthorizedErr } from "@/utils/errors";
+import { FailedToEditPostErr, FailedToPublishPostErr, FailedToSaveDraftErr, LIVE_POST_EDIT_ERROR, UserNotAuthenticatedErr, UserNotAuthorizedErr } from "@/utils/errors";
 import { z } from "zod";
 import { PrismaJson } from '@/utils/types';
 
@@ -22,7 +22,7 @@ const validateUser = async () => {
 const getPostDetails = async (postId: string) => {
   return await prisma.post.findUnique({
     where: { id: postId },
-    select: { authorId: true, status: true }
+    select: { authorId: true, status: true, approvalStatus: true },
   });
 };
 
@@ -36,6 +36,15 @@ const checkPostStatus = async (postId: string, allowedStatus: PostStatus[]) => {
   const existingPost = await getPostDetails(postId);
   if (existingPost && !allowedStatus.includes(existingPost.status)) {
     throw FailedToEditPostErr(`Post cannot be modified because it is in ${existingPost.status} status.`);
+  }
+};
+
+const checkPostLiveStatus = async (postId: string) => {
+  const existingPost = await getPostDetails(postId);
+
+  const isLivePost = existingPost?.approvalStatus === PostApprovalStatus.APPROVED;
+  if (existingPost && isLivePost) {
+    throw LIVE_POST_EDIT_ERROR;
   }
 };
 
@@ -66,7 +75,6 @@ export async function createDraftPost(data: z.infer<typeof PostDraftValidator>) 
   const user = await validateUser();
   if (data.id) {
     await checkPostOwnership(data.id, user.id);
-    await checkPostStatus(data.id, ["DRAFT"]); // Only allow updates if the post is in DRAFT status
   }
 
   const post = await prisma.post.upsert({
@@ -87,7 +95,7 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
   const user = await validateUser();
   if (data.id) {
     await checkPostOwnership(data.id, user.id);
-    await checkPostStatus(data.id, ["DRAFT"]); // Only allow publishing if the post is in DRAFT status
+    await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status
   }
 
   try {
