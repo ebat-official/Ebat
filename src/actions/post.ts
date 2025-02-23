@@ -77,10 +77,16 @@ export async function createDraftPost(data: z.infer<typeof PostDraftValidator>) 
     await checkPostOwnership(data.id, user.id);
   }
 
+  const postData={
+    ...buildBasePostData(user, data, "DRAFT"),
+    approvalStatus: PostApprovalStatus.PENDING,
+    approvalLogs: []
+  }
+
   const post = await prisma.post.upsert({
     where: { id: data.id || undefined },
-    create: buildBasePostData(user, data, "DRAFT"),
-    update: buildBasePostData(user, data, "DRAFT"),
+    create: postData,
+    update: postData,
   });
 
   if (!post) throw FailedToSaveDraftErr();
@@ -98,23 +104,19 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
     await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status
   }
 
+  const postData={
+    ...buildBasePostData(user, data, "PUBLISHED"),
+    title: data.title, // Required in published post
+    completionDuration: data.completionDuration,
+    approvalStatus: PostApprovalStatus.PENDING,
+    approvalLogs: []
+  }
+
   try {
     const post = await prisma.post.upsert({
       where: { id: data.id || undefined },
-      create: {
-        ...buildBasePostData(user, data, "PUBLISHED"),
-        title: data.title, // Required in published post
-        companies: data.companies,
-        topics: data.topics,
-        completionDuration: data.completionDuration,
-      },
-      update: {
-        ...buildBasePostData(user, data, "PUBLISHED"),
-        title: data.title,
-        companies: data.companies,
-        topics: data.topics,
-        completionDuration: data.completionDuration,
-      },
+      create: postData,
+      update: postData,
     });
 
     return post.id;
