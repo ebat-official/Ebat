@@ -7,7 +7,8 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { generateNanoId } from "@/lib/generateNanoid";
 import isValidSubCategory from "@/utils/isValidSubCategory";
-import isValidCategory from "@/utils/isValidiCategory";
+import isValidCategory from "@/utils/isValidCategory";
+import isValidPostType from "@/utils/isValidiPostType";
 import {
 	PostDraftType,
 	PostDraftValidator,
@@ -36,6 +37,7 @@ function Page() {
 		category: categoryRoute,
 		subCategory: subCategoryRoute,
 		postId: postIdParam,
+		type: typeRoute,
 	} = useParams();
 	const [sidebarData, setSidebarData] = useState({});
 	const subCategory = (
@@ -43,6 +45,9 @@ function Page() {
 	)?.toUpperCase();
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
+	)?.toUpperCase();
+	const postType = (
+		(Array.isArray(typeRoute) ? typeRoute[0] : typeRoute) || ""
 	)?.toUpperCase();
 
 	const editPostId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
@@ -66,7 +71,8 @@ function Page() {
 		!category ||
 		!subCategory ||
 		!isValidSubCategory(subCategory) ||
-		!isValidCategory(category)
+		!isValidCategory(category) ||
+		!isValidPostType(postType)
 	) {
 		notFound();
 	}
