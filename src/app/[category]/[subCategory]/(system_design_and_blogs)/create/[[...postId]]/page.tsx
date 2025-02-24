@@ -31,6 +31,8 @@ import { usePostDraft } from "@/hooks/query/usePostDraft";
 import StatusDialog from "@/components/shared/StatusDialog";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import consolidatePostData from "@/utils/consolidatePostData";
+import subCategory from "@/utils/subCategoryConfig";
 
 function Page() {
 	const {
@@ -40,14 +42,12 @@ function Page() {
 		type: typeRoute,
 	} = useParams();
 	const [sidebarData, setSidebarData] = useState({});
-	const subCategory = (
-		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
-	)?.toUpperCase();
+
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
 	)?.toUpperCase();
 	const postType = (
-		(Array.isArray(typeRoute) ? typeRoute[0] : typeRoute) || ""
+		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
 	)?.toUpperCase();
 
 	const editPostId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
@@ -69,10 +69,9 @@ function Page() {
 
 	if (
 		!category ||
-		!subCategory ||
-		!isValidSubCategory(subCategory) ||
+		!postType ||
 		!isValidCategory(category) ||
-		!isValidPostType(postType)
+		!(postType === PostType.BLOGS || postType === PostType.SYSTEM_DESIGN)
 	) {
 		notFound();
 	}
@@ -115,24 +114,6 @@ function Page() {
 		});
 	}, [postFetchError]);
 
-	const consolidateData = (
-		postId: string,
-		category: CategoryType,
-		subCategory: SubCategoryType,
-		postContent: ContentType,
-		sidebarData: Record<string, unknown>,
-	): PostDraftType => {
-		return {
-			id: postId,
-			type: PostType.QUESTION,
-			category,
-			subCategory,
-			title: postContent?.post?.title,
-			content: postContent,
-			...sidebarData,
-		};
-	};
-
 	const formatSidebarDefaultData = (
 		post: Post | undefined,
 	): QuestionSidebarData | undefined => {
@@ -147,13 +128,13 @@ function Page() {
 
 	const saveHandler = async (postContent: ContentType) => {
 		try {
-			const data = consolidateData(
+			const data = consolidatePostData({
 				postId,
 				category,
-				subCategory,
 				postContent,
 				sidebarData,
-			);
+				type: postType,
+			});
 			const result = PostDraftValidator.safeParse(data);
 			if (!result.success) {
 				postMutationErrorHandler(result.error);
@@ -173,13 +154,13 @@ function Page() {
 
 	const publishHandler = async (postContent: ContentType) => {
 		try {
-			const data = consolidateData(
+			const data = consolidatePostData({
 				postId,
 				category,
-				subCategory,
 				postContent,
 				sidebarData,
-			);
+				type: postType,
+			});
 			const result = PostValidator.safeParse(data);
 			if (!result.success) {
 				throw result.error;

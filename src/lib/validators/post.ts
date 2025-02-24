@@ -17,10 +17,10 @@ export const PostDraftValidator = z.object({
   id: z.string().regex(/^[\w-]{21}$/, { message: INVALID_POST_ID }),
   title: z.string().optional(),
   content: z.record(z.any()).optional(),
-  type: z.nativeEnum(PostType, { // Use native enum validation
+  type: z.nativeEnum(PostType, { 
     errorMap: () => ({ message: INVALID_POST_TYPE }),
   }),
-  difficulty: z.nativeEnum(Difficulty, { // For other enums too
+  difficulty: z.nativeEnum(Difficulty, { 
     errorMap: () => ({ message: INVALID_DIFFICULTY }),
   }).nullable().optional(),
   companies: z.array(z.string()).optional(),
@@ -31,8 +31,17 @@ export const PostDraftValidator = z.object({
   }),
   subCategory: z.nativeEnum(SubCategory, {
     errorMap: () => ({ message: INVALID_SUBCATEGORY }),
-  }),
+  }).optional(),
+}).superRefine((data, ctx) => {
+  if ((data.type !== PostType.BLOGS && data.type !== PostType.SYSTEM_DESIGN) && !data.subCategory) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: INVALID_SUBCATEGORY,
+      path: ["subCategory"],
+    });
+  }
 });
+
 
 
 
@@ -61,12 +70,23 @@ const BasePostValidator = z.object({
   }),
   subCategory: z.nativeEnum(SubCategory, {
     errorMap: () => ({ message: INVALID_SUBCATEGORY }),
-  }),
+  }).optional(),
   content: z.object({
-    post: z.custom<EditorContent >().optional(),
-    answer: z.custom<EditorContent >().optional(),
+    post: z.custom<EditorContent>().optional(),
+    answer: z.custom<EditorContent>().optional(),
   }),
+}).superRefine((data, ctx) => {
+  if (!(data.type === PostType.BLOGS || data.type === PostType.SYSTEM_DESIGN)) {
+    if (!data.subCategory) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: INVALID_SUBCATEGORY,
+        path: ["subCategory"],
+      });
+    }
+  }
 });
+
 
 // Create the main validator with conditional content rules
 export const PostValidator = BasePostValidator.superRefine((data, ctx) => {
