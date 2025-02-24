@@ -34,7 +34,7 @@ enum PostType {
   BLOGS
   QUESTION
   CHALLENGE
-  SYSTEM_DESIGN
+  SYSTEMDESIGN
 }
 
 enum Difficulty {

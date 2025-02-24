@@ -16,12 +16,11 @@ import { MdOutlineGpsFixed } from "react-icons/md";
 import { RiBuilding2Line } from "react-icons/ri";
 import { AiOutlineTag } from "react-icons/ai";
 import { IoMdTime } from "react-icons/io";
-import { SubCategory } from "@prisma/client";
 import { convertFromMinutes, convertToMinutes } from "@/utils/converToMinutes";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
-import { QuestionSidebarData } from "@/utils/types";
+import { QuestionSidebarData, TopicCategory } from "@/utils/types";
 
 export type Duration = {
 	days: string;
@@ -30,7 +29,7 @@ export type Duration = {
 };
 
 interface QuestionSidebarProps {
-	subCategory: SubCategory;
+	topicCategory: TopicCategory;
 	getSidebarData: (args: QuestionSidebarData) => void;
 	postId: string;
 	defaultContent?: QuestionSidebarData | undefined;
@@ -40,14 +39,14 @@ interface QuestionSidebarProps {
 const INITIAL_DURATION: Duration = { days: "0", minutes: "5", hours: "0" };
 
 function QuestionSidebar({
-	subCategory,
+	topicCategory,
 	getSidebarData,
 	postId,
 	defaultContent,
 	dataLoading,
 }: QuestionSidebarProps) {
 	const { companies, searchCompanies } = useCompanies();
-	const { topics, searchTopics } = useTopics(subCategory);
+	const { topics, searchTopics } = useTopics(topicCategory);
 
 	const [selectedCompanies, setSelectedCompanies] = useState<InternalOption[]>(
 		[],

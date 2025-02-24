@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import topicsData from "@/utils/subCategoryConfig";
-import { SubCategory } from "@prisma/client";
-
-export type TopicCategory = keyof typeof topicsData;
+import { TopicCategory } from "@/utils/types";
 
 const useTopics = (category: TopicCategory) => {
 	// Use the raw data directly from topicsData based on the category

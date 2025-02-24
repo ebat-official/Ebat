@@ -1,48 +1,32 @@
 "use client";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import React, { useEffect, useRef, useState } from "react";
-import EditorQuestion from "@/components/shared/Editor/EditorQuestion";
+import EditorContainer from "@/components/shared/Editor/EditorContainer";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { generateNanoId } from "@/lib/generateNanoid";
 import isValidSubCategory from "@/utils/isValidSubCategory";
 import isValidCategory from "@/utils/isValidCategory";
-import isValidPostType from "@/utils/isValidiPostType";
-import {
-	PostDraftType,
-	PostDraftValidator,
-	PostValidator,
-} from "@/lib/validators/post";
 import { toast } from "@/hooks/use-toast";
-import { createDraftPost, createPost } from "@/actions/post";
 import LoginModal from "@/components/auth/LoginModal";
-import {
-	CategoryType,
-	ContentType,
-	QuestionSidebarData,
-	SubCategoryType,
-} from "@/utils/types";
+import { ContentType } from "@/utils/types";
 import { handleError } from "@/utils/handleError";
 import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
-import { useServerAction } from "@/hooks/useServerAction";
-import { Post, PostType } from "@prisma/client";
+import { PostType } from "@prisma/client";
 import { usePostDraft } from "@/hooks/query/usePostDraft";
 import StatusDialog from "@/components/shared/StatusDialog";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import consolidatePostData from "@/utils/consolidatePostData";
-import subCategory from "@/utils/subCategoryConfig";
+import { usePostManager } from "@/hooks/query/usePostManager";
+import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
 
 function Page() {
 	const {
 		category: categoryRoute,
 		subCategory: subCategoryRoute,
 		postId: postIdParam,
-		type: typeRoute,
 	} = useParams();
 	const [sidebarData, setSidebarData] = useState({});
-
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
 	)?.toUpperCase();
@@ -62,19 +46,23 @@ function Page() {
 		title?: string;
 	} | null>();
 	const isEditMode = useRef<boolean>(!!editPostId);
-	const [actionCreateDraft, isCreateDraftActionLoading] =
-		useServerAction(createDraftPost);
-	const [actionCreatePost, isCreatePostActionLoading] =
-		useServerAction(createPost);
-
+	console.log("page loaded");
 	if (
 		!category ||
 		!postType ||
-		!isValidCategory(category) ||
-		!(postType === PostType.BLOGS || postType === PostType.SYSTEM_DESIGN)
+		!(postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) ||
+		!isValidCategory(category)
 	) {
 		notFound();
 	}
+
+	const {
+		saveDraft,
+		publish,
+		isDrafting,
+		isPublishing,
+		error: postPublishError,
+	} = usePostManager();
 
 	const {
 		data: postData,
@@ -114,69 +102,10 @@ function Page() {
 		});
 	}, [postFetchError]);
 
-	const formatSidebarDefaultData = (
-		post: Post | undefined,
-	): QuestionSidebarData | undefined => {
-		if (!post) return;
-		return {
-			companies: post.companies || [],
-			topics: post.topics || [],
-			difficulty: post.difficulty || "",
-			completionDuration: post.completionDuration || 0,
-		};
-	};
+	useEffect(() => {
+		if (!postPublishError) return;
 
-	const saveHandler = async (postContent: ContentType) => {
-		try {
-			const data = consolidatePostData({
-				postId,
-				category,
-				postContent,
-				sidebarData,
-				type: postType,
-			});
-			const result = PostDraftValidator.safeParse(data);
-			if (!result.success) {
-				postMutationErrorHandler(result.error);
-				return;
-			}
-			const savedPostId = await actionCreateDraft(result.data);
-			toast({
-				title: "Draft Saved",
-				description: "Your draft has been saved successfully",
-				variant: "default",
-			});
-			return savedPostId;
-		} catch (error) {
-			postMutationErrorHandler(error);
-		}
-	};
-
-	const publishHandler = async (postContent: ContentType) => {
-		try {
-			const data = consolidatePostData({
-				postId,
-				category,
-				postContent,
-				sidebarData,
-				type: postType,
-			});
-			const result = PostValidator.safeParse(data);
-			if (!result.success) {
-				throw result.error;
-			}
-
-			const publishedPostId = await actionCreatePost(result.data);
-			setPostPublished(true);
-
-			return publishedPostId;
-		} catch (error) {
-			postMutationErrorHandler(error);
-		}
-	};
-
-	function postMutationErrorHandler(error: unknown) {
-		const message = handleError(error, PostType.QUESTION);
+		const message = handleError(postPublishError, PostType.QUESTION);
 
 		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
 			setLoginModalMessage("Please sign in to publish your post");
@@ -186,7 +115,37 @@ function Page() {
 			description: message,
 			variant: "destructive",
 		});
-	}
+	}, [postPublishError]);
+
+	const getPostData = (postContent: ContentType) => {
+		return {
+			postId,
+			category,
+			postContent,
+			sidebarData,
+			type: postType,
+		};
+	};
+
+	const saveHandler = async (postContent: ContentType) => {
+		const data = getPostData(postContent);
+		const result = await saveDraft(data);
+		if (result.data) {
+			toast({
+				title: "Draft Saved",
+				description: "Your draft has been saved successfully",
+				variant: "default",
+			});
+		}
+	};
+
+	const publishHandler = async (postContent: ContentType) => {
+		const data = getPostData(postContent);
+		const result = await publish(data);
+		if (result.data) {
+			setPostPublished(true);
+		}
+	};
 
 	if (blockUserAccess) {
 		return (
@@ -233,20 +192,21 @@ function Page() {
 			)}
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel>
-					<EditorQuestion
+					<EditorContainer
 						postId={postId}
+						postType={postType}
 						saveHandler={saveHandler}
 						publishHandler={publishHandler}
 						dataLoading={isLoading}
-						actionDraftLoading={isCreateDraftActionLoading}
-						actionPublishLoading={isCreatePostActionLoading}
+						actionDraftLoading={isDrafting}
+						actionPublishLoading={isPublishing}
 						defaultContent={postData?.content}
 					/>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>
 					<QuestionSidebar
 						postId={postId}
-						subCategory={subCategory}
+						topicCategory={category}
 						getSidebarData={setSidebarData}
 						defaultContent={formatSidebarDefaultData(postData)}
 						dataLoading={isLoading}

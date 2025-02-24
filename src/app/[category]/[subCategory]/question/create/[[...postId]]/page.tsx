@@ -1,7 +1,7 @@
 "use client";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import React, { useEffect, useRef, useState } from "react";
-import EditorQuestion from "@/components/shared/Editor/EditorQuestion";
+import EditorContainer from "@/components/shared/Editor/EditorContainer";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
@@ -193,8 +193,9 @@ function Page() {
 			)}
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel>
-					<EditorQuestion
+					<EditorContainer
 						postId={postId}
+						postType={PostType.QUESTION}
 						saveHandler={saveHandler}
 						publishHandler={publishHandler}
 						dataLoading={isLoading}
@@ -206,7 +207,7 @@ function Page() {
 				<RightPanelLayout.SidePanel>
 					<QuestionSidebar
 						postId={postId}
-						subCategory={subCategory}
+						topicCategory={subCategory}
 						getSidebarData={setSidebarData}
 						defaultContent={formatSidebarDefaultData(postData)}
 						dataLoading={isLoading}

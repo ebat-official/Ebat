@@ -33,7 +33,7 @@ export const PostDraftValidator = z.object({
     errorMap: () => ({ message: INVALID_SUBCATEGORY }),
   }).optional(),
 }).superRefine((data, ctx) => {
-  if ((data.type !== PostType.BLOGS && data.type !== PostType.SYSTEM_DESIGN) && !data.subCategory) {
+  if ((data.type !== PostType.BLOGS && data.type !== PostType.SYSTEMDESIGN) && !data.subCategory) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: INVALID_SUBCATEGORY,
@@ -51,41 +51,59 @@ export const PostDraftValidator = z.object({
 
 
 // Base schema with common fields
-const BasePostValidator = z.object({
-  id: z.string().regex(/^[\w-]{21}$/, {
-    message: INVALID_POST_ID,
-  }),
-  title: z.string().min(3, TITLE_MIN_LENGTH),
-  type: z.nativeEnum(PostType, {
-    errorMap: () => ({ message: INVALID_POST_TYPE }),
-  }),
-  difficulty: z.nativeEnum(Difficulty, {
-    errorMap: () => ({ message: INVALID_DIFFICULTY }),
-  }),
-  companies: z.array(z.string()).optional(),
-  completionDuration: z.number().int().positive().optional(),
-  topics: z.array(z.string()).optional(),
-  category: z.nativeEnum(PostCategory, {
-    errorMap: () => ({ message: INVALID_CATEGORY }),
-  }),
-  subCategory: z.nativeEnum(SubCategory, {
-    errorMap: () => ({ message: INVALID_SUBCATEGORY }),
-  }).optional(),
-  content: z.object({
-    post: z.custom<EditorContent>().optional(),
-    answer: z.custom<EditorContent>().optional(),
-  }),
-}).superRefine((data, ctx) => {
-  if (!(data.type === PostType.BLOGS || data.type === PostType.SYSTEM_DESIGN)) {
-    if (!data.subCategory) {
+const BasePostValidator = z
+  .object({
+    id: z.string().regex(/^[\w-]{21}$/, {
+      message: INVALID_POST_ID,
+    }),
+    title: z.string().min(3, TITLE_MIN_LENGTH),
+    type: z.nativeEnum(PostType, {
+      errorMap: () => ({ message: INVALID_POST_TYPE }),
+    }),
+    difficulty: z
+      .nativeEnum(Difficulty, {
+        errorMap: () => ({ message: INVALID_DIFFICULTY }),
+      })
+      .optional(), // Initially optional, will enforce validation conditionally
+    companies: z.array(z.string()).optional(),
+    completionDuration: z.number().int().positive().optional(),
+    topics: z.array(z.string()).optional(),
+    category: z.nativeEnum(PostCategory, {
+      errorMap: () => ({ message: INVALID_CATEGORY }),
+    }),
+    subCategory: z
+      .nativeEnum(SubCategory, {
+        errorMap: () => ({ message: INVALID_SUBCATEGORY }),
+      })
+      .optional(),
+    content: z.object({
+      post: z.custom<EditorContent>().optional(),
+      answer: z.custom<EditorContent>().optional(),
+    }),
+  })
+  .superRefine((data, ctx) => {
+    // Ensure subCategory is required if the type is not BLOGS or SYSTEMDESIGN
+    if (!(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN)) {
+      if (!data.subCategory) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: INVALID_SUBCATEGORY,
+          path: ["subCategory"],
+        });
+      }
+    }
+
+    // Ensure difficulty is required unless it's a BLOGS type
+    if (data.type !== PostType.BLOGS && !data.difficulty) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: INVALID_SUBCATEGORY,
-        path: ["subCategory"],
+        message: INVALID_DIFFICULTY,
+        path: ["difficulty"],
       });
     }
-  }
-});
+  });
+
+
 
 
 // Create the main validator with conditional content rules
