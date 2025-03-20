@@ -2,8 +2,7 @@
 .dark .ce-popover-item,
 .dark .ce-popover-item__icon,
 .dark .ce-popover-items,
-.dark .ce-popover__container
-.dark .ce-popover-item:hover {
+.dark .ce-popover__container .dark .ce-popover-item:hover {
   --color-background-item-hover: hsl(var(--background));
   background-color: hsl(var(--background));
   border-color: hsl(var(--border));
@@ -13,8 +12,7 @@
   background: hsl(var(--background));
 }
 
-
-.dark .ce-popover--opened>.ce-popover__container {
+.dark .ce-popover--opened > .ce-popover__container {
   border: 1px solid hsl(var(--border));
 }
 
@@ -25,9 +23,7 @@
 .dark .ce-toolbar__plus,
 .dark .ce-toolbar__settings-btn,
 .dark .ce-popover-item__title,
-.dark .ce-inline-tool
-.dark .ce-inline-tool--link
-.dark .ce-popover-item__icon {
+.dark .ce-inline-tool .dark .ce-inline-tool--link .dark .ce-popover-item__icon {
   color: hsl(var(--foreground));
 }
 
@@ -112,14 +108,14 @@
 }
 
 .dark .cdx-list__checkbox-check {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 .dark .link-tool__input-holder--error .link-tool__input {
-  background-color: hsl(var(--background)); 
+  background-color: hsl(var(--background));
 }
 .dark .link-tool__progress {
-  background-color: #00bcd4
+  background-color: #00bcd4;
 }
 
 .cdx-notifies {
@@ -129,7 +125,7 @@
   background: #fb5d5d !important;
 }
 
-.cdx-notify__cross{
+.cdx-notify__cross {
   margin-right: 6px;
 }
 .cdx-notify__cross::after,
@@ -158,11 +154,29 @@
 }
 .codex-editor [data-placeholder-active]:empty:before,
 .codex-editor [data-placeholder-active][data-empty="true"]:before {
-color: hsl(var(--color-text-primary)) !important;
-background-color: hsl(var(--background)) !important;
-opacity: 50%;
+  color: hsl(var(--color-text-primary)) !important;
+  background-color: hsl(var(--background)) !important;
+  opacity: 50%;
 }
 
+h1.ce-header {
+  @apply text-3xl font-bold;
+}
+h2.ce-header {
+  @apply text-2xl font-semibold;
+}
+h3.ce-header {
+  @apply text-xl font-semibold;
+}
+h4.ce-header {
+  @apply text-lg font-semibold;
+}
+h5.ce-header {
+  @apply text-base font-semibold;
+}
+h6.ce-header {
+  @apply text-base font-semibold;
+}
 
 @media (max-width: 650px) {
   .dark .ce-toolbar__settings-btn,
