@@ -15,19 +15,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-// import { useEdgeStore } from "@/lib/edgestore";
+import useFileUpload from "@/hooks/useFileUpload";
+import { toast } from "sonner";
 
 const FileUploadZone = ({
   InsertMedia,
+  closeHandler,
 }: {
   InsertMedia: (files: { url: string; alt: string }[]) => void;
+  closeHandler: () => void;
 }) => {
   const [draggedZone, setDraggedZone] = useState<number | null>(null);
   const [files, setFiles] = useState<{ url: string; alt: string }[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // const { edgestore } = useEdgeStore();
+  const { uploadFile } = useFileUpload();
 
   const handleDragEnter = (index: number) => (e: React.DragEvent) => {
     e.preventDefault();
@@ -51,19 +54,27 @@ const FileUploadZone = ({
       const file = newFiles[i];
 
       try {
-        // const response = await edgestore.publicFiles.upload({
-        //   file,
-        //   onProgressChange: (progress) => {
-        //     setProgress(
-        //       Math.round((progress / 100) * ((i + 1) / newFiles.length) * 100)
-        //     );
-        //   },
-        // });
-        const response = {};
-
-        uploadedFiles.push({ url: response.url, alt: file.name });
+        const { status, data } = await uploadFile(file, { postId: "postId" });
+        if (status === "error") {
+          throw new Error(data.message);
+        }
+        uploadedFiles.push({ url: data.url || "", alt: file.name });
       } catch (error) {
-        console.error(`Error uploading ${file.name}:`, error);
+        closeHandler();
+        if (error instanceof Error) {
+          const errMsg = `Error uploading file "${file.name}": ${error.message}`;
+          console.error(errMsg, {
+            fileName: file.name,
+            errorStack: error.stack,
+          });
+          toast.error(errMsg);
+        } else {
+          const errMsg = `Error uploading file "${file.name}": Unknown error`;
+          console.error(errMsg, {
+            fileName: file.name,
+          });
+          toast.error(errMsg);
+        }
       }
     }
 
@@ -72,19 +83,26 @@ const FileUploadZone = ({
     setProgress(100);
   };
 
-  const handleDrop = () => async (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
-    setDraggedZone(null);
-    const droppedFiles = Array.from(e.dataTransfer.files);
+    e.stopPropagation();
+
+    setDraggedZone(null); // Reset the dragged zone state
+    const droppedFiles = Array.from(e.dataTransfer.files); // Get the dropped files
     if (droppedFiles.length > 0) {
-      await upload(droppedFiles);
+      await upload(droppedFiles); // Call the upload function with the dropped files
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // Prevent the default behavior during drag over
+    e.stopPropagation(); // Stop the event from propagating further
+  };
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
+    const selectedFiles = Array.from(e.target.files || []); // Get the selected files
     if (selectedFiles.length > 0) {
-      await upload(selectedFiles);
+      await upload(selectedFiles); // Call the upload function with the selected files
     }
   };
 
@@ -100,33 +118,31 @@ const FileUploadZone = ({
       gradient: "from-purple-400 via-pink-500 to-red-500",
       rotate: "-rotate-2",
     },
-    {
-      title: "Upload Videos",
-      subtitle: "Drop videos here",
-      icon: Video,
-      gradient: "from-blue-400 via-teal-500 to-green-500",
-      rotate: "",
-    },
-    {
-      title: "Upload Files",
-      subtitle: "Drop files here",
-      icon: UploadCloudIcon,
-      gradient: "from-yellow-400 via-orange-500 to-red-500",
-      rotate: "rotate-3",
-    },
+    // {
+    //   title: "Upload Videos",
+    //   subtitle: "Drop videos here",
+    //   icon: Video,
+    //   gradient: "from-blue-400 via-teal-500 to-green-500",
+    //   rotate: "",
+    // },
+    // {
+    //   title: "Upload Files",
+    //   subtitle: "Drop files here",
+    //   icon: UploadCloudIcon,
+    //   gradient: "from-yellow-400 via-orange-500 to-red-500",
+    //   rotate: "rotate-3",
+    // },
   ];
 
   return (
-    <Card className="mx-auto w-full  bg-transparent border-none max-w-[300px] lg:max-w-[500px] overflow-hidden rounded-[1rem]">
+    <Card className="mx-auto w-full  bg-transparent border-none overflow-hidden rounded-[1rem]">
       <CardContent className="p-6 py-7   cursor:pointer">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 gap-4 mb-6 justify-center">
           {zones.map((zone, index) => (
             <div key={index} className={`relative ${zone.rotate}`}>
               <motion.div
                 onDragEnter={handleDragEnter(index)}
-                onDragOver={(e: { preventDefault: () => any }) =>
-                  e.preventDefault()
-                }
+                onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 whileHover={{ y: -4, scale: 1.02 }}

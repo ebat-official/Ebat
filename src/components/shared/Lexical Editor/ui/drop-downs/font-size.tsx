@@ -107,7 +107,10 @@ export default function FontSize({
         type="number"
         value={inputValue}
         disabled={disabled}
-        className={cn("h-7 min-w-[29px] w-[29px]  px-[6px]", className)}
+        className={cn(
+          "h-7 min-w-[29px] w-[29px] px-[6px] appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-moz-appearance:textfield]",
+          className
+        )}
         min={MIN_ALLOWED_FONT_SIZE}
         max={MAX_ALLOWED_FONT_SIZE}
         onChange={(e) => setInputValue(e.target.value)}

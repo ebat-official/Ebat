@@ -70,12 +70,19 @@ import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImagePayload } from "../../nodes/ImageNode";
 import { INSERT_IMAGE_COMMAND } from "../ImagesPlugin";
-import { AutoEmbedDialog, TwitterEmbedConfig, YoutubeEmbedConfig } from "../AutoEmbedPlugin";
-import { initialEditorState, INSERT_STEPPER_COMMAND } from "../../nodes/Stepper";
+import {
+  AutoEmbedDialog,
+  TwitterEmbedConfig,
+  YoutubeEmbedConfig,
+} from "../AutoEmbedPlugin";
+import {
+  initialEditorState,
+  INSERT_STEPPER_COMMAND,
+} from "../../nodes/Stepper";
 const InsertGif = React.lazy(() => import("../../ui/models/insert-gif"));
-const InsertImageDialog = React.lazy(() =>
-  import("../../ui/models/insert-image").then((module) => ({
-    default: module.InsertImageDialog,
+const InsertMediaDialog = React.lazy(() =>
+  import("../../ui/models/insertMedia").then((module) => ({
+    default: module.InsertMediaDialog,
   }))
 );
 class ComponentPickerOption extends MenuOption {
@@ -319,24 +326,24 @@ function getBaseOptions(
       },
     }),
     new ComponentPickerOption("Twitter", {
-        icon: <Twitter className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
-        keywords: ["Twitter", "tweet", "x","twitter"],
-        desc: "Embedded Tweets ",
-  
-        onSelect: () => {
-          showModal(
-            "Twitter tweet",
-            "Insert a URL to embed a live preview. Works with Twitter",
-            (onClose) => (
-              <AutoEmbedDialog
-                embedConfig={TwitterEmbedConfig}
-                onClose={onClose}
-              />
-            ),
-            true
-          );
-        },
-      }),
+      icon: <Twitter className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
+      keywords: ["Twitter", "tweet", "x", "twitter"],
+      desc: "Embedded Tweets ",
+
+      onSelect: () => {
+        showModal(
+          "Twitter tweet",
+          "Insert a URL to embed a live preview. Works with Twitter",
+          (onClose) => (
+            <AutoEmbedDialog
+              embedConfig={TwitterEmbedConfig}
+              onClose={onClose}
+            />
+          ),
+          true
+        );
+      },
+    }),
     new ComponentPickerOption("Image", {
       icon: <ImageIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["image", "photo", "picture", "file", "img"],
@@ -344,13 +351,13 @@ function getBaseOptions(
 
       onSelect: () =>
         showModal(
-          "Insert Image",
-          "Please select an image to upload.",
+          "Insert Media",
+          "Please select the Media to upload.",
           (onClose) => (
             <React.Suspense
               fallback={<Skeleton className="mx-2 w-[350px] h-[350px]" />}
             >
-              <InsertImageDialog activeEditor={editor} onClose={onClose} />
+              <InsertMediaDialog activeEditor={editor} onClose={onClose} />
             </React.Suspense>
           ),
           true
@@ -384,11 +391,24 @@ function getBaseOptions(
         editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 1fr 1fr"),
     }),
     new ComponentPickerOption("Stepper", {
-      icon: <svg  className="w-9 h-9 max-sm:h-5 max-sm:w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fillRule="evenodd"><path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"></path><path fill="currentColor" d="M5 6a3 3 0 0 1 6 0v2a3 3 0 0 1-6 0zm3-1a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0V6a1 1 0 0 0-1-1m9.707-.707a1 1 0 0 0-1.414 0L13.465 7.12a1 1 0 0 0 1.414 1.415L16 7.414V20a1 1 0 1 0 2 0V7.414l1.121 1.122a1 1 0 1 0 1.415-1.415zM5 15a3 3 0 0 1 5.995-.176l.005.186c0 .408-.039.799-.107 1.171c-.264 1.433-.964 2.58-1.57 3.352c-.307.39-.598.694-.815.904c-.124.12-.25.238-.385.345a1 1 0 0 1-1.34-1.479L7.118 19l.224-.228A7 7 0 0 0 7.971 18A3 3 0 0 1 5 15m3-1a1 1 0 1 0 0 2a1 1 0 0 0 0-2"></path></g></svg>,
+      icon: (
+        <svg
+          className="w-9 h-9 max-sm:h-5 max-sm:w-5"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <g fill="none" fillRule="evenodd">
+            <path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"></path>
+            <path
+              fill="currentColor"
+              d="M5 6a3 3 0 0 1 6 0v2a3 3 0 0 1-6 0zm3-1a1 1 0 0 0-1 1v2a1 1 0 0 0 2 0V6a1 1 0 0 0-1-1m9.707-.707a1 1 0 0 0-1.414 0L13.465 7.12a1 1 0 0 0 1.414 1.415L16 7.414V20a1 1 0 1 0 2 0V7.414l1.121 1.122a1 1 0 1 0 1.415-1.415zM5 15a3 3 0 0 1 5.995-.176l.005.186c0 .408-.039.799-.107 1.171c-.264 1.433-.964 2.58-1.57 3.352c-.307.39-.598.694-.815.904c-.124.12-.25.238-.385.345a1 1 0 0 1-1.34-1.479L7.118 19l.224-.228A7 7 0 0 0 7.971 18A3 3 0 0 1 5 15m3-1a1 1 0 1 0 0 2a1 1 0 0 0 0-2"
+            ></path>
+          </g>
+        </svg>
+      ),
       keywords: ["stpper", "step", "lines", "routes", "docs", "number"],
       desc: "Stepper with descriptions for each step.",
-      onSelect: () =>{
-   
+      onSelect: () => {
         const newEditor = createEditor();
         const parsedEditorState = newEditor.parseEditorState(
           JSON.stringify(initialEditorState)
@@ -397,11 +417,10 @@ function getBaseOptions(
         const newStep = {
           id: 0,
           title: `New step 0`,
-          content:newEditor,
+          content: newEditor,
         };
-        editor.dispatchCommand(INSERT_STEPPER_COMMAND, [newStep])
-
-      }
+        editor.dispatchCommand(INSERT_STEPPER_COMMAND, [newStep]);
+      },
     }),
     new ComponentPickerOption("Gifs", {
       icon: <ImagePlayIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
@@ -512,7 +531,7 @@ export default function SlashCommand(): React.JSX.Element {
                           ref={option.ref as React.Ref<HTMLDivElement>}
                           className={cn(
                             selectedIndex == i &&
-                            "dark:bg-gray-300/10 bg-gray-400/60",
+                              "dark:bg-gray-300/10 bg-gray-400/60",
                             "gap-x-2 h-full items-start hover:bg-transparent border-0 bg-transparent  transition-colors  cursor-pointer rounded-sm relative"
                           )}
                           onSelect={() => {

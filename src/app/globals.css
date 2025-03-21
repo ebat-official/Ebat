@@ -8,6 +8,28 @@ body {
 
 @layer base {
   :root {
+    --font-gray: #9B9A97;
+    --font-brown: #64473A;
+    --font-orange: #D9730D;
+    --font-yellow: #DFAB01;
+    --font-green: #0F7B6C;
+    --font-blue: #0B6E99;
+    --font-purple: #6940A5;
+    --font-pink: #AD1A72;
+    --font-red: #E03E3E;
+
+        
+    --background-gray: #EBECED;
+    --background-brown: #E9E5E3;
+    --background-orange: #FAEBDD;
+    --background-yellow: #FBF3DB;
+    --background-green: #DDEDEA;
+    --background-blue: #DDEDEA;
+    --background-purple: #EAE4F2;
+    --background-pink: #F4DFEB;
+    --background-red: #FBE4E4;
+
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -43,6 +65,28 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
+    --font-gray: #9B9A97;
+    --font-brown: #937264;
+    --font-orange: #FFA344;
+    --font-yellow: #FFDC49;
+    --font-green: #4DAB9A;
+    --font-blue: #529CCA;
+    --font-purple: #9A6DD7;
+    --font-pink: #E255A1;
+    --font-red: #FF7369;
+
+
+    --background-gray: #454B4E;
+    --background-brown: #434040;
+    --background-orange: #594A3A;
+    --background-yellow: #59563B;
+    --background-green: #354C4B;
+    --background-blue: #364954;
+    --background-purple: #443F57;
+    --background-pink: #533B4C;
+    --background-red: #594141;
+
+    
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;

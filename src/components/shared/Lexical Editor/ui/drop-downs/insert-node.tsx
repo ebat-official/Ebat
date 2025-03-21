@@ -33,9 +33,9 @@ import {
 } from "../../plugins/AutoEmbedPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
 
-const InsertImageDialog = lazy(() =>
-  import("../../ui/models/insert-image").then((module) => ({
-    default: module.InsertImageDialog,
+const InsertMediaDialog = lazy(() =>
+  import("../models/insertMedia").then((module) => ({
+    default: module.InsertMediaDialog,
   }))
 );
 const InsertGif = lazy(() => import("../models/insert-gif"));
@@ -78,17 +78,17 @@ export default function InsertNode({
           editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
       },
       {
-        label: "Image",
+        label: "Media",
         icon: <Image className="size-4" />,
         func: () => {
           showModal(
-            "Insert Image",
-            "Please select an image to upload.",
+            "Insert Media",
+            "Please select the Media to upload.",
             (onClose) => (
               <Suspense
                 fallback={<Skeleton className="mx-2 w-[350px] h-[350px]" />}
               >
-                <InsertImageDialog activeEditor={editor} onClose={onClose} />
+                <InsertMediaDialog activeEditor={editor} onClose={onClose} />
               </Suspense>
             ),
             true
