@@ -1,29 +1,23 @@
 "use client";
 
-import type React from "react";
-import { useState, useRef } from "react";
-import {
-  Upload,
-  Loader2,
-  X,
-  Image,
-  File,
-  UploadCloudIcon,
-  Video,
-} from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Upload, Loader2, X, Image, UploadCloudIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import useFileUpload from "@/hooks/useFileUpload";
 import { toast } from "sonner";
+import { zones } from "./constants";
 
-const FileUploadZone = ({
-  InsertMedia,
-  closeHandler,
-}: {
+interface FileUploadZoneProps {
   InsertMedia: (files: { url: string; alt: string }[]) => void;
   closeHandler: () => void;
+}
+
+const FileUploadZone: React.FC<FileUploadZoneProps> = ({
+  InsertMedia,
+  closeHandler,
 }) => {
   const [draggedZone, setDraggedZone] = useState<number | null>(null);
   const [files, setFiles] = useState<{ url: string; alt: string }[]>([]);
@@ -42,39 +36,48 @@ const FileUploadZone = ({
     setDraggedZone(null);
   };
 
-  //   loading
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDraggedZone(null);
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0) {
+      await upload(droppedFiles);
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length > 0) {
+      await upload(selectedFiles);
+    }
+  };
+
   const upload = async (newFiles: File[]) => {
     setUploading(true);
     setProgress(0);
 
-    // Store uploaded files
-    let uploadedFiles: { url: string; alt: string }[] = [];
+    const uploadedFiles: { url: string; alt: string }[] = [];
 
-    for (let i = 0; i < newFiles.length; i++) {
-      const file = newFiles[i];
-
+    for (const file of newFiles) {
       try {
         const { status, data } = await uploadFile(file, { postId: "postId" });
-        if (status === "error") {
-          throw new Error(data.message);
-        }
+        if (status === "error") throw new Error(data.message);
+
         uploadedFiles.push({ url: data.url || "", alt: file.name });
       } catch (error) {
         closeHandler();
-        if (error instanceof Error) {
-          const errMsg = `Error uploading file "${file.name}": ${error.message}`;
-          console.error(errMsg, {
-            fileName: file.name,
-            errorStack: error.stack,
-          });
-          toast.error(errMsg);
-        } else {
-          const errMsg = `Error uploading file "${file.name}": Unknown error`;
-          console.error(errMsg, {
-            fileName: file.name,
-          });
-          toast.error(errMsg);
-        }
+        const errMsg = `Error uploading file "${file.name}": ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`;
+        console.error(errMsg);
+        toast.error(errMsg);
       }
     }
 
@@ -83,60 +86,13 @@ const FileUploadZone = ({
     setProgress(100);
   };
 
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setDraggedZone(null); // Reset the dragged zone state
-    const droppedFiles = Array.from(e.dataTransfer.files); // Get the dropped files
-    if (droppedFiles.length > 0) {
-      await upload(droppedFiles); // Call the upload function with the dropped files
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault(); // Prevent the default behavior during drag over
-    e.stopPropagation(); // Stop the event from propagating further
-  };
-
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []); // Get the selected files
-    if (selectedFiles.length > 0) {
-      await upload(selectedFiles); // Call the upload function with the selected files
-    }
-  };
-
   const removeFile = (index: number) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  const zones = [
-    {
-      title: "Upload Images",
-      subtitle: "Drop images here",
-      icon: Image,
-      gradient: "from-purple-400 via-pink-500 to-red-500",
-      rotate: "-rotate-2",
-    },
-    // {
-    //   title: "Upload Videos",
-    //   subtitle: "Drop videos here",
-    //   icon: Video,
-    //   gradient: "from-blue-400 via-teal-500 to-green-500",
-    //   rotate: "",
-    // },
-    // {
-    //   title: "Upload Files",
-    //   subtitle: "Drop files here",
-    //   icon: UploadCloudIcon,
-    //   gradient: "from-yellow-400 via-orange-500 to-red-500",
-    //   rotate: "rotate-3",
-    // },
-  ];
-
   return (
-    <Card className="mx-auto w-full  bg-transparent border-none overflow-hidden rounded-[1rem]">
-      <CardContent className="p-6 py-7   cursor:pointer">
+    <Card className="mx-auto w-full bg-transparent border-none overflow-hidden rounded-[1rem]">
+      <CardContent className="p-6 py-7">
         <div className="grid grid-cols-1 gap-4 mb-6 justify-center">
           {zones.map((zone, index) => (
             <div key={index} className={`relative ${zone.rotate}`}>
@@ -154,8 +110,7 @@ const FileUploadZone = ({
                     absolute inset-0 -z-10 rounded-xl bg-gradient-to-br ${
                       zone.gradient
                     }
-                    opacity-0 blur-md transition-opacity duration-300
-                    ${
+                    opacity-0 blur-md transition-opacity duration-300 ${
                       draggedZone === index
                         ? "opacity-70"
                         : "group-hover:opacity-70"
@@ -245,7 +200,7 @@ const FileUploadZone = ({
               disabled={uploading}
               className="rounded-[1rem] mt-2"
             >
-              Insert the {files.length == 1 ? "image" : "images"}
+              Insert the {files.length === 1 ? "image" : "images"}
             </Button>
           )}
         </div>
