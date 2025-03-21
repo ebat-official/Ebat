@@ -23,7 +23,7 @@ import {
   LexicalEditor,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import {  sanitizeUrl } from "../../utils/url";
+import { sanitizeUrl } from "../../utils/url";
 import { setFloatingElemPositionForLinkEditor } from "../../utils/setFloatingElemPositionForLinkEditor";
 import { Input } from "@/components/ui/input";
 import { Check, Edit2Icon, Link, X } from "lucide-react";
@@ -191,14 +191,14 @@ function FloatingLinkEditor({
     }
   };
 
-  const handleLinkSubmission =  (
+  const handleLinkSubmission = (
     event: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLElement>
   ) => {
     event.preventDefault();
 
     if (lastSelection !== null) {
       if (linkUrl !== "") {
-        editor.update( () => {
+        editor.update(() => {
           editor.dispatchCommand(
             TOGGLE_LINK_COMMAND,
             sanitizeUrl(editedLinkUrl)
@@ -220,7 +220,7 @@ function FloatingLinkEditor({
       }
       // Fetch metadata asynchronously AFTER editor update
       setEditedLinkUrl("https://");
-    
+
       setIsLinkEditMode(false);
     }
   };
@@ -255,7 +255,7 @@ function FloatingLinkEditor({
               className=" rounded-xl h-6 w-6 flex items-center"
               role="button"
               variant={"destructive"}
-              size={"Toolbar"}
+              size="sm"
               tip="delete link"
               tabIndex={0}
               onMouseDown={preventDefault}
@@ -272,7 +272,7 @@ function FloatingLinkEditor({
               tip="confirm link"
               onMouseDown={preventDefault}
               onClick={handleLinkSubmission}
-              size={"Toolbar"}
+              size="sm"
             >
               <Check />
             </Button>
@@ -298,7 +298,7 @@ function FloatingLinkEditor({
             <Button
               className=" rounded-xl z-50 h-6 w-6 flex items-center"
               role="button"
-              size={"Toolbar"}
+              size="sm"
               tip="edit link"
               tabIndex={0}
               onMouseDown={preventDefault}
@@ -316,7 +316,7 @@ function FloatingLinkEditor({
               tabIndex={0}
               variant={"secondary"}
               tip="delet link"
-              size={"Toolbar"}
+              size="sm"
               onMouseDown={preventDefault}
               onClick={() => {
                 editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
@@ -435,7 +435,6 @@ export default function FloatingLinkEditorPlugin({
 }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
 
-  
   return useFloatingLinkEditorToolbar(
     editor,
     anchorElem,

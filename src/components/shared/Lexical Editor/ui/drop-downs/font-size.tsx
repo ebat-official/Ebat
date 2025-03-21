@@ -95,7 +95,7 @@ export default function FontSize({
             Number(inputValue) <= MIN_ALLOWED_FONT_SIZE)
         }
         variant={"outline"}
-        size={"Toolbar"}
+        size="sm"
         onClick={() =>
           updateFontSize(editor, UpdateFontSizeType.decrement, inputValue)
         }
@@ -127,7 +127,7 @@ export default function FontSize({
             Number(inputValue) >= MAX_ALLOWED_FONT_SIZE)
         }
         variant={"outline"}
-        size={"Toolbar"}
+        size="sm"
         onClick={() =>
           updateFontSize(editor, UpdateFontSizeType.increment, inputValue)
         }

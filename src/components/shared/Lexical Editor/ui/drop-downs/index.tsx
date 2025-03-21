@@ -27,7 +27,6 @@ interface values {
   style?: React.CSSProperties;
   isSelected?: boolean;
   shortcuts?: string;
-
 }
 interface Props {
   TriggerLabel: React.ReactNode | string;
@@ -35,10 +34,16 @@ interface Props {
   PopoverContentClassName?: React.CSSProperties;
   values: values[];
   disabled: boolean;
-  triggerVariants?:"ghost" | "default" |"outline" |"link" | "secondary" | "destructive"
-  ShowChevronsUpDown?:boolean
-  side?: "top" | "right" | "bottom" | "left" | undefined
-  sideOffset?:number
+  triggerVariants?:
+    | "ghost"
+    | "default"
+    | "outline"
+    | "link"
+    | "secondary"
+    | "destructive";
+  ShowChevronsUpDown?: boolean;
+  side?: "top" | "right" | "bottom" | "left" | undefined;
+  sideOffset?: number;
 }
 
 export function DropDown({
@@ -47,26 +52,28 @@ export function DropDown({
   values,
   disabled,
   PopoverContentClassName,
-  triggerVariants="outline",
-  ShowChevronsUpDown=true,
-  side="bottom",
-  sideOffset=5
+  triggerVariants = "outline",
+  ShowChevronsUpDown = true,
+  side = "bottom",
+  sideOffset = 5,
 }: Props) {
   const [value, setValue] = React.useState("");
 
   return (
-    <Popover  modal={false}>
-      <PopoverTrigger  disabled={disabled} asChild>
+    <Popover modal={false}>
+      <PopoverTrigger disabled={disabled} asChild>
         <Button
           variant={triggerVariants}
           role="combobox"
-          size={"Toolbar"}
+          size="sm"
           style={TriggerClassName}
         >
           <div className="flex  flex-row justify-center gap-x-3 items-center">
             {TriggerLabel}
           </div>
-          {ShowChevronsUpDown && <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
+          {ShowChevronsUpDown && (
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -87,7 +94,7 @@ export function DropDown({
                   style={framework.style}
                   className={cn(
                     "cursor-pointer",
-                    value === framework.label && "bg-gray-300/10",
+                    value === framework.label && "bg-gray-300/10"
                   )}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);

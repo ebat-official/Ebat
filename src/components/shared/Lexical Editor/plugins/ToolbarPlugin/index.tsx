@@ -190,8 +190,8 @@ export default function index({
         $isElementNode(matchingParent)
           ? matchingParent.getFormatType()
           : $isElementNode(node)
-          ? node.getFormatType()
-          : parent?.getFormatType() || "left"
+            ? node.getFormatType()
+            : parent?.getFormatType() || "left"
       );
     }
     if ($isRangeSelection(selection) || $isTableSelection(selection)) {
@@ -298,7 +298,7 @@ export default function index({
       <div className="group flex flex-row justify-center max-sm:overflow-x-scroll  w-screen items-center   p-2 border-b">
         <div className="flex flex-row gap-x-2">
           <Button
-            size={"Toolbar"}
+            size="sm"
             variant={"outline"}
             disabled={!toolbarState.canUndo || !isEditable}
             onClick={() => {
@@ -312,7 +312,7 @@ export default function index({
           </Button>
           <Button
             variant={"outline"}
-            size={"Toolbar"}
+            size="sm"
             disabled={!toolbarState.canRedo || !isEditable}
             onClick={() => {
               activeEditor.dispatchCommand(REDO_COMMAND, undefined);
@@ -363,7 +363,7 @@ export default function index({
               <Toggle
                 disabled={!isEditable}
                 variant={"outline"}
-                size={"Toolbar"}
+                size="sm"
                 pressed={toolbarState.isBold}
                 onPressedChange={() => {
                   activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
@@ -375,7 +375,7 @@ export default function index({
               </Toggle>
               <Toggle
                 variant={"outline"}
-                size={"Toolbar"}
+                size="sm"
                 disabled={!isEditable}
                 pressed={toolbarState.isItalic}
                 onPressedChange={() => {
@@ -390,7 +390,7 @@ export default function index({
               <Toggle
                 disabled={!isEditable}
                 variant={"outline"}
-                size={"Toolbar"}
+                size="sm"
                 pressed={toolbarState.isUnderline}
                 onPressedChange={() => {
                   activeEditor.dispatchCommand(
@@ -407,7 +407,7 @@ export default function index({
               <Toggle
                 disabled={!isEditable}
                 variant={"outline"}
-                size={"Toolbar"}
+                size="sm"
                 pressed={toolbarState.isCode}
                 onPressedChange={() => {
                   activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
@@ -420,7 +420,7 @@ export default function index({
               </Toggle>
               <Toggle
                 variant={"outline"}
-                size={"Toolbar"}
+                size="sm"
                 disabled={!isEditable}
                 onPressedChange={insertLink}
                 pressed={toolbarState.isLink}

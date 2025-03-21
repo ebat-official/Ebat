@@ -49,7 +49,7 @@ export function CopyButton({ editor, getCodeDOMNode }: Props) {
   return (
     <Button
       variant="outline"
-      size={"Toolbar"}
+      size="sm"
       className="relative rounded-md"
       onClick={copyToClipboard}
       aria-label={isCopyCompleted ? "Copied" : "Copy to clipboard"}
