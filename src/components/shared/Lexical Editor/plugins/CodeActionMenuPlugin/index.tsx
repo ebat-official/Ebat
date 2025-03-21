@@ -11,7 +11,7 @@ import {
   isHTMLElement,
   NodeKey,
 } from "lexical";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
@@ -27,42 +27,33 @@ interface Position {
   right: string;
 }
 
-function CodeActionMenuContainer({
-  anchorElem,
-}: {
-  anchorElem: HTMLElement;
-}): React.JSX.Element {
+function CodeActionMenuContainer({ anchorElem }: { anchorElem: HTMLElement }) {
   const [editor] = useLexicalComposerContext();
 
   const [lang, setLang] = useState("");
-  const [isShown, setShown] = useState<boolean>(false);
+  const [isShown, setShown] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(
     null
   );
-  const [shouldListenMouseMove, setShouldListenMouseMove] =
-    useState<boolean>(false);
-  const [position, setPosition] = useState<Position>({
-    right: "0",
-    top: "0",
-  });
+  const [shouldListenMouseMove, setShouldListenMouseMove] = useState(false);
+  const [position, setPosition] = useState<Position>({ right: "0", top: "0" });
+
   const codeSetRef = useRef<Set<string>>(new Set());
   const codeDOMNodeRef = useRef<HTMLElement | null>(null);
 
-  function getCodeDOMNode(): HTMLElement | null {
-    return codeDOMNodeRef.current;
-  }
+  const getCodeDOMNode = useCallback(() => codeDOMNodeRef.current, []);
 
   const debouncedOnMouseMove = useDebounce(
     (event: MouseEvent) => {
       const { codeDOMNode, isOutside } = getMouseInfo(event);
+
       if (isOutside) {
         setShown(false);
         return;
       }
 
-      if (!codeDOMNode) {
-        return;
-      }
+      if (!codeDOMNode) return;
 
       codeDOMNodeRef.current = codeDOMNode;
 
@@ -71,11 +62,10 @@ function CodeActionMenuContainer({
 
       editor.update(() => {
         const maybeCodeNode = $getNearestNodeFromDOMNode(codeDOMNode);
-
         if ($isCodeNode(maybeCodeNode)) {
           codeNode = maybeCodeNode;
           _lang = codeNode.getLanguage() || "";
-          setSelectedElementKey(codeNode.getKey()); // Set the selectedElementKey
+          setSelectedElementKey(codeNode.getKey());
         }
       });
 
@@ -86,7 +76,7 @@ function CodeActionMenuContainer({
         setLang(_lang);
         setShown(true);
         setPosition({
-          right: `${editorElemRight - right  + CODE_PADDING}px`,
+          right: `${editorElemRight - right + CODE_PADDING}px`,
           top: `${y - editorElemY}px`,
         });
       }
@@ -96,12 +86,9 @@ function CodeActionMenuContainer({
   );
 
   useEffect(() => {
-    if (!shouldListenMouseMove) {
-      return;
-    }
+    if (!shouldListenMouseMove) return;
 
     document.addEventListener("mousemove", debouncedOnMouseMove);
-
     return () => {
       setShown(false);
       debouncedOnMouseMove.cancel();
@@ -115,18 +102,8 @@ function CodeActionMenuContainer({
       (mutations) => {
         editor.getEditorState().read(() => {
           for (const [key, type] of mutations) {
-            switch (type) {
-              case "created":
-                codeSetRef.current.add(key);
-                break;
-
-              case "destroyed":
-                codeSetRef.current.delete(key);
-                break;
-
-              default:
-                break;
-            }
+            if (type === "created") codeSetRef.current.add(key);
+            else if (type === "destroyed") codeSetRef.current.delete(key);
           }
         });
         setShouldListenMouseMove(codeSetRef.current.size > 0);
@@ -138,7 +115,7 @@ function CodeActionMenuContainer({
   const normalizedLang = normalizeCodeLang(lang);
   const codeFriendlyName = getLanguageFriendlyName(lang);
 
-  const onCodeLanguageSelect = React.useCallback(
+  const onCodeLanguageSelect = useCallback(
     (value: string) => {
       editor.update(() => {
         if (selectedElementKey !== null) {
@@ -153,15 +130,17 @@ function CodeActionMenuContainer({
     [editor, selectedElementKey]
   );
 
-  
   return (
-    <div>
-      {isShown ? (
+    <>
+      {(isShown || isHovering) && (
         <div
-          className="code-action-menu-container   flex flex-row items-center gap-x-2 p-2 absolute "
-          style={{ ...position }}
+          className="code-action-menu-container flex flex-row items-center gap-x-2 p-2 absolute"
+          style={position}
         >
-          <div>
+          <div
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
             <CodeList
               codeLanguage={codeFriendlyName}
               disabled={!editor.isEditable()}
@@ -169,19 +148,20 @@ function CodeActionMenuContainer({
             />
           </div>
           <CopyButton editor={editor} getCodeDOMNode={getCodeDOMNode} />
-          {canBePrettier(normalizedLang) ? (
+          {canBePrettier(normalizedLang) && (
             <PrettierButton
               editor={editor}
               getCodeDOMNode={getCodeDOMNode}
               lang={normalizedLang}
             />
-          ) : null}
+          )}
         </div>
-      ) : null}
-    </div>
+      )}
+    </>
   );
 }
 
+// 🧹 Cleaned: Removed duplicate `target.closest<HTMLElement>("code.line-code")`
 function getMouseInfo(event: MouseEvent): {
   codeDOMNode: HTMLElement | null;
   isOutside: boolean;
@@ -189,20 +169,15 @@ function getMouseInfo(event: MouseEvent): {
   const target = event.target;
 
   if (isHTMLElement(target)) {
-    const codeDOMNode = target.closest<HTMLElement>(
-      "code.line-code"
-    );
-    const isOutside = !(
+    const codeDOMNode = target.closest<HTMLElement>("code.line-code");
+    const isInside =
       codeDOMNode ||
       target.closest<HTMLElement>("div.code-action-menu-container") ||
-      target.closest<HTMLElement>("div.code-selector") ||
-      target.closest<HTMLElement>("code.line-code")
-    );
+      target.closest<HTMLElement>("div.code-selector");
 
-    return { codeDOMNode, isOutside };
-  } else {
-    return { codeDOMNode: null, isOutside: true };
+    return { codeDOMNode, isOutside: !isInside };
   }
+  return { codeDOMNode: null, isOutside: true };
 }
 
 export default function CodeActionMenuPlugin({
