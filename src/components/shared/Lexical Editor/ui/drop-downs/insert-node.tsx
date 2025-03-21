@@ -1,8 +1,11 @@
-import { LexicalEditor } from "lexical";
+import { $getSelection, $isRangeSelection, LexicalEditor } from "lexical";
+import { $patchStyleText, $setBlocksType } from "@lexical/selection";
+import { $createCodeNode } from "@lexical/code";
 import React, { useMemo, lazy, Suspense } from "react";
 import useModal from "../models/use-model";
 import {
   AlertCircle,
+  Code2,
   Columns2,
   Columns3,
   Columns4,
@@ -93,6 +96,25 @@ export default function InsertNode({
             ),
             true
           );
+        },
+      },
+      {
+        label: "Code",
+        icon: <Code2 />,
+        func: () => {
+          editor.update(() => {
+            const selection = $getSelection();
+            if ($isRangeSelection(selection)) {
+              if (selection.isCollapsed()) {
+                $setBlocksType(selection, () => $createCodeNode());
+              } else {
+                const textContent = selection.getTextContent();
+                const codeNode = $createCodeNode();
+                selection.insertNodes([codeNode]);
+                selection.insertRawText(textContent);
+              }
+            }
+          });
         },
       },
       {

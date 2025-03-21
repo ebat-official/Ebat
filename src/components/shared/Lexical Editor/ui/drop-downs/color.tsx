@@ -122,31 +122,38 @@ export default function Color({
     [theme, dark, light]
   );
 
-
   return (
     <Popover>
       <PopoverTrigger asChild disabled={disabled}>
         {!isTable ? (
           <Button
             style={{
-              ...style,background: bgColor === "#fff" ? "transparent" : bgColor,
-              color: theme === "dark" && color === "#000" ? "white" : 
-                    theme !== "dark" && color === "#fff" ? "black" : color,
+              ...style,
+              background: bgColor === "#fff" ? "transparent" : bgColor,
+              color:
+                theme === "dark" && color === "#000"
+                  ? "white"
+                  : theme !== "dark" && color === "#fff"
+                    ? "black"
+                    : color,
             }}
-            variant={"transparent"}
             className="px-2 "
-            size="Toolbar"
             onMouseDown={(e) => e.preventDefault()}
           >
             A
           </Button>
         ) : (
           <div
-          style={{
-            ...style,background: bgColor === "#fff" ? "transparent" : bgColor,
-            color: theme === "dark" && color === "#000" ? "white" : 
-                   theme !== "dark" && color === "#fff" ? "black" : color,
-          }}
+            style={{
+              ...style,
+              background: bgColor === "#fff" ? "transparent" : bgColor,
+              color:
+                theme === "dark" && color === "#000"
+                  ? "white"
+                  : theme !== "dark" && color === "#fff"
+                    ? "black"
+                    : color,
+            }}
             onMouseDown={(e) => e.preventDefault()}
             className="cursor-pointer"
           >
@@ -154,7 +161,11 @@ export default function Color({
           </div>
         )}
       </PopoverTrigger>
-      <PopoverContent className="max-w-32 w-full p-2" side={side} sideOffset={sideOffset}>
+      <PopoverContent
+        className="max-w-32 w-full p-2 "
+        side={side}
+        sideOffset={sideOffset}
+      >
         <div className="flex flex-col">
           {!isTable && (
             <div className="flex flex-col gap-y-1">
@@ -162,21 +173,19 @@ export default function Color({
                 Font color
               </span>
               <div className="w-full flex flex-wrap gap-1">
-                {Object.entries(themeColor.font).map(
-                  ([_, colorValue]) => (
-                    <Button
-                      key={colorValue}
-                      type="button"
-                      onClick={() => onFontColorSelect(colorValue, true)}
-                      className={cn(
-                        "w-[18px] p-0 h-[18px] rounded-[3px]",
-                        colorValue === color && "ring-2 ring-offset-2"
-                      )}
-                      style={{ background: colorValue }}
-                      onMouseDown={(e) => e.preventDefault()}
-                    />
-                  )
-                )}
+                {Object.entries(themeColor.font).map(([_, colorValue]) => (
+                  <Button
+                    key={colorValue}
+                    type="button"
+                    onClick={() => onFontColorSelect(colorValue, true)}
+                    className={cn(
+                      "w-[18px] p-0 h-[18px] rounded-[3px]",
+                      colorValue === color && "ring-2 ring-offset-2"
+                    )}
+                    style={{ background: colorValue }}
+                    onMouseDown={(e) => e.preventDefault()}
+                  />
+                ))}
               </div>
               <Separator className="my-2 h-[1px]" />
             </div>
@@ -186,22 +195,19 @@ export default function Color({
               Background
             </span>
             <div className="w-full flex flex-wrap gap-1">
-              {Object.entries(themeColor.background).map(
-                ([_, colorValue]) => (
-                  <Button
-                    key={colorValue}
-                    onClick={() => onBgColorSelect(colorValue, false)}
-
-                    type="button"
-                    className={cn(
-                      "w-[18px] p-0 h-[18px] rounded-[3px]",
-                      colorValue === bgColor && "ring-2 ring-offset-2"
-                    )}
-                    style={{ background: colorValue }}
-                    onMouseDown={(e) => e.preventDefault()}
-                  />
-                )
-              )}
+              {Object.entries(themeColor.background).map(([_, colorValue]) => (
+                <Button
+                  key={colorValue}
+                  onClick={() => onBgColorSelect(colorValue, false)}
+                  type="button"
+                  className={cn(
+                    "w-[18px] p-0 h-[18px] rounded-[3px]",
+                    colorValue === bgColor && "ring-2 ring-offset-2"
+                  )}
+                  style={{ background: colorValue }}
+                  onMouseDown={(e) => e.preventDefault()}
+                />
+              ))}
             </div>
           </div>
         </div>
