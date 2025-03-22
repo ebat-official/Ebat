@@ -36,6 +36,7 @@ import YouTubePlugin from "./plugins/YouTubePlugin";
 import HintPlugin from "./nodes/Hint";
 import { LexicalOnChangePlugin } from "./lexical-on-change";
 import StepperPlugin from "./nodes/Stepper";
+import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
   ssr: false,
 });
@@ -174,6 +175,7 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
           <CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
 
           <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
+          <TableOfContentsPlugin />
         </>
       )}
 

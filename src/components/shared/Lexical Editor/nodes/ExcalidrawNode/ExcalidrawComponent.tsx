@@ -1,8 +1,7 @@
 import type { ExcalidrawInitialElements } from "../../ui/excaliDraw/ExcalidrawModal";
 import type { NodeKey } from "lexical";
-import type { JSX } from "react";
 
-import { AppState, BinaryFiles } from "@excalidraw/excalidraw/types/types";
+import { AppState, BinaryFiles } from "@excalidraw/excalidraw/types";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
@@ -31,7 +30,7 @@ export default function ExcalidrawComponent({
   nodeKey: NodeKey;
   width: "inherit" | number;
   height: "inherit" | number;
-}): JSX.Element {
+}) {
   const [editor] = useLexicalComposerContext();
   const isEditable = useLexicalEditable();
   const [isModalOpen, setModalOpen] = useState<boolean>(
