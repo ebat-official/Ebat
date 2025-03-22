@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import useFileUpload from "@/hooks/useFileUpload";
 import { toast } from "sonner";
 import { zones } from "./constants";
+import { useEditorContext } from "../../providers/EditorContext";
 
 interface FileUploadZoneProps {
   InsertMedia: (files: { url: string; alt: string }[]) => void;
@@ -22,9 +23,9 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   const [draggedZone, setDraggedZone] = useState<number | null>(null);
   const [files, setFiles] = useState<{ url: string; alt: string }[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadFile } = useFileUpload();
+  const { uploadFile, progress } = useFileUpload();
+  const { id: postId } = useEditorContext();
 
   const handleDragEnter = (index: number) => (e: React.DragEvent) => {
     e.preventDefault();
@@ -61,13 +62,12 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 
   const upload = async (newFiles: File[]) => {
     setUploading(true);
-    setProgress(0);
 
     const uploadedFiles: { url: string; alt: string }[] = [];
 
     for (const file of newFiles) {
       try {
-        const { status, data } = await uploadFile(file, { postId: "postId" });
+        const { status, data } = await uploadFile(file, { postId });
         if (status === "error") throw new Error(data.message);
 
         uploadedFiles.push({ url: data.url || "", alt: file.name });
@@ -83,7 +83,6 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 
     setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
     setUploading(false);
-    setProgress(100);
   };
 
   const removeFile = (index: number) => {
@@ -93,7 +92,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   return (
     <Card className="mx-auto w-full bg-transparent border-none overflow-hidden rounded-[1rem]">
       <CardContent className="p-6 py-7">
-        <div className="grid grid-cols-1 gap-4 mb-6 justify-center">
+        <div className="grid justify-center grid-cols-1 gap-4 mb-6">
           {zones.map((zone, index) => (
             <div key={index} className={`relative ${zone.rotate}`}>
               <motion.div
@@ -103,7 +102,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                 onDrop={handleDrop}
                 whileHover={{ y: -4, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="group relative h-full"
+                className="relative h-full group"
               >
                 <div
                   className={`
@@ -118,12 +117,12 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                   `}
                 />
                 <Card className="relative h-full rounded-[1rem] overflow-hidden border-2 border-dashed border-gray-200 dark:border-gray-800 transition-colors duration-300 group-hover:border-transparent">
-                  <CardContent className="flex h-full flex-col items-center justify-center p-6 text-center">
+                  <CardContent className="flex flex-col items-center justify-center h-full p-6 text-center">
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 10 }}
-                      className="rounded-full bg-gray-100 dark:bg-gray-800 p-3 mb-4"
+                      className="p-3 mb-4 bg-gray-100 rounded-full dark:bg-gray-800"
                     >
-                      <zone.icon className="h-8 w-8 text-gray-500" />
+                      <zone.icon className="w-8 h-8 text-gray-500" />
                     </motion.div>
                     <h3 className="mb-1 text-sm font-medium">{zone.title}</h3>
                     <p className="text-xs text-gray-500">{zone.subtitle}</p>
@@ -137,7 +136,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
         {(uploading || files.length > 0) && (
           <div className="mb-6">
             <Progress value={uploading ? progress : 100} className="h-2 mb-2" />
-            <p className="text-sm text-gray-500 mb-2">
+            <p className="mb-2 text-sm text-gray-500">
               {uploading
                 ? `Uploading... ${progress}%`
                 : `${files.length} file(s) uploaded`}
@@ -158,9 +157,9 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                     variant="ghost"
                     size="icon"
                     onClick={() => removeFile(index)}
-                    className="h-6 w-6 p-0 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    className="w-6 h-6 p-0 hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="w-4 h-4" />
                   </Button>
                 </motion.div>
               ))}
@@ -168,7 +167,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           </div>
         )}
 
-        <div className="text-center flex flex-col">
+        <div className="flex flex-col text-center">
           <input
             type="file"
             ref={fileInputRef}
@@ -183,12 +182,12 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           >
             {uploading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Uploading...
               </>
             ) : (
               <>
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className="w-4 h-4 mr-2" />
                 Choose Files
               </>
             )}

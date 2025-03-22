@@ -44,7 +44,7 @@ const SlashCommand = dynamic(() => import("./plugins/SlashCommand"), {
 });
 const ToolbarPlugin = dynamic(() => import("./plugins/ToolbarPlugin"), {
   ssr: false,
-  loading: () => <Skeleton className="w-full mt-8  h-9" />,
+  loading: () => <Skeleton className="w-full mt-8 h-9" />,
 });
 const FloatingLinkEditorPlugin = dynamic(
   () => import("./plugins/FloatingLinkEditorPlugin"),
@@ -66,7 +66,13 @@ const FloatingTextFormatToolbarPlugin = dynamic(
   () => import("./plugins/FloatingTextFormatToolbarPlugin"),
   { ssr: false }
 );
-export default function Core() {
+interface CoreProps {
+  placeholder: string;
+  id: string;
+  autoFocus?: boolean;
+}
+
+export default function Core({ placeholder, id, autoFocus }: CoreProps) {
   const { historyState } = useSharedHistoryContext();
   const isEditable = useLexicalEditable();
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -96,16 +102,22 @@ export default function Core() {
         contentEditable={
           <div ref={onRef} className="relative">
             <ContentEditable
-              id="lexical-editor"
-              autoFocus
+              id={id}
+              autoFocus={autoFocus}
               className="-z-1 z-20 h-screen  p-1 mt-[80px] outline-none border-0 "
+              aria-placeholder={placeholder}
+              placeholder={
+                <div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
+                  {placeholder}
+                </div>
+              }
             />
           </div>
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
 
-      <AutoFocusPlugin defaultSelection={"rootStart"} />
+      {/* <AutoFocusPlugin defaultSelection={"rootStart"} /> */}
       <ClearEditorPlugin />
       <ShortcutsPlugin
         editor={activeEditor}

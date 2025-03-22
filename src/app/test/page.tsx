@@ -2,14 +2,15 @@
 import "@excalidraw/excalidraw/index.css";
 import Editor from "@/components/shared/Lexical Editor";
 import React, { FC } from "react";
+import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
 
 interface pageProps {}
 
 const page: FC<pageProps> = ({}) => {
   return (
-    <div>
+    <EditorProvider>
       <Editor isEditable={true} />
-    </div>
+    </EditorProvider>
   );
 };
 

@@ -6,19 +6,31 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import theme from "./themes/editor-theme";
 import Core from "./Core";
 import nodes from "./nodes";
+import { useEditorContext } from "./providers/EditorContext";
+
+interface EditorProps {
+  isEditable: boolean;
+  content?: unknown;
+  namespace?: string;
+  placeholder?: string;
+  id?: string;
+  autoFocus?: boolean;
+}
 
 export default function Editor({
   isEditable = false,
   content,
-}: {
-  isEditable: boolean;
-  content?: unknown;
-}) {
+  placeholder = "",
+  id = "ebatEditor",
+  autoFocus = false,
+}: EditorProps) {
+  const { setId } = useEditorContext();
+  setId(id);
   const initialConfig = {
-    namespace: "Bloger editor",
+    namespace: id,
     theme,
-    // editorState:
-    //   typeof content === "string" ? content : JSON.stringify(content),
+    editorState:
+      typeof content === "string" ? content : JSON.stringify(content),
     nodes: [...nodes],
     onError: (error: Error) => {
       throw error;
@@ -30,7 +42,7 @@ export default function Editor({
     <LexicalComposer initialConfig={initialConfig}>
       <SharedHistoryContext>
         <ToolbarContext>
-          <Core />
+          <Core placeholder={placeholder} id={id} autoFocus={autoFocus} />
         </ToolbarContext>
       </SharedHistoryContext>
     </LexicalComposer>
