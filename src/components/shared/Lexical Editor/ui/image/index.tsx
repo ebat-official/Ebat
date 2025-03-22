@@ -377,7 +377,7 @@ export default function ImageComponent({
                         Enter a caption...
                       </span>
                     )}
-                    className="text-center relative text-xs text-muted-foreground  outline-none"
+                    className="relative text-xs text-center outline-none text-muted-foreground"
                   />
                 }
                 ErrorBoundary={LexicalErrorBoundary}
@@ -397,7 +397,12 @@ export default function ImageComponent({
         {resizable && $isNodeSelection(selection) && isFocused && (
           <ImageResizer
             editor={editor}
-            MediaRef={MediaRef}
+            buttonRef={buttonRef}
+            imageRef={MediaRef}
+            maxWidth={maxWidth}
+            setShowCaption={() => null}
+            showCaption={false}
+            captionsEnabled={false}
             onResizeStart={onResizeStart}
             onResizeEnd={onResizeEnd}
           />

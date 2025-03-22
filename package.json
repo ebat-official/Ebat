@@ -77,7 +77,21 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.0.3",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "@excalidraw/excalidraw": "^0.18.0",
+    "@lexical/clipboard": "0.28.0",
+    "@lexical/code": "0.28.0",
+    "@lexical/file": "0.28.0",
+    "@lexical/hashtag": "0.28.0",
+    "@lexical/link": "0.28.0",
+    "@lexical/list": "0.28.0",
+    "@lexical/mark": "0.28.0",
+    "@lexical/overflow": "0.28.0",
+    "@lexical/plain-text": "0.28.0",
+    "@lexical/rich-text": "0.28.0",
+    "@lexical/selection": "0.28.0",
+    "@lexical/table": "0.28.0",
+    "@lexical/utils": "0.28.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

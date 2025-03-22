@@ -1,29 +1,27 @@
+import type { Klass, LexicalNode } from "lexical";
 
-import type {Klass, LexicalNode} from 'lexical';
-
-import {CodeHighlightNode, CodeNode} from '@lexical/code';
-import {HashtagNode} from '@lexical/hashtag';
-import {AutoLinkNode, LinkNode} from '@lexical/link';
-import {ListItemNode, ListNode} from '@lexical/list';
-import {MarkNode} from '@lexical/mark';
-import {OverflowNode} from '@lexical/overflow';
-import {HorizontalRuleNode} from '@lexical/react/LexicalHorizontalRuleNode';
-import {HeadingNode, QuoteNode} from '@lexical/rich-text';
-import {TableCellNode, TableNode, TableRowNode} from '@lexical/table';
-import { ImageNode } from './ImageNode';
-import { PollNode } from './PollNode';
-import { LayoutItemNode } from './LayoutNode/LayoutItemNode';
-import { LayoutContainerNode } from './LayoutNode/LayoutContainerNode';
-import { CollapsibleContainerNode } from './CollapsibleNode/CollapsibleContainerNode';
-import { CollapsibleContentNode } from './CollapsibleNode/CollapsibleContentNode';
-import { CollapsibleTitleNode } from './CollapsibleNode/CollapsibleTitleNode';
-import { LinkWithMetaDataNode } from '../plugins/LinkWithMetaData';
-import { TweetNode } from './TweetNode';
-import { YouTubeNode } from '../plugins/YouTubeNode';
-import { Hint } from './Hint';
-import { StepperNode } from './Stepper';
-
-
+import { CodeHighlightNode, CodeNode } from "@lexical/code";
+import { HashtagNode } from "@lexical/hashtag";
+import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { ListItemNode, ListNode } from "@lexical/list";
+import { MarkNode } from "@lexical/mark";
+import { OverflowNode } from "@lexical/overflow";
+import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { ImageNode } from "./ImageNode";
+import { PollNode } from "./PollNode";
+import { LayoutItemNode } from "./LayoutNode/LayoutItemNode";
+import { LayoutContainerNode } from "./LayoutNode/LayoutContainerNode";
+import { CollapsibleContainerNode } from "./CollapsibleNode/CollapsibleContainerNode";
+import { CollapsibleContentNode } from "./CollapsibleNode/CollapsibleContentNode";
+import { CollapsibleTitleNode } from "./CollapsibleNode/CollapsibleTitleNode";
+import { LinkWithMetaDataNode } from "../plugins/LinkWithMetaData";
+import { TweetNode } from "./TweetNode";
+import { YouTubeNode } from "../plugins/YouTubeNode";
+import { Hint } from "./Hint";
+import { StepperNode } from "./Stepper";
+import { ExcalidrawNode } from "./ExcalidrawNode";
 
 const nodes: Array<Klass<LexicalNode>> = [
   HeadingNode,
@@ -52,10 +50,10 @@ const nodes: Array<Klass<LexicalNode>> = [
   CollapsibleContentNode,
   CollapsibleTitleNode,
   LinkWithMetaDataNode,
-
+  ExcalidrawNode,
 ];
 
-export  const nestedNodes: Array<Klass<LexicalNode>>=[
+export const nestedNodes: Array<Klass<LexicalNode>> = [
   HeadingNode,
   ListNode,
   ListItemNode,
@@ -65,6 +63,6 @@ export  const nestedNodes: Array<Klass<LexicalNode>>=[
   CodeNode,
   StepperNode,
   LinkWithMetaDataNode,
-  ImageNode
-]
-export default nodes
+  ImageNode,
+];
+export default nodes;

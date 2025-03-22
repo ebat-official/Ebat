@@ -9,6 +9,7 @@ import {
   Columns2,
   Columns3,
   Columns4,
+  DraftingCompass,
   FlipHorizontal2,
   Image,
   ImagePlay,
@@ -35,6 +36,7 @@ import {
   YoutubeEmbedConfig,
 } from "../../plugins/AutoEmbedPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
+import { INSERT_EXCALIDRAW_COMMAND } from "../../plugins/ExcalidrawPlugin";
 
 const InsertMediaDialog = lazy(() =>
   import("../models/insertMedia").then((module) => ({
@@ -97,6 +99,12 @@ export default function InsertNode({
             true
           );
         },
+      },
+      {
+        label: "Excalidraw",
+        icon: <DraftingCompass className="w-4 h-4" />,
+        func: () =>
+          editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
       },
       {
         label: "Code",

@@ -30,6 +30,7 @@ import {
   Columns2,
   Columns3,
   Columns4,
+  DraftingCompass,
   ImageIcon,
   ImagePlayIcon,
   ListCheck,
@@ -79,6 +80,7 @@ import {
   initialEditorState,
   INSERT_STEPPER_COMMAND,
 } from "../../nodes/Stepper";
+import { INSERT_EXCALIDRAW_COMMAND } from "../ExcalidrawPlugin";
 const InsertGif = React.lazy(() => import("../../ui/models/insert-gif"));
 const InsertMediaDialog = React.lazy(() =>
   import("../../ui/models/insertMedia").then((module) => ({
@@ -136,7 +138,7 @@ function getDynamicOptions(editor: LexicalEditor, queryString: string) {
       ...colOptions.map(
         (columns) =>
           new ComponentPickerOption(`${rows}x${columns} Table`, {
-            icon: <i className="icon table" />,
+            icon: <i className="table icon" />,
             keywords: ["table"],
             onSelect: () =>
               editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
@@ -363,6 +365,13 @@ function getBaseOptions(
           true
         ),
     }),
+    new ComponentPickerOption("Excalidraw", {
+      icon: <DraftingCompass className="icon diagram-2" />,
+      keywords: ["excalidraw", "diagram", "drawing"],
+      desc: "Create diagrams and drawings",
+      onSelect: () =>
+        editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
+    }),
     new ComponentPickerOption("Poll", {
       icon: <SquarePenIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["collapse", "collapsible", "toggle"],
@@ -543,18 +552,18 @@ export default function SlashCommand(): React.JSX.Element {
                           }}
                           key={option.key}
                         >
-                          <div className="p-4 h-full  bg-gray-400/60  dark:bg-gray-300/10 rounded-sm">
+                          <div className="h-full p-4 rounded-sm bg-gray-400/60 dark:bg-gray-300/10">
                             {option.icon}
                           </div>
-                          <div className="flex flex-row justify-between items-center">
-                            <div className="flex justify-center items-start flex-col">
+                          <div className="flex flex-row items-center justify-between">
+                            <div className="flex flex-col items-start justify-center">
                               <div>{option.title}</div>
-                              <span className="text-sm text-muted-foreground break-words">
+                              <span className="text-sm break-words text-muted-foreground">
                                 {option.desc}
                               </span>
                             </div>
                             {option.keyboardShortcut && (
-                              <CommandShortcut className=" absolute top-1 right-2">
+                              <CommandShortcut className="absolute top-1 right-2">
                                 {option.keyboardShortcut}
                               </CommandShortcut>
                             )}

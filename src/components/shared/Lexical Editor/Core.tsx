@@ -36,12 +36,15 @@ import YouTubePlugin from "./plugins/YouTubePlugin";
 import HintPlugin from "./nodes/Hint";
 import { LexicalOnChangePlugin } from "./lexical-on-change";
 import StepperPlugin from "./nodes/Stepper";
+const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
+  ssr: false,
+});
 const SlashCommand = dynamic(() => import("./plugins/SlashCommand"), {
   ssr: false,
 });
 const ToolbarPlugin = dynamic(() => import("./plugins/ToolbarPlugin"), {
   ssr: false,
-  loading: () => <Skeleton className=" h-9 w-full  mt-8" />,
+  loading: () => <Skeleton className="w-full mt-8  h-9" />,
 });
 const FloatingLinkEditorPlugin = dynamic(
   () => import("./plugins/FloatingLinkEditorPlugin"),
@@ -133,6 +136,7 @@ export default function Core() {
       <HistoryPlugin externalHistoryState={historyState} />
       <MarkdownShortcutPlugin />
       <ClickableLinkPlugin disabled={isEditable} />
+      <ExcalidrawPlugin />
       <TablePlugin
         hasCellMerge={true}
         hasCellBackgroundColor={true}
