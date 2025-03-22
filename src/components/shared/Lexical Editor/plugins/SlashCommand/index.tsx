@@ -231,6 +231,13 @@ function getBaseOptions(
       desc: "Add a hint to your content.",
       onSelect: () => editor.dispatchCommand(INSERT_HINT_COMMAND, "hint"),
     }),
+    new ComponentPickerOption("Excalidraw", {
+      icon: <DraftingCompass className="icon diagram-2" />,
+      keywords: ["excalidraw", "diagram", "drawing"],
+      desc: "Create diagrams and drawings",
+      onSelect: () =>
+        editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
+    }),
     new ComponentPickerOption("Numbered List", {
       icon: <ListOrdered className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
       keywords: ["numbered list", "ordered list", "ol"],
@@ -364,13 +371,6 @@ function getBaseOptions(
           ),
           true
         ),
-    }),
-    new ComponentPickerOption("Excalidraw", {
-      icon: <DraftingCompass className="icon diagram-2" />,
-      keywords: ["excalidraw", "diagram", "drawing"],
-      desc: "Create diagrams and drawings",
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
     }),
     new ComponentPickerOption("Poll", {
       icon: <SquarePenIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
