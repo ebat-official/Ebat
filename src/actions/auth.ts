@@ -24,16 +24,17 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { findUserByEmail } from "@/actions/user";
 import mailer from "@/lib/mailer";
-import { prismaCustomAdapter } from '@/prismaAdapter'
+import { prismaCustomAdapter } from "@/prismaAdapter";
 
 type AuthReturnType = {
-  type: string;
   data: any;
   cause?: string;
+  status: string;
 };
 
-export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> {
-  
+export async function signUp(
+  data: authFormSchemaType
+): Promise<AuthReturnType> {
   const validateFields = authFormSchema.safeParse(data);
   if (!validateFields.success) {
     return INVALID_USERNAME_PASSWORD_ERROR;
@@ -48,11 +49,11 @@ export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> 
     return EMAIL_ALREADY_EXISTS_ERROR;
   }
   const customAdapter = prismaCustomAdapter();
- 
+
   const user = await customAdapter.createUser({
     name: data.name,
     email: data.email,
-     // @ts-ignore
+    // @ts-ignore
     password: bcrypt.hashSync(data.password, 12),
   });
   if (!user) {
@@ -66,14 +67,19 @@ export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> 
 
 export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
   const validateFields = authFormSchema.safeParse(data);
+
+  // console.log(validateFields, "subina-validate");
   if (!validateFields.success) {
     return INVALID_USERNAME_PASSWORD_ERROR;
   }
+
   const { email, password } = validateFields.data;
   try {
-    await signIn("credentials", { email, password});
+    await signIn("credentials", { email, password });
+    // console.log(validateFields, "Subina-singed");
     return { type: SUCCESS, data: "" };
   } catch (error) {
+    // console.log(validateFields, "subina-error");
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
@@ -93,11 +99,15 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
   }
 }
 // Verification Tokens
-export async function upsertVerificationToken(email: string): Promise<AuthReturnType> {
+export async function upsertVerificationToken(
+  email: string
+): Promise<AuthReturnType> {
   const user = await findUserByEmail(email);
   if (!user) return NO_USER_FOUND_ERROR;
   const uuidToken = uuidv4();
-  const tokenExpires = new Date(new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES));
+  const tokenExpires = new Date(
+    new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES)
+  );
   try {
     const record = await prisma.verificationToken.upsert({
       where: { email: email },
@@ -148,7 +158,9 @@ export async function upsertResetToken(email: string): Promise<AuthReturnType> {
   const user = await findUserByEmail(email);
   if (!user) return NO_USER_FOUND_ERROR;
   const uuidToken = uuidv4();
-  const tokenExpires = new Date(new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES));
+  const tokenExpires = new Date(
+    new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES)
+  );
   try {
     const record = await prisma.resetToken.upsert({
       where: { email: email },
@@ -175,7 +187,7 @@ export async function validateResetToken(token: string) {
         return { type: ERROR, data: TOKEN_EXPIRED };
       }
     }
-    
+
     return { type: ERROR, data: INVALID_TOKEN_ERROR };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
@@ -196,20 +208,23 @@ export async function deleteResetToken(email: string) {
   }
 }
 
-export async function updateUserPasswordWithToken(token: string, password: string) {
+export async function updateUserPasswordWithToken(
+  token: string,
+  password: string
+) {
   try {
     const tokenData = await prisma.resetToken.findFirst({
       where: {
         token: token,
       },
     });
-    if(!tokenData){
-      return { type: ERROR, data: INVALID_TOKEN_ERROR }
+    if (!tokenData) {
+      return { type: ERROR, data: INVALID_TOKEN_ERROR };
     }
-    
+
     await prisma.user.update({
       where: {
-        email:tokenData.email,
+        email: tokenData.email,
       },
       data: { password: bcrypt.hashSync(password, 12) },
     });
