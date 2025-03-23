@@ -62,24 +62,21 @@ export async function signUp(
   //send verification mail
   const verification = await upsertVerificationToken(user.email);
   mailer(user.email, EMAIL_VALIDATION, verification.data?.token);
-  return { type: SUCCESS, data: user };
+  return { status: SUCCESS, data: user };
 }
 
 export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
   const validateFields = authFormSchema.safeParse(data);
 
-  // console.log(validateFields, "subina-validate");
   if (!validateFields.success) {
     return INVALID_USERNAME_PASSWORD_ERROR;
   }
-
   const { email, password } = validateFields.data;
   try {
     await signIn("credentials", { email, password });
-    // console.log(validateFields, "Subina-singed");
-    return { type: SUCCESS, data: "" };
+
+    return { status: SUCCESS, data: "" };
   } catch (error) {
-    // console.log(validateFields, "subina-error");
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
@@ -114,7 +111,7 @@ export async function upsertVerificationToken(
       update: { token: uuidToken, expires: tokenExpires },
       create: { email: email, token: uuidToken, expires: tokenExpires },
     });
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -129,12 +126,12 @@ export async function validateVerificationToken(token: string) {
 
     if (record?.token === token) {
       if (record.expires.getTime() > new Date().getTime()) {
-        return { type: SUCCESS, data: record };
+        return { status: SUCCESS, data: record };
       } else {
-        return { type: ERROR, data: TOKEN_EXPIRED };
+        return { status: ERROR, data: TOKEN_EXPIRED };
       }
     }
-    return { type: ERROR, data: INVALID_TOKEN_ERROR };
+    return { status: ERROR, data: INVALID_TOKEN_ERROR };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -147,7 +144,7 @@ export async function deleteVerificationToken(email: string) {
       },
     });
 
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -167,7 +164,7 @@ export async function upsertResetToken(email: string): Promise<AuthReturnType> {
       update: { token: uuidToken, expires: tokenExpires },
       create: { email: email, token: uuidToken, expires: tokenExpires },
     });
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -182,13 +179,13 @@ export async function validateResetToken(token: string) {
 
     if (record?.token === token) {
       if (record.expires.getTime() > new Date().getTime()) {
-        return { type: SUCCESS, data: record };
+        return { status: SUCCESS, data: record };
       } else {
-        return { type: ERROR, data: TOKEN_EXPIRED };
+        return { status: ERROR, data: TOKEN_EXPIRED };
       }
     }
 
-    return { type: ERROR, data: INVALID_TOKEN_ERROR };
+    return { status: ERROR, data: INVALID_TOKEN_ERROR };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -202,7 +199,7 @@ export async function deleteResetToken(email: string) {
       },
     });
 
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -219,7 +216,7 @@ export async function updateUserPasswordWithToken(
       },
     });
     if (!tokenData) {
-      return { type: ERROR, data: INVALID_TOKEN_ERROR };
+      return { status: ERROR, data: INVALID_TOKEN_ERROR };
     }
 
     await prisma.user.update({

@@ -11,8 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { signUp } from "@/actions/auth";
 import { useServerAction } from "@/hooks/useServerAction";
 import EmailVerificationModal from "./EmailVerificationModal";
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type FormValues = {
   name: string;
@@ -28,7 +28,8 @@ const schema = z.object({
     .string()
     .min(8)
     .regex(/^(?=.*[!@#$%^&*])/, {
-      message: "Password must contain at least one special character (!@#$%^&*)",
+      message:
+        "Password must contain at least one special character (!@#$%^&*)",
     }),
   termsAccepted: z.boolean().refine((data) => data === true, {
     message: "You must accept the terms and conditions",
@@ -51,15 +52,15 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
   const [userData, setUserData] = useState({ email: "" });
   // const mutation = useRegisterUser();
   const [runActionSignup, isLoading] = useServerAction(signUp);
-  const {toast}=useToast()
+  const { toast } = useToast();
 
   const onSubmit = handleSubmit(async (userData) => {
     setUserData(userData);
     const result = await runActionSignup(userData);
-    if (result?.type === "success") {
+    if (result?.status === "success") {
       setOpenEmailVerification(true);
     }
-    if (result?.type === "error") {
+    if (result?.status === "error") {
       return toast({
         title: "Error",
         description: String(result.data),
@@ -79,60 +80,72 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
           <Input
             {...register("name")}
             type="text"
-            className={cn(
-
-              { "border-red-500": errors?.name },
-            )}
+            className={cn({ "border-red-500": errors?.name })}
             placeholder="Name"
             aria-label="Name"
           />
-          {errors?.name && <p className="text-sm text-red-500 dark:text-red-900">{errors.name.message}</p>}
+          {errors?.name && (
+            <p className="text-sm text-red-500 dark:text-red-900">
+              {errors.name.message}
+            </p>
+          )}
         </div>
         <div className="mb-4">
           <Input
             {...register("email")}
             type="email"
-            className={cn(
-
-              { "border-red-500": errors?.email },
-            )}
+            className={cn({ "border-red-500": errors?.email })}
             placeholder="Email"
             aria-label="Email"
           />
-          {errors?.email && <p className="text-sm text-red-500 dark:text-red-900">{errors.email.message}</p>}
+          {errors?.email && (
+            <p className="text-sm text-red-500 dark:text-red-900">
+              {errors.email.message}
+            </p>
+          )}
         </div>
         <div className="mb-4">
           <Input
             {...register("password")}
             type="password"
-            className={cn(
-
-              { "border-red-500": errors?.password },
-            )}
+            className={cn({ "border-red-500": errors?.password })}
             placeholder="Password"
             aria-label="Password"
           />
-          {errors?.password && <p className="text-sm text-red-500 dark:text-red-900">{errors.password.message}</p>}
+          {errors?.password && (
+            <p className="text-sm text-red-500 dark:text-red-900">
+              {errors.password.message}
+            </p>
+          )}
         </div>
         <div className="min-h-[6px] flex gap-2 items-center">
           <input
             {...register("termsAccepted")}
             id="terms"
-            className={cn(
-              "w-4 h-4 ease-soft  rounded-md",
-              { " border-red-500 ": errors.termsAccepted },
-            )}
+            className={cn("w-4 h-4 ease-soft  rounded-md", {
+              " border-red-500 ": errors.termsAccepted,
+            })}
             type="checkbox"
           />
-          <label className="text-sm font-normal cursor-pointer select-none " htmlFor="terms">
+          <label
+            className="text-sm font-normal cursor-pointer select-none "
+            htmlFor="terms"
+          >
             I agree the{" "}
-            <Link href="#" passHref={true} onClick={() => {}} className="font-bold ">
+            <Link
+              href="#"
+              passHref={true}
+              onClick={() => {}}
+              className="font-bold "
+            >
               Terms and Conditions
             </Link>
           </label>
         </div>
         {errors?.termsAccepted && (
-          <p className="text-sm text-red-500 dark:text-red-900">{errors.termsAccepted.message}</p>
+          <p className="text-sm text-red-500 dark:text-red-900">
+            {errors.termsAccepted.message}
+          </p>
         )}
         <div className="text-center">
           <ButtonDark type="submit" title="sign up" loading={isLoading} />

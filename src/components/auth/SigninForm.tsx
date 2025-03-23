@@ -65,7 +65,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
     (async () => {
       if (openEmailVerification && userData.email) {
         const verification = await upsertVerificationToken(userData.email);
-        if (verification.type === ERROR) {
+        if (verification.status === ERROR) {
           return toast({
             title: "Error",
             description: verification.data,
@@ -80,8 +80,6 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
   const onSubmit = handleSubmit(async (userData) => {
     setUserData(userData);
     const result = await runActionSignin(userData);
-
-    console.log(result, "result");
 
     if (result?.status === "success") {
       if (modelHandler) modelHandler(false);
