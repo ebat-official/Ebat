@@ -20,7 +20,7 @@ import { logIn, upsertVerificationToken } from "@/actions/auth";
 import EmailVerificationModal from "./EmailVerificationModal";
 import { useServerAction } from "@/hooks/useServerAction";
 import mailer from "@/lib/mailer";
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 
 type FormValues = {
   email: string;
@@ -52,7 +52,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
   const verificationEmail = searchParams.get(EMAIL_VERIFICATION);
   const [runActionSignin, isLoading] = useServerAction(logIn);
   const [formStatus, setFormStatus] = useState({ type: LOADING, data: "" });
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   useEffect(() => {
     if (verificationEmail) {
@@ -65,7 +65,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
     (async () => {
       if (openEmailVerification && userData.email) {
         const verification = await upsertVerificationToken(userData.email);
-        if (verification.type === ERROR) {
+        if (verification.status === ERROR) {
           return toast({
             title: "Error",
             description: verification.data,
@@ -81,11 +81,11 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
     setUserData(userData);
     const result = await runActionSignin(userData);
 
-    if (result?.type === "success") {
+    if (result?.status === "success") {
       if (modelHandler) modelHandler(false);
       return;
     }
-    if (result?.type === "error") {
+    if (result?.status === "error") {
       if (result.cause === EMAIL_NOT_VERIFIED) {
         setOpenEmailVerification(true);
         await upsertVerificationToken(userData.email);
@@ -111,9 +111,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
           <Input
             {...register("email")}
             type="email"
-            className={cn(
-              { "border-red-500": errors?.email }
-            )}
+            className={cn({ "border-red-500": errors?.email })}
             placeholder="Email"
             aria-label="Email"
             autoComplete="username"
@@ -130,9 +128,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
             {...register("password")}
             type="password"
             name="password"
-            className={cn(
-              { "border-red-500": errors?.password }
-            )}
+            className={cn({ "border-red-500": errors?.password })}
             placeholder="Password"
             aria-label="Password"
             autoComplete="current-password"
