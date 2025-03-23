@@ -194,11 +194,15 @@ function TableOfContentsList({
 }
 
 export default function TableOfContentsPlugin() {
+  const { setTableOfContents } = useEditorContext();
+
   return (
     <LexicalTableOfContentsPlugin>
       {(tableOfContents) => {
-        const { setTableOfContents } = useEditorContext();
-        setTableOfContents(tableOfContents);
+        useEffect(() => {
+          setTableOfContents(tableOfContents);
+        }, [tableOfContents, setTableOfContents]);
+
         return <TableOfContentsList tableOfContents={tableOfContents} />;
       }}
     </LexicalTableOfContentsPlugin>

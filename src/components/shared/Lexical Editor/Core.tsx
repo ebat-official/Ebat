@@ -9,27 +9,28 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
-import ImagesPlugin from "./plugins/ImagesPlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
+import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
+
 import ShortcutsPlugin from "./plugins/ShortcutsPlugin";
 import TabFocusPlugin from "./plugins/TabFocusPlugin";
 import TableCellResizerPlugin from "./plugins/TableCellResizer";
+import ImagesPlugin from "./plugins/ImagesPlugin";
 import PollPlugin from "./plugins/PollPlugin";
 import { LayoutPlugin } from "./plugins/LayoutPlugin";
 import CollapsiblePlugin from "./plugins/CollapsiblePlugin";
-import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import LexicalAutoLinkPlugin from "./plugins/AutoLinkPlugin";
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { LinkWithMetaDataPlugin } from "./plugins/LinkWithMetaData";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
 import DragDropPaste from "./plugins/DragDropPastePlugin";
 import DraggableBlockPlugin from "./plugins/DraggableBlockPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
 import TwitterPlugin from "./plugins/TwitterPlugin";
 import AutoEmbedPlugin from "./plugins/AutoEmbedPlugin";
 import YouTubePlugin from "./plugins/YouTubePlugin";
@@ -37,6 +38,8 @@ import HintPlugin from "./nodes/Hint";
 import { LexicalOnChangePlugin } from "./lexical-on-change";
 import StepperPlugin from "./nodes/Stepper";
 import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
+import { useEditorContext } from "./providers/EditorContext";
+
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
   ssr: false,
 });
@@ -67,6 +70,7 @@ const FloatingTextFormatToolbarPlugin = dynamic(
   () => import("./plugins/FloatingTextFormatToolbarPlugin"),
   { ssr: false }
 );
+
 interface CoreProps {
   placeholder: string;
   id: string;
@@ -88,6 +92,8 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
     }
   }, []);
 
+  const { settings } = useEditorContext();
+
   return (
     <>
       {isEditable && (
@@ -105,7 +111,7 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
             <ContentEditable
               id={id}
               autoFocus={autoFocus}
-              className="-z-1 z-20 h-screen  p-1 mt-[80px] outline-none border-0 "
+              className="-z-1 z-20 h-screen p-1 mt-[80px] outline-none border-0"
               aria-placeholder={placeholder}
               placeholder={
                 <div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
@@ -118,7 +124,6 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
         ErrorBoundary={LexicalErrorBoundary}
       />
 
-      {/* <AutoFocusPlugin defaultSelection={"rootStart"} /> */}
       <ClearEditorPlugin />
       <ShortcutsPlugin
         editor={activeEditor}
@@ -128,7 +133,7 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
       <LinkPlugin />
       <HorizontalRulePlugin />
       <TabFocusPlugin />
-      <PollPlugin />
+      {settings.enablePollPlugin && <PollPlugin />}
       <TableCellResizerPlugin />
       <LayoutPlugin />
       <CollapsiblePlugin />
@@ -139,17 +144,17 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
       <LinkWithMetaDataPlugin />
       <ListPlugin />
       <LinkPlugin />
-      <StepperPlugin />
-      <TwitterPlugin />
+      {settings.enableStepperPlugin && <StepperPlugin />}
+      {settings.enableTwitterPlugin && <TwitterPlugin />}
       <CheckListPlugin />
-      <ImagesPlugin />
-      <AutoEmbedPlugin />
-      <HintPlugin />
-      <YouTubePlugin />
+      {settings.enableImagesPlugin && <ImagesPlugin />}
+      {settings.enableAutoEmbedPlugin && <AutoEmbedPlugin />}
+      {settings.enableHintPlugin && <HintPlugin />}
+      {settings.enableYouTubePlugin && <YouTubePlugin />}
       <HistoryPlugin externalHistoryState={historyState} />
       <MarkdownShortcutPlugin />
       <ClickableLinkPlugin disabled={isEditable} />
-      <ExcalidrawPlugin />
+      {settings.enableExcalidrawPlugin && <ExcalidrawPlugin />}
       <TablePlugin
         hasCellMerge={true}
         hasCellBackgroundColor={true}
@@ -173,13 +178,13 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
             cellMerge={true}
           />
           <CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
-
           <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
-          <TableOfContentsPlugin />
+          {settings.enableTableOfContentsPlugin && <TableOfContentsPlugin />}
         </>
       )}
 
-      {isEditable && <SlashCommand />}
+      {isEditable && settings.enableSlashCommand && <SlashCommand />}
+      {settings.enableAutoFocusPlugin && <AutoFocusPlugin />}
     </>
   );
 }

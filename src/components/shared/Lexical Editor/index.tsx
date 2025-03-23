@@ -7,6 +7,7 @@ import theme from "./themes/editor-theme";
 import Core from "./Core";
 import nodes from "./nodes";
 import { useEditorContext } from "./providers/EditorContext";
+import { useEffect } from "react";
 
 interface EditorProps {
   isEditable: boolean;
@@ -25,7 +26,11 @@ export default function Editor({
   autoFocus = false,
 }: EditorProps) {
   const { setId } = useEditorContext();
-  setId(id);
+
+  useEffect(() => {
+    setId(id);
+  }, [id]);
+
   const initialConfig = {
     namespace: id,
     theme,

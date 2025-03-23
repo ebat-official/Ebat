@@ -37,6 +37,7 @@ import {
 } from "../../plugins/AutoEmbedPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
 import { INSERT_EXCALIDRAW_COMMAND } from "../../plugins/ExcalidrawPlugin";
+import { PLUGIN_NAMES } from "../../constants";
 
 const InsertMediaDialog = lazy(() =>
   import("../models/insertMedia").then((module) => ({
@@ -77,17 +78,17 @@ export default function InsertNode({
   const items: Items[] = useMemo(
     () => [
       {
-        label: "Horizontal Rule",
+        label: PLUGIN_NAMES.HORIZONTAL_RULE,
         icon: <FlipHorizontal2 className="w-4 h-4" />,
         func: () =>
           editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
       },
       {
-        label: "Media",
+        label: PLUGIN_NAMES.MEDIA,
         icon: <Image className="size-4" />,
         func: () => {
           showModal(
-            "Insert Media",
+            PLUGIN_NAMES.MEDIA,
             "Please select the Media to upload.",
             (onClose) => (
               <Suspense
@@ -101,13 +102,13 @@ export default function InsertNode({
         },
       },
       {
-        label: "Excalidraw",
+        label: PLUGIN_NAMES.EXCALIDRAW,
         icon: <DraftingCompass className="w-4 h-4" />,
         func: () =>
           editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
       },
       {
-        label: "Code",
+        label: PLUGIN_NAMES.CODE,
         icon: <Code2 />,
         func: () => {
           editor.update(() => {
@@ -126,11 +127,11 @@ export default function InsertNode({
         },
       },
       {
-        label: "GIF",
+        label: PLUGIN_NAMES.GIFS,
         icon: <ImagePlay className="w-4 h-4" />,
         func: () => {
           showModal(
-            "Insert GIF",
+            PLUGIN_NAMES.GIFS,
             "Please select a GIF to upload.",
             (onClose) => (
               <Suspense
@@ -147,11 +148,11 @@ export default function InsertNode({
         },
       },
       {
-        label: "Table",
+        label: PLUGIN_NAMES.TABLE,
         icon: <Table className="w-4 h-4" />,
         func: () => {
           showModal(
-            "Insert Table",
+            PLUGIN_NAMES.TABLE,
             "Please configure your table.",
             (onClose) => (
               <Suspense
@@ -165,11 +166,11 @@ export default function InsertNode({
         },
       },
       {
-        label: "Poll",
+        label: PLUGIN_NAMES.POLL,
         icon: <SquarePenIcon className="w-4 h-4" />,
         func: () => {
           showModal(
-            "Create Poll",
+            PLUGIN_NAMES.POLL,
             "Please type your question.",
             (onClose) => (
               <Suspense
@@ -183,46 +184,46 @@ export default function InsertNode({
         },
       },
       {
-        label: "2 columns (equal width)",
+        label: PLUGIN_NAMES.TWO_COLUMNS_EQUAL,
         icon: <Columns2 className="w-4 h-4" />,
         func: () => {
           editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 1fr");
         },
       },
       {
-        label: "3 columns (equal width)",
+        label: PLUGIN_NAMES.THREE_COLUMNS_EQUAL,
         icon: <Columns3 className="w-4 h-4" />,
         func: () => {
           editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 1fr 1fr");
         },
       },
       {
-        label: "4 columns (equal width)",
+        label: PLUGIN_NAMES.FOUR_COLUMNS_EQUAL,
         icon: <Columns4 className="w-4 h-4" />,
         func: () => {
           editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 1fr 1fr 1fr");
         },
       },
       {
-        label: "2 columns (25% - 75%)",
+        label: PLUGIN_NAMES.TWO_COLUMNS_25_75,
         icon: <Columns2 className="w-4 h-4" />,
         func: () => {
           editor.dispatchCommand(INSERT_LAYOUT_COMMAND, "1fr 3fr");
         },
       },
       {
-        label: "Collapsible container",
+        label: PLUGIN_NAMES.COLLAPSIBLE_CONTAINER,
         icon: <SquareChevronRight className="w-4 h-4" />,
         func: () => {
           editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined);
         },
       },
       {
-        label: "Twitter",
+        label: PLUGIN_NAMES.TWITTER,
         icon: <Twitter className="w-4 h-4" />,
         func: () => {
           showModal(
-            "Twitter tweet",
+            PLUGIN_NAMES.TWITTER,
             "Insert a URL to embed a live preview. Works with Twitter, Google Drive, Vimeo, and more.",
             (onClose) => (
               <AutoEmbedDialog
@@ -235,11 +236,11 @@ export default function InsertNode({
         },
       },
       {
-        label: "Youtube",
+        label: PLUGIN_NAMES.YOUTUBE,
         icon: <Youtube />,
         func: () => {
           showModal(
-            "Youtube",
+            PLUGIN_NAMES.YOUTUBE,
             "Insert a URL to embed a live preview. Works with YouTube, Google Drive, Vimeo, and more.",
             (onClose) => (
               <AutoEmbedDialog
@@ -252,7 +253,7 @@ export default function InsertNode({
         },
       },
       {
-        label: "Hint",
+        label: PLUGIN_NAMES.HINT,
         icon: <AlertCircle />,
         func: () => {
           editor.dispatchCommand(INSERT_HINT_COMMAND, "info");
