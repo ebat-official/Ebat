@@ -7,16 +7,15 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { DEFAULT_SETTINGS, INITIAL_SETTINGS } from "../appSettings";
-import type { SettingName } from "../appSettings";
+import { PLUGIN_CONFIG, pluginConfig, PluginConfigured } from "../appSettings";
 
 interface EditorContextType {
   id: string;
   setId: (id: string) => void;
   tableOfContents: Array<TableOfContentsEntry>;
   setTableOfContents: (entries: Array<TableOfContentsEntry>) => void;
-  settings: Record<SettingName, boolean>;
-  setOption: (name: SettingName, value: boolean) => void;
+  pluginConfig: pluginConfig;
+  setPlugin: (plugin: PluginConfigured, options: object) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -28,12 +27,15 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
   const [tableOfContents, setTableOfContents] = useState<
     Array<TableOfContentsEntry>
   >([]);
-  const [settings, setSettings] = useState(INITIAL_SETTINGS);
+  const [pluginConfig, setPluginConfig] = useState(PLUGIN_CONFIG);
 
-  const setOption = useCallback((setting: SettingName, value: boolean) => {
-    setSettings((options) => ({
-      ...options,
-      [setting]: value,
+  const setPlugin = useCallback((plugin: PluginConfigured, options: object) => {
+    setPluginConfig((prev) => ({
+      ...prev,
+      [plugin]: {
+        ...prev[plugin],
+        ...options,
+      },
     }));
   }, []);
 
@@ -43,10 +45,10 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
       setId,
       tableOfContents,
       setTableOfContents,
-      settings,
-      setOption,
+      pluginConfig,
+      setPlugin,
     };
-  }, [id, tableOfContents, settings, setOption]);
+  }, [id, tableOfContents, pluginConfig, setPlugin]);
 
   return (
     <EditorContext.Provider value={contextValue}>

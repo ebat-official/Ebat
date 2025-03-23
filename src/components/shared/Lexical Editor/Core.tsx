@@ -39,6 +39,7 @@ import { LexicalOnChangePlugin } from "./lexical-on-change";
 import StepperPlugin from "./nodes/Stepper";
 import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
 import { useEditorContext } from "./providers/EditorContext";
+import { PLUGIN_NAMES } from "./constants";
 
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
   ssr: false,
@@ -92,7 +93,7 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
     }
   }, []);
 
-  const { settings } = useEditorContext();
+  const { pluginConfig } = useEditorContext();
 
   return (
     <>
@@ -133,7 +134,7 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
       <LinkPlugin />
       <HorizontalRulePlugin />
       <TabFocusPlugin />
-      {settings.enablePollPlugin && <PollPlugin />}
+      {pluginConfig[PLUGIN_NAMES.PARAGRAPH].isEnabled && <PollPlugin />}
       <TableCellResizerPlugin />
       <LayoutPlugin />
       <CollapsiblePlugin />
@@ -144,17 +145,16 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
       <LinkWithMetaDataPlugin />
       <ListPlugin />
       <LinkPlugin />
-      {settings.enableStepperPlugin && <StepperPlugin />}
-      {settings.enableTwitterPlugin && <TwitterPlugin />}
-      <CheckListPlugin />
-      {settings.enableImagesPlugin && <ImagesPlugin />}
-      {settings.enableAutoEmbedPlugin && <AutoEmbedPlugin />}
-      {settings.enableHintPlugin && <HintPlugin />}
-      {settings.enableYouTubePlugin && <YouTubePlugin />}
+      {pluginConfig[PLUGIN_NAMES.STEPPER].isEnabled && <StepperPlugin />}
+      {pluginConfig[PLUGIN_NAMES.TWITTER].isEnabled && <TwitterPlugin />}
+      {pluginConfig[PLUGIN_NAMES.CHECK_LIST].isEnabled && <CheckListPlugin />}
+      {pluginConfig[PLUGIN_NAMES.IMAGE].isEnabled && <ImagesPlugin />}
+      {pluginConfig[PLUGIN_NAMES.HINT].isEnabled && <HintPlugin />}
+      {pluginConfig[PLUGIN_NAMES.YOUTUBE].isEnabled && <YouTubePlugin />}
       <HistoryPlugin externalHistoryState={historyState} />
       <MarkdownShortcutPlugin />
       <ClickableLinkPlugin disabled={isEditable} />
-      {settings.enableExcalidrawPlugin && <ExcalidrawPlugin />}
+      {pluginConfig[PLUGIN_NAMES.EXCALIDRAW].isEnabled && <ExcalidrawPlugin />}
       <TablePlugin
         hasCellMerge={true}
         hasCellBackgroundColor={true}
@@ -179,12 +179,16 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
           />
           <CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
           <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
-          {settings.enableTableOfContentsPlugin && <TableOfContentsPlugin />}
+          {pluginConfig[PLUGIN_NAMES.TABLE_OF_CONTENTS].isEnabled && (
+            <TableOfContentsPlugin />
+          )}
         </>
       )}
 
-      {isEditable && settings.enableSlashCommand && <SlashCommand />}
-      {settings.enableAutoFocusPlugin && <AutoFocusPlugin />}
+      {isEditable && pluginConfig[PLUGIN_NAMES.SLASH_COMMAND].isEnabled && (
+        <SlashCommand />
+      )}
+      {pluginConfig[PLUGIN_NAMES.AUTO_FOCUS].isEnabled && <AutoFocusPlugin />}
     </>
   );
 }

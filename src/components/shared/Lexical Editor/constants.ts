@@ -1,5 +1,3 @@
-import { DEFAULT_SETTINGS } from "./appSettings";
-
 export const PLUGIN_NAMES = {
   PARAGRAPH: "Paragraph",
   HEADING_1: "Heading 1",
@@ -67,68 +65,4 @@ export const PLUGIN_NAMES = {
   TWO_COLUMNS_25_75: "2 columns (25% - 75%)",
   COLLAPSIBLE_CONTAINER: "Collapsible container",
 } as const;
-
-export const PLUGIN_TO_FLAG_MAP: Record<
-  string,
-  keyof typeof DEFAULT_SETTINGS | null
-> = {
-  [PLUGIN_NAMES.PARAGRAPH]: null,
-  [PLUGIN_NAMES.HEADING_1]: null,
-  [PLUGIN_NAMES.HEADING_2]: null,
-  [PLUGIN_NAMES.HEADING_3]: null,
-
-  [PLUGIN_NAMES.TABLE]: "enableTablePlugin",
-  [PLUGIN_NAMES.TABLE_CELL_ACTION_MENU]: "enableTableCellActionMenuPlugin",
-  [PLUGIN_NAMES.TABLE_CELL_RESIZER]: "enableTableCellResizerPlugin",
-  [PLUGIN_NAMES.TABLE_HOVER_ACTIONS]: "enableTableHoverActionsPlugin",
-  [PLUGIN_NAMES.TABLE_OF_CONTENTS]: "enableTableOfContentsPlugin",
-
-  [PLUGIN_NAMES.HINT]: "enableHintPlugin",
-  [PLUGIN_NAMES.EXCALIDRAW]: "enableExcalidrawPlugin",
-
-  [PLUGIN_NAMES.NUMBERED_LIST]: "enableListPlugin",
-  [PLUGIN_NAMES.BULLETED_LIST]: "enableListPlugin",
-  [PLUGIN_NAMES.CHECK_LIST]: "enableCheckListPlugin",
-  [PLUGIN_NAMES.QUOTE]: "enableListPlugin",
-
-  [PLUGIN_NAMES.POLL]: "enablePollPlugin",
-  [PLUGIN_NAMES.CODE]: "enableCodeHighlightPlugin",
-  [PLUGIN_NAMES.DIVIDER]: "enableHorizontalRulePlugin",
-
-  [PLUGIN_NAMES.YOUTUBE]: "enableYouTubePlugin",
-  [PLUGIN_NAMES.TWITTER]: "enableTwitterPlugin",
-  [PLUGIN_NAMES.IMAGE]: "enableImagesPlugin",
-  [PLUGIN_NAMES.GIFS]: "enableImagesPlugin",
-
-  [PLUGIN_NAMES.COLLAPSIBLE]: "enableCollapsiblePlugin",
-
-  [PLUGIN_NAMES.TWO_COLUMNS]: "enableLayoutPlugin",
-  [PLUGIN_NAMES.THREE_COLUMNS]: "enableLayoutPlugin",
-  [PLUGIN_NAMES.FOUR_COLUMNS]: "enableLayoutPlugin",
-
-  [PLUGIN_NAMES.STEPPER]: "enableStepperPlugin",
-
-  [PLUGIN_NAMES.TOOLBAR]: "enableToolbarPlugin",
-  [PLUGIN_NAMES.FLOATING_LINK_EDITOR]: "enableFloatingLinkEditorPlugin",
-  [PLUGIN_NAMES.FLOATING_TEXT_FORMAT_TOOLBAR]:
-    "enableFloatingTextFormatToolbarPlugin",
-  [PLUGIN_NAMES.LINK]: "enableLinkPlugin",
-  [PLUGIN_NAMES.LINK_WITH_METADATA]: "enableLinkWithMetaDataPlugin",
-  [PLUGIN_NAMES.CLICKABLE_LINK]: "enableClickableLinkPlugin",
-  [PLUGIN_NAMES.AUTO_LINK]: "enableLexicalAutoLinkPlugin",
-
-  [PLUGIN_NAMES.SLASH_COMMAND]: "enableSlashCommand",
-  [PLUGIN_NAMES.MARKDOWN_SHORTCUTS]: "enableMarkdownShortcutPlugin",
-
-  [PLUGIN_NAMES.AUTO_FOCUS]: "enableAutoFocusPlugin",
-  [PLUGIN_NAMES.AUTO_EMBED]: "enableAutoEmbedPlugin",
-  [PLUGIN_NAMES.CLEAR_EDITOR]: "enableClearEditorPlugin",
-  [PLUGIN_NAMES.CODE_ACTION_MENU]: "enableCodeActionMenuPlugin",
-  [PLUGIN_NAMES.DRAG_DROP_PASTE]: "enableDragDropPastePlugin",
-  [PLUGIN_NAMES.DRAGGABLE_BLOCK]: "enableDraggableBlockPlugin",
-  [PLUGIN_NAMES.LEXICAL_ONCHANGE]: "enableLexicalOnChangePlugin",
-  [PLUGIN_NAMES.SHORTCUTS]: "enableShortcutsPlugin",
-  [PLUGIN_NAMES.TAB_FOCUS]: "enableTabFocusPlugin",
-  [PLUGIN_NAMES.TAB_INDENTATION]: "enableTabIndentationPlugin",
-  [PLUGIN_NAMES.HISTORY]: "enableHistoryPlugin",
-};
+export type PluginNames = keyof typeof PLUGIN_NAMES;
