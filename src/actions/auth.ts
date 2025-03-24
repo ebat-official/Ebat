@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 import { findUserByEmail } from "@/actions/user";
 import mailer from "@/lib/mailer";
 import { prismaCustomAdapter } from "@/prismaAdapter";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 type AuthReturnType = {
   data: any;
@@ -77,7 +78,11 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
 
     return { status: SUCCESS, data: "" };
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
     if (error instanceof AuthError) {
+      console.log("error type", error.type);
       switch (error.type) {
         case "CredentialsSignin":
           return INVALID_USERNAME_PASSWORD_ERROR;
@@ -88,11 +93,12 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
             return EMAIL_NOT_VERIFIED_ERROR;
           }
           return SOMETHING_WENT_WRONG_ERROR;
+
         default:
           return SOMETHING_WENT_WRONG_ERROR;
       }
     }
-    throw error;
+    throw SOMETHING_WENT_WRONG_ERROR;
   }
 }
 // Verification Tokens
