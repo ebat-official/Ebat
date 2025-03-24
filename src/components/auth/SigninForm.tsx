@@ -23,6 +23,7 @@ import mailer from "@/lib/mailer";
 import { Input } from "@/components/ui/input";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import parseRedirectError from "@/utils/parseRedirectError";
+import { Eye, EyeOff } from "lucide-react";
 
 type FormValues = {
   email: string;
@@ -55,6 +56,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
   const [runActionSignin, isLoading] = useServerAction(logIn);
   const [formStatus, setFormStatus] = useState({ type: LOADING, data: "" });
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (verificationEmail) {
@@ -132,16 +134,22 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
             </p>
           )}
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <Input
             {...register("password")}
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             className={cn({ "border-red-500": errors?.password })}
             placeholder="Password"
             aria-label="Password"
             autoComplete="current-password"
           />
+          <span
+            className="absolute right-2  top-2 cursor-pointer"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </span>
           {errors?.password && (
             <p className="text-sm text-red-500 dark:text-red-900">
               {errors.password.message}
