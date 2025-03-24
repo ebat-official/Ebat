@@ -82,7 +82,6 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
       throw error;
     }
     if (error instanceof AuthError) {
-      console.log("error type", error.type);
       switch (error.type) {
         case "CredentialsSignin":
           return INVALID_USERNAME_PASSWORD_ERROR;
