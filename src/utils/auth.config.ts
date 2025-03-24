@@ -1,23 +1,27 @@
-import type { NextAuthConfig } from "next-auth"
+import type { NextAuthConfig } from "next-auth";
 import { authFormSchema } from "@/lib/validators/authForm";
-import { findUserByEmail, findUserById, setEmailVerified } from "@/actions/user";
+import {
+  findUserByEmailServer,
+  findUserById,
+  setEmailVerified,
+} from "@/actions/user";
 import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook";
 import Linkedin from "next-auth/providers/linkedin";
 import { EMAIL_NOT_VERIFIED } from "@/utils/contants";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { UserRole,UserProfile } from "@prisma/client";
- 
+import { UserRole, UserProfile } from "@prisma/client";
+
 export default {
-    trustHost: true,
+  trustHost: true,
   events: {
     async linkAccount({ user }) {
       await setEmailVerified(user.email!);
     },
   },
   callbacks: {
-    async signIn({ user, account, email,...rem }) {
+    async signIn({ user, account, email, ...rem }) {
       //allow signin iff email verified
       if (account?.provider === "credentials" && !user.emailVerified) {
         throw new Error(EMAIL_NOT_VERIFIED);
@@ -27,12 +31,12 @@ export default {
     async jwt({ token, account }) {
       if (!token.sub) return token;
 
-      const user = await findUserById(token.sub,true);
+      const user = await findUserById(token.sub, true);
       if (!user) return token;
       token.role = user.role;
-      if (user && 'userProfile' in user) {
-        token.image=user?.userProfile?.image
-        token.name=user?.userProfile?.name
+      if (user && "userProfile" in user) {
+        token.image = user?.userProfile?.image;
+        token.name = user?.userProfile?.name;
       }
       return token;
     },
@@ -40,8 +44,8 @@ export default {
       if (session.user) {
         session.user.id = token.sub || "";
         session.user.role = token.role as UserRole;
-        session.user.image=token.image as string
-        session.user.name=token.name as string
+        session.user.image = token.image as string;
+        session.user.name = token.name as string;
       }
       return session;
     },
@@ -71,9 +75,7 @@ export default {
           throw new Error("Invalid input data");
         }
         const { email, password } = validateFields.data;
-
-        user = await findUserByEmail(email);
-
+        user = await findUserByEmailServer(email);
         if (!user || !user.password) {
           throw new Error("User email or password is incorrect");
         }
@@ -96,4 +98,4 @@ export default {
       },
     },
   },
-} satisfies NextAuthConfig
+} satisfies NextAuthConfig;

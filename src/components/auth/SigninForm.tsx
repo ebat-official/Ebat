@@ -21,6 +21,8 @@ import EmailVerificationModal from "./EmailVerificationModal";
 import { useServerAction } from "@/hooks/useServerAction";
 import mailer from "@/lib/mailer";
 import { Input } from "@/components/ui/input";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
+import parseRedirectError from "@/utils/parseRedirectError";
 
 type FormValues = {
   email: string;
@@ -78,24 +80,31 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
   }, [openEmailVerification]);
 
   const onSubmit = handleSubmit(async (userData) => {
-    setUserData(userData);
-    const result = await runActionSignin(userData);
+    try {
+      setUserData(userData);
+      const result = await runActionSignin(userData);
 
-    if (result?.status === "success") {
-      if (modelHandler) modelHandler(false);
-      return;
-    }
-    if (result?.status === "error") {
-      if (result.cause === EMAIL_NOT_VERIFIED) {
-        setOpenEmailVerification(true);
-        await upsertVerificationToken(userData.email);
+      if (result?.status === "success") {
+        if (modelHandler) modelHandler(false);
         return;
       }
-      return toast({
-        title: "Error",
-        description: result?.data?.message || JSON.stringify(result),
-        variant: "destructive",
-      });
+      if (result?.status === "error") {
+        if (result.cause === EMAIL_NOT_VERIFIED) {
+          setOpenEmailVerification(true);
+          await upsertVerificationToken(userData.email);
+          return;
+        }
+        return toast({
+          title: "Error",
+          description: result?.data?.message || JSON.stringify(result),
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      if (isRedirectError(error)) {
+        const redirectInfo = parseRedirectError(error);
+        if (redirectInfo?.url) window.location.href = redirectInfo.url;
+      }
     }
   });
 

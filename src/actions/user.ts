@@ -7,6 +7,26 @@ import { validateVerificationToken } from "./auth";
 
 type UserWithProfile = User & { userProfile: UserProfile | null };
 
+/**
+ *
+ * @param email
+ * @returns
+ * this function is used to find user by email from server side
+ * this will include password and other sensitive information
+ */
+export async function findUserByEmailServer(email: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    return user;
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function findUserByEmail(email: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -17,8 +37,8 @@ export async function findUserByEmail(email: string) {
         id: true,
         email: true,
         name: true,
-        userName:true,
-        emailVerified:true,
+        userName: true,
+        emailVerified: true,
         userProfile: {
           select: {
             id: true,
@@ -35,7 +55,10 @@ export async function findUserByEmail(email: string) {
     return null;
   }
 }
-export async function findUserById(id: string, includeProfile = false): Promise<User | UserWithProfile | null> {
+export async function findUserById(
+  id: string,
+  includeProfile = false
+): Promise<User | UserWithProfile | null> {
   try {
     const user = await prisma.user.findUnique({
       where: { id },
@@ -51,7 +74,7 @@ export async function findUserById(id: string, includeProfile = false): Promise<
       },
     });
 
-    return user as UserWithProfile | User | null; 
+    return user as UserWithProfile | User | null;
   } catch (error) {
     console.error("Error finding user by ID:", error);
     return null;
@@ -72,16 +95,16 @@ export async function setEmailVerified(email: string) {
   }
 }
 export async function setEmailVerifiedUsingToken(token: string) {
-  const user=await validateVerificationToken(token)
+  const user = await validateVerificationToken(token);
 
   if (typeof user.data !== "object" || !user.data?.email) {
-    return null
+    return null;
   }
 
   try {
     await prisma.user.update({
       where: {
-        email:user.data.email,
+        email: user.data.email,
       },
       data: { emailVerified: new Date() },
     });
@@ -110,12 +133,10 @@ export async function updateUserName(id: string, userName: string) {
       where: {
         id,
       },
-      data: { userName},
+      data: { userName },
     });
     return true;
   } catch (error) {
     return null;
   }
 }
-
-
