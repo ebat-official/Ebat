@@ -272,7 +272,7 @@ export const PLUGIN_CONFIG = {
   [PLUGIN_NAMES.MEDIA]: {
     isEnabled: true,
     label: "Media",
-    icon: Image,
+    icon: ImageIcon,
     keywords: ["image", "photo", "picture", "file", "img"],
     desc: "Upload or embed with a link",
     keyboardShortcut: undefined,
