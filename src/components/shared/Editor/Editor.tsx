@@ -167,7 +167,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
               <p className="text-sm text-gray-500">
                 Use{" "}
                 <kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
-                  Enter
+                  /
                 </kbd>{" "}
                 to open the command menu.
               </p>

@@ -93,10 +93,10 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
     }
   }, []);
 
-  const { pluginConfig } = useEditorContext();
+  const { pluginConfig, minHeight } = useEditorContext();
 
   return (
-    <>
+    <div className="relative">
       {isEditable && (
         <ToolbarPlugin
           editor={editor}
@@ -110,9 +110,10 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
         contentEditable={
           <div ref={onRef} className="relative">
             <ContentEditable
+              style={{ minHeight }}
               id={id}
               autoFocus={autoFocus}
-              className="-z-1 z-20 h-screen p-1 mt-[80px] outline-none border-0"
+              className="-z-1 z-20 min p-1 mt-7 outline-none border-0"
               aria-placeholder={placeholder}
               placeholder={
                 <div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
@@ -189,6 +190,6 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
         <SlashCommand />
       )}
       {pluginConfig[PLUGIN_NAMES.AUTO_FOCUS].isEnabled && <AutoFocusPlugin />}
-    </>
+    </div>
   );
 }

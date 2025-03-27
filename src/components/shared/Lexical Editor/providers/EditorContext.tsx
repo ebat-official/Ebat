@@ -16,6 +16,8 @@ interface EditorContextType {
   setTableOfContents: (entries: Array<TableOfContentsEntry>) => void;
   pluginConfig: pluginConfig;
   setPlugin: (plugin: PluginConfigured, options: object) => void;
+  minHeight: string;
+  setMinHeight: (height: string) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -28,6 +30,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
     Array<TableOfContentsEntry>
   >([]);
   const [pluginConfig, setPluginConfig] = useState(PLUGIN_CONFIG);
+  const [minHeight, setMinHeight] = useState<string>("250px");
 
   const setPlugin = useCallback((plugin: PluginConfigured, options: object) => {
     setPluginConfig((prev) => ({
@@ -47,6 +50,8 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
       setTableOfContents,
       pluginConfig,
       setPlugin,
+      minHeight,
+      setMinHeight,
     };
   }, [id, tableOfContents, pluginConfig, setPlugin]);
 

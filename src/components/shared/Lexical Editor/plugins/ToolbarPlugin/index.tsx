@@ -292,11 +292,10 @@ export default function index({
   return (
     <nav
       className={cn(
-        "z-[200] fixed top-0 left-0  backdrop-blur-md bg-white/10 dark:bg-black/10 w-full  border-gray-500/20"
+        "sticky overflow-y-hidden overflow-x-hidden max-w-[60%] top-0 left-0  backdrop-blur-md bg-white/10 dark:bg-black/10 border-gray-500/20 group flex flex-row justify-center items-center   p-2 border-b"
       )}
     >
-      <div className="group flex flex-row justify-center max-sm:overflow-x-scroll  w-screen items-center   p-2 border-b">
-        <div className="flex flex-row gap-x-2">
+      {/* <div className="flex flex-row gap-x-2">
           <Button
             size="sm"
             variant={"outline"}
@@ -325,42 +324,43 @@ export default function index({
             <Redo className=" size-4" />
           </Button>
         </div>
-        <Separator className="h-6 mx-2" orientation="vertical" />
-        {toolbarState.blockType in blockTypeToBlockName &&
-          activeEditor === editor && (
-            <div className="flex flex-row gap-x-[5px]  items-center">
-              <BlockFormatDropDown
-                disabled={!isEditable}
-                blockType={toolbarState.blockType}
-                editor={activeEditor}
-              />
-              <Separator orientation={"vertical"} />
-            </div>
-          )}
-        <Separator className="h-6 mx-2" orientation="vertical" />
-        {toolbarState.blockType == "code" ? (
-          <CodeList
-            onCodeLanguageSelect={onCodeLanguageSelect}
-            codeLanguage={toolbarState.codeLanguage}
-            disabled={!isEditable}
-          />
-        ) : (
-          <div className="flex flex-row items-center">
-            <FontDropDown
+        <Separator className="h-6 mx-2" orientation="vertical" /> */}
+      {toolbarState.blockType in blockTypeToBlockName &&
+        activeEditor === editor && (
+          <div className="flex flex-row gap-x-[5px]  items-center float-left">
+            <BlockFormatDropDown
+              disabled={!isEditable}
+              blockType={toolbarState.blockType}
+              editor={activeEditor}
+            />
+            <Separator className="h-6 mx-2" orientation="vertical" />
+          </div>
+        )}
+      {toolbarState.blockType == "code" ? (
+        <CodeList
+          onCodeLanguageSelect={onCodeLanguageSelect}
+          codeLanguage={toolbarState.codeLanguage}
+          disabled={!isEditable}
+        />
+      ) : (
+        <div className="flex flex-row items-center ">
+          {/* <FontDropDown
               disabled={!isEditable}
               style={{ fontFamily: toolbarState.fontFamily }}
               value={toolbarState.fontFamily}
               editor={activeEditor}
             />
-            <Separator className="h-6 mx-2" orientation="vertical" />
+            <Separator className="h-6 mx-2" orientation="vertical" /> */}
+          <div className="float-left flex">
             <FontSize
               selectionFontSize={toolbarState.fontSize.slice(0, -2)}
               editor={activeEditor}
               disabled={!isEditable}
             />
             <Separator className="h-6 mx-2" orientation="vertical" />
-            <div className="flex flex-row gap-x-1">
-              <Toggle
+          </div>
+          <div className="flex flex-row gap-x-1 float-left">
+            {/* <Toggle
                 disabled={!isEditable}
                 variant={"outline"}
                 size="sm"
@@ -403,8 +403,8 @@ export default function index({
                 aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
               >
                 <Underline />
-              </Toggle>
-              <Toggle
+              </Toggle> */}
+            {/* <Toggle
                 disabled={!isEditable}
                 variant={"outline"}
                 size="sm"
@@ -429,34 +429,35 @@ export default function index({
                 type="button"
               >
                 <Link />
-              </Toggle>
-            </div>
-            <Separator className="h-6 mx-2" orientation="vertical" />
+              </Toggle> */}
+          </div>
+          {/* <Separator className="h-6 mx-2" orientation="vertical" />
             <Color
               disabled={!isEditable}
               color={toolbarState.fontColor}
               bgColor={toolbarState.bgColor}
               editor={editor}
-            />
-            <Separator className="h-6 mx-2" orientation="vertical" />
-            <TextFormat
+            /> */}
+          {/* <TextFormat
               disabled={!isEditable}
               editor={editor}
               toolbarState={toolbarState}
             />
+            <Separator className="h-6 mx-2" orientation="vertical" /> */}
+          <div className="float-left flex">
+            <TextAlign
+              disabled={!isEditable}
+              value={toolbarState.elementFormat}
+              editor={activeEditor}
+              isRTL={toolbarState.isRTL}
+            />
             <Separator className="h-6 mx-2" orientation="vertical" />
+          </div>
+          <div className="float-left">
             <InsertNode disabled={!isEditable} editor={editor} />
           </div>
-        )}
-        <Separator className="h-6 mx-2" orientation="vertical" />
-
-        <TextAlign
-          disabled={!isEditable}
-          value={toolbarState.elementFormat}
-          editor={activeEditor}
-          isRTL={toolbarState.isRTL}
-        />
-      </div>
+        </div>
+      )}
     </nav>
   );
 }
