@@ -141,7 +141,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 
               {!dataLoading &&
                 isMounted && ( // Render Lexical Editor only on the client
-                  <div id={editorAnswerId} className="mt-6">
+                  <div id={editorAnswerId} className="mt-1">
                     <Editor
                       isEditable={true}
                       content={defaultContent.answer?.blocks} // Pass initial content

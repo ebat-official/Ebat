@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import { useSharedHistoryContext } from "./providers/SharedHistoryContext";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -11,13 +11,13 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
+import { AnimatePresence, motion } from "framer-motion";
 
 import ShortcutsPlugin from "./plugins/ShortcutsPlugin";
 import TabFocusPlugin from "./plugins/TabFocusPlugin";
@@ -40,6 +40,8 @@ import StepperPlugin from "./nodes/Stepper";
 import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
 import { useEditorContext } from "./providers/EditorContext";
 import { PLUGIN_NAMES } from "./constants";
+import { mergeRegister } from "@lexical/utils";
+import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from "lexical";
 
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
   ssr: false,
@@ -86,6 +88,32 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
+  const [hasFocus, setHasFocus] = useState(() => {
+    return editor.getRootElement() === document.activeElement;
+  });
+  const [isHovering, setIsHovering] = useState(false); // Track hover state
+
+  useLayoutEffect(() => {
+    setHasFocus(editor.getRootElement() === document.activeElement);
+    return mergeRegister(
+      editor.registerCommand(
+        FOCUS_COMMAND,
+        () => {
+          setHasFocus(true);
+          return false;
+        },
+        COMMAND_PRIORITY_LOW
+      ),
+      editor.registerCommand(
+        BLUR_COMMAND,
+        () => {
+          setHasFocus(false);
+          return false;
+        },
+        COMMAND_PRIORITY_LOW
+      )
+    );
+  }, [editor]);
 
   const onRef = useCallback((_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -94,17 +122,31 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
   }, []);
 
   const { pluginConfig, minHeight } = useEditorContext();
-
+  console.log("asdf", autoFocus);
   return (
-    <div className="relative">
-      {isEditable && (
-        <ToolbarPlugin
-          editor={editor}
-          activeEditor={activeEditor}
-          setActiveEditor={setActiveEditor}
-          setIsLinkEditMode={setIsLinkEditMode}
-        />
-      )}
+    <div
+      className="relative pran"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <AnimatePresence>
+        {isEditable && (hasFocus || isHovering) && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-0 left-0 z-50"
+          >
+            <ToolbarPlugin
+              editor={editor}
+              activeEditor={activeEditor}
+              setActiveEditor={setActiveEditor}
+              setIsLinkEditMode={setIsLinkEditMode}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <RichTextPlugin
         contentEditable={
@@ -189,7 +231,6 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
       {isEditable && pluginConfig[PLUGIN_NAMES.SLASH_COMMAND].isEnabled && (
         <SlashCommand />
       )}
-      {pluginConfig[PLUGIN_NAMES.AUTO_FOCUS].isEnabled && <AutoFocusPlugin />}
     </div>
   );
 }
