@@ -24,16 +24,18 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { findUserByEmail } from "@/actions/user";
 import mailer from "@/lib/mailer";
-import { prismaCustomAdapter } from '@/prismaAdapter'
+import { prismaCustomAdapter } from "@/prismaAdapter";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 type AuthReturnType = {
-  type: string;
   data: any;
   cause?: string;
+  status: string;
 };
 
-export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> {
-  
+export async function signUp(
+  data: authFormSchemaType
+): Promise<AuthReturnType> {
   const validateFields = authFormSchema.safeParse(data);
   if (!validateFields.success) {
     return INVALID_USERNAME_PASSWORD_ERROR;
@@ -48,11 +50,11 @@ export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> 
     return EMAIL_ALREADY_EXISTS_ERROR;
   }
   const customAdapter = prismaCustomAdapter();
- 
+
   const user = await customAdapter.createUser({
     name: data.name,
     email: data.email,
-     // @ts-ignore
+    // @ts-ignore
     password: bcrypt.hashSync(data.password, 12),
   });
   if (!user) {
@@ -61,19 +63,24 @@ export async function signUp(data: authFormSchemaType): Promise<AuthReturnType> 
   //send verification mail
   const verification = await upsertVerificationToken(user.email);
   mailer(user.email, EMAIL_VALIDATION, verification.data?.token);
-  return { type: SUCCESS, data: user };
+  return { status: SUCCESS, data: user };
 }
 
 export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
   const validateFields = authFormSchema.safeParse(data);
+
   if (!validateFields.success) {
     return INVALID_USERNAME_PASSWORD_ERROR;
   }
   const { email, password } = validateFields.data;
   try {
-    await signIn("credentials", { email, password});
-    return { type: SUCCESS, data: "" };
+    await signIn("credentials", { email, password });
+
+    return { status: SUCCESS, data: "" };
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
@@ -85,26 +92,31 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
             return EMAIL_NOT_VERIFIED_ERROR;
           }
           return SOMETHING_WENT_WRONG_ERROR;
+
         default:
           return SOMETHING_WENT_WRONG_ERROR;
       }
     }
-    throw error;
+    throw SOMETHING_WENT_WRONG_ERROR;
   }
 }
 // Verification Tokens
-export async function upsertVerificationToken(email: string): Promise<AuthReturnType> {
+export async function upsertVerificationToken(
+  email: string
+): Promise<AuthReturnType> {
   const user = await findUserByEmail(email);
   if (!user) return NO_USER_FOUND_ERROR;
   const uuidToken = uuidv4();
-  const tokenExpires = new Date(new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES));
+  const tokenExpires = new Date(
+    new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES)
+  );
   try {
     const record = await prisma.verificationToken.upsert({
       where: { email: email },
       update: { token: uuidToken, expires: tokenExpires },
       create: { email: email, token: uuidToken, expires: tokenExpires },
     });
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -119,12 +131,12 @@ export async function validateVerificationToken(token: string) {
 
     if (record?.token === token) {
       if (record.expires.getTime() > new Date().getTime()) {
-        return { type: SUCCESS, data: record };
+        return { status: SUCCESS, data: record };
       } else {
-        return { type: ERROR, data: TOKEN_EXPIRED };
+        return { status: ERROR, data: TOKEN_EXPIRED };
       }
     }
-    return { type: ERROR, data: INVALID_TOKEN_ERROR };
+    return { status: ERROR, data: INVALID_TOKEN_ERROR };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -137,7 +149,7 @@ export async function deleteVerificationToken(email: string) {
       },
     });
 
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -148,14 +160,16 @@ export async function upsertResetToken(email: string): Promise<AuthReturnType> {
   const user = await findUserByEmail(email);
   if (!user) return NO_USER_FOUND_ERROR;
   const uuidToken = uuidv4();
-  const tokenExpires = new Date(new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES));
+  const tokenExpires = new Date(
+    new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES)
+  );
   try {
     const record = await prisma.resetToken.upsert({
       where: { email: email },
       update: { token: uuidToken, expires: tokenExpires },
       create: { email: email, token: uuidToken, expires: tokenExpires },
     });
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -170,13 +184,13 @@ export async function validateResetToken(token: string) {
 
     if (record?.token === token) {
       if (record.expires.getTime() > new Date().getTime()) {
-        return { type: SUCCESS, data: record };
+        return { status: SUCCESS, data: record };
       } else {
-        return { type: ERROR, data: TOKEN_EXPIRED };
+        return { status: ERROR, data: TOKEN_EXPIRED };
       }
     }
-    
-    return { type: ERROR, data: INVALID_TOKEN_ERROR };
+
+    return { status: ERROR, data: INVALID_TOKEN_ERROR };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
@@ -190,26 +204,29 @@ export async function deleteResetToken(email: string) {
       },
     });
 
-    return { type: SUCCESS, data: record };
+    return { status: SUCCESS, data: record };
   } catch (error) {
     return SOMETHING_WENT_WRONG_ERROR;
   }
 }
 
-export async function updateUserPasswordWithToken(token: string, password: string) {
+export async function updateUserPasswordWithToken(
+  token: string,
+  password: string
+) {
   try {
     const tokenData = await prisma.resetToken.findFirst({
       where: {
         token: token,
       },
     });
-    if(!tokenData){
-      return { type: ERROR, data: INVALID_TOKEN_ERROR }
+    if (!tokenData) {
+      return { status: ERROR, data: INVALID_TOKEN_ERROR };
     }
-    
+
     await prisma.user.update({
       where: {
-        email:tokenData.email,
+        email: tokenData.email,
       },
       data: { password: bcrypt.hashSync(password, 12) },
     });

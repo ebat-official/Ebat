@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.2.7",
@@ -102,7 +103,8 @@
     "postcss": "^8",
     "prettier": "^3.5.3",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5"
+    "typescript": "^5",
+    "prisma": "^6.1.0"
   },
   "pnpm": {
     "overrides": {

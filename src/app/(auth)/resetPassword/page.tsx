@@ -6,10 +6,20 @@ import * as z from "zod";
 import backgroundImg from "@/assets/img/resetBackground.jpg";
 import ButtonDark from "@/components/shared/ButtonDark";
 import { useRouter } from "next/navigation";
-import { ERROR, LOADING, SUCCESS, TOKEN, TOKEN_NOT_FOUND, VERIFICATION_SUCCESSFULL } from "@/utils/contants";
+import {
+  ERROR,
+  LOADING,
+  SUCCESS,
+  TOKEN,
+  TOKEN_NOT_FOUND,
+  VERIFICATION_SUCCESSFULL,
+} from "@/utils/contants";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import { updateUserPasswordWithToken, validateResetToken } from "@/actions/auth";
+import {
+  updateUserPasswordWithToken,
+  validateResetToken,
+} from "@/actions/auth";
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 import FormSuccess from "@/components/shared/FormSuccess";
 import FormError from "@/components/shared/FormError";
@@ -26,7 +36,8 @@ const schema = z
       .string()
       .min(8)
       .regex(/^(?=.*[!@#$%^&*])/, {
-        message: "Password must contain at least one special character (!@#$%^&*)",
+        message:
+          "Password must contain at least one special character (!@#$%^&*)",
       }),
     confirmPassword: z.string(),
   })
@@ -47,15 +58,21 @@ const ResetPassword: FC<pageProps> = ({}) => {
     formState: { errors },
   } = useForm<FormValues>({ resolver });
 
-  const [VerificationStatus, setVerificationStatus] = useState<{ type: string; data: any }>({
-    type: "",
+  const [VerificationStatus, setVerificationStatus] = useState<{
+    status: string;
+    data: any;
+  }>({
+    status: "",
     data: "",
   });
   const [timer, setTimer] = useState(3);
   const intrvl: any = useRef(null);
 
   useEffect(() => {
-    if (VerificationStatus.type === SUCCESS || VerificationStatus.type === ERROR) {
+    if (
+      VerificationStatus.status === SUCCESS ||
+      VerificationStatus.status === ERROR
+    ) {
       intrvl.current = setInterval(() => {
         setTimer((prev) => prev - 1);
       }, 1000);
@@ -64,13 +81,13 @@ const ResetPassword: FC<pageProps> = ({}) => {
   }, [VerificationStatus]);
 
   const onSubmit = handleSubmit(async (formData: { password: string }) => {
-    setVerificationStatus({ type: LOADING, data: "" });
+    setVerificationStatus({ status: LOADING, data: "" });
     if (!verificationToken) {
-      setVerificationStatus({ type: ERROR, data: TOKEN_NOT_FOUND });
+      setVerificationStatus({ status: ERROR, data: TOKEN_NOT_FOUND });
       return;
     }
     const data = await validateResetToken(verificationToken);
-    if (data.type === ERROR) {
+    if (data.status === ERROR) {
       return setVerificationStatus(data);
     }
 
@@ -78,11 +95,14 @@ const ResetPassword: FC<pageProps> = ({}) => {
       return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
     }
     // const setVerifyEmail = await setEmailVerified(data.data?.email);
-    const updatePassword = await updateUserPasswordWithToken(verificationToken, formData.password);
+    const updatePassword = await updateUserPasswordWithToken(
+      verificationToken,
+      formData.password
+    );
     if (!updatePassword) {
       return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
     }
-    setVerificationStatus({ type: SUCCESS, data: VERIFICATION_SUCCESSFULL });
+    setVerificationStatus({ status: SUCCESS, data: VERIFICATION_SUCCESSFULL });
   });
 
   if (timer === 0) {
@@ -102,7 +122,9 @@ const ResetPassword: FC<pageProps> = ({}) => {
                     <h4 className="relative z-10 font-bold text-center text-transparent md:text-2xl lg:text-3xl md:text-left bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">
                       Reset your password
                     </h4>
-                    <p className="mb-0 text-center md:text-left">Enter a new password for your account.</p>
+                    <p className="mb-0 text-center md:text-left">
+                      Enter a new password for your account.
+                    </p>
                   </div>
                   <div className="flex-auto p-6">
                     <form role="form" onSubmit={onSubmit} noValidate>
@@ -114,13 +136,15 @@ const ResetPassword: FC<pageProps> = ({}) => {
                             "text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
                             {
                               "border-red-500": errors?.password,
-                            },
+                            }
                           )}
                           placeholder="Password"
                           aria-label="Password"
                         />
                         {errors?.password && (
-                          <p className="text-sm text-red-500 dark:text-red-900">{errors.password.message}</p>
+                          <p className="text-sm text-red-500 dark:text-red-900">
+                            {errors.password.message}
+                          </p>
                         )}
                       </div>
                       <div className="mb-4">
@@ -131,16 +155,18 @@ const ResetPassword: FC<pageProps> = ({}) => {
                             "text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
                             {
                               "border-red-500": errors?.password,
-                            },
+                            }
                           )}
                           placeholder=" Confirm password"
                           aria-label="Password"
                         />
                         {errors?.confirmPassword && (
-                          <p className="text-sm text-red-500 dark:text-red-900">{errors.confirmPassword.message}</p>
+                          <p className="text-sm text-red-500 dark:text-red-900">
+                            {errors.confirmPassword.message}
+                          </p>
                         )}
                       </div>
-                      {VerificationStatus.type == SUCCESS && (
+                      {VerificationStatus.status == SUCCESS && (
                         <>
                           <FormSuccess message="Password reset successful" />
                           <p className="text-sm pt-4 text-slate-400 text-center">
@@ -149,7 +175,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
                         </>
                       )}
 
-                      {VerificationStatus.type === ERROR && (
+                      {VerificationStatus.status === ERROR && (
                         <>
                           <FormError message={VerificationStatus.data} />
                           <p className="text-sm pt-4 text-slate-400 text-center">
@@ -160,10 +186,13 @@ const ResetPassword: FC<pageProps> = ({}) => {
 
                       <div className="text-center">
                         <ButtonDark
-                          disabled={VerificationStatus.type === SUCCESS || VerificationStatus.type === ERROR}
+                          disabled={
+                            VerificationStatus.status === SUCCESS ||
+                            VerificationStatus.status === ERROR
+                          }
                           type="submit"
                           title="Reset Password"
-                          loading={VerificationStatus.type === LOADING}
+                          loading={VerificationStatus.status === LOADING}
                         />
                       </div>
                     </form>
