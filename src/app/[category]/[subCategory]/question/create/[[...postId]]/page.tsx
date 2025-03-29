@@ -19,203 +19,206 @@ import StatusDialog from "@/components/shared/StatusDialog";
 import { Button } from "@/components/ui/button";
 import { usePostManager } from "@/hooks/query/usePostManager";
 import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
+import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
 
 function Page() {
-	const {
-		category: categoryRoute,
-		subCategory: subCategoryRoute,
-		postId: postIdParam,
-	} = useParams();
-	const [sidebarData, setSidebarData] = useState({});
-	const subCategory = (
-		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
-	)?.toUpperCase();
-	const category = (
-		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
-	)?.toUpperCase();
+  const {
+    category: categoryRoute,
+    subCategory: subCategoryRoute,
+    postId: postIdParam,
+  } = useParams();
+  const [sidebarData, setSidebarData] = useState({});
+  const subCategory = (
+    Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
+  )?.toUpperCase();
+  const category = (
+    Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
+  )?.toUpperCase();
 
-	const editPostId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
-	const router = useRouter();
+  const editPostId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
+  const router = useRouter();
 
-	const [postId, setPostId] = useState<string>("");
-	const currentPath = usePathname();
-	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
-	const [postPublished, setPostPublished] = useState<boolean>(false);
-	const [blockUserAccess, setBlockUserAccess] = useState<{
-		message?: string;
-		title?: string;
-	} | null>();
-	const isEditMode = useRef<boolean>(!!editPostId);
+  const [postId, setPostId] = useState<string>("");
+  const currentPath = usePathname();
+  const [loginModalMessage, setLoginModalMessage] = useState<string>("");
+  const [postPublished, setPostPublished] = useState<boolean>(false);
+  const [blockUserAccess, setBlockUserAccess] = useState<{
+    message?: string;
+    title?: string;
+  } | null>();
+  const isEditMode = useRef<boolean>(!!editPostId);
 
-	if (
-		!category ||
-		!subCategory ||
-		!isValidSubCategory(subCategory) ||
-		!isValidCategory(category)
-	) {
-		notFound();
-	}
+  if (
+    !category ||
+    !subCategory ||
+    !isValidSubCategory(subCategory) ||
+    !isValidCategory(category)
+  ) {
+    notFound();
+  }
 
-	const {
-		saveDraft,
-		publish,
-		isDrafting,
-		isPublishing,
-		error: postPublishError,
-	} = usePostManager();
+  const {
+    saveDraft,
+    publish,
+    isDrafting,
+    isPublishing,
+    error: postPublishError,
+  } = usePostManager();
 
-	const {
-		data: postData,
-		isLoading,
-		error: postFetchError,
-	} = usePostDraft(editPostId!, {
-		enabled: isEditMode.current,
-		retry: false,
-	});
+  const {
+    data: postData,
+    isLoading,
+    error: postFetchError,
+  } = usePostDraft(editPostId!, {
+    enabled: isEditMode.current,
+    retry: false,
+  });
 
-	useEffect(() => {
-		if (editPostId) {
-			setPostId(editPostId);
-		} else {
-			const newPostId = generateNanoId();
-			setPostId(newPostId);
-			const newRoute = `${currentPath}/${newPostId}`;
-			window.history.pushState({}, "", newRoute);
-		}
-	}, []);
+  useEffect(() => {
+    if (editPostId) {
+      setPostId(editPostId);
+    } else {
+      const newPostId = generateNanoId();
+      setPostId(newPostId);
+      const newRoute = `${currentPath}/${newPostId}`;
+      window.history.pushState({}, "", newRoute);
+    }
+  }, []);
 
-	useEffect(() => {
-		if (!postFetchError) return;
-		const message = handleError(postFetchError, PostType.QUESTION);
+  useEffect(() => {
+    if (!postFetchError) return;
+    const message = handleError(postFetchError, PostType.QUESTION);
 
-		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
-			setLoginModalMessage("Please sign in to edit your post");
-			return;
-		}
-		if (message && message === POST_NOT_EXIST_ERROR.data.message) {
-			//user might reloaded without saving
-			return;
-		}
-		setBlockUserAccess({
-			message,
-			title: (postFetchError.cause as string) || "",
-		});
-	}, [postFetchError]);
+    if (message && message === UNAUTHENTICATED_ERROR.data.message) {
+      setLoginModalMessage("Please sign in to edit your post");
+      return;
+    }
+    if (message && message === POST_NOT_EXIST_ERROR.data.message) {
+      //user might reloaded without saving
+      return;
+    }
+    setBlockUserAccess({
+      message,
+      title: (postFetchError.cause as string) || "",
+    });
+  }, [postFetchError]);
 
-	useEffect(() => {
-		if (!postPublishError) return;
+  useEffect(() => {
+    if (!postPublishError) return;
 
-		const message = handleError(postPublishError, PostType.QUESTION);
+    const message = handleError(postPublishError, PostType.QUESTION);
 
-		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
-			setLoginModalMessage("Please sign in to publish your post");
-			return;
-		}
-		toast({
-			description: message,
-			variant: "destructive",
-		});
-	}, [postPublishError]);
+    if (message && message === UNAUTHENTICATED_ERROR.data.message) {
+      setLoginModalMessage("Please sign in to publish your post");
+      return;
+    }
+    toast({
+      description: message,
+      variant: "destructive",
+    });
+  }, [postPublishError]);
 
-	const getPostData = (postContent: ContentType) => {
-		return {
-			postId,
-			category,
-			subCategory,
-			postContent,
-			sidebarData,
-			type: PostType.QUESTION,
-		};
-	};
+  const getPostData = (postContent: ContentType) => {
+    return {
+      postId,
+      category,
+      subCategory,
+      postContent,
+      sidebarData,
+      type: PostType.QUESTION,
+    };
+  };
 
-	const saveHandler = async (postContent: ContentType) => {
-		const data = getPostData(postContent);
-		const result = await saveDraft(data);
-		if (result.data) {
-			toast({
-				title: "Draft Saved",
-				description: "Your draft has been saved successfully",
-				variant: "default",
-			});
-		}
-	};
+  const saveHandler = async (postContent: ContentType) => {
+    const data = getPostData(postContent);
+    const result = await saveDraft(data);
+    if (result.data) {
+      toast({
+        title: "Draft Saved",
+        description: "Your draft has been saved successfully",
+        variant: "default",
+      });
+    }
+  };
 
-	const publishHandler = async (postContent: ContentType) => {
-		const data = getPostData(postContent);
-		const result = await publish(data);
-		if (result.data) {
-			setPostPublished(true);
-		}
-	};
+  const publishHandler = async (postContent: ContentType) => {
+    const data = getPostData(postContent);
+    const result = await publish(data);
+    if (result.data) {
+      setPostPublished(true);
+    }
+  };
 
-	if (blockUserAccess) {
-		return (
-			<StatusDialog type="error">
-				<StatusDialog.Title>{blockUserAccess?.title}</StatusDialog.Title>
-				<StatusDialog.Content>{blockUserAccess?.message}</StatusDialog.Content>
-				<StatusDialog.Footer>
-					<Button
-						className="w-[90%] blue-gradient text-white"
-						onClick={() => router.push("/")}
-					>
-						Go back to home
-					</Button>
-				</StatusDialog.Footer>
-			</StatusDialog>
-		);
-	}
-	if (postPublished) {
-		return (
-			<StatusDialog>
-				<StatusDialog.Title>Post Published</StatusDialog.Title>
-				<StatusDialog.Content>
-					Your post has been published and sent for approval
-				</StatusDialog.Content>
-				<StatusDialog.Footer>
-					<Button
-						className="w-[90%] blue-gradient text-white"
-						onClick={() => router.push("/")}
-					>
-						Go back to home
-					</Button>
-				</StatusDialog.Footer>
-			</StatusDialog>
-		);
-	}
+  if (blockUserAccess) {
+    return (
+      <StatusDialog type="error">
+        <StatusDialog.Title>{blockUserAccess?.title}</StatusDialog.Title>
+        <StatusDialog.Content>{blockUserAccess?.message}</StatusDialog.Content>
+        <StatusDialog.Footer>
+          <Button
+            className="w-[90%] blue-gradient text-white"
+            onClick={() => router.push("/")}
+          >
+            Go back to home
+          </Button>
+        </StatusDialog.Footer>
+      </StatusDialog>
+    );
+  }
+  if (postPublished) {
+    return (
+      <StatusDialog>
+        <StatusDialog.Title>Post Published</StatusDialog.Title>
+        <StatusDialog.Content>
+          Your post has been published and sent for approval
+        </StatusDialog.Content>
+        <StatusDialog.Footer>
+          <Button
+            className="w-[90%] blue-gradient text-white"
+            onClick={() => router.push("/")}
+          >
+            Go back to home
+          </Button>
+        </StatusDialog.Footer>
+      </StatusDialog>
+    );
+  }
 
-	return (
-		<>
-			{loginModalMessage && (
-				<LoginModal
-					closeHandler={() => setLoginModalMessage("")}
-					message={loginModalMessage}
-				/>
-			)}
-			<RightPanelLayout className="mt-8 min-h-[75vh]">
-				<RightPanelLayout.MainPanel>
-					<EditorContainer
-						postId={postId}
-						postType={PostType.QUESTION}
-						saveHandler={saveHandler}
-						publishHandler={publishHandler}
-						dataLoading={isLoading}
-						actionDraftLoading={isDrafting}
-						actionPublishLoading={isPublishing}
-						defaultContent={postData?.content}
-					/>
-				</RightPanelLayout.MainPanel>
-				<RightPanelLayout.SidePanel>
-					<QuestionSidebar
-						postId={postId}
-						topicCategory={subCategory}
-						getSidebarData={setSidebarData}
-						defaultContent={formatSidebarDefaultData(postData)}
-						dataLoading={isLoading}
-					/>
-				</RightPanelLayout.SidePanel>
-			</RightPanelLayout>
-		</>
-	);
+  return (
+    <>
+      {loginModalMessage && (
+        <LoginModal
+          closeHandler={() => setLoginModalMessage("")}
+          message={loginModalMessage}
+        />
+      )}
+      <EditorProvider>
+        <RightPanelLayout className="mt-8 min-h-[75vh]">
+          <RightPanelLayout.MainPanel>
+            <EditorContainer
+              postId={postId}
+              postType={PostType.QUESTION}
+              saveHandler={saveHandler}
+              publishHandler={publishHandler}
+              dataLoading={isLoading}
+              actionDraftLoading={isDrafting}
+              actionPublishLoading={isPublishing}
+              defaultContent={postData?.content}
+            />
+          </RightPanelLayout.MainPanel>
+          <RightPanelLayout.SidePanel>
+            <QuestionSidebar
+              postId={postId}
+              topicCategory={subCategory}
+              getSidebarData={setSidebarData}
+              defaultContent={formatSidebarDefaultData(postData)}
+              dataLoading={isLoading}
+            />
+          </RightPanelLayout.SidePanel>
+        </RightPanelLayout>
+      </EditorProvider>
+    </>
+  );
 }
 
 export default Page;

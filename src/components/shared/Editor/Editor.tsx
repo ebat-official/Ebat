@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import type EditorJS from "@editorjs/editorjs";
-import { OutputData } from "@editorjs/editorjs";
+import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic"; // Import dynamic from Next.js
 import TextareaAutosize from "react-textarea-autosize";
 import { z } from "zod";
 import useFileUpload from "@/hooks/useFileUpload";
@@ -13,250 +12,168 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import PostContentSkeleton from "./PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
-import "./Editor.css";
+
+// Dynamically import the Lexical Editor with SSR disabled
+const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {
+  ssr: false, // Disable server-side rendering for this component
+});
 
 interface EditorProps<T extends z.ZodType<EditorContent>> {
-	onChange: (data: z.infer<T>) => void;
-	answerHandler?: (data: z.infer<T>) => void;
-	editorId?: string;
-	defaultContent?: ContentType;
-	showTitleField?: boolean;
-	showCommandDetail?: boolean;
-	titlePlaceHolder?: string;
-	contentPlaceHolder?: string;
-	postId: string;
-	dataLoading?: boolean;
-	answerPlaceHolder?: string;
+  onChange: (data: z.infer<T>) => void;
+  answerHandler?: (data: z.infer<T>) => void;
+  editorId?: string;
+  defaultContent?: ContentType;
+  showTitleField?: boolean;
+  showCommandDetail?: boolean;
+  titlePlaceHolder?: string;
+  contentPlaceHolder?: string;
+  postId: string;
+  dataLoading?: boolean;
+  answerPlaceHolder?: string;
 }
 
-export const Editor = <T extends z.ZodType<EditorContent>>({
-	onChange,
-	defaultContent = {},
-	showTitleField = true,
-	titlePlaceHolder = "Title",
-	contentPlaceHolder = "Type here to write your post...",
-	showCommandDetail = true,
-	postId,
-	dataLoading = false,
-	answerHandler,
-	answerPlaceHolder = "",
+export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
+  onChange,
+  defaultContent = {},
+  showTitleField = true,
+  titlePlaceHolder = "Title",
+  contentPlaceHolder = "Type here to write your post...",
+  showCommandDetail = true,
+  postId,
+  dataLoading = false,
+  answerHandler,
+  answerPlaceHolder = "",
 }: EditorProps<T>) => {
-	const ref = useRef<EditorJS>(null);
-	const _titleRef = useRef<HTMLTextAreaElement>(null);
-	const [isMounted, setIsMounted] = useState(false);
-	const [isLoading, setIsLoading] = useState(true);
-	const { uploadFile } = useFileUpload();
-	const [uploadError, setUploadError] = useState<string | null | undefined>(
-		null,
-	);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [uploadError, setUploadError] = useState<string | null | undefined>(
+    null
+  );
 
-	const editorPostId = `editor-post-${postId}`;
-	const editorAnswerId = answerHandler ? `editor-answer-${postId}` : null;
+  const editorPostId = `editor-post-${postId}`;
+  const editorAnswerId = answerHandler ? `editor-answer-${postId}` : null;
+  const _titleRef = useRef<HTMLTextAreaElement>(null);
 
-	useEffect(() => {
-		setIsMounted(typeof window !== "undefined");
-	}, []);
+  useEffect(() => {
+    setIsMounted(true); // Set isMounted to true when the component mounts on the client
+  }, []);
 
-	const initializeEditor = useCallback(
-		async (
-			editorId: string,
-			placeholder: string,
-			onChangeHandler: (data: EditorContent) => void,
-			ContentType?: EditorContent["blocks"],
-		) => {
-			const editorModules = {
-				EditorJS: import("@editorjs/editorjs").then((mod) => mod.default),
-				Header: import("@editorjs/header").then((mod) => mod.default),
-				Embed: import("@editorjs/embed").then((mod) => mod.default),
-				Table: import("@editorjs/table").then((mod) => mod.default),
-				List: import("@editorjs/list").then((mod) => mod.default),
-				Code: import("@editorjs/code").then((mod) => mod.default),
-				LinkTool: import("@editorjs/link").then((mod) => mod.default),
-				InlineCode: import("@editorjs/inline-code").then((mod) => mod.default),
-				ImageTool: import("@editorjs/image").then((mod) => mod.default),
-			};
+  // Initialize all editors when mounted and data is ready
+  useEffect(() => {
+    if (!isMounted || dataLoading) return;
 
-			const [
-				EditorJSModule,
-				HeaderModule,
-				EmbedModule,
-				TableModule,
-				ListModule,
-				CodeModule,
-				LinkToolModule,
-				InlineCodeModule,
-				ImageToolModule,
-			] = await Promise.all(Object.values(editorModules));
+    setIsLoading(false);
+    setTimeout(() => _titleRef.current?.focus(), 0);
+  }, [isMounted, dataLoading]);
 
-			if (!ref.current) {
-				const editor = new EditorJSModule({
-					holder: editorId,
-					onReady() {
-						ref.current = editor;
-					},
-					placeholder,
-					inlineToolbar: true,
-					data: ContentType ? { blocks: ContentType } : { blocks: [] },
-					tools: {
-						header: HeaderModule,
-						linkTool: {
-							class: LinkToolModule,
-							config: { endpoint: "/api/link" },
-						},
-						image: {
-							class: ImageToolModule,
-							config: {
-								features: { caption: "optional" },
-								uploader: {
-									async uploadByFile(file: File) {
-										try {
-											const { status, data } = await uploadFile(file, {
-												postId,
-											});
-											if (status === "error") {
-												setUploadError(data.message);
-												throw new Error(data.message);
-											}
-											return { success: 1, file: { url: data.url } };
-										} catch (error) {
-											console.error("Image upload failed:", error);
-											return { success: 0, error: "Failed to upload image" };
-										}
-									},
-								},
-							},
-						},
-						list: ListModule,
-						code: CodeModule,
-						inlineCode: InlineCodeModule,
-						table: TableModule,
-						embed: EmbedModule,
-					},
-					async onChange() {
-						const content = await editor.save();
-						const title = _titleRef.current?.value || "";
-						onChangeHandler({ title, blocks: content.blocks });
-					},
-				});
-			}
-		},
-		[postId],
-	);
+  return (
+    <>
+      {uploadError === UNAUTHENTICATED && (
+        <LoginModal
+          closeHandler={() => setUploadError(null)}
+          message="Sign in to upload an image."
+        />
+      )}
 
-	// Initialize all editors when mounted and data is ready
-	useEffect(() => {
-		if (!isMounted || dataLoading) return;
+      <div className="pt-8 min-w-[73%] min-h-[70vh]">
+        <div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full justify-between ">
+          <div className="h-full flex flex-col">
+            {showTitleField &&
+              (isLoading || dataLoading ? (
+                <Skeleton className="h-10 w-52" />
+              ) : (
+                <TextareaAutosize
+                  onChange={async () => {
+                    const title = _titleRef.current?.value || "";
+                    onChange({ title, blocks: [] }); // Pass empty blocks for now
+                  }}
+                  ref={_titleRef}
+                  defaultValue={defaultContent?.post?.title ?? ""}
+                  placeholder={titlePlaceHolder}
+                  className={cn(
+                    "w-full overflow-hidden text-lg md:text-xl lg:text-2xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+                  )}
+                />
+              ))}
 
-		const init = async () => {
-			const editors = [
-				initializeEditor(
-					editorPostId,
-					contentPlaceHolder,
-					onChange,
-					defaultContent.post?.blocks,
-				),
-			];
+            {!dataLoading &&
+              isMounted && ( // Render Lexical Editor only on the client
+                <div id={editorPostId} className="mt-6">
+                  <Editor
+                    isEditable={true}
+                    content={defaultContent.post?.blocks} // Pass initial content
+                    placeholder={contentPlaceHolder}
+                    id={editorPostId}
+                    autoFocus={false}
+                    onChange={(content) => {
+                      const title = _titleRef.current?.value || "";
+                      onChange({ title, blocks: content.blocks });
+                    }}
+                  />
+                </div>
+              )}
 
-			if (editorAnswerId && answerHandler) {
-				editors.push(
-					initializeEditor(
-						editorAnswerId,
-						answerPlaceHolder,
-						answerHandler,
-						defaultContent.answer?.blocks,
-					),
-				);
-			}
+            {(isLoading || dataLoading) &&
+              (dataLoading ? (
+                <PostContentSkeleton
+                  lines={10}
+                  className="mt-6 mb-6 min-h-[250px]"
+                />
+              ) : (
+                <Skeleton className="ml-6 mt-6 h-5 w-64 mb-[240px]" />
+              ))}
+          </div>
 
-			await Promise.all(editors);
-			setIsLoading(false);
-			setTimeout(() => _titleRef.current?.focus(), 0);
-		};
+          {editorAnswerId && (
+            <>
+              <Separator className="py-0.5" />
 
-		init();
-		return () => {
-			ref.current?.destroy();
-			ref.current = null;
-		};
-	}, [isMounted, dataLoading, initializeEditor]);
+              {isLoading || dataLoading ? (
+                dataLoading ? (
+                  <PostContentSkeleton
+                    lines={9}
+                    className="mt-8 min-h-[250px] mb-4"
+                  />
+                ) : (
+                  <Skeleton className="ml-6 mt-6 h-5 w-64 mb-[240px]" />
+                )
+              ) : null}
 
-	return (
-		<>
-			{uploadError === UNAUTHENTICATED && (
-				<LoginModal
-					closeHandler={() => setUploadError(null)}
-					message="Sign in to upload an image."
-				/>
-			)}
+              {!dataLoading &&
+                isMounted && ( // Render Lexical Editor only on the client
+                  <div id={editorAnswerId} className="mt-1">
+                    <Editor
+                      isEditable={true}
+                      content={defaultContent.answer?.blocks} // Pass initial content
+                      placeholder={answerPlaceHolder}
+                      id={editorAnswerId}
+                      autoFocus={false}
+                      onChange={(content) => {
+                        if (answerHandler) {
+                          const title = _titleRef.current?.value || "";
+                          answerHandler({ title, blocks: content.blocks });
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+            </>
+          )}
 
-			<div className="pt-8 min-w-[73%] min-h-[70vh]">
-				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full justify-between ">
-					<div className="h-full flex flex-col">
-						{showTitleField &&
-							(isLoading || dataLoading ? (
-								<Skeleton className="h-10 w-52" />
-							) : (
-								<TextareaAutosize
-									onChange={async () => {
-										const content = await ref.current?.save();
-										const title = _titleRef.current?.value || "";
-										onChange({ title, blocks: content?.blocks ?? [] });
-									}}
-									ref={_titleRef}
-									defaultValue={defaultContent?.post?.title ?? ""}
-									placeholder={titlePlaceHolder}
-									className={cn(
-										"w-full overflow-hidden text-lg md:text-xl lg:text-2xl font-bold bg-transparent appearance-none resize-none focus:outline-none",
-									)}
-								/>
-							))}
-
-						{!dataLoading && <div id={editorPostId} className="mt-6" />}
-
-						{(isLoading || dataLoading) &&
-							(dataLoading ? (
-								<PostContentSkeleton
-									lines={10}
-									className="mt-6 mb-6 min-h-[250px]"
-								/>
-							) : (
-								<Skeleton className="ml-6 mt-6 h-5 w-64 mb-[240px]" />
-							))}
-					</div>
-
-					{editorAnswerId && (
-						<>
-							<Separator className="py-0.5" />
-
-							{isLoading || dataLoading ? (
-								dataLoading ? (
-									<PostContentSkeleton
-										lines={9}
-										className="mt-8 min-h-[250px] mb-4"
-									/>
-								) : (
-									<Skeleton className="ml-6 mt-6 h-5 w-64 mb-[240px]" />
-								)
-							) : null}
-
-							{!dataLoading && <div id={editorAnswerId} className="mt-6" />}
-						</>
-					)}
-
-					{showCommandDetail &&
-						(isLoading || dataLoading ? (
-							<Skeleton className="px-1 h-6 py-2 w-64" />
-						) : (
-							<p className="text-sm text-gray-500">
-								Use{" "}
-								<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
-									Enter
-								</kbd>{" "}
-								to open the command menu.
-							</p>
-						))}
-				</div>
-			</div>
-		</>
-	);
+          {showCommandDetail &&
+            (isLoading || dataLoading ? (
+              <Skeleton className="px-1 h-6 py-2 w-64" />
+            ) : (
+              <p className="text-sm text-gray-500">
+                Use{" "}
+                <kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
+                  /
+                </kbd>{" "}
+                to open the command menu.
+              </p>
+            ))}
+        </div>
+      </div>
+    </>
+  );
 };

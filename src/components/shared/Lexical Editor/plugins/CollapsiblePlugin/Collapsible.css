@@ -1,0 +1,76 @@
+.Collapsible__container {
+  margin-bottom: 8px;
+  
+}
+
+.Collapsible__title {
+  cursor: pointer;
+  padding: 5px 5px 5px 20px;
+  position: relative;
+  font-weight: bold;
+  list-style: none;
+  outline: none;
+  
+}
+
+
+.Collapsible__title::marker,
+.Collapsible__title::-webkit-details-marker {
+  display: none;
+  
+}
+
+
+
+
+
+.dark .Collapsible__title:before {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-left-color: white;
+  display: block;
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.Collapsible__title:before {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-left-color: #000;
+  display: block;
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dark .Collapsible__container[open] > .Collapsible__title:before {
+  border-color: transparent;
+  border-width: 6px 4px 0 4px;
+  border-top-color: white;
+
+  
+}
+
+.Collapsible__container[open] > .Collapsible__title:before {
+  border-color: transparent;
+  border-width: 6px 4px 0 4px;
+  border-top-color: #000;
+
+
+
+}
+
+.Collapsible__content {
+  padding: 0 5px 5px 20px;
+}
+
+.Collapsible__collapsed .Collapsible__content {
+  display: none;
+  user-select: none;
+}
