@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import parseRedirectError from "@/utils/parseRedirectError";
 import { Eye, EyeOff } from "lucide-react";
+import EyeButton from "./EyeButton";
 
 type FormValues = {
   email: string;
@@ -117,7 +118,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
     if (modelHandler) modelHandler(false);
     setOpenEmailVerification((prev) => !prev);
   };
-  const showPasswordHandler = (e) => {
+  const showPasswordHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setShowPassword((prev) => !prev);
   };
@@ -151,12 +152,11 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
             aria-label={PASSWORD}
             autoComplete="current-password"
           />
-          <button
-            className="absolute right-2 top-0  translate-y-1/2 opacity-50"
-            onClick={(e) => showPasswordHandler(e)}
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+          <EyeButton
+            showPassword={showPassword}
+            onClickHandler={showPasswordHandler}
+          />
+
           {errors?.password && (
             <p className="text-sm text-red-500 dark:text-red-900">
               {errors.password.message}
