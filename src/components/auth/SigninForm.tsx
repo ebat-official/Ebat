@@ -14,6 +14,9 @@ import {
   EMAIL_VERIFICATION,
   ERROR,
   LOADING,
+  PASSWORD,
+  SUCCESS,
+  TEXT,
 } from "@/utils/contants";
 import ForgotPassword from "./ForgotPassword";
 import { logIn, upsertVerificationToken } from "@/actions/auth";
@@ -23,6 +26,7 @@ import mailer from "@/lib/mailer";
 import { Input } from "@/components/ui/input";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import parseRedirectError from "@/utils/parseRedirectError";
+import { Eye, EyeOff } from "lucide-react";
 
 type FormValues = {
   email: string;
@@ -55,6 +59,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
   const [runActionSignin, isLoading] = useServerAction(logIn);
   const [formStatus, setFormStatus] = useState({ type: LOADING, data: "" });
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (verificationEmail) {
@@ -69,7 +74,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
         const verification = await upsertVerificationToken(userData.email);
         if (verification.status === ERROR) {
           return toast({
-            title: "Error",
+            title: ERROR,
             description: verification.data,
             variant: "destructive",
           });
@@ -84,18 +89,18 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
       setUserData(userData);
       const result = await runActionSignin(userData);
 
-      if (result?.status === "success") {
+      if (result?.status === SUCCESS) {
         if (modelHandler) modelHandler(false);
         return;
       }
-      if (result?.status === "error") {
+      if (result?.status === ERROR) {
         if (result.cause === EMAIL_NOT_VERIFIED) {
           setOpenEmailVerification(true);
           await upsertVerificationToken(userData.email);
           return;
         }
         return toast({
-          title: "Error",
+          title: ERROR,
           description: result?.data?.message || JSON.stringify(result),
           variant: "destructive",
         });
@@ -111,6 +116,10 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
   const emailVerificationCloseHanlder = () => {
     if (modelHandler) modelHandler(false);
     setOpenEmailVerification((prev) => !prev);
+  };
+  const showPasswordHandler = (e) => {
+    e.preventDefault();
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -132,23 +141,29 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
             </p>
           )}
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <Input
-            {...register("password")}
-            type="password"
-            name="password"
+            {...register(PASSWORD)}
+            type={showPassword ? TEXT : PASSWORD}
+            name={PASSWORD}
             className={cn({ "border-red-500": errors?.password })}
-            placeholder="Password"
-            aria-label="Password"
+            placeholder={PASSWORD}
+            aria-label={PASSWORD}
             autoComplete="current-password"
           />
+          <button
+            className="absolute right-2 top-0  translate-y-1/2 opacity-50"
+            onClick={(e) => showPasswordHandler(e)}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
           {errors?.password && (
             <p className="text-sm text-red-500 dark:text-red-900">
               {errors.password.message}
             </p>
           )}
         </div>
-        <div className="flex justify-end w-full text-xs text-slate-500 ">
+        <div className="flex justify-end w-full text-xs text-slate-500 mb-2">
           <button
             aria-label="forgot password"
             type="button"
