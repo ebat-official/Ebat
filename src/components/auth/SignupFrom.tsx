@@ -13,6 +13,8 @@ import { useServerAction } from "@/hooks/useServerAction";
 import EmailVerificationModal from "./EmailVerificationModal";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import EyeButton from "./EyeButton";
+import { ERROR, PASSWORD, SUCCESS, TEXT } from "@/utils/contants";
 
 type FormValues = {
   name: string;
@@ -53,14 +55,15 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
   // const mutation = useRegisterUser();
   const [runActionSignup, isLoading] = useServerAction(signUp);
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = handleSubmit(async (userData) => {
     setUserData(userData);
     const result = await runActionSignup(userData);
-    if (result?.status === "success") {
+    if (result?.status === SUCCESS) {
       setOpenEmailVerification(true);
     }
-    if (result?.status === "error") {
+    if (result?.status === ERROR) {
       return toast({
         title: "Error",
         description: String(result.data),
@@ -71,6 +74,10 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
   const emailVerificationCloseHanlder = () => {
     if (modelHandler) modelHandler(false);
     setOpenEmailVerification((prev) => !prev);
+  };
+  const showPasswordHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -104,13 +111,17 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
             </p>
           )}
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <Input
-            {...register("password")}
-            type="password"
+            {...register(PASSWORD)}
+            type={showPassword ? TEXT : PASSWORD}
             className={cn({ "border-red-500": errors?.password })}
-            placeholder="Password"
-            aria-label="Password"
+            placeholder={PASSWORD}
+            aria-label={PASSWORD}
+          />
+          <EyeButton
+            showPassword={showPassword}
+            onClickHandler={showPasswordHandler}
           />
           {errors?.password && (
             <p className="text-sm text-red-500 dark:text-red-900">
