@@ -125,7 +125,11 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 
   return (
     <>
-      <form onSubmit={onSubmit} className="text-left" noValidate>
+      <form
+        onSubmit={onSubmit}
+        className="text-left flex  flex-col gap-4"
+        noValidate
+      >
         <div className="mb-4">
           <Input
             {...register("email")}
@@ -142,20 +146,22 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
             </p>
           )}
         </div>
-        <div className="mb-4 relative">
-          <Input
-            {...register(PASSWORD)}
-            type={showPassword ? TEXT : PASSWORD}
-            name={PASSWORD}
-            className={cn({ "border-red-500": errors?.password })}
-            placeholder={PASSWORD}
-            aria-label={PASSWORD}
-            autoComplete="current-password"
-          />
-          <EyeButton
-            showPassword={showPassword}
-            onClickHandler={showPasswordHandler}
-          />
+        <div className="mb-4 ">
+          <div className="relative">
+            <Input
+              {...register(PASSWORD)}
+              type={showPassword ? TEXT : PASSWORD}
+              name={PASSWORD}
+              className={cn({ "border-red-500": errors?.password })}
+              placeholder={PASSWORD}
+              aria-label={PASSWORD}
+              autoComplete="current-password"
+            />
+            <EyeButton
+              showPassword={showPassword}
+              onClickHandler={showPasswordHandler}
+            />
+          </div>
 
           {errors?.password && (
             <p className="text-sm text-red-500 dark:text-red-900">
@@ -163,7 +169,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
             </p>
           )}
         </div>
-        <div className="flex justify-end w-full text-xs text-slate-500 mb-2">
+        <div className="flex justify-end w-full text-xs text-slate-500 -mt-6 ">
           <button
             aria-label="forgot password"
             type="button"
@@ -175,7 +181,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
             Forgot password ?
           </button>
         </div>
-        <div className="text-center">
+        <div className="text-center ">
           <ButtonBlue type="submit" title="sign in" loading={isLoading} />
         </div>
       </form>
