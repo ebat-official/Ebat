@@ -8,7 +8,7 @@
 		"start": "next start",
 		"lint": "next lint",
 		"postinstall": "npx prisma generate",
-		"format": "biome format",
+		"format": "biome format . --write",
 		"format:check": "biome format --check"
 	},
 	"dependencies": {
