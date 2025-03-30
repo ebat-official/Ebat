@@ -14,6 +14,7 @@ import EmailVerificationModal from "./EmailVerificationModal";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import EyeButton from "./EyeButton";
+import { ERROR, PASSWORD, SUCCESS, TEXT } from "@/utils/contants";
 
 type FormValues = {
   name: string;
@@ -59,10 +60,10 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
   const onSubmit = handleSubmit(async (userData) => {
     setUserData(userData);
     const result = await runActionSignup(userData);
-    if (result?.status === "success") {
+    if (result?.status === SUCCESS) {
       setOpenEmailVerification(true);
     }
-    if (result?.status === "error") {
+    if (result?.status === ERROR) {
       return toast({
         title: "Error",
         description: String(result.data),
@@ -112,11 +113,11 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
         </div>
         <div className="mb-4 relative">
           <Input
-            {...register("password")}
-            type={showPassword ? "text" : "password"}
+            {...register(PASSWORD)}
+            type={showPassword ? TEXT : PASSWORD}
             className={cn({ "border-red-500": errors?.password })}
-            placeholder="Password"
-            aria-label="Password"
+            placeholder={PASSWORD}
+            aria-label={PASSWORD}
           />
           <EyeButton
             showPassword={showPassword}
