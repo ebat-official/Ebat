@@ -19,6 +19,7 @@ import StatusDialog from "@/components/shared/StatusDialog";
 import { Button } from "@/components/ui/button";
 import { usePostManager } from "@/hooks/query/usePostManager";
 import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
+import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
 
 function Page() {
 	const {
@@ -190,29 +191,31 @@ function Page() {
 					message={loginModalMessage}
 				/>
 			)}
-			<RightPanelLayout className="mt-8 min-h-[75vh]">
-				<RightPanelLayout.MainPanel>
-					<EditorContainer
-						postId={postId}
-						postType={postType}
-						saveHandler={saveHandler}
-						publishHandler={publishHandler}
-						dataLoading={isLoading}
-						actionDraftLoading={isDrafting}
-						actionPublishLoading={isPublishing}
-						defaultContent={postData?.content}
-					/>
-				</RightPanelLayout.MainPanel>
-				<RightPanelLayout.SidePanel>
-					<QuestionSidebar
-						postId={postId}
-						topicCategory={category}
-						getSidebarData={setSidebarData}
-						defaultContent={formatSidebarDefaultData(postData)}
-						dataLoading={isLoading}
-					/>
-				</RightPanelLayout.SidePanel>
-			</RightPanelLayout>
+			<EditorProvider>
+				<RightPanelLayout className="mt-8 min-h-[75vh]">
+					<RightPanelLayout.MainPanel>
+						<EditorContainer
+							postId={postId}
+							postType={postType}
+							saveHandler={saveHandler}
+							publishHandler={publishHandler}
+							dataLoading={isLoading}
+							actionDraftLoading={isDrafting}
+							actionPublishLoading={isPublishing}
+							defaultContent={postData?.content}
+						/>
+					</RightPanelLayout.MainPanel>
+					<RightPanelLayout.SidePanel>
+						<QuestionSidebar
+							postId={postId}
+							topicCategory={category}
+							getSidebarData={setSidebarData}
+							defaultContent={formatSidebarDefaultData(postData)}
+							dataLoading={isLoading}
+						/>
+					</RightPanelLayout.SidePanel>
+				</RightPanelLayout>
+			</EditorProvider>
 		</>
 	);
 }
