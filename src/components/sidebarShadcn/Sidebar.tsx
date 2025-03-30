@@ -40,18 +40,18 @@ const data = {
 			logo: FaReact,
 			logoClassName: "text-blue-500",
 			// plan: "Enterprise",
-      route:'/frontend'
+			route: "/frontend",
 		},
 		{
 			name: "Backend",
 			logo: AudioWaveform,
-      route:'/backend'
+			route: "/backend",
 			// plan: "Startup",
 		},
 		{
 			name: "Tools",
 			logo: Command,
-      route:'/tools'
+			route: "/tools",
 			// plan: "Free",
 		},
 	],

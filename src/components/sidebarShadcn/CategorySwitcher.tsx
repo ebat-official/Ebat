@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
-
 export function CategorySwitcher({
 	categories,
 }: {
@@ -39,7 +38,8 @@ export function CategorySwitcher({
 	const { isMobile } = useSidebar();
 	const router = useRouter();
 	const pathname = usePathname();
-	const [activeCategoryLocalIndex, setActiveCategoryLocalIndex] = useLocalStorage<number>('categoryIndex',0);
+	const [activeCategoryLocalIndex, setActiveCategoryLocalIndex] =
+		useLocalStorage<number>("categoryIndex", 0);
 	const [activeCategory, setActiveCategory] = useState(
 		() =>
 			categories.find((category) => pathname.startsWith(category.route)) ||
@@ -51,23 +51,23 @@ export function CategorySwitcher({
 		router.push(activeCategory.route);
 	}, [activeCategory]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey) {
-        const key = event.code ;
-        const index = Number.parseInt(key.at(-1) as string, 10) - 1;
-        if (index >= 0 && index < categories.length) {
-          setActiveCategory(categories[index]);
-		  setActiveCategoryLocalIndex(index);
-        }
-      }
-    };
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.altKey) {
+				const key = event.code;
+				const index = Number.parseInt(key.at(-1) as string, 10) - 1;
+				if (index >= 0 && index < categories.length) {
+					setActiveCategory(categories[index]);
+					setActiveCategoryLocalIndex(index);
+				}
+			}
+		};
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, []);
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -105,10 +105,9 @@ export function CategorySwitcher({
 							<DropdownMenuItem
 								key={team.name}
 								onClick={() => {
-									setActiveCategory(team)
-									setActiveCategoryLocalIndex(index)
-								}
-							}
+									setActiveCategory(team);
+									setActiveCategoryLocalIndex(index);
+								}}
 								className="gap-2 p-2"
 							>
 								<div className="flex items-center justify-center border rounded-sm size-6">

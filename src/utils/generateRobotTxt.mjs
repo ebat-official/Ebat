@@ -14,22 +14,26 @@ const __dirname = path.dirname(__filename);
 const publicDir = path.join(__dirname, "../../public");
 
 const generateRobotsTxt = () => {
-  // Check if the public directory exists
-  if (!fs.existsSync(publicDir)) {
-    console.log("Public directory does not exist. Skipping robots.txt generation.");
-    return;
-  }
+	// Check if the public directory exists
+	if (!fs.existsSync(publicDir)) {
+		console.log(
+			"Public directory does not exist. Skipping robots.txt generation.",
+		);
+		return;
+	}
 
-  const isDevelopment = process.env.NODE_ENV === "development";
-  const robotsContent = isDevelopment
-    ? `User-agent: *
+	const isDevelopment = process.env.NODE_ENV === "development";
+	const robotsContent = isDevelopment
+		? `User-agent: *
 Disallow: /`
-    : `User-agent: *
+		: `User-agent: *
 Disallow:`;
 
-  const filePath = path.join(publicDir, "robots.txt");
-  fs.writeFileSync(filePath, robotsContent, "utf8");
-  console.log(`robots.txt generated for ${isDevelopment ? "development" : "production"}`);
+	const filePath = path.join(publicDir, "robots.txt");
+	fs.writeFileSync(filePath, robotsContent, "utf8");
+	console.log(
+		`robots.txt generated for ${isDevelopment ? "development" : "production"}`,
+	);
 };
 
 generateRobotsTxt();

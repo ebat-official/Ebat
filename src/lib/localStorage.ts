@@ -1,24 +1,23 @@
 export const getLocalStorage = <T>(key: string | undefined): T | undefined => {
 	if (typeof window === "undefined" || !key) return undefined;
 	try {
-	  const item = window.localStorage.getItem(key);
-	  return item ? JSON.parse(item) : undefined;
+		const item = window.localStorage.getItem(key);
+		return item ? JSON.parse(item) : undefined;
 	} catch (error) {
-	  console.error(`Error reading localStorage key "${key}":`, error);
-	  return undefined;
+		console.error(`Error reading localStorage key "${key}":`, error);
+		return undefined;
 	}
-  };
-  
-  export const setLocalStorage = <T>(key: string | undefined, value: T): void => {
+};
+
+export const setLocalStorage = <T>(key: string | undefined, value: T): void => {
 	if (typeof window === "undefined" || !key) return;
 	try {
-	  if (value === undefined) {
-		window.localStorage.removeItem(key);
-	  } else {
-		window.localStorage.setItem(key, JSON.stringify(value));
-	  }
+		if (value === undefined) {
+			window.localStorage.removeItem(key);
+		} else {
+			window.localStorage.setItem(key, JSON.stringify(value));
+		}
 	} catch (error) {
-	  console.error(`Error writing to localStorage key "${key}":`, error);
+		console.error(`Error writing to localStorage key "${key}":`, error);
 	}
-  };
-  
+};

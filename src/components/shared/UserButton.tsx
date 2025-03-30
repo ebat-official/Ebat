@@ -5,50 +5,62 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 
 interface UserButtonProps {
-  session: Session | null;
+	session: Session | null;
 }
 import {
-  LogOut,
-  // UserPlus,
-  // Users,
+	LogOut,
+	// UserPlus,
+	// Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  // DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  // DropdownMenuSub,
-  // DropdownMenuSubContent,
-  // DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	// DropdownMenuPortal,
+	DropdownMenuSeparator,
+	DropdownMenuShortcut,
+	// DropdownMenuSub,
+	// DropdownMenuSubContent,
+	// DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Session } from "next-auth";
 
 const UserButton: FC<UserButtonProps> = ({ session }) => {
-  return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button className="rounded-full select-none focus-visible:ring-0 w-9 h-9" variant="ghost" size="icon">
-            <Avatar>
-              <AvatarImage src={session?.user?.image || undefined} alt="avatar" referrerPolicy="no-referrer"/>
-              <AvatarFallback>
-                <Image className="rounded-full outline-none" src={fallbackImg} alt="AB" />
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {/* <DropdownMenuItem>
+	return (
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						className="rounded-full select-none focus-visible:ring-0 w-9 h-9"
+						variant="ghost"
+						size="icon"
+					>
+						<Avatar>
+							<AvatarImage
+								src={session?.user?.image || undefined}
+								alt="avatar"
+								referrerPolicy="no-referrer"
+							/>
+							<AvatarFallback>
+								<Image
+									className="rounded-full outline-none"
+									src={fallbackImg}
+									alt="AB"
+								/>
+							</AvatarFallback>
+						</Avatar>
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent className="w-56">
+					<DropdownMenuLabel>My Account</DropdownMenuLabel>
+					<DropdownMenuSeparator />
+					<DropdownMenuGroup>
+						{/* <DropdownMenuItem>
               <User className="w-4 h-4 mr-2" />
               <span>Profile</span>
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
@@ -68,21 +80,21 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
               <span>Support</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator /> */}
-            <DropdownMenuItem onClick={() => signOut()}>
-              <LogOut className="w-4 h-4 mr-2" />
-              <Button className="h-0" variant="ghost">
-                Log out
-              </Button>
-              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-            </DropdownMenuItem>
+						<DropdownMenuItem onClick={() => signOut()}>
+							<LogOut className="w-4 h-4 mr-2" />
+							<Button className="h-0" variant="ghost">
+								Log out
+							</Button>
+							<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+						</DropdownMenuItem>
 
-            {/* <DropdownMenuItem>
+						{/* <DropdownMenuItem>
               <Keyboard className="w-4 h-4 mr-2" />
               <span>Keyboard shortcuts</span>
               <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
             </DropdownMenuItem> */}
-          </DropdownMenuGroup>
-          {/* <DropdownMenuSeparator />
+					</DropdownMenuGroup>
+					{/* <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <Users className="w-4 h-4 mr-2" />
@@ -127,10 +139,10 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
             <Cloud className="w-4 h-4 mr-2" />
             <span>API</span>
           </DropdownMenuItem> */}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
-  );
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</>
+	);
 };
 
 export default UserButton;

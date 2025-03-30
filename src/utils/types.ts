@@ -3,8 +3,8 @@ import { PostCategory, SubCategory } from "@prisma/client";
 import { SerializedEditorState } from "lexical";
 
 export interface ContentType {
-  post?: EditorContent;
-  answer?: EditorContent;
+	post?: EditorContent;
+	answer?: EditorContent;
 }
 
 export type PrismaJson = ReturnType<typeof JSON.parse> | null | undefined;
@@ -15,18 +15,18 @@ export type SubCategoryType = keyof typeof SubCategory | undefined;
 export type TopicCategory = SubCategory | PostCategory;
 
 export type QuestionSidebarData = {
-  companies?: string[];
-  topics?: string[];
-  difficulty?: string;
-  completionDuration?: number;
+	companies?: string[];
+	topics?: string[];
+	difficulty?: string;
+	completionDuration?: number;
 };
 export type CustomErrorType = {
-  status?: string;
-  cause?: string;
-  data?: { message: string };
+	status?: string;
+	cause?: string;
+	data?: { message: string };
 };
 
 export interface EditorContent {
-  title?: string;
-  blocks: SerializedEditorState | [];
+	title?: string;
+	blocks: SerializedEditorState | [];
 }

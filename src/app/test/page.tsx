@@ -7,11 +7,11 @@ import { EditorProvider } from "@/components/shared/Lexical Editor/providers/Edi
 interface pageProps {}
 
 const page: FC<pageProps> = ({}) => {
-  return (
-    <EditorProvider>
-      <Editor isEditable={true} />
-    </EditorProvider>
-  );
+	return (
+		<EditorProvider>
+			<Editor isEditable={true} />
+		</EditorProvider>
+	);
 };
 
 export default page;

@@ -229,7 +229,7 @@ const Sidebar = React.forwardRef<
 				data-variant={variant}
 				data-side={side}
 			>
-        <SidebarToggle />
+				<SidebarToggle />
 				{/* This is what handles the sidebar gap on desktop */}
 				<div
 					className={cn(
@@ -286,7 +286,7 @@ const SidebarTrigger = React.forwardRef<
 			}}
 			{...props}
 		>
-			<MenuIcon size={26}/>
+			<MenuIcon size={26} />
 			<span className="sr-only">Toggle Sidebar</span>
 		</Button>
 	);
@@ -295,25 +295,25 @@ const SidebarTrigger = React.forwardRef<
 SidebarTrigger.displayName = "SidebarTrigger";
 
 function SidebarToggle() {
-  const { state,toggleSidebar } = useSidebar();
-  const isOpen=state === "expanded";
-  return (
-    <div className="invisible md:visible absolute top-[66px] -right-[16px] z-20">
-      <Button
-        onClick={toggleSidebar}
-        className="rounded-md w-8 h-8"
-        variant="outline"
-        size="icon"
-      >
-        <ChevronLeft
-          className={cn(
-            "h-4 w-4 transition-transform ease-in-out duration-700",
-            isOpen === false ? "rotate-180" : "rotate-0"
-          )}
-        />
-      </Button>
-    </div>
-  );
+	const { state, toggleSidebar } = useSidebar();
+	const isOpen = state === "expanded";
+	return (
+		<div className="invisible md:visible absolute top-[66px] -right-[16px] z-20">
+			<Button
+				onClick={toggleSidebar}
+				className="rounded-md w-8 h-8"
+				variant="outline"
+				size="icon"
+			>
+				<ChevronLeft
+					className={cn(
+						"h-4 w-4 transition-transform ease-in-out duration-700",
+						isOpen === false ? "rotate-180" : "rotate-0",
+					)}
+				/>
+			</Button>
+		</div>
+	);
 }
 
 const SidebarRail = React.forwardRef<

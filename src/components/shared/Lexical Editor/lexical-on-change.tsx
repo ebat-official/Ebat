@@ -4,37 +4,37 @@ import { setNodePlaceholderFromSelection } from "./utils/setNodePlaceholderFromS
 import { SerializedEditorState } from "lexical";
 
 interface LexicalOnChangePluginProps {
-  onChangeHandler: (data: SerializedEditorState) => void; // Use SerializedEditorState
+	onChangeHandler: (data: SerializedEditorState) => void; // Use SerializedEditorState
 }
 
 export function LexicalOnChangePlugin({
-  onChangeHandler,
+	onChangeHandler,
 }: LexicalOnChangePluginProps) {
-  const [editor] = useLexicalComposerContext();
+	const [editor] = useLexicalComposerContext();
 
-  useLayoutEffectImpl(() => {
-    const unregisterListener = editor.registerUpdateListener(
-      ({ editorState, dirtyElements, dirtyLeaves, prevEditorState, tags }) => {
-        if (
-          (dirtyElements.size === 0 && dirtyLeaves.size === 0) ||
-          tags.has("history-merge") ||
-          prevEditorState.isEmpty()
-        ) {
-          return;
-        }
-        setNodePlaceholderFromSelection(editor);
+	useLayoutEffectImpl(() => {
+		const unregisterListener = editor.registerUpdateListener(
+			({ editorState, dirtyElements, dirtyLeaves, prevEditorState, tags }) => {
+				if (
+					(dirtyElements.size === 0 && dirtyLeaves.size === 0) ||
+					tags.has("history-merge") ||
+					prevEditorState.isEmpty()
+				) {
+					return;
+				}
+				setNodePlaceholderFromSelection(editor);
 
-        editorState.read(() => {
-          const json = editorState.toJSON();
-          onChangeHandler(json); // Pass the SerializedEditorState
-        });
-      }
-    );
+				editorState.read(() => {
+					const json = editorState.toJSON();
+					onChangeHandler(json); // Pass the SerializedEditorState
+				});
+			},
+		);
 
-    return () => {
-      unregisterListener();
-    };
-  }, [editor, onChangeHandler]);
+		return () => {
+			unregisterListener();
+		};
+	}, [editor, onChangeHandler]);
 
-  return <></>;
+	return <></>;
 }

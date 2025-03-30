@@ -1,16 +1,15 @@
-
 export type AIAction =
-  | "MakeLong"
-  | "MakeShort"
-  | "FixSpellingGrammar"
-  | "ImproveWriting"
-  | "ChatWithSelectedString"
-  | "autoComplete"
-  | "GenerateAgain"
-  | "SimplifyLanguage"
-  | "WriteHint"
-  | "Steps"
-  | "askPageQuestion";
+	| "MakeLong"
+	| "MakeShort"
+	| "FixSpellingGrammar"
+	| "ImproveWriting"
+	| "ChatWithSelectedString"
+	| "autoComplete"
+	| "GenerateAgain"
+	| "SimplifyLanguage"
+	| "WriteHint"
+	| "Steps"
+	| "askPageQuestion";
 
 const GenerateAgainInstruction = `
         Create a system that allows the AI to regenerate its response if the user is not satisfied with the initial answer.
@@ -33,10 +32,8 @@ const GenerateAgainInstruction = `
               - Keep track of regenerated responses to avoid repeating the same or overly similar answers.
               - Consider limitations to the number of regenerated responses to manage system performance and user experience.`;
 
-
-
-const autoCompleteInstruction=`        Generate a completion without combining it with the user's text. Limit the response to a concise length and do not include additional commentary or explanations.`
-const improveMesgInstruction= `Provide constructive feedback to improve the writing of a user, focusing on clarity, grammar, style, and coherence. 
+const autoCompleteInstruction = `        Generate a completion without combining it with the user's text. Limit the response to a concise length and do not include additional commentary or explanations.`;
+const improveMesgInstruction = `Provide constructive feedback to improve the writing of a user, focusing on clarity, grammar, style, and coherence. 
 Assess the user's writing thoughtfully before providing feedback, ensuring to highlight both strengths and areas for improvement. Offer specific, actionable suggestions to help the user enhance their writing skills.
 
 # Steps
@@ -79,10 +76,9 @@ Provide feedback in a structured paragraph format. Use bullet points or numbered
 
 - Tailor feedback according to the level of the user's proficiency.
 - Be specific in your suggestions to aid clarity and understanding.
-- Encourage sustained practice and application of advice for continuous improvement.`
+- Encourage sustained practice and application of advice for continuous improvement.`;
 
-
-const FixSpellingGrammarInstruction=`Correct any spelling and grammar errors in a given text.
+const FixSpellingGrammarInstruction = `Correct any spelling and grammar errors in a given text.
 
 # Steps
 
@@ -104,12 +100,10 @@ The corrected text should be provided in a clear and readable paragraph format, 
 
 **Input:** "She dont like to play soccer, she prefers basketball."
 
-**Output:** "She doesn't like to play soccer; she prefers basketball."`
-
-
+**Output:** "She doesn't like to play soccer; she prefers basketball."`;
 
 // stop
-const MakeShortInstruction=`    
+const MakeShortInstruction = `    
 Shorten the provided text while keeping its context intact.
 
 # Steps
@@ -131,9 +125,9 @@ The shortened text should be presented in a clear and concise paragraph format, 
 
 **Input:** "Although she doesn't like playing soccer, she enjoys basketball more and plays it every weekend."
 
-**Output:** "She prefers basketball over soccer, playing it weekly.""`
+**Output:** "She prefers basketball over soccer, playing it weekly.""`;
 
-const MakeLongInstruction=` Expand the provided short text while keeping its context intact.
+const MakeLongInstruction = ` Expand the provided short text while keeping its context intact.
 
           # Steps
 
@@ -154,12 +148,9 @@ const MakeLongInstruction=` Expand the provided short text while keeping its con
 
           **Input:** "She prefers basketball over soccer."
 
-          **Output:** "While she appreciates the dynamics of soccer, she finds basketball much more engaging and enjoyable. She actively participates in basketball games every weekend because it's her favorite sport, and she loves practicing different techniques and plays with her friends."`
+          **Output:** "While she appreciates the dynamics of soccer, she finds basketball much more engaging and enjoyable. She actively participates in basketball games every weekend because it's her favorite sport, and she loves practicing different techniques and plays with her friends."`;
 
-
-
-
-const SimplifyLanguageInstruction=`
+const SimplifyLanguageInstruction = `
   Simplify the language of the provided text, ensuring it remains clear, concise, and easy to understand.
 
 # Steps
@@ -186,8 +177,8 @@ Provide the simplified version of the text in one or more paragraphs, maintainin
 - Avoid oversimplifying technical terms that are necessary for understanding.
 - Maintain the integrity and original intent of the text.
 - Additional context or explanation should only be added if it aids in clarity.
-`
-const WriteHintInstruction=`
+`;
+const WriteHintInstruction = `
  Generate a concise message based on the provided context and user input, categorized by type such as error, success, info, or warning. Ensure that the message does not exceed 50 words. 
         # Steps
 
@@ -229,10 +220,9 @@ const WriteHintInstruction=`
         # Notes
         -make sure do not Reponse with anything except the message.
         - Ensure the tone and content of the message accurately reflect the message type and context.
-        - Be mindful of the word limit while maintaining clarity and precision in the message`
+        - Be mindful of the word limit while maintaining clarity and precision in the message`;
 
-
-const StepsInstruction=`
+const StepsInstruction = `
 Generate a structured response in the format of a JSON object, detailing the given topic as steps.
 
 - Each step should contain three elements: "id", "title", and "content".
@@ -285,16 +275,16 @@ Your response should be a JSON array where each item follows this structure:
 
 - Be concise in writing titles, yet comprehensive in content explanations.
 - Ensure the steps are logically ordered and cover the task comprehensively.
-`
+`;
 
 export {
-    GenerateAgainInstruction,
-    autoCompleteInstruction,
-    improveMesgInstruction,
-    FixSpellingGrammarInstruction,
-    MakeLongInstruction,
-    MakeShortInstruction,
-    SimplifyLanguageInstruction,
-    WriteHintInstruction,
-    StepsInstruction,
-}
+	GenerateAgainInstruction,
+	autoCompleteInstruction,
+	improveMesgInstruction,
+	FixSpellingGrammarInstruction,
+	MakeLongInstruction,
+	MakeShortInstruction,
+	SimplifyLanguageInstruction,
+	WriteHintInstruction,
+	StepsInstruction,
+};

@@ -1,22 +1,22 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from "react";
 
 export const useResizeObserver = (
-  target: Element | null,
-  callback?: (entry: DOMRectReadOnly) => void
+	target: Element | null,
+	callback?: (entry: DOMRectReadOnly) => void,
 ) => {
-  const [size, setSize] = useState<DOMRectReadOnly>();
+	const [size, setSize] = useState<DOMRectReadOnly>();
 
-  useEffect(() => {
-    if (!target) return;
+	useEffect(() => {
+		if (!target) return;
 
-    const observer = new ResizeObserver(([entry]) => {
-      setSize(entry.contentRect);
-      callback?.(entry.contentRect);
-    });
+		const observer = new ResizeObserver(([entry]) => {
+			setSize(entry.contentRect);
+			callback?.(entry.contentRect);
+		});
 
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [target, callback]);
+		observer.observe(target);
+		return () => observer.disconnect();
+	}, [target, callback]);
 
-  return size;
+	return size;
 };
