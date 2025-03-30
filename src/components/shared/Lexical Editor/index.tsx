@@ -8,6 +8,7 @@ import Core from "./Core";
 import nodes from "./nodes";
 import { useEditorContext } from "./providers/EditorContext";
 import { useEffect } from "react";
+import { SerializedEditorState } from "lexical";
 
 interface EditorProps {
   isEditable: boolean;
@@ -16,6 +17,7 @@ interface EditorProps {
   placeholder?: string;
   id?: string;
   autoFocus?: boolean;
+  onChangeHandler: (data: SerializedEditorState) => void;
 }
 
 export default function Editor({
@@ -24,6 +26,7 @@ export default function Editor({
   placeholder = "",
   id = "ebatEditor",
   autoFocus = false,
+  onChangeHandler,
 }: EditorProps) {
   const { setId } = useEditorContext();
 
@@ -42,12 +45,16 @@ export default function Editor({
     },
     editable: isEditable,
   };
-
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <SharedHistoryContext>
         <ToolbarContext>
-          <Core placeholder={placeholder} id={id} autoFocus={autoFocus} />
+          <Core
+            placeholder={placeholder}
+            id={id}
+            autoFocus={autoFocus}
+            onChangeHandler={onChangeHandler}
+          />
         </ToolbarContext>
       </SharedHistoryContext>
     </LexicalComposer>

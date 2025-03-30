@@ -1,8 +1,15 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import useLayoutEffectImpl from "./utils/useLayoutEffect";
 import { setNodePlaceholderFromSelection } from "./utils/setNodePlaceholderFromSelection/setNodePlaceholderFromSelection";
+import { SerializedEditorState } from "lexical";
 
-export function LexicalOnChangePlugin() {
+interface LexicalOnChangePluginProps {
+  onChangeHandler: (data: SerializedEditorState) => void; // Use SerializedEditorState
+}
+
+export function LexicalOnChangePlugin({
+  onChangeHandler,
+}: LexicalOnChangePluginProps) {
   const [editor] = useLexicalComposerContext();
 
   useLayoutEffectImpl(() => {
@@ -19,8 +26,7 @@ export function LexicalOnChangePlugin() {
 
         editorState.read(() => {
           const json = editorState.toJSON();
-          console.log("Editor Content JSON:", json);
-          // You can also pass this JSON to a parent component or store in DB
+          onChangeHandler(json); // Pass the SerializedEditorState
         });
       }
     );
@@ -28,6 +34,7 @@ export function LexicalOnChangePlugin() {
     return () => {
       unregisterListener();
     };
-  }, [editor]);
+  }, [editor, onChangeHandler]);
+
   return <></>;
 }

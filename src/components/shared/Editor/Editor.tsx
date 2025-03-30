@@ -85,7 +85,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
                 <TextareaAutosize
                   onChange={async () => {
                     const title = _titleRef.current?.value || "";
-                    onChange({ title, blocks: [] }); // Pass empty blocks for now
+                    onChange({ title, blocks: [] });
                   }}
                   ref={_titleRef}
                   defaultValue={defaultContent?.post?.title ?? ""}
@@ -105,9 +105,9 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
                     placeholder={contentPlaceHolder}
                     id={editorPostId}
                     autoFocus={false}
-                    onChange={(content) => {
+                    onChangeHandler={(content) => {
                       const title = _titleRef.current?.value || "";
-                      onChange({ title, blocks: content.blocks });
+                      onChange({ title, blocks: content });
                     }}
                   />
                 </div>
@@ -148,10 +148,10 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
                       placeholder={answerPlaceHolder}
                       id={editorAnswerId}
                       autoFocus={false}
-                      onChange={(content) => {
+                      onChangeHandler={(content) => {
                         if (answerHandler) {
                           const title = _titleRef.current?.value || "";
-                          answerHandler({ title, blocks: content.blocks });
+                          answerHandler({ blocks: content });
                         }
                       }}
                     />

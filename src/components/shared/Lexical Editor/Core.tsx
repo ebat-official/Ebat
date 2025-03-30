@@ -41,7 +41,12 @@ import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
 import { useEditorContext } from "./providers/EditorContext";
 import { PLUGIN_NAMES } from "./constants";
 import { mergeRegister } from "@lexical/utils";
-import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from "lexical";
+import {
+  BLUR_COMMAND,
+  COMMAND_PRIORITY_LOW,
+  FOCUS_COMMAND,
+  SerializedEditorState,
+} from "lexical";
 
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
   ssr: false,
@@ -78,9 +83,15 @@ interface CoreProps {
   placeholder: string;
   id: string;
   autoFocus?: boolean;
+  onChangeHandler: (data: SerializedEditorState) => void;
 }
 
-export default function Core({ placeholder, id, autoFocus }: CoreProps) {
+export default function Core({
+  placeholder,
+  id,
+  autoFocus,
+  onChangeHandler,
+}: CoreProps) {
   const { historyState } = useSharedHistoryContext();
   const isEditable = useLexicalEditable();
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -122,10 +133,9 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
   }, []);
 
   const { pluginConfig, minHeight } = useEditorContext();
-  console.log("asdf", autoFocus);
   return (
     <div
-      className="relative pran"
+      className="relative"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -173,7 +183,7 @@ export default function Core({ placeholder, id, autoFocus }: CoreProps) {
         editor={activeEditor}
         setIsLinkEditMode={setIsLinkEditMode}
       />
-      <LexicalOnChangePlugin />
+      <LexicalOnChangePlugin onChangeHandler={onChangeHandler} />
       <LinkPlugin />
       <HorizontalRulePlugin />
       <TabFocusPlugin />
