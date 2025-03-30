@@ -22,6 +22,7 @@ import { YouTubeNode } from "../plugins/YouTubeNode";
 import { Hint } from "./Hint";
 import { StepperNode } from "./Stepper";
 import { ExcalidrawNode } from "./ExcalidrawNode";
+import { EquationNode } from "./EquationNode/EquationNode";
 
 const nodes: Array<Klass<LexicalNode>> = [
 	HeadingNode,
@@ -51,6 +52,7 @@ const nodes: Array<Klass<LexicalNode>> = [
 	CollapsibleTitleNode,
 	LinkWithMetaDataNode,
 	ExcalidrawNode,
+	EquationNode,
 ];
 
 export const nestedNodes: Array<Klass<LexicalNode>> = [

@@ -24,8 +24,9 @@ export default function CodeList({
 	disabled?: boolean;
 	codeLanguage: string;
 }) {
-	const CODE_LANGUAGE_OPTIONS = getCodeLanguageOptions();
-
+	const CODE_LANGUAGE_OPTIONS = getCodeLanguageOptions().filter(
+		([lang]) => lang !== "markdown",
+	);
 	const languageButtons = CODE_LANGUAGE_OPTIONS.map(([lang]) => ({
 		label: lang,
 		func: () => onCodeLanguageSelect(lang),

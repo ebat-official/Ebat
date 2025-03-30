@@ -41,12 +41,8 @@ import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
 import { useEditorContext } from "./providers/EditorContext";
 import { PLUGIN_NAMES } from "./constants";
 import { mergeRegister } from "@lexical/utils";
-import {
-	BLUR_COMMAND,
-	COMMAND_PRIORITY_LOW,
-	FOCUS_COMMAND,
-	SerializedEditorState,
-} from "lexical";
+import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from "lexical";
+import type { SerializedEditorState } from "lexical";
 
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
 	ssr: false,
@@ -78,6 +74,9 @@ const FloatingTextFormatToolbarPlugin = dynamic(
 	() => import("./plugins/FloatingTextFormatToolbarPlugin"),
 	{ ssr: false },
 );
+const EquationsPlugin = dynamic(() => import("./plugins/EquationsPlugin"), {
+	ssr: false,
+});
 
 interface CoreProps {
 	placeholder: string;
@@ -165,7 +164,7 @@ export default function Core({
 							style={{ minHeight }}
 							id={id}
 							autoFocus={autoFocus}
-							className="-z-1 z-20 min p-1 mt-7 outline-none border-0"
+							className="z-20 p-1 border-0 outline-none -z-1 min mt-7"
 							aria-placeholder={placeholder}
 							placeholder={
 								<div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
@@ -204,6 +203,7 @@ export default function Core({
 			{pluginConfig[PLUGIN_NAMES.IMAGE].isEnabled && <ImagesPlugin />}
 			{pluginConfig[PLUGIN_NAMES.HINT].isEnabled && <HintPlugin />}
 			{pluginConfig[PLUGIN_NAMES.YOUTUBE].isEnabled && <YouTubePlugin />}
+			{pluginConfig[PLUGIN_NAMES.EQUATION].isEnabled && <EquationsPlugin />}
 			<HistoryPlugin externalHistoryState={historyState} />
 			<MarkdownShortcutPlugin />
 			<ClickableLinkPlugin disabled={isEditable} />

@@ -31,7 +31,6 @@ export const handleError = (error: unknown, postType: PostType): string => {
 	}
 
 	if (error instanceof Error) {
-		console.log("pranu", error);
 		if (error.message.includes("Something went wrong")) {
 			return "Database error";
 		}

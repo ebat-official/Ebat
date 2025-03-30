@@ -140,7 +140,7 @@ function GenerateSteps(json: string, editor: LexicalEditor) {
 // getMore = number of words to get if the selection was less than 30 len.
 const getSelectedText = (editor: LexicalEditor, getMore?: number) => {
 	let selectedText = "";
-	let context = getMore ? getWordsBeforeSelection(editor, getMore) : null;
+	const context = getMore ? getWordsBeforeSelection(editor, getMore) : null;
 	editor.update(() => {
 		const selection = $getSelection();
 		if ($isRangeSelection(selection)) {
@@ -221,7 +221,7 @@ function insertText(text: string, editor: LexicalEditor) {
 	editor.update(() => {
 		const selection = $getSelection();
 		if (!$isRangeSelection(selection))
-			return console.log("No valid text selection found.");
+			return console.info("No valid text selection found.");
 
 		const nodesInSelection = selection.getNodes();
 		if (nodesInSelection.length > 0) {
