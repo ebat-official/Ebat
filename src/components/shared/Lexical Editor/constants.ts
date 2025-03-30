@@ -1,3 +1,5 @@
+import type { SerializedEditorState } from "lexical";
+
 export const PLUGIN_NAMES = {
 	PARAGRAPH: "Paragraph",
 	HEADING_1: "Heading 1",
@@ -66,3 +68,14 @@ export const PLUGIN_NAMES = {
 	COLLAPSIBLE_CONTAINER: "Collapsible container",
 } as const;
 export type PluginNames = keyof typeof PLUGIN_NAMES;
+
+export const emptyEditorState: SerializedEditorState = {
+	root: {
+		children: [],
+		type: "root",
+		version: 1,
+		direction: null,
+		format: "",
+		indent: 0,
+	},
+};

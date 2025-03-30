@@ -17,7 +17,8 @@ const HEADING_WIDTH = 9;
 function indent(tagName: HeadingTagType) {
 	if (tagName === "h2") {
 		return "heading2";
-	} else if (tagName === "h3") {
+	}
+	if (tagName === "h3") {
 		return "heading3";
 	}
 }
@@ -176,7 +177,7 @@ function TableOfContentsList({
 				)}
 			>
 				{tableOfContents.map(([key, text, tag], index) => (
-					<div
+					<button
 						key={key}
 						onClick={() => scrollToNode(key, index)}
 						className={cn(

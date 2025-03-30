@@ -28,7 +28,7 @@ import { prismaCustomAdapter } from "@/prismaAdapter";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 type AuthReturnType = {
-	data: any;
+	data: unknown;
 	cause?: string;
 	status: string;
 };

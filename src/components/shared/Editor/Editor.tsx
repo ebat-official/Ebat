@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import PostContentSkeleton from "./PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
+import { emptyEditorState } from "../Lexical Editor/constants";
 
 // Dynamically import the Lexical Editor with SSR disabled
 const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {
@@ -85,7 +86,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 								<TextareaAutosize
 									onChange={async () => {
 										const title = _titleRef.current?.value || "";
-										onChange({ title, blocks: [] });
+										onChange({ title, blocks: emptyEditorState });
 									}}
 									ref={_titleRef}
 									defaultValue={defaultContent?.post?.title ?? ""}

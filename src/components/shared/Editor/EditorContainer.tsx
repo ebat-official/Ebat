@@ -15,6 +15,7 @@ import { MdOutlinePublish } from "react-icons/md";
 import { ContentType, EditorContent } from "@/utils/types";
 import { Loader2 } from "lucide-react";
 import { PostType } from "@prisma/client";
+import { emptyEditorState } from "../Lexical Editor/constants";
 
 interface EditorContainerProps {
 	postId: string;
@@ -54,9 +55,9 @@ function EditorContainer({
 	useEffect(() => {
 		const initialData = savedData || defaultContent || {};
 		const content: ContentType = {};
-		content.post = initialData.post || { blocks: [] };
+		content.post = initialData.post || { blocks: emptyEditorState };
 		if (postType === PostType.QUESTION)
-			content.answer = initialData.answer || { blocks: [] };
+			content.answer = initialData.answer || { blocks: emptyEditorState };
 		setContent(content);
 	}, [defaultContent, savedData]);
 

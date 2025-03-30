@@ -29,11 +29,11 @@ export default function Editor({
 	onChangeHandler,
 }: EditorProps) {
 	const { setId } = useEditorContext();
-
 	useEffect(() => {
 		setId(id);
 	}, [id]);
 
+	console.log("Editor content", content, typeof content);
 	const initialConfig = {
 		namespace: id,
 		theme,
@@ -45,6 +45,7 @@ export default function Editor({
 		},
 		editable: isEditable,
 	};
+	console.log("Editor content2", content, JSON.stringify(content));
 	return (
 		<LexicalComposer initialConfig={initialConfig}>
 			<SharedHistoryContext>
