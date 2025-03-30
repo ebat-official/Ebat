@@ -9,7 +9,8 @@
 		"lint": "next lint",
 		"postinstall": "npx prisma generate",
 		"format": "biome format . --write",
-		"format:check": "biome format --check"
+		"format:check": "biome format --check",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.2.7",
@@ -25,8 +26,22 @@
 		"@editorjs/link": "^2.6.2",
 		"@editorjs/list": "^2.0.4",
 		"@editorjs/table": "^2.4.3",
+		"@excalidraw/excalidraw": "^0.18.0",
 		"@hookform/resolvers": "^3.9.1",
+		"@lexical/clipboard": "0.28.0",
+		"@lexical/code": "0.28.0",
+		"@lexical/file": "0.28.0",
+		"@lexical/hashtag": "0.28.0",
+		"@lexical/link": "0.28.0",
+		"@lexical/list": "0.28.0",
+		"@lexical/mark": "0.28.0",
+		"@lexical/overflow": "0.28.0",
+		"@lexical/plain-text": "0.28.0",
 		"@lexical/react": "^0.28.0",
+		"@lexical/rich-text": "0.28.0",
+		"@lexical/selection": "0.28.0",
+		"@lexical/table": "0.28.0",
+		"@lexical/utils": "0.28.0",
 		"@novu/node": "^2.0.6",
 		"@prisma/client": "^6.1.0",
 		"@radix-ui/react-accordion": "^1.2.2",
@@ -80,21 +95,7 @@
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7",
 		"uuid": "^11.0.3",
-		"zod": "^3.24.1",
-		"@excalidraw/excalidraw": "^0.18.0",
-		"@lexical/clipboard": "0.28.0",
-		"@lexical/code": "0.28.0",
-		"@lexical/file": "0.28.0",
-		"@lexical/hashtag": "0.28.0",
-		"@lexical/link": "0.28.0",
-		"@lexical/list": "0.28.0",
-		"@lexical/mark": "0.28.0",
-		"@lexical/overflow": "0.28.0",
-		"@lexical/plain-text": "0.28.0",
-		"@lexical/rich-text": "0.28.0",
-		"@lexical/selection": "0.28.0",
-		"@lexical/table": "0.28.0",
-		"@lexical/utils": "0.28.0"
+		"zod": "^3.24.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
@@ -102,11 +103,12 @@
 		"@types/node": "^20",
 		"@types/react": "19.0.7",
 		"@types/react-dom": "19.0.3",
+		"husky": "^9.1.7",
 		"postcss": "^8",
 		"prettier": "^3.5.3",
+		"prisma": "^6.1.0",
 		"tailwindcss": "^3.4.17",
-		"typescript": "^5",
-		"prisma": "^6.1.0"
+		"typescript": "^5"
 	},
 	"pnpm": {
 		"overrides": {
