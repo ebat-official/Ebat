@@ -51,7 +51,7 @@ const LoginModal: FC<LoginModalProps> = ({
 					</Button>
 				</DialogTrigger>
 			)}
-			<DialogContent className="max-w-[425px] p-8 border rounded-xl sm:rounded-3xl">
+			<DialogContent className="p-8 border rounded-xl sm:rounded-3xl !max-w-md">
 				{loading && (
 					<div className="absolute inset-0 z-50 flex items-center justify-center w-full h-full bg-white bg-opacity-50 dark:bg-black dark:bg-opacity-50 backdrop-blur-md rounded-3xl">
 						<Loader />
