@@ -137,7 +137,7 @@ function TableOfContentsList({
 	}, [tableOfContents, editor]);
 
 	return (
-		<div className="sticky top-1/2 right-3 group">
+		<div className="sticky top-1/2 right-0 group h-fit">
 			{/* <div
         className={cn(
           "max-w-[300px] w-[300px] overflow-y-scroll gap-y-3 flex-col transition-all duration-700 cursor-pointer h-[350px] p-4",
