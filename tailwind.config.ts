@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
 export default {
-	darkMode: ["class"],
 	content: [
 		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -121,19 +120,16 @@ export default {
 		},
 	},
 	plugins: [
-		require("tailwindcss-animate"),
-		function ({
+		({
 			addUtilities,
 		}: {
-			addUtilities: (utilities: Record<string, any>) => void;
-		}) {
+			addUtilities: (utilities: Record<string, Record<string, string>>) => void;
+		}) => {
 			addUtilities({
 				".scrollbar-hide": {
 					"-ms-overflow-style": "none",
 					"scrollbar-width": "none",
-					"&::-webkit-scrollbar": {
-						display: "none",
-					},
+					"&::-webkit-scrollbar": "display: none",
 				},
 			});
 		},

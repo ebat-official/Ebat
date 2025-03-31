@@ -1,6 +1,7 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @config '../../tailwind.config.ts';
+@import "tw-animate-css";
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
@@ -35,27 +36,25 @@
 
 @layer base {
   :root {
-    --font-gray: #9B9A97;
-    --font-brown: #64473A;
-    --font-orange: #D9730D;
-    --font-yellow: #DFAB01;
-    --font-green: #0F7B6C;
-    --font-blue: #0B6E99;
-    --font-purple: #6940A5;
-    --font-pink: #AD1A72;
-    --font-red: #E03E3E;
+    --font-gray: #9b9a97;
+    --font-brown: #64473a;
+    --font-orange: #d9730d;
+    --font-yellow: #dfab01;
+    --font-green: #0f7b6c;
+    --font-blue: #0b6e99;
+    --font-purple: #6940a5;
+    --font-pink: #ad1a72;
+    --font-red: #e03e3e;
 
-        
-    --background-gray: #EBECED;
-    --background-brown: #E9E5E3;
-    --background-orange: #FAEBDD;
-    --background-yellow: #FBF3DB;
-    --background-green: #DDEDEA;
-    --background-blue: #DDEDEA;
-    --background-purple: #EAE4F2;
-    --background-pink: #F4DFEB;
-    --background-red: #FBE4E4;
-
+    --background-gray: #ebeced;
+    --background-brown: #e9e5e3;
+    --background-orange: #faebdd;
+    --background-yellow: #fbf3db;
+    --background-green: #ddedea;
+    --background-blue: #ddedea;
+    --background-purple: #eae4f2;
+    --background-pink: #f4dfeb;
+    --background-red: #fbe4e4;
 
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -83,8 +82,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
     --sidebar-background: var(--background);
-    --sidebar-foreground: var(--foreground)
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-foreground: var(--foreground) --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
@@ -92,28 +90,26 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --font-gray: #9B9A97;
+    --font-gray: #9b9a97;
     --font-brown: #937264;
-    --font-orange: #FFA344;
-    --font-yellow: #FFDC49;
-    --font-green: #4DAB9A;
-    --font-blue: #529CCA;
-    --font-purple: #9A6DD7;
-    --font-pink: #E255A1;
-    --font-red: #FF7369;
+    --font-orange: #ffa344;
+    --font-yellow: #ffdc49;
+    --font-green: #4dab9a;
+    --font-blue: #529cca;
+    --font-purple: #9a6dd7;
+    --font-pink: #e255a1;
+    --font-red: #ff7369;
 
-
-    --background-gray: #454B4E;
+    --background-gray: #454b4e;
     --background-brown: #434040;
-    --background-orange: #594A3A;
-    --background-yellow: #59563B;
-    --background-green: #354C4B;
+    --background-orange: #594a3a;
+    --background-yellow: #59563b;
+    --background-green: #354c4b;
     --background-blue: #364954;
-    --background-purple: #443F57;
-    --background-pink: #533B4C;
+    --background-purple: #443f57;
+    --background-pink: #533b4c;
     --background-red: #594141;
 
-    
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
