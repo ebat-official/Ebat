@@ -377,7 +377,7 @@ export default function ImageComponent({
 												Enter a caption...
 											</span>
 										)}
-										className="relative text-xs text-center outline-none text-muted-foreground"
+										className="relative text-xs text-center outline-hidden text-muted-foreground"
 									/>
 								}
 								ErrorBoundary={LexicalErrorBoundary}

@@ -168,7 +168,7 @@ export const Editor = <T extends z.ZodType>({
 									ref={_titleRef}
 									defaultValue={defaultContent?.title ?? ""}
 									placeholder={titlePlaceHolder}
-									className="w-full overflow-hidden text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none"
+									className="w-full overflow-hidden text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-hidden"
 								/>
 							))}
 

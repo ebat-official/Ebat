@@ -158,7 +158,7 @@ export default function ImageToolBar({
 							onChange={handleWidthChange}
 							onKeyDown={handleKeyDown}
 							className={cn(
-								"h-5 px-0.5 w-full rounded-sm text-xs outline-none transition-opacity duration-300 ease-in-out",
+								"h-5 px-0.5 w-full rounded-sm text-xs outline-hidden transition-opacity duration-300 ease-in-out",
 								showResizeInput ? "opacity-100" : "opacity-0",
 							)}
 						/>
@@ -178,7 +178,7 @@ export default function ImageToolBar({
 							onChange={handleHeightChange}
 							onKeyDown={handleKeyDown}
 							className={cn(
-								"h-5 px-0.5 w-full text-xs rounded-sm outline-none transition-opacity duration-300 ease-in-out",
+								"h-5 px-0.5 w-full text-xs rounded-sm outline-hidden transition-opacity duration-300 ease-in-out",
 								showResizeInput ? "opacity-100" : "opacity-0",
 							)}
 						/>

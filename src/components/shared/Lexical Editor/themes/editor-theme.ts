@@ -98,7 +98,7 @@ const theme: EditorThemeClasses = {
 	text: {
 		bold: "font-bold",
 		capitalize: "capitalize",
-		code: "inline-flex items-center rounded-sm border border-zinc-200 px-0.1 py-0  h-fit min-h-[20px] transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2 dark:border-zinc-800 dark:focus:ring-zinc-300 border-transparent bg-zinc-100 text-zinc-900 hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80",
+		code: "inline-flex items-center rounded-sm border border-zinc-200 px-0.1 py-0  h-fit min-h-[20px] transition-colors focus:outline-hidden focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2 dark:border-zinc-800 dark:focus:ring-zinc-300 border-transparent bg-zinc-100 text-zinc-900 hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80",
 		italic: "italic ",
 		lowercase: "lowercase",
 		strikethrough: "line-through",

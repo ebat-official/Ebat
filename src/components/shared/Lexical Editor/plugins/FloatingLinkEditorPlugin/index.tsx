@@ -281,7 +281,7 @@ function FloatingLinkEditor({
 					</div>
 				</div>
 			) : (
-				<div className="w-full border-input border rounded-xl h-9 flex items-center justify-between px-3 py-1 text-base shadow-sm ">
+				<div className="w-full border-input border rounded-xl h-9 flex items-center justify-between px-3 py-1 text-base shadow-xs ">
 					<Link
 						className={cn(
 							"size-[14px] text-muted-foreground absolute  transition-colors duration-500 transform -translate-x-1/2 -translate-y-1/2 left-4 top-1/2",

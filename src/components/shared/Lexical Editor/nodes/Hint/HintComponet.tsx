@@ -192,7 +192,7 @@ export default function HintComponent({
 							className="
                     flex-1 ml-3
                     border-0 resize-none cursor-text
-                    block  relative outline-none   select-text
+                    block  relative outline-hidden   select-text
                     whitespace-pre-wrap break-words
                 "
 							aria-placeholder={"Write hint caption"}

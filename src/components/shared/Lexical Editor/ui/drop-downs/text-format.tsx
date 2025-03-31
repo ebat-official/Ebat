@@ -88,8 +88,7 @@ export default function TextFormat({
 
 	return (
 		<DropDown
-			PopoverContentClassName={{ width: "100%" }}
-			TriggerClassName={{ ...style, width: "100%" }}
+			// TriggerClassName={{ ...style, width: "100%" }}
 			disabled={disabled}
 			sideOffset={sideOffset}
 			side={side}

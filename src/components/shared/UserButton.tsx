@@ -48,7 +48,7 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
 							/>
 							<AvatarFallback>
 								<Image
-									className="rounded-full outline-none"
+									className="rounded-full outline-hidden"
 									src={fallbackImg}
 									alt="AB"
 								/>

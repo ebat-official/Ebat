@@ -557,7 +557,7 @@ export default function SlashCommand(): React.JSX.Element {
 								<div
 									id={"toolbar"}
 									className={`
-                   overflow-x-hidden  z-[100]  relative  max-w-[300px] max-sm:w-[200px] w-[300px] max-h-[300px] h-fit   border rounded-sm  bg-background shadow-sm shadow-muted-foreground/20
+                   overflow-x-hidden  z-100  relative  max-w-[300px] max-sm:w-[200px] w-[300px] max-h-[300px] h-fit   border rounded-sm  bg-background shadow-sm shadow-muted-foreground/20
                    
                    `}
 								>

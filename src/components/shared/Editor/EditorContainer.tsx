@@ -88,8 +88,8 @@ function EditorContainer({
 	};
 
 	return (
-		<Card>
-			<CardContent className="flex h-full justify-center  relative">
+		<Card className="relative">
+			<CardContent className="flex h-full justify-center  ">
 				<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 right-0 -translate-y-full">
 					<TooltipProvider>
 						<Tooltip>
@@ -118,7 +118,7 @@ function EditorContainer({
 					<Button
 						disabled={actionDraftLoading || actionPublishLoading}
 						onClick={() => publishHandler(content)}
-						className="bg-gradient-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
+						className="bg-linear-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
 					>
 						{actionPublishLoading ? (
 							<Loader2 className="animate-spin" />
