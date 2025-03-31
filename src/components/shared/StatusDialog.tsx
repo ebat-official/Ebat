@@ -44,7 +44,7 @@ const StatusDialog: React.FC<StatusDialogProps> & StatusDialogSubComponents = ({
 		<Dialog modal={!allowOutsideClick} open onOpenChange={onClose}>
 			<DialogContent
 				hideCloseButton
-				className="max-w-sm p-6 text-white border-none rounded-lg bg-gradient-to-br from-gray-800 to-black "
+				className="max-w-sm p-6 text-white border-none rounded-lg bg-linear-to-br from-gray-800 to-black "
 			>
 				<DialogHeader
 					id="rewardId"

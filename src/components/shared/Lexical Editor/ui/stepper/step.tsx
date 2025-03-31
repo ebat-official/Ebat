@@ -109,7 +109,7 @@ export default function Step({
 					ref={titleRef}
 					onBlur={handleTitleBlur}
 					onKeyDown={handleTitleKeyDown}
-					className="scroll-m-20 border-none outline-none cursor-text break-words max-sm:text-lg text-2xl font-semibold tracking-tight"
+					className="scroll-m-20 border-none outline-hidden cursor-text break-words max-sm:text-lg text-2xl font-semibold tracking-tight"
 				>
 					{item.title}
 				</div>
@@ -134,7 +134,7 @@ export default function Step({
 						contentEditable={
 							<div ref={onRef} className="relative">
 								<ContentEditable
-									className="h-fit w-full resize-none cursor-text relative outline-none select-text whitespace-pre-wrap break-words"
+									className="h-fit w-full resize-none cursor-text relative outline-hidden select-text whitespace-pre-wrap break-words"
 									aria-placeholder="Write hint caption"
 									placeholder={
 										<div className="text-base font-medium text-[#999] overflow-hidden absolute top-[2px] left-[2px]  text-nowrap inline-block text-ellipsis pointer-events-none">

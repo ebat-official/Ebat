@@ -119,7 +119,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
 							<div className="flex flex-col w-full max-w-full px-3 mx-auto md:flex-0 shrink-0 md:w-6/12 lg:w-5/12 xl:w-4/12">
 								<div className="relative flex flex-col min-w-0 mt-32 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
 									<div className="p-6 pb-0 mb-0 bg-transparent border-b-0 rounded-t-2xl">
-										<h4 className="relative z-10 font-bold text-center text-transparent md:text-2xl lg:text-3xl md:text-left bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">
+										<h4 className="relative z-10 font-bold text-center text-transparent md:text-2xl lg:text-3xl md:text-left bg-linear-to-tl from-blue-600 to-cyan-400 bg-clip-text">
 											Reset your password
 										</h4>
 										<p className="mb-0 text-center md:text-left">
@@ -133,7 +133,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
 													{...register("password")}
 													type="password"
 													className={cn(
-														"text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
+														"text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-hidden focus:transition-shadow",
 														{
 															"border-red-500": errors?.password,
 														},
@@ -152,7 +152,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
 													{...register("confirmPassword")}
 													type="password"
 													className={cn(
-														"text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow",
+														"text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-hidden focus:transition-shadow",
 														{
 															"border-red-500": errors?.password,
 														},
@@ -199,7 +199,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
 									</div>
 								</div>
 							</div>
-							<div className="w-full max-w-full px-3 lg:flex-grow-0 lg:flex-shrink-0  shrink-0 md:w-6/12">
+							<div className="w-full max-w-full px-3 lg:grow-0 lg:shrink-0  shrink-0 md:w-6/12">
 								<div className="absolute top-0 hidden w-3/5 h-full -mr-32 overflow-hidden -skew-x-12 -right-40 rounded-bl-xl md:block">
 									<div
 										className="absolute inset-x-0 top-0 z-0 h-full -ml-16 bg-cover "

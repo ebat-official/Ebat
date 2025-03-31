@@ -25,7 +25,7 @@ export function Menu({ isOpen }: MenuProps) {
 	const { config } = useSidebar();
 	const { menuList } = config;
 	return (
-		<ScrollArea className="[&>div>div[style]]:!block">
+		<ScrollArea className="[&>div>div[style]]:block!">
 			<nav className="h-full w-full">
 				<ul className="flex flex-col  lg:h-[calc(79vh+10px)] items-start space-y-1 px-2">
 					{menuList.map(({ groupLabel, menus }, index) => (

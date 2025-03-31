@@ -118,7 +118,7 @@ function EditorContainer({
 					<Button
 						disabled={actionDraftLoading || actionPublishLoading}
 						onClick={() => publishHandler(content)}
-						className="bg-gradient-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
+						className="bg-linear-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
 					>
 						{actionPublishLoading ? (
 							<Loader2 className="animate-spin" />

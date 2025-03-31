@@ -116,7 +116,7 @@ export default function EquationComponent({
 	}, [editor, nodeKey, onHide, showEquationEditor, isEditable]);
 
 	return (
-		<div className="bg-transparent backdrop-blur-sm">
+		<div className="bg-transparent backdrop-blur-xs">
 			{showEquationEditor && isEditable ? (
 				<EquationEditor
 					equation={equationValue}

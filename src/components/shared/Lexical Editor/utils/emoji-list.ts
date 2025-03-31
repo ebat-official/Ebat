@@ -10350,9 +10350,9 @@ export default [
 	},
 	{
 		emoji: "💍",
-		description: "ring",
+		description: "ring-3",
 		category: "Objects",
-		aliases: ["ring"],
+		aliases: ["ring-3"],
 		tags: ["wedding", "marriage", "engaged"],
 		unicode_version: "6.0",
 		ios_version: "6.0",

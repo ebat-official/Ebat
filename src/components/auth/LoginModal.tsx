@@ -72,7 +72,7 @@ const LoginModal: FC<LoginModalProps> = ({
 						{isLoginForm && (
 							<div className="flex-auto ">
 								<div className="relative w-full max-w-full px-3 mt-2 text-center shrink-0">
-									<hr className=" flex-shrink-0 border-t border-r border-l border-transparent h-0.5 my-6 border-b-0 opacity-25 bg-gradient-to-r from-transparent via-slate-400 to-transparent" />
+									<hr className=" shrink-0 border-t border-r border-l border-transparent h-0.5 my-6 border-b-0 opacity-25 bg-linear-to-r from-transparent via-slate-400 to-transparent" />
 
 									<p className="absolute z-20 inline px-4 mb-2 text-sm font-semibold leading-normal -translate-x-1/2 -translate-y-1/2 bg-background left-1/2 top-1/2 text-slate-400">
 										or

@@ -211,7 +211,7 @@ export class LinkWithMetaDataNode extends ElementNode {
 			if (this.__metadata?.image) {
 				if (!image) {
 					const leftContainer = document.createElement("div");
-					leftContainer.className = "flex h-full flex-shrink-0 order-6";
+					leftContainer.className = "flex h-full shrink-0 order-6";
 
 					const newImage = document.createElement("img");
 					newImage.src = this.__metadata.image;
