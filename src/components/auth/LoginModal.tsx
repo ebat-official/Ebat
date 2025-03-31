@@ -45,7 +45,7 @@ const LoginModal: FC<LoginModalProps> = ({
 					<Button
 						onClick={() => setOpen(true)}
 						variant={"outline"}
-						className="w-full ml-2 font-medium whitespace-nowrap"
+						className="px-6  ml-2 font-medium whitespace-nowrap"
 					>
 						Login
 					</Button>
