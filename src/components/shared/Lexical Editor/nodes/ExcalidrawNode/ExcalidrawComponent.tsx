@@ -44,14 +44,6 @@ export default function ExcalidrawComponent({
 	const [isResizing, setIsResizing] = useState<boolean>(false);
 
 	useEffect(() => {
-		console.log("Rendered on the client: ExcalidrawComponent");
-	}, []);
-
-	if (typeof window === "undefined") {
-		console.log("Rendered on the server: ExcalidrawComponent");
-	}
-
-	useEffect(() => {
 		if (!isEditable) {
 			if (isSelected) {
 				clearSelection();

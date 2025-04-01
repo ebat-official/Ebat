@@ -45,7 +45,6 @@ export default function ImageToolBar({
 	const updateWidthAndHeight = useCallback(() => {
 		const newWidth = Number(widthInput);
 		const newHeight = Number(heightInput);
-		console.log("update", newWidth, newHeight);
 
 		if (isNaN(newWidth) || isNaN(newHeight)) return;
 		if (newWidth > 990 || newHeight > 1800) return;
@@ -124,7 +123,7 @@ export default function ImageToolBar({
 			editor.update(() => {
 				const node = $getNodeByKey(nodeKey);
 				if ($isImageNode(node)) {
-					const roundedValue = parseInt(event.target.value);
+					const roundedValue = Number.parseInt(event.target.value);
 					node.setRounded(roundedValue);
 				}
 			});
@@ -132,15 +131,15 @@ export default function ImageToolBar({
 		[editor, nodeKey],
 	);
 	return (
-		<div className="flex flex-row items-center z-50 gap-x-2 absolute top-1 left-1 group-hover:opacity-100 duration-500 opacity-0 transition-all">
-			<div className="p-1 rounded-sm bg-background/40 flex flex-row items-center justify-between">
+		<div className="absolute z-50 flex flex-row items-center transition-all duration-500 opacity-0 gap-x-2 top-1 left-1 group-hover:opacity-100">
+			<div className="flex flex-row items-center justify-between p-1 rounded-sm bg-background/40">
 				<div className="flex flex-row items-center">
 					<Button
 						onClick={toggleResizeInput}
 						tip="Resize image"
 						variant={"ghost"}
 						size={"sm"}
-						className="p-1 w-6 h-6 "
+						className="w-6 h-6 p-1 "
 					>
 						<Fullscreen className="size-2" />
 					</Button>
@@ -159,7 +158,7 @@ export default function ImageToolBar({
 							onChange={handleWidthChange}
 							onKeyDown={handleKeyDown}
 							className={cn(
-								"h-5 px-0.5 w-full rounded-sm text-xs outline-none transition-opacity duration-300 ease-in-out",
+								"h-5 px-0.5 w-full rounded-sm text-xs outline-hidden transition-opacity duration-300 ease-in-out",
 								showResizeInput ? "opacity-100" : "opacity-0",
 							)}
 						/>
@@ -179,13 +178,13 @@ export default function ImageToolBar({
 							onChange={handleHeightChange}
 							onKeyDown={handleKeyDown}
 							className={cn(
-								"h-5 px-0.5 w-full text-xs rounded-sm outline-none transition-opacity duration-300 ease-in-out",
+								"h-5 px-0.5 w-full text-xs rounded-sm outline-hidden transition-opacity duration-300 ease-in-out",
 								showResizeInput ? "opacity-100" : "opacity-0",
 							)}
 						/>
 					</div>
 				</div>
-				<Separator orientation="vertical" className="mx-1 h-5" />
+				<Separator orientation="vertical" className="h-5 mx-1" />
 				<div className="flex flex-row items-center gap-x-1">
 					<Button
 						onClick={ChangeSideToLeft}
@@ -215,7 +214,7 @@ export default function ImageToolBar({
 						<PanelLeftClose />
 					</Button>
 				</div>
-				<Separator orientation="vertical" className="mx-1 h-5" />
+				<Separator orientation="vertical" className="h-5 mx-1" />
 
 				<Button
 					size={"sm"}
@@ -247,7 +246,7 @@ export default function ImageToolBar({
 					/>
 				</div>
 
-				<Separator orientation="vertical" className="mx-1 h-5" />
+				<Separator orientation="vertical" className="h-5 mx-1" />
 
 				<Button
 					size={"sm"}

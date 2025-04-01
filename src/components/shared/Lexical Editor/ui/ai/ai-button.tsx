@@ -224,7 +224,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
 					icon: (
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="h-4 flex-shrink-0 w-4 block text-green-400"
+							className="h-4 shrink-0 w-4 block text-green-400"
 							viewBox="0 0 20 20"
 						>
 							<path
@@ -243,7 +243,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
 					icon: (
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="h-4 flex-shrink-0 w-4 block text-green-400"
+							className="h-4 shrink-0 w-4 block text-green-400"
 							viewBox="0 0 32 32"
 						>
 							<path fill="currentColor" d="M6 18h14v2H6zm0-6h20v2H6z"></path>
@@ -259,7 +259,7 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
 					icon: (
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							className="h-4 flex-shrink-0 w-4 block text-green-400"
+							className="h-4 shrink-0 w-4 block text-green-400"
 							viewBox="0 0 24 24"
 						>
 							<path
@@ -397,11 +397,11 @@ export default function AiButton({ editor }: { editor: LexicalEditor }) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<button className="inline-flex px-6 max-sm:py-2 max-sm:px-[5px]  h-6 animate-background-shine items-center justify-center rounded-md border border-gray-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%]   font-medium text-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50">
+				<button className="inline-flex px-6 max-sm:py-2 max-sm:px-[5px]  h-6 animate-background-shine items-center justify-center rounded-md border border-gray-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%]   font-medium text-gray-400 transition-colors focus:outline-hidden focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50">
 					<WandSparkles className=" size-4 text-purple-400" />
 				</button>
 			</PopoverTrigger>
-			<PopoverContent className="absolute max-h-[300px] h-fit shadow-sm  shadow-black dark:shadow-gray-500  p-0 w-[420px] max-sm:w-[200px] min-w-[200px] max-w-[420px] top-[10px] max-sm:left-6 -left-7 AI-format">
+			<PopoverContent className="absolute max-h-[300px] h-fit shadow-xs  shadow-black dark:shadow-gray-500  p-0 w-[420px] max-sm:w-[200px] min-w-[200px] max-w-[420px] top-[10px] max-sm:left-6 -left-7 AI-format">
 				<div className="w-full relative">
 					<div className="flex flex-col items-start justify-between">
 						{(completion || actionType === "Steps") && (

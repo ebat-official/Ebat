@@ -1,4 +1,8 @@
-import type { SerializedEditorState } from "lexical";
+import type {
+	SerializedEditorState,
+	SerializedParagraphNode,
+	SerializedTextNode,
+} from "lexical";
 
 export const PLUGIN_NAMES = {
 	PARAGRAPH: "Paragraph",
@@ -66,16 +70,37 @@ export const PLUGIN_NAMES = {
 	FOUR_COLUMNS_EQUAL: "4 columns (equal width)",
 	TWO_COLUMNS_25_75: "2 columns (25% - 75%)",
 	COLLAPSIBLE_CONTAINER: "Collapsible container",
+	EQUATION: "Equations",
 } as const;
 export type PluginNames = keyof typeof PLUGIN_NAMES;
 
 export const emptyEditorState: SerializedEditorState = {
 	root: {
-		children: [],
+		children: [
+			{
+				type: "paragraph", // Paragraph node
+				children: [
+					{
+						type: "text", // Text node
+						text: "", // Empty text
+						format: 0,
+						detail: 0,
+						mode: "normal",
+						style: "",
+					} as SerializedTextNode,
+				],
+				direction: null,
+				format: "",
+				indent: 0,
+				version: 1, // Add version property
+				textFormat: 0, // Add textFormat property
+				textStyle: "", // Add textStyle property
+			} as SerializedParagraphNode,
+		],
 		type: "root",
 		version: 1,
-		direction: null,
-		format: "",
-		indent: 0,
+		direction: null, // Text direction (e.g., "ltr", "rtl", or null)
+		format: "", // Format of the root node
+		indent: 0, // Indentation level
 	},
 };

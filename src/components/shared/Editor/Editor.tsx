@@ -86,13 +86,13 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 								<TextareaAutosize
 									onChange={async () => {
 										const title = _titleRef.current?.value || "";
-										onChange({ title, blocks: emptyEditorState });
+										onChange({ title });
 									}}
 									ref={_titleRef}
 									defaultValue={defaultContent?.post?.title ?? ""}
 									placeholder={titlePlaceHolder}
 									className={cn(
-										"w-full overflow-hidden text-lg md:text-xl lg:text-2xl font-bold bg-transparent appearance-none resize-none focus:outline-none",
+										"w-full overflow-hidden text-lg md:text-xl lg:text-2xl font-bold bg-transparent appearance-none resize-none focus:outline-hidden",
 									)}
 								/>
 							))}

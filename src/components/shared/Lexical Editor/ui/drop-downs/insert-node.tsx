@@ -16,6 +16,7 @@ import {
 	ImagePlay,
 	PencilRuler,
 	Plus,
+	Sigma,
 	SquareChevronRight,
 	SquarePenIcon,
 	Table,
@@ -41,6 +42,7 @@ import { INSERT_EXCALIDRAW_COMMAND } from "../../plugins/ExcalidrawPlugin";
 import { PLUGIN_NAMES } from "../../constants";
 import { PLUGIN_CONFIG } from "../../appSettings";
 import { boolean } from "zod";
+import { InsertEquationDialog } from "../../plugins/EquationsPlugin";
 
 const InsertMediaDialog = lazy(() =>
 	import("../models/insertMedia").then((module) => ({
@@ -305,6 +307,30 @@ export default function InsertNode({
 							icon: <AlertCircle />,
 							func: () => {
 								editor.dispatchCommand(INSERT_HINT_COMMAND, "info");
+							},
+						};
+					case PLUGIN_NAMES.EQUATION:
+						return {
+							label: pluginName,
+							icon: <Sigma className="w-4 h-4" />,
+							func: () => {
+								showModal(
+									PLUGIN_NAMES.EQUATION,
+									"Insert Equation",
+									(onClose) => (
+										<Suspense
+											fallback={
+												<Skeleton className="mx-2 w-[400px] h-[100px]" />
+											}
+										>
+											<InsertEquationDialog
+												activeEditor={editor}
+												onClose={onClose}
+											/>
+										</Suspense>
+									),
+									true,
+								);
 							},
 						};
 				}

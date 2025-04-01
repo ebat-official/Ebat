@@ -41,12 +41,8 @@ import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
 import { useEditorContext } from "./providers/EditorContext";
 import { PLUGIN_NAMES } from "./constants";
 import { mergeRegister } from "@lexical/utils";
-import {
-	BLUR_COMMAND,
-	COMMAND_PRIORITY_LOW,
-	FOCUS_COMMAND,
-	SerializedEditorState,
-} from "lexical";
+import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from "lexical";
+import type { SerializedEditorState } from "lexical";
 
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
 	ssr: false,
@@ -78,6 +74,9 @@ const FloatingTextFormatToolbarPlugin = dynamic(
 	() => import("./plugins/FloatingTextFormatToolbarPlugin"),
 	{ ssr: false },
 );
+const EquationsPlugin = dynamic(() => import("./plugins/EquationsPlugin"), {
+	ssr: false,
+});
 
 interface CoreProps {
 	placeholder: string;
@@ -134,112 +133,117 @@ export default function Core({
 
 	const { pluginConfig, minHeight } = useEditorContext();
 	return (
-		<div
-			className="relative"
-			onMouseEnter={() => setIsHovering(true)}
-			onMouseLeave={() => setIsHovering(false)}
-		>
-			<AnimatePresence>
-				{isEditable && (hasFocus || isHovering) && (
-					<motion.div
-						initial={{ opacity: 0, y: -10 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: -10 }}
-						transition={{ duration: 0.3 }}
-						className="fixed top-0 left-0 z-50"
-					>
-						<ToolbarPlugin
-							editor={editor}
-							activeEditor={activeEditor}
-							setActiveEditor={setActiveEditor}
+		<div className="relative flex">
+			<div
+				onMouseEnter={() => setIsHovering(true)}
+				onMouseLeave={() => setIsHovering(false)}
+				className="flex-1"
+			>
+				<AnimatePresence>
+					{isEditable && (hasFocus || isHovering) && (
+						<motion.div
+							initial={{ opacity: 0, y: -10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.3 }}
+							className="fixed top-0 left-0 z-50"
+						>
+							<ToolbarPlugin
+								editor={editor}
+								activeEditor={activeEditor}
+								setActiveEditor={setActiveEditor}
+								setIsLinkEditMode={setIsLinkEditMode}
+							/>
+						</motion.div>
+					)}
+				</AnimatePresence>
+
+				<RichTextPlugin
+					contentEditable={
+						<div ref={onRef} className="relative">
+							<ContentEditable
+								style={{ minHeight }}
+								id={id}
+								autoFocus={autoFocus}
+								className="z-20 p-1 border-0 outline-hidden -z-1 min mt-7"
+								aria-placeholder={placeholder}
+								placeholder={
+									<div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
+										{placeholder}
+									</div>
+								}
+							/>
+						</div>
+					}
+					ErrorBoundary={LexicalErrorBoundary}
+				/>
+
+				<ClearEditorPlugin />
+				<ShortcutsPlugin
+					editor={activeEditor}
+					setIsLinkEditMode={setIsLinkEditMode}
+				/>
+				<LexicalOnChangePlugin onChangeHandler={onChangeHandler} />
+				<LinkPlugin />
+				<HorizontalRulePlugin />
+				<TabFocusPlugin />
+				{pluginConfig[PLUGIN_NAMES.PARAGRAPH].isEnabled && <PollPlugin />}
+				<TableCellResizerPlugin />
+				<LayoutPlugin />
+				<CollapsiblePlugin />
+				<CodeHighlightPlugin />
+				<DragDropPaste />
+				<TabIndentationPlugin maxIndent={7} />
+				<LexicalAutoLinkPlugin />
+				<LinkWithMetaDataPlugin />
+				<ListPlugin />
+				<LinkPlugin />
+				{pluginConfig[PLUGIN_NAMES.STEPPER].isEnabled && <StepperPlugin />}
+				{pluginConfig[PLUGIN_NAMES.TWITTER].isEnabled && <TwitterPlugin />}
+				{pluginConfig[PLUGIN_NAMES.CHECK_LIST].isEnabled && <CheckListPlugin />}
+				{pluginConfig[PLUGIN_NAMES.IMAGE].isEnabled && <ImagesPlugin />}
+				{pluginConfig[PLUGIN_NAMES.HINT].isEnabled && <HintPlugin />}
+				{pluginConfig[PLUGIN_NAMES.YOUTUBE].isEnabled && <YouTubePlugin />}
+				{pluginConfig[PLUGIN_NAMES.EQUATION].isEnabled && <EquationsPlugin />}
+				<HistoryPlugin externalHistoryState={historyState} />
+				<MarkdownShortcutPlugin />
+				<ClickableLinkPlugin disabled={isEditable} />
+				{pluginConfig[PLUGIN_NAMES.EXCALIDRAW].isEnabled && (
+					<ExcalidrawPlugin />
+				)}
+				<TablePlugin
+					hasCellMerge={true}
+					hasCellBackgroundColor={true}
+					hasHorizontalScroll={true}
+				/>
+
+				{floatingAnchorElem && isEditable && (
+					<>
+						<DraggableBlockPlugin anchorElem={floatingAnchorElem} />
+						<FloatingLinkEditorPlugin
+							anchorElem={floatingAnchorElem}
+							isLinkEditMode={isLinkEditMode}
 							setIsLinkEditMode={setIsLinkEditMode}
 						/>
-					</motion.div>
-				)}
-			</AnimatePresence>
-
-			<RichTextPlugin
-				contentEditable={
-					<div ref={onRef} className="relative">
-						<ContentEditable
-							style={{ minHeight }}
-							id={id}
-							autoFocus={autoFocus}
-							className="-z-1 z-20 min p-1 mt-7 outline-none border-0"
-							aria-placeholder={placeholder}
-							placeholder={
-								<div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
-									{placeholder}
-								</div>
-							}
+						<FloatingTextFormatToolbarPlugin
+							setIsLinkEditMode={setIsLinkEditMode}
+							anchorElem={floatingAnchorElem}
 						/>
-					</div>
-				}
-				ErrorBoundary={LexicalErrorBoundary}
-			/>
+						<TableCellActionMenuPlugin
+							anchorElem={floatingAnchorElem}
+							cellMerge={true}
+						/>
+						<CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
+						<TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
+					</>
+				)}
 
-			<ClearEditorPlugin />
-			<ShortcutsPlugin
-				editor={activeEditor}
-				setIsLinkEditMode={setIsLinkEditMode}
-			/>
-			<LexicalOnChangePlugin onChangeHandler={onChangeHandler} />
-			<LinkPlugin />
-			<HorizontalRulePlugin />
-			<TabFocusPlugin />
-			{pluginConfig[PLUGIN_NAMES.PARAGRAPH].isEnabled && <PollPlugin />}
-			<TableCellResizerPlugin />
-			<LayoutPlugin />
-			<CollapsiblePlugin />
-			<CodeHighlightPlugin />
-			<DragDropPaste />
-			<TabIndentationPlugin maxIndent={7} />
-			<LexicalAutoLinkPlugin />
-			<LinkWithMetaDataPlugin />
-			<ListPlugin />
-			<LinkPlugin />
-			{pluginConfig[PLUGIN_NAMES.STEPPER].isEnabled && <StepperPlugin />}
-			{pluginConfig[PLUGIN_NAMES.TWITTER].isEnabled && <TwitterPlugin />}
-			{pluginConfig[PLUGIN_NAMES.CHECK_LIST].isEnabled && <CheckListPlugin />}
-			{pluginConfig[PLUGIN_NAMES.IMAGE].isEnabled && <ImagesPlugin />}
-			{pluginConfig[PLUGIN_NAMES.HINT].isEnabled && <HintPlugin />}
-			{pluginConfig[PLUGIN_NAMES.YOUTUBE].isEnabled && <YouTubePlugin />}
-			<HistoryPlugin externalHistoryState={historyState} />
-			<MarkdownShortcutPlugin />
-			<ClickableLinkPlugin disabled={isEditable} />
-			{pluginConfig[PLUGIN_NAMES.EXCALIDRAW].isEnabled && <ExcalidrawPlugin />}
-			<TablePlugin
-				hasCellMerge={true}
-				hasCellBackgroundColor={true}
-				hasHorizontalScroll={true}
-			/>
-
-			{floatingAnchorElem && isEditable && (
-				<>
-					<DraggableBlockPlugin anchorElem={floatingAnchorElem} />
-					<FloatingLinkEditorPlugin
-						anchorElem={floatingAnchorElem}
-						isLinkEditMode={isLinkEditMode}
-						setIsLinkEditMode={setIsLinkEditMode}
-					/>
-					<FloatingTextFormatToolbarPlugin
-						setIsLinkEditMode={setIsLinkEditMode}
-						anchorElem={floatingAnchorElem}
-					/>
-					<TableCellActionMenuPlugin
-						anchorElem={floatingAnchorElem}
-						cellMerge={true}
-					/>
-					<CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
-					<TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
-					{pluginConfig[PLUGIN_NAMES.TABLE_OF_CONTENTS].isEnabled && (
-						<TableOfContentsPlugin />
-					)}
-				</>
-			)}
-
-			{isEditable && pluginConfig[PLUGIN_NAMES.SLASH_COMMAND].isEnabled && (
-				<SlashCommand />
+				{isEditable && pluginConfig[PLUGIN_NAMES.SLASH_COMMAND].isEnabled && (
+					<SlashCommand />
+				)}
+			</div>
+			{pluginConfig[PLUGIN_NAMES.TABLE_OF_CONTENTS].isEnabled && (
+				<TableOfContentsPlugin />
 			)}
 		</div>
 	);

@@ -329,6 +329,16 @@ export const PLUGIN_CONFIG = {
 		showInSlashCommand: true,
 		showInInsertList: true,
 	},
+	[PLUGIN_NAMES.EQUATION]: {
+		isEnabled: true,
+		label: "Equation",
+		icon: SquareChevronRight,
+		keywords: ["equation", "math", "formula"],
+		desc: "Insert an equation",
+		keyboardShortcut: undefined,
+		showInSlashCommand: true,
+		showInInsertList: true,
+	},
 	[PLUGIN_NAMES.TABLE_OF_CONTENTS]: {
 		isEnabled: true,
 		showInSlashCommand: false,

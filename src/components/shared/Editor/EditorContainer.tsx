@@ -44,6 +44,8 @@ function EditorContainer({
 	const savedData = getLocalStorage<ContentType>(localStorageKey);
 
 	const updateContent = (newContent: Partial<ContentType>) => {
+		console.log("newContent", newContent);
+		console.log("newprev", content);
 		setContent((prev) => {
 			const updated = { ...prev, ...newContent };
 			setLocalStorage(localStorageKey, updated);
@@ -88,8 +90,8 @@ function EditorContainer({
 	};
 
 	return (
-		<Card>
-			<CardContent className="flex h-full justify-center  relative">
+		<Card className="relative">
+			<CardContent className="flex h-full justify-center px-4 md:px-8">
 				<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 right-0 -translate-y-full">
 					<TooltipProvider>
 						<Tooltip>
@@ -118,7 +120,7 @@ function EditorContainer({
 					<Button
 						disabled={actionDraftLoading || actionPublishLoading}
 						onClick={() => publishHandler(content)}
-						className="bg-gradient-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
+						className="bg-linear-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
 					>
 						{actionPublishLoading ? (
 							<Loader2 className="animate-spin" />
@@ -128,11 +130,12 @@ function EditorContainer({
 						<span className="hidden md:block">Publish</span>
 					</Button>
 				</div>
-
 				<LexicalEditorWrapper
 					key="question"
 					postId={postId}
-					onChange={(data: EditorContent) => updateContent({ post: data })}
+					onChange={(data: EditorContent) =>
+						updateContent({ post: { ...content.post, ...data } })
+					}
 					titlePlaceHolder={getTitlePlaceHolder()}
 					contentPlaceHolder={getContentPlaceHolder()}
 					defaultContent={savedData || defaultContent}

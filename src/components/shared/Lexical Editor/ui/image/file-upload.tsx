@@ -106,7 +106,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 							>
 								<div
 									className={`
-                    absolute inset-0 -z-10 rounded-xl bg-gradient-to-br ${
+                    absolute inset-0 -z-10 rounded-xl bg-linear-to-br ${
 											zone.gradient
 										}
                     opacity-0 blur-md transition-opacity duration-300 ${

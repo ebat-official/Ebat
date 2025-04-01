@@ -1,7 +1,9 @@
-import React, { Dispatch, useCallback, useEffect, useState } from "react";
+import React, { type Dispatch, useCallback, useEffect, useState } from "react";
 
 import {
+	$createTextNode,
 	$getNodeByKey,
+	$getRoot,
 	$getSelection,
 	$isElementNode,
 	$isLineBreakNode,
@@ -11,12 +13,13 @@ import {
 	CAN_UNDO_COMMAND,
 	COMMAND_PRIORITY_CRITICAL,
 	FORMAT_TEXT_COMMAND,
-	LexicalEditor,
-	NodeKey,
+	type LexicalEditor,
+	type NodeKey,
 	REDO_COMMAND,
 	SELECTION_CHANGE_COMMAND,
 	UNDO_COMMAND,
 } from "lexical";
+import { BsMarkdown } from "react-icons/bs";
 
 import {
 	useToolbarState,
@@ -43,12 +46,17 @@ import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { $isTableNode, $isTableSelection } from "@lexical/table";
 import { $isListNode, ListNode } from "@lexical/list";
 import { $isHeadingNode } from "@lexical/rich-text";
-import { $isCodeNode, CODE_LANGUAGE_MAP } from "@lexical/code";
+import { $createCodeNode, $isCodeNode, CODE_LANGUAGE_MAP } from "@lexical/code";
 import dynamic from "next/dynamic";
 import { Toggle } from "@/components/ui/toggle";
 import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { sanitizeUrl } from "../../utils/url";
 import CodeList from "../../ui/drop-downs/code";
+import {
+	$convertFromMarkdownString,
+	$convertToMarkdownString,
+} from "@lexical/markdown";
+import { PLAYGROUND_TRANSFORMERS } from "../MarkdownTransformers";
 const BlockFormatDropDown = dynamic(
 	() => import("../../ui/drop-downs/block-format"),
 );
@@ -288,14 +296,41 @@ export default function index({
 		},
 		[activeEditor, selectedElementKey],
 	);
+	const shouldPreserveNewLinesInMarkdown = true;
+	const handleMarkdownToggle = useCallback(() => {
+		editor.update(() => {
+			const root = $getRoot();
+			const firstChild = root.getFirstChild();
+			if ($isCodeNode(firstChild) && firstChild.getLanguage() === "markdown") {
+				$convertFromMarkdownString(
+					firstChild.getTextContent(),
+					PLAYGROUND_TRANSFORMERS,
+					undefined, // node
+					shouldPreserveNewLinesInMarkdown,
+				);
+			} else {
+				const markdown = $convertToMarkdownString(
+					PLAYGROUND_TRANSFORMERS,
+					undefined, //node
+					shouldPreserveNewLinesInMarkdown,
+				);
+				const codeNode = $createCodeNode("markdown");
+				codeNode.append($createTextNode(markdown));
+				root.clear().append(codeNode);
+				if (markdown.length === 0) {
+					codeNode.select();
+				}
+			}
+		});
+	}, [editor]);
 	return (
 		<nav
 			className={cn(
 				"z-50 overflow-auto backdrop-blur-md bg-white/10 dark:bg-black/10 w-full  border-gray-500/20 scrollbar-hide",
 			)}
 		>
-			<div className="group flex flex-row justify-center max-sm:overflow-x-scroll  w-screen items-center   p-2 border-b">
-				<div className="flex flex-row gap-x-2">
+			<div className="flex flex-row items-center justify-center w-screen p-2 border-b group max-sm:overflow-x-scroll">
+				{/* <div className="flex flex-row gap-x-2">
 					<Button
 						variant={"outline"}
 						disabled={!toolbarState.canUndo || !isEditable}
@@ -322,33 +357,86 @@ export default function index({
 						<Redo className=" size-4" />
 					</Button>
 				</div>
-				<Separator className="h-6 mx-2" orientation="vertical" />
-				{toolbarState.blockType in blockTypeToBlockName &&
-					activeEditor === editor && (
-						<div className="flex flex-row gap-x-[5px]  items-center">
-							<BlockFormatDropDown
+				<Separator className="h-6 mx-2" orientation="vertical" /> */}
+
+				{toolbarState.blockType === "code" ? (
+					<>
+						{toolbarState.codeLanguage === "markdown" && (
+							<Toggle
+								variant={"outline"}
 								disabled={!isEditable}
-								blockType={toolbarState.blockType}
-								editor={activeEditor}
+								onPressedChange={handleMarkdownToggle}
+								pressed={toolbarState.isLink}
+								aria-label="mark down"
+								type="button"
+							>
+								<BsMarkdown />
+							</Toggle>
+						)}
+						<Separator className="h-6 mx-2" orientation="vertical" />
+						<fieldset
+							disabled={toolbarState.codeLanguage === "markdown"}
+							className="flex flex-row items-center justify-center"
+						>
+							{toolbarState.blockType in blockTypeToBlockName &&
+								activeEditor === editor && (
+									<div className="flex flex-row gap-x-[5px]  items-center">
+										<BlockFormatDropDown
+											disabled={!isEditable}
+											blockType={toolbarState.blockType}
+											editor={activeEditor}
+										/>
+										<Separator orientation={"vertical"} />
+									</div>
+								)}
+							<Separator className="h-6 mx-2" orientation="vertical" />
+							<CodeList
+								onCodeLanguageSelect={onCodeLanguageSelect}
+								codeLanguage={toolbarState.codeLanguage}
+								disabled={!isEditable}
 							/>
-							<Separator orientation={"vertical"} />
-						</div>
-					)}
-				<Separator className="h-6 mx-2" orientation="vertical" />
-				{toolbarState.blockType == "code" ? (
-					<CodeList
-						onCodeLanguageSelect={onCodeLanguageSelect}
-						codeLanguage={toolbarState.codeLanguage}
-						disabled={!isEditable}
-					/>
+							<Separator className="h-6 mx-2" orientation="vertical" />
+							<TextAlign
+								disabled={!isEditable}
+								value={toolbarState.elementFormat}
+								editor={activeEditor}
+								isRTL={toolbarState.isRTL}
+							/>
+							<Separator className="h-6 mx-2" orientation="vertical" />
+						</fieldset>
+					</>
 				) : (
 					<div className="flex flex-row items-center">
-						<FontDropDown
+						{/* <FontDropDown
 							disabled={!isEditable}
 							style={{ fontFamily: toolbarState.fontFamily }}
 							value={toolbarState.fontFamily}
 							editor={activeEditor}
 						/>
+						
+						<Separator className="h-6 mx-2" orientation="vertical" /> */}
+						<Toggle
+							variant={"outline"}
+							disabled={!isEditable}
+							onPressedChange={handleMarkdownToggle}
+							pressed={toolbarState.isLink}
+							aria-label="mark down"
+							type="button"
+						>
+							<BsMarkdown />
+						</Toggle>
+						<Separator className="h-6 mx-2" orientation="vertical" />
+						{toolbarState.blockType in blockTypeToBlockName &&
+							activeEditor === editor && (
+								<div className="flex flex-row gap-x-[5px]  items-center">
+									<BlockFormatDropDown
+										disabled={!isEditable}
+										blockType={toolbarState.blockType}
+										editor={activeEditor}
+									/>
+									<Separator orientation={"vertical"} />
+								</div>
+							)}
 						<Separator className="h-6 mx-2" orientation="vertical" />
 						<FontSize
 							selectionFontSize={toolbarState.fontSize.slice(0, -2)}
@@ -437,17 +525,18 @@ export default function index({
 							toolbarState={toolbarState}
 						/>
 						<Separator className="h-6 mx-2" orientation="vertical" />
+						<Separator className="h-6 mx-2" orientation="vertical" />
+
+						<TextAlign
+							disabled={!isEditable}
+							value={toolbarState.elementFormat}
+							editor={activeEditor}
+							isRTL={toolbarState.isRTL}
+						/>
+						<Separator className="h-6 mx-2" orientation="vertical" />
 						<InsertNode disabled={!isEditable} editor={editor} />
 					</div>
 				)}
-				<Separator className="h-6 mx-2" orientation="vertical" />
-
-				<TextAlign
-					disabled={!isEditable}
-					value={toolbarState.elementFormat}
-					editor={activeEditor}
-					isRTL={toolbarState.isRTL}
-				/>
 			</div>
 		</nav>
 	);

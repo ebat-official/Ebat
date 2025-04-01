@@ -34,7 +34,6 @@ const StatusDialog: React.FC<StatusDialogProps> & StatusDialogSubComponents = ({
 	const { reward: confettiReward, isAnimating: isConfettiAnimating } =
 		useReward("rewardId", "confetti");
 	useEffect(() => {
-		console.log(isSuccess, enableAnimation, "pp");
 		if (isSuccess && enableAnimation) {
 			setTimeout(() => {
 				confettiReward();
@@ -45,11 +44,11 @@ const StatusDialog: React.FC<StatusDialogProps> & StatusDialogSubComponents = ({
 		<Dialog modal={!allowOutsideClick} open onOpenChange={onClose}>
 			<DialogContent
 				hideCloseButton
-				className="max-w-sm p-6 rounded-lg bg-gradient-to-br from-gray-800 to-black text-white border-none "
+				className="max-w-sm p-6 text-white border-none rounded-lg bg-linear-to-br from-gray-800 to-black "
 			>
 				<DialogHeader
 					id="rewardId"
-					className="flex items-center justify-center flex-col absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"
+					className="absolute top-0 flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 left-1/2"
 				>
 					{isSuccess ? (
 						<div className="relative">
@@ -57,7 +56,7 @@ const StatusDialog: React.FC<StatusDialogProps> & StatusDialogSubComponents = ({
 							<div className="absolute inset-0 bg-green-500 rounded-full blur-2xl opacity-40" />
 
 							<div className="bg-green-500 rounded-full p-4 flex justify-center items-center shadow-[0px_10px_30px_rgba(0,255,0,0.5)]">
-								<FaCheck className="text-white w-16 h-16" />
+								<FaCheck className="w-16 h-16 text-white" />
 							</div>
 						</div>
 					) : (
@@ -66,13 +65,13 @@ const StatusDialog: React.FC<StatusDialogProps> & StatusDialogSubComponents = ({
 							<div className="absolute inset-0 bg-red-500 rounded-full blur-2xl opacity-40" />
 
 							<div className="bg-red-500 rounded-full p-4 flex justify-center items-center shadow-[0px_10px_30px_rgba(255,0,0,0.5)]">
-								<ImCross className="text-white w-14 h-14 font-medium" />
+								<ImCross className="font-medium text-white w-14 h-14" />
 							</div>
 						</div>
 					)}
 				</DialogHeader>
 
-				<div className="mt-8 flex flex-col gap-4">{children}</div>
+				<div className="flex flex-col gap-4 mt-8">{children}</div>
 			</DialogContent>
 		</Dialog>
 	);
@@ -82,7 +81,7 @@ StatusDialog.Title = ({ children }) => (
 	<h2 className="mt-4 text-lg font-bold text-center">{children}</h2>
 );
 StatusDialog.Content = ({ children }) => (
-	<p className="text-center text-gray-300 font-medium">{children}</p>
+	<p className="font-medium text-center text-gray-300">{children}</p>
 );
 StatusDialog.Footer = ({ children }) => (
 	<div className="flex justify-center mt-4">{children}</div>

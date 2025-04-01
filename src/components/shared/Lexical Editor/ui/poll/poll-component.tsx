@@ -112,7 +112,7 @@ function PollOptionComponent({
 					{votes > 0 && (votes === 1 ? "1 vote" : `${votes} votes`)}
 				</span>
 				<Input
-					className=" overflow-hidden ring-0 outline-none bg-transparent"
+					className=" overflow-hidden ring-0 outline-hidden bg-transparent"
 					value={text}
 					disabled={!isEditable}
 					onChange={(e) => {

@@ -16,7 +16,7 @@ const publicDir = path.join(__dirname, "../../public");
 const generateRobotsTxt = () => {
 	// Check if the public directory exists
 	if (!fs.existsSync(publicDir)) {
-		console.log(
+		console.info(
 			"Public directory does not exist. Skipping robots.txt generation.",
 		);
 		return;
@@ -31,7 +31,7 @@ Disallow:`;
 
 	const filePath = path.join(publicDir, "robots.txt");
 	fs.writeFileSync(filePath, robotsContent, "utf8");
-	console.log(
+	console.info(
 		`robots.txt generated for ${isDevelopment ? "development" : "production"}`,
 	);
 };

@@ -134,19 +134,11 @@ function CodeActionMenuContainer({ anchorElem }: { anchorElem: HTMLElement }) {
 		<>
 			{(isShown || isHovering) && (
 				<div
-					className="code-action-menu-container flex flex-row items-center gap-x-2 p-2 absolute"
+					className="absolute flex flex-row items-center p-2 code-action-menu-container gap-x-2"
 					style={position}
+					onMouseEnter={() => setIsHovering(true)}
+					onMouseLeave={() => setIsHovering(false)}
 				>
-					<div
-						onMouseEnter={() => setIsHovering(true)}
-						onMouseLeave={() => setIsHovering(false)}
-					>
-						<CodeList
-							codeLanguage={codeFriendlyName}
-							disabled={!editor.isEditable()}
-							onCodeLanguageSelect={onCodeLanguageSelect}
-						/>
-					</div>
 					<CopyButton editor={editor} getCodeDOMNode={getCodeDOMNode} />
 					{canBePrettier(normalizedLang) && (
 						<PrettierButton

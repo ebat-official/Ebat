@@ -240,7 +240,7 @@ export default function ExcalidrawModal({
 
 	return createPortal(
 		<div
-			className="fixed inset-0 flex flex-col items-center z-[100]"
+			className="fixed inset-0 flex flex-col items-center z-100"
 			role="dialog"
 		>
 			<div
