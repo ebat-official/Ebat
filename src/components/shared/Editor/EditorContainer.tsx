@@ -44,6 +44,8 @@ function EditorContainer({
 	const savedData = getLocalStorage<ContentType>(localStorageKey);
 
 	const updateContent = (newContent: Partial<ContentType>) => {
+		console.log("newContent", newContent);
+		console.log("newprev", content);
 		setContent((prev) => {
 			const updated = { ...prev, ...newContent };
 			setLocalStorage(localStorageKey, updated);
@@ -131,7 +133,9 @@ function EditorContainer({
 				<LexicalEditorWrapper
 					key="question"
 					postId={postId}
-					onChange={(data: EditorContent) => updateContent({ post: data })}
+					onChange={(data: EditorContent) =>
+						updateContent({ post: { ...content.post, ...data } })
+					}
 					titlePlaceHolder={getTitlePlaceHolder()}
 					contentPlaceHolder={getContentPlaceHolder()}
 					defaultContent={savedData || defaultContent}

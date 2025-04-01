@@ -28,5 +28,5 @@ export type CustomErrorType = {
 
 export interface EditorContent {
 	title?: string;
-	blocks: SerializedEditorState;
+	blocks?: SerializedEditorState;
 }
