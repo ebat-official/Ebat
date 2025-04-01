@@ -41,7 +41,7 @@ const schema = z.object({
 const resolver: Resolver<FormValues> = zodResolver(schema);
 
 interface SignupFormProps {
-	modelHandler?: Function;
+	modelHandler?: (isOpen: boolean) => void;
 }
 
 const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {

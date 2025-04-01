@@ -108,18 +108,16 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({
 					</form>
 				)}
 				{formStatus.status === SUCCESS && (
-					<>
-						<DialogHeader className="flex items-center">
-							<CheckCircledIcon className="w-16 h-16 text-green-500" />
-							<DialogTitle className="text-2xl text-center">
-								Request submitted successfully
-							</DialogTitle>
-							<DialogDescription className="text-center pt-4">
-								Please take a moment to access your email, where you'll find
-								detailed instructions on how to reset your password securely.
-							</DialogDescription>
-						</DialogHeader>
-					</>
+					<DialogHeader className="flex items-center">
+						<CheckCircledIcon className="w-16 h-16 text-green-500" />
+						<DialogTitle className="text-2xl text-center">
+							Request submitted successfully
+						</DialogTitle>
+						<DialogDescription className="text-center pt-4">
+							Please take a moment to access your email, where you'll find
+							detailed instructions on how to reset your password securely.
+						</DialogDescription>
+					</DialogHeader>
 				)}
 			</DialogContent>
 		</Dialog>
