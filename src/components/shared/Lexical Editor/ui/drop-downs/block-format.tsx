@@ -139,14 +139,14 @@ export default function BlockFormatDropDown({
 
 	return (
 		<DropDown
-			TriggerClassName={{ ...style, width: "100%" }}
+			TriggerClassName={{ ...style }}
 			disabled={disabled}
 			side={side}
 			sideOffset={sideOffset}
 			TriggerLabel={
 				<>
 					{currentBlock.icon}
-					<span className="max-sm:hidden">{currentBlock.label}</span>
+					<span className="hidden md:visible">{currentBlock.label}</span>
 				</>
 			}
 			ShowChevronsUpDown={ShowChevronsUpDown}

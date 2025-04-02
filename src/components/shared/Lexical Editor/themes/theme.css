@@ -1,213 +1,494 @@
+/* ==================== */
+/* BLOG TYPOGRAPHY BASE */
+/* ==================== */
+.ContentEditable__root {
+  font-family:
+    ui-sans-serif,
+    -apple-system,
+    system-ui,
+    "Source Serif 4",
+    "Segoe UI",
+    Helvetica,
+    "Apple Color Emoji",
+    Arial,
+    sans-serif,
+    "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  font-size: 16px;
+  line-height: 28px;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
+  word-wrap: break-word;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========== PARAGRAPHS ========== */
+.editor p {
+  margin: 1.75em 0;
+  padding: 0;
+  word-spacing: 0.05em;
+  letter-spacing: 0.01em;
+  hyphens: auto;
+  orphans: 3;
+  widows: 3;
+}
+
+/* ========== HEADINGS ========== */
+.editor h1 {
+  font-size: 2.5em;
+  line-height: 1.2;
+  margin: 1.2em 0 0.8em;
+  font-weight: 700;
+  color: #111;
+}
+
+.editor h2 {
+  font-size: 2em;
+  line-height: 1.3;
+  margin: 1.5em 0 0.75em;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5em;
+}
+
+.editor h3 {
+  font-size: 1.5em;
+  line-height: 1.4;
+  margin: 1.3em 0 0.65em;
+  font-weight: 600;
+}
+
+.editor h4 {
+  font-size: 1.25em;
+  line-height: 1.4;
+  margin: 1.1em 0 0.55em;
+  font-weight: 600;
+}
+
+.editor h5 {
+  font-size: 1.1em;
+  line-height: 1.4;
+  margin: 1em 0 0.5em;
+  font-weight: 600;
+}
+
+.editor h6 {
+  font-size: 1em;
+  line-height: 1.4;
+  margin: 1em 0 0.5em;
+  font-weight: 600;
+  color: #666;
+}
+
+/* ========== LISTS ========== */
+.editor ul,
+.editor ol {
+  margin: 1.5em 0;
+  padding-left: 2.5em;
+}
+
+.editor li {
+  margin: 0.7em 0;
+  position: relative;
+  line-height: 1.6;
+}
+
+.editor ul {
+  list-style-type: none;
+}
+
+.editor ul li::before {
+  content: "•";
+  color: #666;
+  position: absolute;
+  left: -1.5em;
+  font-size: 1.2em;
+}
+
+.editor ol {
+  counter-reset: item;
+  list-style-type: none;
+}
+
+.editor ol li {
+  counter-increment: item;
+}
+
+.editor ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: -2.5em;
+  width: 2em;
+  text-align: right;
+  color: #666;
+}
+
+/* ========== BLOCKQUOTES ========== */
+.editor blockquote {
+  border-left: 3px solid #ddd;
+  padding: 0.5em 1.5em;
+  margin: 2em 0;
+  font-style: italic;
+  color: #555;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.editor blockquote p {
+  margin: 0.8em 0;
+}
+
+/* ========== CODE ========== */
+.editor pre {
+  background: #f8f8f8;
+  padding: 1.5em;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 2em 0;
+  font-size: 0.9em;
+  line-height: 1.5;
+  tab-size: 2;
+}
+
+.editor code {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 0.95em;
+}
+
+.editor p code,
+.editor li code {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* ========== LINKS ========== */
+.editor a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+
+.editor a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* ========== IMAGES ========== */
+.editor img {
+  max-width: 100%;
+  height: auto;
+  margin: 2em auto;
+  display: block;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.editor img + em {
+  display: block;
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+  margin-top: -1.5em;
+  margin-bottom: 2em;
+}
+
+/* ========== HORIZONTAL RULES ========== */
+.editor hr {
+  border: 0;
+  height: 1px;
+  background: #ddd;
+  margin: 3em 0;
+}
+
+/* ========== TABLES ========== */
 .PlaygroundEditorTheme__table {
-	border-collapse: collapse;
-	border-spacing: 0;
-	overflow-x: auto;
-	table-layout: fixed;
-	display: block;
-	max-width: fit-content;
-	width: 100%;
-	margin: 0px 25px 30px 0px;
+  border-collapse: collapse;
+  border-spacing: 0;
+  overflow-x: auto;
+  table-layout: fixed;
+  display: block;
+  max-width: 100%;
+  margin: 2em 0;
+  box-shadow: 0 0 0 1px #ddd;
+  border-radius: 4px;
 }
 
-.PlaygroundEditorTheme__tableSelection *::selection {
-	background-color: transparent;
-}
-.PlaygroundEditorTheme__tableSelected {
-	outline: 2px solid rgb(60, 132, 244);
-}
 .PlaygroundEditorTheme__tableCell {
-	border: 1px solid #979797;
-	width: 75px;
-	min-width: 75px;
-	vertical-align: top;
-	text-align: start;
-	padding: 6px 8px;
-	position: relative;
-	outline: none;
+  border: 1px solid #ddd;
+  padding: 12px 15px;
+  vertical-align: top;
+  min-width: 75px;
 }
-.PlaygroundEditorTheme__tableCellSortedIndicator {
-	display: block;
-	opacity: 0.5;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
 
-	height: 4px;
-	background-color: #999;
-}
-.PlaygroundEditorTheme__tableCellResizer {
-	position: absolute;
-	right: -4px;
-	height: 100%;
-	width: 8px;
-	cursor: ew-resize;
-	z-index: 10;
-	top: 0;
-}
 .PlaygroundEditorTheme__tableCellHeader {
-	text-align: start;
+  background-color: #f5f5f5;
+  font-weight: 600;
+  text-align: left;
 }
+
+.PlaygroundEditorTheme__tableSelected {
+  outline: 2px solid rgb(60, 132, 244);
+}
+
 .PlaygroundEditorTheme__tableCellSelected {
-	background-color: #c9dbf0;
+  background-color: #e6f0fd;
 }
-.PlaygroundEditorTheme__tableCellPrimarySelected {
-	border: 2px solid rgb(60, 132, 244);
-	display: block;
-	height: calc(100% - 2px);
-	position: absolute;
-	width: calc(100% - 2px);
-	left: -1px;
-	top: -1px;
-	z-index: 2;
+
+/* ========== LAYOUT CONTAINERS ========== */
+.layoutContainer {
+  display: grid;
+  gap: 1em;
+  margin: 1.5em 0;
 }
-.PlaygroundEditorTheme__tableCellEditing {
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
-	border-radius: 3px;
+
+.layoutItem {
+  padding: 1em;
+  border: 1px solid #eee;
+  background: #f9f9f9;
+  border-radius: 4px;
 }
-.PlaygroundEditorTheme__tableAddColumns {
-	position: absolute;
-	background-color: #eee;
-	height: 100%;
-	animation: table-controls 0.2s ease;
-	border: 0;
-	cursor: pointer;
+
+/* ========== CHECKLISTS ========== */
+.PlaygroundEditorTheme__listItemChecked,
+.PlaygroundEditorTheme__listItemUnchecked {
+  position: relative;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding-left: 24px;
+  padding-right: 24px;
+  list-style-type: none;
+  outline: none;
 }
-.PlaygroundEditorTheme__tableAddColumns:after {
-	background-image: url(/public/images/icons/plus.svg);
-	background-size: contain;
-	background-position: center;
-	background-repeat: no-repeat;
-	display: block;
-	content: " ";
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	opacity: 0.4;
+
+.PlaygroundEditorTheme__listItemChecked {
+  text-decoration: line-through;
+  color: #666;
 }
-.PlaygroundEditorTheme__tableAddColumns:hover,
-.PlaygroundEditorTheme__tableAddRows:hover {
-	background-color: #c9dbf0;
+
+/* ========== DARK MODE ========== */
+@media (prefers-color-scheme: dark) {
+  .ContentEditable__root {
+    color: #e5e7eb;
+    background: transparent;
+  }
+
+  .editor h1,
+  .editor h2,
+  .editor h3,
+  .editor h4,
+  .editor h5 {
+    color: #f9fafb;
+  }
+
+  .editor h6 {
+    color: #9ca3af;
+  }
+
+  .editor blockquote {
+    border-left-color: #4b5563;
+    color: #d1d5db;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .editor pre {
+    background: #1f2937;
+    box-shadow: 0 0 0 1px #374151;
+  }
+
+  .editor p code,
+  .editor li code {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .editor ul li::before,
+  .editor ol li::before {
+    color: #9ca3af;
+  }
+
+  .PlaygroundEditorTheme__table {
+    box-shadow: 0 0 0 1px #374151;
+  }
+
+  .PlaygroundEditorTheme__tableCell {
+    border-color: #374151;
+  }
+
+  .PlaygroundEditorTheme__tableCellHeader {
+    background-color: #374151;
+  }
+
+  .PlaygroundEditorTheme__tableCellSelected {
+    background-color: #1e3a8a;
+  }
+
+  .layoutItem {
+    border-color: #374151;
+    background: #1f2937;
+  }
+
+  .editor hr {
+    background: #374151;
+  }
+
+  .editor img {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .editor img + em {
+    color: #9ca3af;
+  }
 }
-.PlaygroundEditorTheme__tableAddRows {
-	position: absolute;
-	width: calc(100% - 25px);
-	background-color: #eee;
-	animation: table-controls 0.2s ease;
-	border: 0;
-	cursor: pointer;
+
+/* ========== PRINT STYLES ========== */
+@media print {
+  .ContentEditable__root {
+    max-width: 100%;
+    padding: 0;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+  }
+
+  .editor pre {
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+
+  .editor img {
+    page-break-inside: avoid;
+    max-width: 100% !important;
+  }
+
+  .editor blockquote,
+  .editor table,
+  .editor pre {
+    page-break-inside: avoid;
+  }
+
+  .editor h1,
+  .editor h2,
+  .editor h3 {
+    page-break-after: avoid;
+  }
 }
-.PlaygroundEditorTheme__tableAddRows:after {
-	background-image: url(/public/images/icons/plus.svg);
-	background-size: contain;
-	background-position: center;
-	background-repeat: no-repeat;
-	display: block;
-	content: " ";
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	opacity: 0.4;
+
+/* ========== YOUR EXISTING PLAYGROUND THEME STYLES ========== */
+.PlaygroundEditorTheme__tableSelection *::selection {
+  background-color: transparent;
 }
-@keyframes table-controls {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
+
+.PlaygroundEditorTheme__tableCellResizer {
+  position: absolute;
+  right: -4px;
+  height: 100%;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 10;
+  top: 0;
 }
-.PlaygroundEditorTheme__tableCellResizeRuler {
-	display: block;
-	position: absolute;
-	width: 1px;
-	background-color: rgb(60, 132, 244);
-	height: 100%;
-	top: 0;
-}
+
 .PlaygroundEditorTheme__tableCellActionButtonContainer {
-	display: block;
-	right: 5px;
-	top: 6px;
-	position: absolute;
-	z-index: 4;
-	width: 20px;
-	height: 20px;
+  display: block;
+  right: 5px;
+  top: 6px;
+  position: absolute;
+  z-index: 4;
+  width: 20px;
+  height: 20px;
 }
+
 .PlaygroundEditorTheme__tableCellActionButton {
-	background-color: #eee;
-	display: block;
-	border: 0;
-	border-radius: 20px;
-	width: 20px;
-	height: 20px;
-	color: #222;
-	cursor: pointer;
+  background-color: #eee;
+  display: block;
+  border: 0;
+  border-radius: 20px;
+  width: 20px;
+  height: 20px;
+  color: #222;
+  cursor: pointer;
 }
+
 .PlaygroundEditorTheme__tableCellActionButton:hover {
-	background-color: #ddd;
+  background-color: #ddd;
 }
 
 .PlaygroundEditorTheme__tokenComment {
-	color: slategray;
+  color: slategray;
 }
+
 .PlaygroundEditorTheme__tokenPunctuation {
-	color: #999;
+  color: #999;
 }
+
 .PlaygroundEditorTheme__tokenProperty {
-	color: rgba(226, 113, 175, 0.5);
+  color: rgba(226, 113, 175, 0.5);
 }
+
 .PlaygroundEditorTheme__tokenSelector {
-	color: #690;
+  color: #690;
 }
+
 .PlaygroundEditorTheme__tokenOperator {
-	color: #9a6e3a;
+  color: #9a6e3a;
 }
+
 .PlaygroundEditorTheme__tokenAttr {
-	color: #07a;
+  color: #07a;
 }
+
 .PlaygroundEditorTheme__tokenVariable {
-	color: #e90;
+  color: #e90;
 }
+
 .PlaygroundEditorTheme__tokenFunction {
-	color: #e398a7;
+  color: #e398a7;
 }
 
 .PlaygroundEditorTheme__embedBlock {
-	user-select: none;
+  user-select: none;
 }
+
 .PlaygroundEditorTheme__embedBlockFocus {
-	outline: 2px solid rgb(60, 132, 244);
+  outline: 2px solid rgb(60, 132, 244);
 }
 
 .line-code {
-	tab-size: 2;
+  tab-size: 2;
 }
 
 .line-code:before {
-	content: attr(data-gutter);
-	position: absolute;
-	background-color: transparent;
-	left: 0;
-	top: 0;
-	height: 100%;
-	border-right: 1px solid rgba(42, 42, 42, 0.158);
-	padding: 8px;
-	color: rgba(0, 0, 0, 0.349);
-	white-space: pre-wrap;
-	text-align: right;
-	min-width: 25px;
+  content: attr(data-gutter);
+  position: absolute;
+  background-color: transparent;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-right: 1px solid rgba(42, 42, 42, 0.158);
+  padding: 8px;
+  color: rgba(0, 0, 0, 0.349);
+  white-space: pre-wrap;
+  text-align: right;
+  min-width: 25px;
 }
-.line-code:before:hover {
-	background: red;
-}
+
 .dark .line-code:before {
-	border-right: 1px solid #3b3b3b65;
-	color: #777;
+  border-right: 1px solid #3b3b3b65;
+  color: #777;
+}
+
+.PlaygroundEditorTheme__ol1,
+.PlaygroundEditorTheme__ol2,
+.PlaygroundEditorTheme__ol3,
+.PlaygroundEditorTheme__ol4,
+.PlaygroundEditorTheme__ol5 {
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
 }
 
 .PlaygroundEditorTheme__ul1,
@@ -215,157 +496,16 @@
 .PlaygroundEditorTheme__ul3,
 .PlaygroundEditorTheme__ul4,
 .PlaygroundEditorTheme__ul5 {
-	padding: 0;
-	margin: 0;
-	list-style-position: inside;
-}
-.PlaygroundEditorTheme__ol1,
-.PlaygroundEditorTheme__ol2,
-.PlaygroundEditorTheme__ol3,
-.PlaygroundEditorTheme__ol4,
-.PlaygroundEditorTheme__ol5 {
-	padding: 0;
-	margin: 0;
-	list-style-position: inside;
-}
-.PlaygroundEditorTheme__listItem {
-	margin: 2px 32px;
-}
-
-.PlaygroundEditorTheme__listItemChecked,
-.PlaygroundEditorTheme__listItemUnchecked {
-	position: relative;
-	margin-left: 8px;
-	margin-right: 8px;
-	padding-left: 24px;
-	padding-right: 24px;
-	list-style-type: none;
-	outline: none;
-}
-.ol {
-	list-style-type: decimal;
-}
-
-.ul {
-	list-style-type: disc;
-}
-
-.PlaygroundEditorTheme__listItemChecked {
-	text-decoration: line-through;
-}
-.PlaygroundEditorTheme__listItemUnchecked:before,
-.PlaygroundEditorTheme__listItemChecked:before {
-	content: "";
-	width: 16px;
-	height: 16px;
-	top: 4px;
-	left: 0;
-	cursor: pointer;
-	display: block;
-	background-size: cover;
-	position: absolute;
-}
-.PlaygroundEditorTheme__listItemUnchecked[dir="rtl"]:before,
-.PlaygroundEditorTheme__listItemChecked[dir="rtl"]:before {
-	left: auto;
-	right: 0;
-}
-.PlaygroundEditorTheme__listItemUnchecked:focus:before,
-.PlaygroundEditorTheme__listItemChecked:focus:before {
-	box-shadow: 0 0 0 2px #a6cdfe;
-	border-radius: 2px;
-}
-.PlaygroundEditorTheme__listItemUnchecked:before {
-	border: 1px solid #999;
-	border-radius: 2px;
-}
-.PlaygroundEditorTheme__listItemChecked:before {
-	border: 1px solid rgb(61, 135, 245);
-	border-radius: 2px;
-	background-color: #3d87f5;
-	background-repeat: no-repeat;
-}
-.PlaygroundEditorTheme__listItemChecked:after {
-	content: "";
-	cursor: pointer;
-	border-color: #fff;
-	border-style: solid;
-	position: absolute;
-	display: block;
-	top: 9px;
-	width: 3px;
-	left: 7px;
-	right: 7px;
-	height: 6px;
-	transform: rotate(45deg);
-	border-width: 0 2px 2px 0;
-}
-
-.PlaygroundEditorTheme__ol1 {
-	padding: 0;
-	margin: 0;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ol2 {
-	padding: 0;
-	margin: 0;
-	list-style-type: upper-alpha;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ol3 {
-	padding: 0;
-	margin: 0;
-	list-style-type: lower-alpha;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ol4 {
-	padding: 0;
-	margin: 0;
-	list-style-type: upper-roman;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ol5 {
-	padding: 0;
-	margin: 0;
-	list-style-type: lower-roman;
-	list-style-position: outside;
-}
-
-.PlaygroundEditorTheme__ul1 {
-	padding: 0;
-	margin: 0;
-	list-style-type: disc;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ul2 {
-	padding: 0;
-	margin: 0;
-	list-style-type: circle;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ul3 {
-	padding: 0;
-	margin: 0;
-	list-style-type: square;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ul4 {
-	padding: 0;
-	margin: 0;
-	list-style-type: circle;
-	list-style-position: outside;
-}
-.PlaygroundEditorTheme__ul5 {
-	padding: 0;
-	margin: 0;
-	list-style-type: disc;
-	list-style-position: outside;
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
 }
 
 .PlaygroundEditorTheme__nestedListItem {
-	list-style-type: none;
+  list-style-type: none;
 }
+
 .PlaygroundEditorTheme__nestedListItem:before,
 .PlaygroundEditorTheme__nestedListItem:after {
-	display: none;
+  display: none;
 }

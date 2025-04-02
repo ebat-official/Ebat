@@ -412,9 +412,9 @@ export default function index({
 							style={{ fontFamily: toolbarState.fontFamily }}
 							value={toolbarState.fontFamily}
 							editor={activeEditor}
-						/>
-						
-						<Separator className="h-6 mx-2" orientation="vertical" /> */}
+						/> */}
+
+						<Separator className="h-6 mx-2" orientation="vertical" />
 						<Toggle
 							variant={"outline"}
 							disabled={!isEditable}
@@ -438,11 +438,11 @@ export default function index({
 								</div>
 							)}
 						<Separator className="h-6 mx-2" orientation="vertical" />
-						<FontSize
+						{/* <FontSize
 							selectionFontSize={toolbarState.fontSize.slice(0, -2)}
 							editor={activeEditor}
 							disabled={!isEditable}
-						/>
+						/> */}
 						<Separator className="h-6 mx-2" orientation="vertical" />
 						<div className="flex flex-row gap-x-1">
 							<Toggle

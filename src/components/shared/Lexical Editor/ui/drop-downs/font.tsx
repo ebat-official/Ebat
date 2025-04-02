@@ -136,6 +136,11 @@ export default function Font({
 			func: () => applyFont("Reenie Beanie"),
 			style: { fontFamily: "Reenie Beanie" },
 		},
+		{
+			label: "System",
+			func: () => applyFont("system-ui"),
+			style: { fontFamily: "system-ui" },
+		},
 	];
 
 	return (
