@@ -1,37 +1,20 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import type { NextRequest } from "next/server";
 import { PostStatus, PostApprovalStatus } from "@prisma/client";
 import {
 	ID_NOT_EXIST_ERROR,
 	POST_NOT_EXIST_ERROR,
 	POST_NOT_PUBLISHED_ERROR,
-	UNAUTHENTICATED_ERROR,
-	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
+import { getPostById } from "@/actions/post";
 
-/**
- * Fetches a post by ID with only required fields.
- */
-export async function getPostById(postId: string) {
-	return prisma.post.findUnique({
-		where: { id: postId },
-		select: {
-			id: true,
-			title: true,
-			content: true,
-			status: true,
-			approvalStatus: true,
-			authorId: true,
-			createdAt: true,
-			updatedAt: true,
-		},
-	});
-}
-
-export async function GET(req: Request, context: { params: { id: string } }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const { id } = await context.params;
+		const { id } = await params;
 
 		if (!id) {
 			return NextResponse.json(ID_NOT_EXIST_ERROR, { status: 404 });

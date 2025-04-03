@@ -10,21 +10,14 @@ import {
 	PostWithAuthor,
 } from "@/utils/metadata";
 
-// Enhanced Type definitions
-interface PageParams {
+// Updated Type definitions for Next.js 15
+type PageParams = Promise<{
 	category: string;
 	subCategory: string;
 	titleSlug: string;
-}
+}>;
 
-interface PostQueryResult {
-	slug: string;
-	id: string;
-	category: PostCategory;
-	subCategory: SubCategory | null;
-}
-
-// Generate static paths
+// Generate static paths (unchanged)
 export async function generateStaticParams() {
 	const posts = await prisma.post.findMany({
 		where: {
@@ -45,49 +38,52 @@ export async function generateStaticParams() {
 	}));
 }
 
-// Enhanced category validation with type guards
-// function isValidCategoryCombo(
-//   category: string,
-//   subCategory: string | null
-// ): category is PostCategory {
-//   const validCombinations: Record<PostCategory, SubCategory[]> = {
-//     [PostCategory.FRONTEND]: [
-//       SubCategory.JAVASCRIPT,
-//       SubCategory.HTML,
-//       SubCategory.CSS,
-//       SubCategory.REACT,
-//     ],
-//     [PostCategory.BACKEND]: [],
-//     [PostCategory.ANDROID]: [],
-//   };
+// Enhanced category validation with type guards (unchanged)
+function isValidCategoryCombo(
+	category: string,
+	subCategory: string | null,
+): category is PostCategory {
+	const validCombinations: Record<PostCategory, SubCategory[]> = {
+		[PostCategory.FRONTEND]: [
+			SubCategory.JAVASCRIPT,
+			SubCategory.HTML,
+			SubCategory.CSS,
+			SubCategory.REACT,
+		],
+		[PostCategory.BACKEND]: [],
+		[PostCategory.ANDROID]: [],
+	};
 
-//   const categoryEnum = Object.values(PostCategory).find(
-//     (c) => c.toLowerCase() === category.toLowerCase()
-//   ) as PostCategory | undefined;
+	const categoryEnum = Object.values(PostCategory).find(
+		(c) => c.toLowerCase() === category.toLowerCase(),
+	) as PostCategory | undefined;
 
-//   if (!categoryEnum) return false;
+	if (!categoryEnum) return false;
 
-//   // If no subcategories defined for this category
-//   if (validCombinations[categoryEnum].length === 0) return true;
+	if (validCombinations[categoryEnum].length === 0) return true;
 
-//   const subCategoryEnum = subCategory
-//     ? (Object.values(SubCategory).find(
-//         (sc) => sc.toLowerCase() === subCategory.toLowerCase()
-//       ) as SubCategory | undefined)
-//     : null;
+	const subCategoryEnum = subCategory
+		? (Object.values(SubCategory).find(
+				(sc) => sc.toLowerCase() === subCategory.toLowerCase(),
+			) as SubCategory | undefined)
+		: null;
 
-//   return subCategoryEnum
-//     ? validCombinations[categoryEnum].includes(subCategoryEnum)
-//     : false;
-// }
+	return subCategoryEnum
+		? validCombinations[categoryEnum].includes(subCategoryEnum)
+		: false;
+}
 
-// Enhanced post fetching with proper typing
-async function getPost(params: PageParams): Promise<PostWithAuthor | null> {
+// Enhanced post fetching with proper typing (updated params type)
+async function getPost(params: {
+	category: string;
+	subCategory: string;
+	titleSlug: string;
+}): Promise<PostWithAuthor | null> {
 	const { titleSlug, category, subCategory } = params;
 
-	// if (!isValidCategoryCombo(category, subCategory)) {
-	//   return null;
-	// }
+	if (!isValidCategoryCombo(category, subCategory)) {
+		return null;
+	}
 
 	const id = titleSlug.slice(-POST_ID_LENGTH);
 	if (!id) return null;
@@ -116,81 +112,77 @@ async function getPost(params: PageParams): Promise<PostWithAuthor | null> {
 	}
 }
 
-// Metadata generation with enhanced typing
+// Metadata generation with updated typing for Next.js 15
 export async function generateMetadata({
 	params,
 }: {
 	params: PageParams;
 }): Promise<Metadata> {
-	const post = await getPost(params);
+	const awaitedParams = await params;
+	const post = await getPost(awaitedParams);
 	if (!post) return {};
 
 	return generatePageMetadata(post, {
-		urlPrefix: `/${params.category}/${params.subCategory}`,
+		urlPrefix: `/${awaitedParams.category}/${awaitedParams.subCategory}`,
 	});
 }
 
-// Structured data component with security enhancements
-// function StructuredData({
-//   post,
-//   category,
-//   subCategory,
-// }: {
-//   post: PostWithAuthor;
-//   category: string;
-//   subCategory: string;
-// }) {
-//   const structuredData = generateStructuredData(post, {
-//     urlPrefix: `/${category}/${subCategory}`,
-//   });
-
-//   return (
-//     <script
-//       type="application/ld+json"
-//       dangerouslySetInnerHTML={{
-//         __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-//       }}
-//     />
-//   );
-// }
-
-// Main page component with view count increment
-export default async function Page({
-	params,
+// Structured data component (unchanged)
+function StructuredData({
+	post,
+	category,
+	subCategory,
 }: {
-	params: { category: string; subCategory: string; titleSlug: string };
+	post: PostWithAuthor;
+	category: string;
+	subCategory: string;
 }) {
-	const post = await getPost(params);
+	const structuredData = generateStructuredData(post, {
+		urlPrefix: `/${category}/${subCategory}`,
+	});
+
+	return (
+		<script
+			type="application/ld+json"
+			dangerouslySetInnerHTML={{
+				__html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+			}}
+		/>
+	);
+}
+
+// Main page component updated for Next.js 15
+export default async function PostPage({ params }: { params: PageParams }) {
+	const awaitedParams = await params;
+	const post = await getPost(awaitedParams);
 	if (!post) return notFound();
 
 	return (
 		<>
-			{/* <StructuredData
-        post={post}
-        category={params.category}
-        subCategory={params.subCategory}
-      /> */}
+			<StructuredData
+				post={post}
+				category={awaitedParams.category}
+				subCategory={awaitedParams.subCategory}
+			/>
 			<article className="max-w-3xl mx-auto py-8 px-4">
 				<header className="mb-8">
 					<div className="flex gap-2 mb-2">
 						<span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-							{params.category}
+							{awaitedParams.category}
 						</span>
-						{params.subCategory && params.subCategory !== "general" && (
-							<span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-								{params.subCategory}
-							</span>
-						)}
+						{awaitedParams.subCategory &&
+							awaitedParams.subCategory !== "general" && (
+								<span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+									{awaitedParams.subCategory}
+								</span>
+							)}
 					</div>
 					<h1 className="text-3xl font-bold">{post.title}</h1>
 				</header>
-				<section className="prose dark:prose-invert max-w-none">
-					{/* Post content would be rendered here */}
-				</section>
 			</article>
 		</>
 	);
 }
 
-// ISR with explicit dynamic params control
+// ISR configuration remains the same
 export const revalidate = 60;

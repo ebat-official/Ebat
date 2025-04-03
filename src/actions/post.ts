@@ -147,3 +147,19 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 		throw FailedToPublishPostErr();
 	}
 }
+
+export async function getPostById(postId: string) {
+	return prisma.post.findUnique({
+		where: { id: postId },
+		select: {
+			id: true,
+			title: true,
+			content: true,
+			status: true,
+			approvalStatus: true,
+			authorId: true,
+			createdAt: true,
+			updatedAt: true,
+		},
+	});
+}
