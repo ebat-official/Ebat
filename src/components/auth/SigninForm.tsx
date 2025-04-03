@@ -28,6 +28,7 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import parseRedirectError from "@/utils/parseRedirectError";
 import { Eye, EyeOff } from "lucide-react";
 import EyeButton from "./EyeButton";
+import Link from "next/link";
 
 type FormValues = {
 	email: string;
@@ -42,7 +43,7 @@ const schema = z.object({
 const resolver: Resolver<FormValues> = zodResolver(schema);
 
 interface SigninFormProps {
-	modelHandler?: Function;
+	modelHandler?: (value: boolean) => void;
 }
 
 const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
@@ -76,7 +77,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 				if (verification.status === ERROR) {
 					return toast({
 						title: ERROR,
-						description: verification.data,
+						description: String(verification.data),
 						variant: "destructive",
 					});
 				}
@@ -134,7 +135,9 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 					<Input
 						{...register("email")}
 						type="email"
-						className={cn({ "border-red-500": errors?.email })}
+						className={cn("focus-visible:ring-0 focus-visible:outline-none", {
+							"border-red-500": errors?.email,
+						})}
 						placeholder="Email"
 						aria-label="Email"
 						autoComplete="username"
@@ -152,7 +155,9 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 							{...register(PASSWORD)}
 							type={showPassword ? TEXT : PASSWORD}
 							name={PASSWORD}
-							className={cn({ "border-red-500": errors?.password })}
+							className={cn("focus-visible:ring-0 focus-visible:outline-none", {
+								"border-red-500": errors?.password,
+							})}
 							placeholder={PASSWORD}
 							aria-label={PASSWORD}
 							autoComplete="current-password"
@@ -181,6 +186,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 						Forgot password ?
 					</button>
 				</div>
+
 				<div className="text-center ">
 					<ButtonBlue type="submit" title="sign in" loading={isLoading} />
 				</div>

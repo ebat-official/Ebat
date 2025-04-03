@@ -17,6 +17,7 @@ import SignupForm from "./SignupFrom";
 import Loader from "@/components/shared/Loader/Loader";
 import FormSuccess from "../shared/FormSuccess";
 import FormError from "../shared/FormError";
+import Link from "next/link";
 
 type LoginModalProps = {
 	isOpen?: boolean;
@@ -85,6 +86,13 @@ const LoginModal: FC<LoginModalProps> = ({
 							</div>
 						)}
 					</DialogFooter>
+					<p className="text-xs text-center text-gray-500">
+						By signing up, you accept our{" "}
+						<Link href="/terms" className="text-blue-500 underline">
+							Terms of Use
+						</Link>
+						.
+					</p>
 					{!isLoginForm && (
 						<div className="flex items-center justify-start -mt-4 ">
 							<p className="text-sm leading-normal justify-self-start">
