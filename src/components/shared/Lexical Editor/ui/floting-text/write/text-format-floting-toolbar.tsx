@@ -188,17 +188,19 @@ export default function TextFormatFloatingToolbar({
 		<div
 			id="toolbar"
 			ref={popupCharStylesEditorRef}
-			className={`
-            h-[30px] p-1 px-2 max-sm:p-2   max-sm:h-[295px] max-sm:w-[32px]  max-sm:overflow-y-auto
-            border dark:border-zinc-800 dark:bg-zinc-900  text-zinc-950 dark:text-zinc-50  border-zinc-200 bg-white/90 
-            inline-flex flex-row max-sm:flex-col items-center shadow-md absolute top-0 left-0  text-sm rounded-[6px]
-        `}
+			className="
+
+            md:h-[40px] p-1 px-2 gap-1
+			w-10 md:w-fit
+            border dark:border-zinc-800  
+            flex bg-background flex-col md:flex-row md:justify-center md:items-center shadow-md absolute top-0 left-0  text-sm rounded-[6px]
+        "
 		>
-			<AiButton editor={editor} />
-			<Separator
-				orientation="vertical"
-				className="max-sm:h-[1px] max-sm:my-1 max-sm:w-5 h-5 mx-1"
-			/>
+			{/* <AiButton editor={editor} />
+      <Separator
+        orientation="vertical"
+        className="max-sm:h-[1px] max-sm:my-1 max-sm:w-5 h-5 mx-1"
+      /> */}
 			<BlockFormatDropDown
 				editor={editor}
 				blockType={blockType}
@@ -211,18 +213,18 @@ export default function TextFormatFloatingToolbar({
 				orientation="vertical"
 				className="max-sm:h-[1px] max-sm:my-1 max-sm:w-5 h-5 mx-1"
 			/>
-			<FontSize
-				selectionFontSize={fontSize.slice(0, -2)}
-				editor={editor}
-				disabled={false}
-				className="h-[25px]"
-				classNameContent="max-sm:flex-col"
-			/>
-			<Separator
-				orientation="vertical"
-				className="max-sm:h-[1px] max-sm:my-1 max-sm:w-5 h-5 mx-1"
-			/>
-			<Font
+			{/* <FontSize
+        selectionFontSize={fontSize.slice(0, -2)}
+        editor={editor}
+        disabled={false}
+        className="h-[25px]"
+        classNameContent="max-sm:flex-col"
+      />
+      <Separator
+        orientation="vertical"
+        className="max-sm:h-[1px] max-sm:my-1 max-sm:w-5 h-5 mx-1"
+      /> */}
+			{/* <Font
 				disabled={false}
 				style={{ fontFamily: fontFamily, height: "25px", padding: "0px 13px" }}
 				value={fontFamily}
@@ -230,15 +232,15 @@ export default function TextFormatFloatingToolbar({
 				ShowChevronsUpDown={false}
 				side={isSmall ? "right" : "bottom"}
 				sideOffset={isSmall ? 10 : 5}
-			/>
+			/> */}
 			<Separator
 				orientation="vertical"
 				className="max-sm:h-[1px] max-sm:my-1 max-sm:w-5 h-5 mx-1"
 			/>
-			<div className="flex  flex-row max-sm:flex-col gap-1 items-center justify-center">
+			<div className="flex flex-col items-center justify-center gap-1 md:flex-row">
 				<Toggle
 					variant={"outline"}
-					size={"floting"}
+					className="p-1"
 					pressed={isBold}
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
@@ -250,7 +252,7 @@ export default function TextFormatFloatingToolbar({
 				</Toggle>
 				<Toggle
 					variant={"outline"}
-					size={"floting"}
+					className="p-1"
 					pressed={isItalic}
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
@@ -263,7 +265,7 @@ export default function TextFormatFloatingToolbar({
 				</Toggle>
 				<Toggle
 					variant={"outline"}
-					size={"floting"}
+					className="p-1"
 					pressed={isUnderline}
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
@@ -276,7 +278,7 @@ export default function TextFormatFloatingToolbar({
 				</Toggle>
 				<Toggle
 					variant={"outline"}
-					size={"floting"}
+					className="p-1"
 					pressed={isCode}
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
@@ -289,7 +291,7 @@ export default function TextFormatFloatingToolbar({
 				</Toggle>
 				<Toggle
 					variant={"outline"}
-					size={"floting"}
+					className="p-1"
 					onPressedChange={insertLink}
 					pressed={isLink}
 					aria-label="Insert link"
