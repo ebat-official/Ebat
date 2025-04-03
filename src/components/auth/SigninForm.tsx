@@ -174,7 +174,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 						</p>
 					)}
 				</div>
-				<div className="flex justify-end w-full text-xs text-slate-500 -mt-6 ">
+				<div className="flex justify-end w-full text-xs text-slate-500 dark:text-white -mt-6 ">
 					<button
 						aria-label="forgot password"
 						type="button"

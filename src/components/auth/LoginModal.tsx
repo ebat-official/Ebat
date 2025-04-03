@@ -86,7 +86,7 @@ const LoginModal: FC<LoginModalProps> = ({
 							</div>
 						)}
 					</DialogFooter>
-					<p className="text-xs text-center text-gray-500">
+					<p className="text-xs text-center text-gray-500 dark:text-white">
 						By signing up, you accept our{" "}
 						<Link href="/terms" className="text-blue-500 underline">
 							Terms of Use
