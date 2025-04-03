@@ -7,7 +7,7 @@ import { getFirstParagraphText } from "@/utils/getFirstParagraphText";
 
 export interface PostWithAuthor extends Post {
 	author?: {
-		name: string;
+		name: string | null;
 	} | null;
 }
 

@@ -1,20 +1,22 @@
 import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
-import { Novu } from "@novu/node";
-
-const FROM_MAIL = "support@codemastero.com";
+import { Novu } from "@novu/api";
 
 async function novuMailer(toEmail: string, type: string, token?: string) {
 	let redirectLink = process.env.ENV_URL;
-	const novu = new Novu(`${process.env.NOVU_API_KEY}`);
-	const name = toEmail.split("@")[0];
-	await novu.subscribers.identify(toEmail, {
-		email: toEmail,
-		firstName: name,
-	});
+	const novu = new Novu({ secretKey: process.env.NOVU_API_KEY });
+	const nameFromEmail = toEmail.split("@")[0];
+	await novu.subscribers.upsert(
+		{
+			email: toEmail,
+			firstName: nameFromEmail,
+		},
+		toEmail,
+	);
 	switch (type) {
 		case EMAIL_VALIDATION:
 			redirectLink = `${process.env.ENV_URL}/api/auth/verify?token=${token}`;
-			novu.trigger("account-activation", {
+			novu.trigger({
+				workflowId: "account-activation",
 				to: {
 					subscriberId: toEmail,
 					email: toEmail,
@@ -27,7 +29,8 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 
 		case RESET_PASSWORD:
 			redirectLink = `${process.env.ENV_URL}/resetPassword?token=${token}`;
-			novu.trigger("password-reset", {
+			novu.trigger({
+				workflowId: "password-reset",
 				to: {
 					subscriberId: toEmail,
 					email: toEmail,
