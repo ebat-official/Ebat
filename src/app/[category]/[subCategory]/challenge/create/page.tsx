@@ -1,4 +1,3 @@
-import { Editor } from "@/components/shared/Editor/Editor_backup";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import React from "react";
 
@@ -16,9 +15,7 @@ function page() {
 		<RightPanelLayout>
 			<RightPanelLayout.MainPanel>
 				<Card className="">
-					<CardContent className="flex justify-center">
-						<Editor subredditId={"9786543567890"} />
-					</CardContent>
+					<CardContent className="flex justify-center">helloo</CardContent>
 				</Card>
 			</RightPanelLayout.MainPanel>
 			<RightPanelLayout.SidePanel>

@@ -187,6 +187,8 @@ model Post {
   collaborators      User[]             @relation("PostCollaborators")
   approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
+  
+  @@unique([id, slug], name: "PostIdSlug")
 }
 
 model PostEdit {

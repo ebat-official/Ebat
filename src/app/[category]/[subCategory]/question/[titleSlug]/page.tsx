@@ -1,75 +1,107 @@
-// pages/posts/[titleSlug]/page.tsx
-import { GetStaticProps, GetStaticPaths } from "next";
-import { useRouter } from "next/router";
-import withSEO from "@/lib/withSEO";
+// app/posts/[titleSlug]/page.tsx
+import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
+import type { Metadata } from "next";
+import { POST_ID_LENGTH } from "@/config";
+import { PostApprovalStatus } from "@prisma/client";
+import {
+	generatePageMetadata,
+	generateStructuredData,
+	PostWithAuthor,
+} from "@/utils/metadata";
 
-export const getStaticPaths: GetStaticPaths = async () => {
-	// Fetch the slugs for all posts
+// Generate static paths at build time
+export async function generateStaticParams() {
 	const posts = await prisma.post.findMany({
-		select: { slug: true }, // Get only the slugs
+		where: {
+			approvalStatus: PostApprovalStatus.APPROVED,
+		},
+		select: { slug: true, id: true },
 	});
 
-	const paths = posts.map((post) => ({
-		params: { titleSlug: post.slug },
+	return posts.map((post) => ({
+		titleSlug: `${post.slug}-${post.id}`,
 	}));
+}
 
-	return {
-		paths,
-		fallback: true, // Enable fallback to show loading for new pages
-	};
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+// Fetch post data
+async function getPost(params: { titleSlug: string }) {
 	const { titleSlug } = params;
 
-	// Fetch the post data based on titleSlug
-	const post = await prisma.post.findUnique({
-		where: {
-			slug: titleSlug, // Assuming titleSlug is stored as `slug` in the database
-		},
-	});
-
-	// Prepare SEO data
-	const seoData = {
-		title: post.title,
-		metaDescription: post.content.slice(0, 150),
-		slug: post.slug,
-		postId: post.id,
-		image: post.image || "/default-image.jpg",
-		author: post.author.name,
-	};
-
-	return {
-		props: {
-			post,
-			seoData,
-		},
-		revalidate: 60, // Optional: Revalidate the page every 60 seconds
-	};
-};
-
-const PostPage = ({ post }) => {
-	const router = useRouter();
-
-	// Check if the page is in fallback state
-	if (router.isFallback) {
-		return (
-			<div className="loading-container">
-				{/* Your custom loading spinner or skeleton */}
-				<div className="spinner">Loading...</div>
-			</div>
-		);
+	if (!titleSlug || typeof titleSlug !== "string") {
+		return null;
 	}
 
-	// Render the post content once it's available
-	return (
-		<div>
-			<h1>{post.title}</h1>
-			<div>{post.content}</div>
-		</div>
-	);
-};
+	const id = titleSlug.slice(-POST_ID_LENGTH);
 
-// Wrap the PostPage component with withSEO (for SEO metadata)
-export default withSEO(PostPage);
+	if (!id) {
+		return null;
+	}
+
+	return await prisma.post.findUnique({
+		where: { id },
+		include: {
+			author: {
+				select: {
+					name: true,
+				},
+			},
+		},
+	});
+}
+
+// Generate metadata
+export async function generateMetadata({
+	params,
+}: {
+	params: { titleSlug: string };
+}): Promise<Metadata> {
+	const post = await getPost(params);
+	if (!post) return {};
+
+	return generatePageMetadata(post as PostWithAuthor, {
+		urlPrefix: "/questions",
+	});
+}
+
+// Structured data component
+function StructuredData({ post }: { post: PostWithAuthor }) {
+	const structuredData = generateStructuredData(post, {
+		urlPrefix: "/questions",
+	});
+
+	return (
+		<script
+			type="application/ld+json"
+			dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+		/>
+	);
+}
+
+// Main page component
+export default async function PostPage({
+	params,
+}: {
+	params: { titleSlug: string };
+}) {
+	const post = await getPost(params);
+	if (!post) return notFound();
+
+	return (
+		<>
+			<StructuredData post={post as PostWithAuthor} />
+			<article className="max-w-3xl mx-auto py-8 px-4">
+				<header className="mb-8">
+					<h1 className="text-3xl font-bold">{post.title}</h1>
+					{post.author && (
+						<p className="text-gray-600 mt-2">By {post.author.name}</p>
+					)}
+				</header>
+				<section className="prose dark:prose-invert max-w-none">helloo</section>
+			</article>
+		</>
+	);
+}
+
+// Revalidation settings (ISR)
+export const revalidate = 60;

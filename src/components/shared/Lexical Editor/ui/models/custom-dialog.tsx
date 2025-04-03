@@ -148,6 +148,7 @@ function DialogTrigger({ children, className }: DialogTriggerProps) {
 
 	return (
 		<button
+			type="button"
 			onClick={context.handleTrigger}
 			className={cn(
 				"inline-flex items-center justify-center rounded-md text-sm font-medium",
@@ -201,7 +202,6 @@ function DialogContent({ children, className, container }: DialogContentProps) {
 					aria-labelledby={ids.title}
 					aria-describedby={ids.description}
 					aria-modal="true"
-					role="dialog"
 					onClick={(e: React.MouseEvent<HTMLDialogElement>) => {
 						if (e.target === dialogRef.current) {
 							setIsOpen(false);
@@ -214,7 +214,7 @@ function DialogContent({ children, className, container }: DialogContentProps) {
 					transition={transition}
 					onAnimationComplete={onAnimationComplete}
 					className={cn(
-						"fixed rounded-lg border z-40 border-zinc-200 p-0 shadow-lg dark:border dark:border-zinc-700",
+						"fixed rounded-lg border z-40 border-zinc-200 p-0 shadow-lg dark:border dark:border-zinc-700 left-1/2 top-1/2 -translate-1/2",
 						"backdrop:bg-black/50 backdrop:backdrop-blur-xs",
 						"open:flex open:flex-col",
 						className,

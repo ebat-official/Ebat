@@ -132,7 +132,7 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 		coins: getDefaultCoins(data),
 		approvalStatus: PostApprovalStatus.PENDING,
 		approvalLogs: [],
-		slug: generateTitleSlug(data.title, data.id),
+		slug: generateTitleSlug(data.title),
 	};
 
 	try {
