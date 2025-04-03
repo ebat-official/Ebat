@@ -112,6 +112,7 @@
 		"react-spinners": "^0.15.0",
 		"react-textarea-autosize": "^8.5.7",
 		"recharts": "^2.15.1",
+		"slugify": "^1.6.6",
 		"sonner": "^1.7.4",
 		"tailwind-merge": "^3.0.2",
 		"uuid": "^11.0.3",
