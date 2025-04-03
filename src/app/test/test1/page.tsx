@@ -4,13 +4,13 @@ import Editor from "@/components/shared/Lexical Editor";
 import React, { type FC, useEffect, useRef, useState } from "react";
 import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
 
-type pageProps = {};
+// type pageProps = {};
 
-const page: FC<pageProps> = ({}) => {
-	return <InfiniteScroll />;
-};
+// const page: FC<pageProps> = ({}) => {
+// 	return <InfiniteScroll />;
+// };
 
-export default page;
+// export default page;
 
 // import {
 //   Excalidraw,
@@ -42,6 +42,7 @@ const InfiniteScroll = () => {
 	const [numbers, setNumbers] = useState([...Array(20).keys()]); // Initial 20 numbers
 	const [loading, setLoading] = useState(false);
 	const observerRef = useRef(null);
+	const observerRef2 = useRef(null);
 
 	const loadMoreNumbers = () => {
 		setLoading(true);
@@ -57,6 +58,7 @@ const InfiniteScroll = () => {
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
+				console.log(entries, loading);
 				if (entries[0].isIntersecting && !loading) {
 					loadMoreNumbers();
 				}
@@ -70,6 +72,9 @@ const InfiniteScroll = () => {
 
 		if (observerRef.current) {
 			observer.observe(observerRef.current);
+		}
+		if (observerRef2.current) {
+			observer.observe(observerRef2.current);
 		}
 
 		return () => {
@@ -87,6 +92,7 @@ const InfiniteScroll = () => {
 			<h2 className="mb-4 text-xl font-semibold text-center">
 				Infinite Scrolling Numbers
 			</h2>
+			{/* <div ref={observerRef2} className="h-10" /> */}
 			{numbers.map((num, index) => (
 				<div
 					key={index}

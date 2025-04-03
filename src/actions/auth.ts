@@ -27,8 +27,12 @@ import mailer from "@/lib/mailer";
 import { prismaCustomAdapter } from "@/prismaAdapter";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
+type dataType = {
+	token?: string;
+	message?: string;
+};
 type AuthReturnType = {
-	data: unknown;
+	data: dataType;
 	cause?: string;
 	status: string;
 };
@@ -76,7 +80,7 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
 	try {
 		await signIn("credentials", { email, password });
 
-		return { status: SUCCESS, data: "" };
+		return { status: SUCCESS, data: {} };
 	} catch (error) {
 		if (isRedirectError(error)) {
 			throw error;
@@ -132,9 +136,8 @@ export async function validateVerificationToken(token: string) {
 		if (record?.token === token) {
 			if (record.expires.getTime() > new Date().getTime()) {
 				return { status: SUCCESS, data: record };
-			} else {
-				return { status: ERROR, data: TOKEN_EXPIRED };
 			}
+			return { status: ERROR, data: TOKEN_EXPIRED };
 		}
 		return { status: ERROR, data: INVALID_TOKEN_ERROR };
 	} catch (error) {
@@ -185,9 +188,8 @@ export async function validateResetToken(token: string) {
 		if (record?.token === token) {
 			if (record.expires.getTime() > new Date().getTime()) {
 				return { status: SUCCESS, data: record };
-			} else {
-				return { status: ERROR, data: TOKEN_EXPIRED };
 			}
+			return { status: ERROR, data: TOKEN_EXPIRED };
 		}
 
 		return { status: ERROR, data: INVALID_TOKEN_ERROR };
