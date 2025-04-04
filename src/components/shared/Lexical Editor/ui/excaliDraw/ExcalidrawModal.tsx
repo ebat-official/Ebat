@@ -19,7 +19,7 @@ import {
 	BinaryFiles,
 	ExcalidrawImperativeAPI,
 	ExcalidrawInitialDataState,
-} from "@excalidraw/excalidraw/types/types";
+} from "@excalidraw/excalidraw/types";
 import { isDOMNode } from "lexical";
 import * as React from "react";
 import {
@@ -239,10 +239,7 @@ export default function ExcalidrawModal({
 	};
 
 	return createPortal(
-		<div
-			className="fixed inset-0 flex flex-col items-center z-100"
-			role="dialog"
-		>
+		<div className="fixed inset-0 flex flex-col items-center z-100">
 			<div
 				className="relative z-10 top-[50px] flex justify-center items-center rounded-lg"
 				ref={excaliDrawModelRef}

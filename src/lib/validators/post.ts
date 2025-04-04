@@ -120,6 +120,7 @@ export const PostValidator = BasePostValidator.superRefine((data, ctx) => {
 	const { type, content } = data;
 
 	if (type === PostType.QUESTION) {
+		// @ts-ignore
 		if (!content.answer?.blocks || content.answer.blocks.length === 0) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,

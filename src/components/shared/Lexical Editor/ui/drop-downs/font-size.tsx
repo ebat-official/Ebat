@@ -88,7 +88,6 @@ export default function FontSize({
 			<Button
 				type="button"
 				className={className}
-				tip={`decrement ${SHORTCUTS.INCREASE_FONT_SIZE}`}
 				disabled={
 					disabled ||
 					(selectionFontSize !== "" &&
@@ -119,7 +118,6 @@ export default function FontSize({
 			/>
 			<Button
 				type="button"
-				tip={`increment ${SHORTCUTS.DECREASE_FONT_SIZE}`}
 				className={className}
 				disabled={
 					disabled ||

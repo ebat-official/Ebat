@@ -245,7 +245,6 @@ export default function TextFormatFloatingToolbar({
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
 					}}
-					tip={`Bold ${SHORTCUTS.BOLD}`}
 					aria-label={`Format text as bold. Shortcut: ${SHORTCUTS.BOLD}`}
 				>
 					<Bold />
@@ -257,7 +256,6 @@ export default function TextFormatFloatingToolbar({
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
 					}}
-					tip={`Italic (${SHORTCUTS.ITALIC})`}
 					type="button"
 					aria-label={`Format text as italics. Shortcut: ${SHORTCUTS.ITALIC}`}
 				>
@@ -270,7 +268,6 @@ export default function TextFormatFloatingToolbar({
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
 					}}
-					tip={`Underline (${SHORTCUTS.UNDERLINE})`}
 					type="button"
 					aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
 				>
@@ -283,7 +280,6 @@ export default function TextFormatFloatingToolbar({
 					onPressedChange={() => {
 						editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
 					}}
-					tip={`Insert code block (${SHORTCUTS.INSERT_CODE_BLOCK})`}
 					type="button"
 					aria-label="Insert code block"
 				>
@@ -295,7 +291,6 @@ export default function TextFormatFloatingToolbar({
 					onPressedChange={insertLink}
 					pressed={isLink}
 					aria-label="Insert link"
-					tip={`Insert link (${SHORTCUTS.INSERT_LINK})`}
 					type="button"
 				>
 					<Link />

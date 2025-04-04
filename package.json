@@ -14,6 +14,7 @@
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.2.7",
+		"@ai-sdk/react": "^1.2.5",
 		"@auth/prisma-adapter": "^2.7.4",
 		"@aws-sdk/client-s3": "^3.735.0",
 		"@aws-sdk/s3-request-presigner": "^3.735.0",
@@ -123,6 +124,7 @@
 		"@biomejs/biome": "1.9.4",
 		"@tailwindcss/postcss": "^4.0.0",
 		"@types/bcryptjs": "^2.4.6",
+		"@types/lodash-es": "^4.17.12",
 		"@types/node": "^20",
 		"@types/react": "19.0.7",
 		"@types/react-dom": "19.0.3",
