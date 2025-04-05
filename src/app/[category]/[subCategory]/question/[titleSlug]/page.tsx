@@ -9,6 +9,8 @@ import {
 	generateStructuredData,
 	PostWithAuthor,
 } from "@/utils/metadata";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
+import { SerializedEditorState } from "lexical";
 
 // Updated Type definitions for Next.js 15
 type PageParams = Promise<{
@@ -38,7 +40,6 @@ export async function generateStaticParams() {
 	}));
 }
 
-// Enhanced category validation with type guards (unchanged)
 function isValidCategoryCombo(
 	category: string,
 	subCategory: string | null,
@@ -156,6 +157,12 @@ export default async function PostPage({ params }: { params: PageParams }) {
 	const awaitedParams = await params;
 	const post = await getPost(awaitedParams);
 	if (!post) return notFound();
+	console.log("pranav", post);
+	if (!post.content?.post) {
+		const questionHTML = getHtml(
+			post.content?.post?.blocks as SerializedEditorState,
+		);
+	}
 
 	return (
 		<>
