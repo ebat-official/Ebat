@@ -6,13 +6,13 @@ import { ListNode, ListItemNode } from "@lexical/list";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 
 const nodes: (Klass<LexicalNode> | LexicalNodeReplacement)[] = [
-  HeadingNode,
-  QuoteNode,
-  ListNode,
-  ListItemNode,
-  LinkNode,
-  CodeNode,
-  CodeHighlightNode,
+	HeadingNode,
+	QuoteNode,
+	ListNode,
+	ListItemNode,
+	LinkNode,
+	CodeNode,
+	CodeHighlightNode,
 ];
 
 export default nodes;

@@ -7,54 +7,54 @@ import createHeadlessEditor from "./headless";
 import { SerializedEditorState } from "lexical";
 
 function setupDom() {
-  const { window, document } = parseHTML("<html><body></body></html>");
-  const _window = global.window;
-  const _document = global.document;
+	const { window, document } = parseHTML("<html><body></body></html>");
+	const _window = global.window;
+	const _document = global.document;
 
-  global.window = window;
-  global.document = document;
+	global.window = window;
+	global.document = document;
 
-  return () => {
-    global.window = _window;
-    global.document = _document;
-  };
+	return () => {
+		global.window = _window;
+		global.document = _document;
+	};
 }
 
 function setupWindow() {
-  const _window = global.window;
-  // need to setup window for CodeNode since facebook#5828
-  // https://github.com/facebook/lexical/pull/5828
-  // @ts-expect-error
-  global.window = global;
+	const _window = global.window;
+	// need to setup window for CodeNode since facebook#5828
+	// https://github.com/facebook/lexical/pull/5828
+	// @ts-expect-error
+	global.window = global;
 
-  return () => {
-    global.window = _window;
-  };
+	return () => {
+		global.window = _window;
+	};
 }
 
 export async function getHtml(serializedEditorState: SerializedEditorState) {
-  if (!serializedEditorState) {
-    return "";
-  }
-  const html: string = await new Promise((resolve) => {
-    const cleanup = setupWindow();
-    const editor = createHeadlessEditor({ namespace: "html-renderer" });
+	if (!serializedEditorState) {
+		return "";
+	}
+	const html: string = await new Promise((resolve) => {
+		const cleanup = setupWindow();
+		const editor = createHeadlessEditor({ namespace: "html-renderer" });
 
-    editor.setEditorState(editor.parseEditorState(serializedEditorState));
-    cleanup();
+		editor.setEditorState(editor.parseEditorState(serializedEditorState));
+		cleanup();
 
-    editor.update(() => {
-      try {
-        const cleanup = setupDom();
-        const _html = $generateHtmlFromNodes(editor, null);
-        cleanup();
+		editor.update(() => {
+			try {
+				const cleanup = setupDom();
+				const _html = $generateHtmlFromNodes(editor, null);
+				cleanup();
 
-        resolve(_html);
-      } catch (e) {
-        console.log(e);
-      }
-    });
-  });
+				resolve(_html);
+			} catch (e) {
+				console.log(e);
+			}
+		});
+	});
 
-  return html;
+	return html;
 }
