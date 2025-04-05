@@ -1,4 +1,3 @@
-import { Editor } from "@/components/shared/Editor/Editor_backup";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import React from "react";
 

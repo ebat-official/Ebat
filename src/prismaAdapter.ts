@@ -31,6 +31,7 @@ export const prismaCustomAdapter = () => {
 							userId: createdUser.id,
 							image: image || null, // Explicitly set to null if undefined
 							name: name || null,
+							email: createdUser.email,
 						},
 					});
 

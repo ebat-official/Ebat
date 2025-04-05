@@ -26,13 +26,26 @@ import { findUserByEmail } from "@/actions/user";
 import mailer from "@/lib/mailer";
 import { prismaCustomAdapter } from "@/prismaAdapter";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { User } from "@prisma/client";
 
 type dataType = {
 	token?: string;
 	message?: string;
 };
 type AuthReturnType = {
-	data: dataType;
+	data: dataType | User;
+	cause?: string;
+	status: string;
+};
+
+type TokenType = {
+	id: string;
+	email: string;
+	token: string;
+	expires: Date;
+};
+type TokenReturnType = {
+	data: TokenType | dataType;
 	cause?: string;
 	status: string;
 };
@@ -66,6 +79,9 @@ export async function signUp(
 	}
 	//send verification mail
 	const verification = await upsertVerificationToken(user.email);
+	if (verification.status !== SUCCESS) {
+		return SOMETHING_WENT_WRONG_ERROR;
+	}
 	mailer(user.email, EMAIL_VALIDATION, verification.data?.token);
 	return { status: SUCCESS, data: user };
 }
@@ -107,7 +123,7 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
 // Verification Tokens
 export async function upsertVerificationToken(
 	email: string,
-): Promise<AuthReturnType> {
+): Promise<TokenReturnType> {
 	const user = await findUserByEmail(email);
 	if (!user) return NO_USER_FOUND_ERROR;
 	const uuidToken = uuidv4();
@@ -159,7 +175,9 @@ export async function deleteVerificationToken(email: string) {
 }
 
 // Rest Tokens
-export async function upsertResetToken(email: string): Promise<AuthReturnType> {
+export async function upsertResetToken(
+	email: string,
+): Promise<TokenReturnType> {
 	const user = await findUserByEmail(email);
 	if (!user) return NO_USER_FOUND_ERROR;
 	const uuidToken = uuidv4();

@@ -28,5 +28,6 @@ export default middleware((req) => {
 });
 
 export const config = {
+	// runtime: "nodejs",
 	matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };

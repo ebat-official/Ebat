@@ -106,3 +106,4 @@ const InfiniteScroll = () => {
 		</div>
 	);
 };
+export default InfiniteScroll;

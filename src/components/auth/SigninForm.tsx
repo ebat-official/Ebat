@@ -103,6 +103,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 				}
 				return toast({
 					title: ERROR,
+					// @ts-ignore
 					description: result?.data?.message || JSON.stringify(result),
 					variant: "destructive",
 				});

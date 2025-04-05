@@ -100,6 +100,7 @@ model UserProfile {
   id               String           @id @default(uuid()) @db.Uuid
   userId           String           @unique @db.Uuid
   name             String?
+  email            String           @unique
   jobTitle         String?
   description      String?
   companyName      String?
@@ -163,6 +164,7 @@ model ResetToken {
 model Post {
   id                 String             @id @default(nanoid())
   title              String?
+  slug               String?            @unique 
   content            Json?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -186,6 +188,8 @@ model Post {
   collaborators      User[]             @relation("PostCollaborators")
   approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
+  
+  @@unique([id, slug], name: "PostIdSlug")
 }
 
 model PostEdit {

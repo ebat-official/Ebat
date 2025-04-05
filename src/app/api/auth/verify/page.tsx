@@ -1,5 +1,6 @@
 "use client";
-import React, { FC, useEffect, useRef, useState } from "react";
+
+import React, { FC, useEffect, useRef, useState, Suspense } from "react";
 import verificationIcon from "@/assets/img/verificationIcon.webp";
 import verificationBackground from "@/assets/img/verificationBackground.avif";
 import Image from "next/image";
@@ -28,12 +29,10 @@ import {
 	deleteVerificationToken,
 	validateVerificationToken,
 } from "@/actions/auth";
-import { setEmailVerified, setEmailVerifiedUsingToken } from "@/actions/user";
+import { setEmailVerifiedUsingToken } from "@/actions/user";
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 
-interface UserVerificationProps {}
-
-const UserVerification: FC<UserVerificationProps> = () => {
+const UserVerification: FC = () => {
 	const [VerificationStatus, setVerificationStatus] = useState<{
 		status: string;
 		data: any;
@@ -42,7 +41,7 @@ const UserVerification: FC<UserVerificationProps> = () => {
 		data: "",
 	});
 	const [timer, setTimer] = useState(3);
-	const intrvl: any = useRef(null);
+	const intrvl = useRef<NodeJS.Timeout | null>(null);
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const verificationToken = searchParams.get(TOKEN);
@@ -53,7 +52,9 @@ const UserVerification: FC<UserVerificationProps> = () => {
 				setTimer((prev) => prev - 1);
 			}, 1000);
 		}
-		return () => clearInterval(intrvl.current);
+		return () => {
+			if (intrvl.current) clearInterval(intrvl.current);
+		};
 	}, [VerificationStatus]);
 
 	async function verifyToken() {
@@ -74,17 +75,19 @@ const UserVerification: FC<UserVerificationProps> = () => {
 			return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
 		}
 		setVerificationStatus({ status: SUCCESS, data: VERIFICATION_SUCCESSFULL });
+		// @ts-ignore
 		deleteVerificationToken(data.data.email);
 	}
 
-	if (timer == 0) {
-		clearInterval(intrvl.current);
+	if (timer === 0) {
+		if (intrvl.current) clearInterval(intrvl.current);
 		router.push("/");
 	}
 
 	useEffect(() => {
 		verifyToken();
 	}, []);
+
 	return (
 		<div className="flex justify-center items-center w-screen h-screen backdrop-blur-3xl ">
 			<Card className=" min-w-[20rem] relative z-10 flex flex-col justify-center items-center px-12 lg:px-16 mx-2">
@@ -131,4 +134,10 @@ const UserVerification: FC<UserVerificationProps> = () => {
 	);
 };
 
-export default UserVerification;
+export default function UserVerificationPage() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<UserVerification />
+		</Suspense>
+	);
+}

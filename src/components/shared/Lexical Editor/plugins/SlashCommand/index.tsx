@@ -211,6 +211,7 @@ function getBaseOptions(
 							editor.update(() => {
 								const selection = $getSelection();
 								if ($isRangeSelection(selection)) {
+									// @ts-ignore
 									$setBlocksType(selection, () => $createHeadingNode(`h${n}`));
 								}
 							}),
@@ -459,7 +460,7 @@ function getBaseOptions(
 							newEditor.setEditorState(parsedEditorState);
 							const newStep = {
 								id: 0,
-								title: `New step 0`,
+								title: "New step 0",
 								content: newEditor,
 							};
 							editor.dispatchCommand(INSERT_STEPPER_COMMAND, [newStep]);
@@ -570,7 +571,7 @@ export default function SlashCommand(): React.JSX.Element {
 												<CommandItem
 													ref={option.ref as React.Ref<HTMLDivElement>}
 													className={cn(
-														selectedIndex == i &&
+														selectedIndex === i &&
 															"dark:bg-gray-300/10 bg-gray-400/60",
 														"gap-x-2 h-full items-start hover:bg-transparent border-0 bg-transparent  transition-colors  cursor-pointer rounded-sm relative",
 													)}

@@ -6,6 +6,9 @@ import { SessionProvider } from "next-auth/react";
 import QueryProvider from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+
+export const runtime = "nodejs";
+
 const inter = Inter({
 	variable: "--font-inter",
 	subsets: ["latin"],

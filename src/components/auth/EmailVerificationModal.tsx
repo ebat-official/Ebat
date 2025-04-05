@@ -51,7 +51,6 @@ const EmailVerificationModal: FC<EmailVerificationModalProps> = ({
 						complete your account registration.
 					</DialogDescription>
 				</DialogHeader>
-				<div className="my-4"></div>
 
 				<p className="mt-2 text-xs text-center opacity-50">
 					If you do not receive the email within the next 5 minutes, use the

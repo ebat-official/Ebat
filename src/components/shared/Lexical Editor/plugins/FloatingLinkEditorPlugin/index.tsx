@@ -255,10 +255,8 @@ function FloatingLinkEditor({
 					<div className=" absolute  bg-background rounded-xl  flex flex-row  gap-x-1 items-center  transition-colors duration-500 transform -translate-y-1/2 right-2 top-1/2">
 						<Button
 							className=" rounded-xl h-6 w-6 flex items-center"
-							role="button"
 							variant={"destructive"}
 							size="sm"
-							tip="delete link"
 							tabIndex={0}
 							onMouseDown={preventDefault}
 							onClick={() => {
@@ -269,9 +267,7 @@ function FloatingLinkEditor({
 						</Button>
 						<Button
 							className=" rounded-xl h-6 w-6 flex items-center"
-							role="button"
 							tabIndex={0}
-							tip="confirm link"
 							onMouseDown={preventDefault}
 							onClick={handleLinkSubmission}
 							size="sm"
@@ -299,9 +295,7 @@ function FloatingLinkEditor({
 					<div className=" absolute  bg-background rounded-xl  flex flex-row  gap-x-1 items-center  transition-colors duration-500 transform -translate-y-1/2 right-2 top-1/2">
 						<Button
 							className=" rounded-xl z-50 h-6 w-6 flex items-center"
-							role="button"
 							size="sm"
-							tip="edit link"
 							tabIndex={0}
 							onMouseDown={preventDefault}
 							onClick={(event) => {
@@ -314,10 +308,8 @@ function FloatingLinkEditor({
 						</Button>
 						<Button
 							className=" rounded-xl h-6 w-6 flex items-center"
-							role="button"
 							tabIndex={0}
 							variant={"secondary"}
-							tip="delet link"
 							size="sm"
 							onMouseDown={preventDefault}
 							onClick={() => {

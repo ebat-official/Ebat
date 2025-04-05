@@ -452,7 +452,6 @@ export default function index({
 								onPressedChange={() => {
 									activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
 								}}
-								tip={`Bold ${SHORTCUTS.BOLD}`}
 								aria-label={`Format text as bold. Shortcut: ${SHORTCUTS.BOLD}`}
 							>
 								<Bold />
@@ -464,7 +463,6 @@ export default function index({
 								onPressedChange={() => {
 									activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
 								}}
-								tip={`Italic (${SHORTCUTS.ITALIC})`}
 								type="button"
 								aria-label={`Format text as italics. Shortcut: ${SHORTCUTS.ITALIC}`}
 							>
@@ -480,7 +478,6 @@ export default function index({
 										"underline",
 									);
 								}}
-								tip={`Underline (${SHORTCUTS.UNDERLINE})`}
 								type="button"
 								aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
 							>
@@ -493,7 +490,6 @@ export default function index({
 								onPressedChange={() => {
 									activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
 								}}
-								tip={`Insert code block (${SHORTCUTS.INSERT_CODE_BLOCK})`}
 								type="button"
 								aria-label="Insert code block"
 							>
@@ -505,7 +501,6 @@ export default function index({
 								onPressedChange={insertLink}
 								pressed={toolbarState.isLink}
 								aria-label="Insert link"
-								tip={`Insert link (${SHORTCUTS.INSERT_LINK})`}
 								type="button"
 							>
 								<Link />

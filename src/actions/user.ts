@@ -97,7 +97,7 @@ export async function setEmailVerified(email: string) {
 export async function setEmailVerifiedUsingToken(token: string) {
 	const user = await validateVerificationToken(token);
 
-	if (typeof user.data !== "object" || !user.data?.email) {
+	if (typeof user.data !== "object" || !("email" in user.data)) {
 		return null;
 	}
 

@@ -8,6 +8,7 @@ import React, {
 	useMemo,
 } from "react";
 import { PLUGIN_CONFIG, pluginConfig, PluginConfigured } from "../appSettings";
+import { PluginNames } from "../constants";
 
 interface EditorContextType {
 	id: string;
@@ -32,11 +33,11 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
 	const [pluginConfig, setPluginConfig] = useState(PLUGIN_CONFIG);
 	const [minHeight, setMinHeight] = useState<string>("250px");
 
-	const setPlugin = useCallback((plugin: PluginConfigured, options: object) => {
+	const setPlugin = useCallback((plugin: PluginNames, options: object) => {
 		setPluginConfig((prev) => ({
 			...prev,
 			[plugin]: {
-				...prev[plugin],
+				...(prev[plugin as keyof typeof prev] || {}),
 				...options,
 			},
 		}));

@@ -1,5 +1,6 @@
 "use client";
-import React, { FC, useEffect, useRef, useState } from "react";
+
+import React, { FC, useEffect, useRef, useState, Suspense } from "react";
 import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -23,6 +24,7 @@ import {
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 import FormSuccess from "@/components/shared/FormSuccess";
 import FormError from "@/components/shared/FormError";
+
 type pageProps = {};
 
 type FormValues = {
@@ -94,7 +96,6 @@ const ResetPassword: FC<pageProps> = ({}) => {
 		if (!(typeof data.data === "object")) {
 			return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
 		}
-		// const setVerifyEmail = await setEmailVerified(data.data?.email);
 		const updatePassword = await updateUserPasswordWithToken(
 			verificationToken,
 			formData.password,
@@ -213,4 +214,10 @@ const ResetPassword: FC<pageProps> = ({}) => {
 	);
 };
 
-export default ResetPassword;
+export default function ResetPasswordPage() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<ResetPassword />
+		</Suspense>
+	);
+}

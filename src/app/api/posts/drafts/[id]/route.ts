@@ -9,33 +9,14 @@ import {
 	UNAUTHENTICATED_ERROR,
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
+import { getPostById } from "@/actions/post";
 
-/**
- * Fetches a post by ID with only required fields.
- */
-export async function getPostById(postId: string) {
-	return prisma.post.findUnique({
-		where: { id: postId },
-		select: {
-			id: true,
-			title: true,
-			content: true,
-			status: true,
-			approvalStatus: true,
-			authorId: true,
-			createdAt: true,
-			updatedAt: true,
-			difficulty: true,
-			companies: true,
-			completionDuration: true,
-			topics: true,
-		},
-	});
-}
-
-export async function GET(req: Request, context: { params: { id: string } }) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const { id } = await context.params;
+		const { id } = await params;
 
 		if (!id) {
 			return NextResponse.json(ID_NOT_EXIST_ERROR, { status: 404 });
@@ -52,19 +33,18 @@ export async function GET(req: Request, context: { params: { id: string } }) {
 		if (isLivePost) {
 			return NextResponse.json(LIVE_POST_EDIT_ERROR, { status: 403 });
 		}
+
 		// Authorization: Only the author can see Draft/Not Live posts
-		if (!isLivePost) {
-			const session = await auth();
-			const user = session?.user;
+		const session = await auth();
+		const user = session?.user;
 
-			if (!user) {
-				return NextResponse.json(UNAUTHENTICATED_ERROR, { status: 401 });
-			}
+		if (!user) {
+			return NextResponse.json(UNAUTHENTICATED_ERROR, { status: 401 });
+		}
 
-			const isOwner = post.authorId === user.id;
-			if (!isOwner) {
-				return NextResponse.json(UNAUTHORIZED_ERROR, { status: 403 });
-			}
+		const isOwner = post.authorId === user.id;
+		if (!isOwner) {
+			return NextResponse.json(UNAUTHORIZED_ERROR, { status: 403 });
 		}
 
 		return NextResponse.json(post, { status: 200 });

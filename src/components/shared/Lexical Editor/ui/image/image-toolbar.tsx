@@ -136,7 +136,6 @@ export default function ImageToolBar({
 				<div className="flex flex-row items-center">
 					<Button
 						onClick={toggleResizeInput}
-						tip="Resize image"
 						variant={"ghost"}
 						size={"sm"}
 						className="w-6 h-6 p-1 "
@@ -190,7 +189,6 @@ export default function ImageToolBar({
 						onClick={ChangeSideToLeft}
 						variant={"ghost"}
 						size={"sm"}
-						tip="move left"
 						className="w-6 h-6 p-1 "
 					>
 						<PanelLeftClose />
@@ -200,7 +198,6 @@ export default function ImageToolBar({
 						variant={"ghost"}
 						onClick={ChangeSideToCenter}
 						className=" mx-1 w-6 h-6 p-1 opacity-[0.70] hover:opacity-100 transition-opacity"
-						tip="move center"
 					>
 						<AlignCenterVertical />
 					</Button>
@@ -209,7 +206,6 @@ export default function ImageToolBar({
 						variant={"ghost"}
 						onClick={ChangeSideToRight}
 						className="  w-6 h-6 p-1 opacity-[0.70] hover:opacity-100 transition-opacity"
-						tip="move right"
 					>
 						<PanelLeftClose />
 					</Button>
@@ -223,7 +219,6 @@ export default function ImageToolBar({
 						setShowInput(!showInput);
 					}}
 					className="  w-6 h-6 p-1 opacity-[0.70] hover:opacity-100 transition-opacity"
-					tip="border radius"
 				>
 					<Radius />
 				</Button>
@@ -253,7 +248,6 @@ export default function ImageToolBar({
 					variant={"ghost"}
 					onClick={setShowCaption}
 					className="  w-6 h-6 p-1 opacity-[0.70] hover:opacity-100 transition-opacity"
-					tip="add caption"
 				>
 					<CaptionsIcon />
 				</Button>

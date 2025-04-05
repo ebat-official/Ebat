@@ -73,3 +73,10 @@
 
 // // Wrap the PostPage component with withSEO (for SEO metadata)
 // export default withSEO(PostPage);
+import React from "react";
+
+function page() {
+	return <div>page</div>;
+}
+
+export default page;

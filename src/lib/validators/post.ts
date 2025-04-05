@@ -17,6 +17,7 @@ import {
 } from "@/utils/contants";
 import { OutputData } from "@editorjs/editorjs";
 import { EditorContent } from "@/utils/types";
+import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
 
 export const PostDraftValidator = z
 	.object({
@@ -120,7 +121,11 @@ export const PostValidator = BasePostValidator.superRefine((data, ctx) => {
 	const { type, content } = data;
 
 	if (type === PostType.QUESTION) {
-		if (!content.answer?.blocks || content.answer.blocks.length === 0) {
+		// @ts-ignore
+		if (
+			!content.answer?.blocks ||
+			isLexicalEditorEmpty(content.answer.blocks)
+		) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: ANSWER_REQUIRED,
@@ -128,7 +133,7 @@ export const PostValidator = BasePostValidator.superRefine((data, ctx) => {
 			});
 		}
 	} else {
-		if (!content.post?.blocks || content.post.blocks.length === 0) {
+		if (!content.post?.blocks || isLexicalEditorEmpty(content.post.blocks)) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				message: POST_REQUIRED,
