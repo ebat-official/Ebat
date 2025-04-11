@@ -25,19 +25,21 @@ import { EditorProvider } from "@/components/shared/Lexical Editor/providers/Edi
 import { POST_ACTIONS } from "@/utils/contants";
 import { usePostFetchManager } from "@/hooks/query/usePostFetchManager";
 
-interface QuestionCreateEditProps {
+interface PostCreateEditProps {
 	category: CategoryType;
 	subCategory: SubCategoryType;
 	postId?: string;
 	action: PostActions;
+	postType: PostType;
 }
 
-function QuestionCreateEdit({
+function PostCreateEdit({
 	category,
 	subCategory,
 	postId: initialPostId,
 	action,
-}: QuestionCreateEditProps) {
+	postType,
+}: PostCreateEditProps) {
 	const [sidebarData, setSidebarData] = useState({});
 	const router = useRouter();
 	const [postId, setPostId] = useState<string>(initialPostId || "");
@@ -81,7 +83,7 @@ function QuestionCreateEdit({
 
 	useEffect(() => {
 		if (!postFetchError) return;
-		const message = handleError(postFetchError, PostType.QUESTION);
+		const message = handleError(postFetchError, postType);
 
 		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
 			setLoginModalMessage("Please sign in to edit your post");
@@ -100,7 +102,7 @@ function QuestionCreateEdit({
 	useEffect(() => {
 		if (!postPublishError) return;
 
-		const message = handleError(postPublishError, PostType.QUESTION);
+		const message = handleError(postPublishError, postType);
 
 		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
 			setLoginModalMessage("Please sign in to publish your post");
@@ -116,10 +118,13 @@ function QuestionCreateEdit({
 		return {
 			postId,
 			category,
-			subCategory,
+			subCategory:
+				postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN
+					? undefined
+					: subCategory,
 			postContent,
 			sidebarData,
-			type: PostType.QUESTION,
+			type: postType,
 		};
 	};
 
@@ -191,7 +196,7 @@ function QuestionCreateEdit({
 					<RightPanelLayout.MainPanel>
 						<EditorContainer
 							postId={postId}
-							postType={PostType.QUESTION}
+							postType={postType}
 							saveHandler={saveHandler}
 							publishHandler={publishHandler}
 							dataLoading={isLoading}
@@ -215,4 +220,4 @@ function QuestionCreateEdit({
 	);
 }
 
-export default QuestionCreateEdit;
+export default PostCreateEdit;

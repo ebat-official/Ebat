@@ -5,7 +5,8 @@ import { useParams, notFound } from "next/navigation";
 import isValidCategory from "@/utils/isValidCategory";
 import isValidSubCategory from "@/utils/isValidSubCategory";
 import { POST_ACTIONS } from "@/utils/contants";
-import QuestionCreateEdit from "@/components/main/QuestionCreateEdit";
+import PostCreateEdit from "@/components/main/PostCreateEdit";
+import { PostType } from "@prisma/client";
 
 function Page() {
 	const {
@@ -34,11 +35,12 @@ function Page() {
 	}
 
 	return (
-		<QuestionCreateEdit
+		<PostCreateEdit
 			category={category}
 			subCategory={subCategory}
 			postId={postId}
 			action={POST_ACTIONS.CREATE}
+			postType={PostType.QUESTION}
 		/>
 	);
 }

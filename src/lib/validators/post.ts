@@ -18,6 +18,7 @@ import {
 import { OutputData } from "@editorjs/editorjs";
 import { EditorContent } from "@/utils/types";
 import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
+import subCategory from "@/utils/subCategoryConfig";
 
 export const PostDraftValidator = z
 	.object({

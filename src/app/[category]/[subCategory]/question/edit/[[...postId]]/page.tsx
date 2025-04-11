@@ -5,7 +5,7 @@ import { useParams, notFound } from "next/navigation";
 import isValidCategory from "@/utils/isValidCategory";
 import isValidSubCategory from "@/utils/isValidSubCategory";
 import { POST_ACTIONS } from "@/utils/contants";
-import QuestionCreateEdit from "@/components/main/QuestionCreateEdit";
+import QuestionCreateEdit from "@/components/main/PostCreateEdit";
 
 function Page() {
 	const {
