@@ -32,7 +32,7 @@ export const handleError = (error: unknown, postType: PostType): string => {
 
 	if (error instanceof Error) {
 		if (error.message.includes("Something went wrong")) {
-			return "Database error";
+			return "Something went wrong";
 		}
 
 		return error.message;

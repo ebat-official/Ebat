@@ -1,0 +1,33 @@
+import { usePost } from "@/hooks/query/usePost";
+import { usePostDraft } from "@/hooks/query/usePostDraft";
+import { PostWithContent } from "@/utils/types";
+import { POST_ACTIONS } from "@/utils/contants";
+
+type PostFetchParams = {
+	postId?: string;
+	action: "edit" | "create";
+	enabled?: boolean;
+};
+
+const defaultReturnValue = {
+	data: null,
+	isLoading: false,
+	error: null,
+};
+
+export const usePostFetchManager = (params: PostFetchParams) => {
+	const { postId, action, enabled } = params;
+	if (!enabled) {
+		return defaultReturnValue;
+	}
+
+	if (action === POST_ACTIONS.EDIT) {
+		// Call usePost for editing
+		return usePost(postId || "");
+	}
+	if (action === POST_ACTIONS.CREATE) {
+		// Call usePostDraft for creating
+		return usePostDraft(postId || "");
+	}
+	return defaultReturnValue;
+};

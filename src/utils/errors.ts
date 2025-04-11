@@ -107,7 +107,7 @@ export const ID_NOT_EXIST_ERROR = {
 export const POST_NOT_PUBLISHED_ERROR = {
 	status: ERROR,
 	cause: FAILED_TO_EDIT_POST,
-	data: { message: "This post is not availble yet" },
+	data: { message: "This post is not available yet" },
 };
 export const LIVE_POST_EDIT_ERROR = {
 	status: ERROR,

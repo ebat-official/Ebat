@@ -1,6 +1,8 @@
 import { OutputData } from "@editorjs/editorjs";
-import { PostCategory, SubCategory } from "@prisma/client";
+import { Post, PostCategory, SubCategory } from "@prisma/client";
+import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
+import { POST_ACTIONS } from "./contants";
 
 export interface ContentType {
 	post?: EditorContent;
@@ -30,3 +32,11 @@ export interface EditorContent {
 	title?: string;
 	blocks?: SerializedEditorState;
 }
+export type PostWithContent = Post & { content: ContentType };
+export type postCreateOptions = Partial<
+	UseQueryOptions<PostWithContent, Error>
+> & {
+	action?: PostActions;
+};
+
+export type PostActions = (typeof POST_ACTIONS)[keyof typeof POST_ACTIONS];

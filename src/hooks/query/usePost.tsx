@@ -8,12 +8,11 @@ import {
 	UseQueryResult,
 } from "@tanstack/react-query";
 
-// Extend UseQueryOptions to include the `action` field
-
-const fetchPostDraftById = async (postId: string): Promise<PostWithContent> => {
+// Fetch a post by its ID
+const fetchPostById = async (postId: string): Promise<PostWithContent> => {
 	if (!postId) throw ID_NOT_EXIST_ERROR;
 
-	const res = await fetch(`/api/posts/drafts/${postId}`);
+	const res = await fetch(`/api/posts/${postId}`);
 
 	if (!res.ok) {
 		let errorMessage = UNKNOWN_ERROR;
@@ -28,18 +27,20 @@ const fetchPostDraftById = async (postId: string): Promise<PostWithContent> => {
 	return { ...post, content: post.content as ContentType };
 };
 
-export function usePostDraft(
+// Hook for fetching a post by ID
+export function usePost(
 	postId: string | undefined,
 	options?: postCreateOptions,
 ): UseQueryResult<PostWithContent, Error> {
 	return useQuery<PostWithContent, Error>({
-		queryKey: ["post", postId],
-		queryFn: () => fetchPostDraftById(postId!),
+		queryKey: ["post", postId, options?.action],
+		queryFn: () => fetchPostById(postId!),
 		enabled: !!postId,
 		...options,
 	});
 }
 
+// Hook for invalidating a post query
 export function useInvalidatePost() {
 	const queryClient = useQueryClient();
 	return (postId: string) =>

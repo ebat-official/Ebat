@@ -36,3 +36,7 @@ export const FAILED_TO_EDIT_DRAFT = "Failed To Edit Post Draft";
 export const CANNOT_EDIT_PUBLISHED_POST = "Cannot Edit a Published Post";
 export const PASSWORD = "password";
 export const TEXT = "text";
+export const POST_ACTIONS = {
+	EDIT: "edit",
+	CREATE: "create",
+} as const;

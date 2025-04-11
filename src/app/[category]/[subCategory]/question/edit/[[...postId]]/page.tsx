@@ -38,7 +38,7 @@ function Page() {
 			category={category}
 			subCategory={subCategory}
 			postId={postId}
-			action={POST_ACTIONS.CREATE}
+			action={POST_ACTIONS.EDIT}
 		/>
 	);
 }

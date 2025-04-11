@@ -14,7 +14,7 @@ type PostParams = {
 	type: PostType;
 };
 
-export const usePostManager = () => {
+export const usePostPublishManager = () => {
 	// Separate loading states for draft and publish actions
 	const [createDraft, isDrafting] = useServerAction(createDraftPost);
 	const [publishPost, isPublishing] = useServerAction(createPost);

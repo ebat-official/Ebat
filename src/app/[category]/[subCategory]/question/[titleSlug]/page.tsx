@@ -11,6 +11,7 @@ import {
 } from "@/utils/metadata";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { SerializedEditorState } from "lexical";
+import { isValidCategoryCombo } from "@/utils/isValidCategoryCombo";
 
 // Updated Type definitions for Next.js 15
 type PageParams = Promise<{
@@ -38,40 +39,6 @@ export async function generateStaticParams() {
 		subCategory: post.subCategory?.toLowerCase() ?? "general",
 		titleSlug: `${post.slug}-${post.id}`,
 	}));
-}
-
-function isValidCategoryCombo(
-	category: string,
-	subCategory: string | null,
-): category is PostCategory {
-	const validCombinations: Record<PostCategory, SubCategory[]> = {
-		[PostCategory.FRONTEND]: [
-			SubCategory.JAVASCRIPT,
-			SubCategory.HTML,
-			SubCategory.CSS,
-			SubCategory.REACT,
-		],
-		[PostCategory.BACKEND]: [],
-		[PostCategory.ANDROID]: [],
-	};
-
-	const categoryEnum = Object.values(PostCategory).find(
-		(c) => c.toLowerCase() === category.toLowerCase(),
-	) as PostCategory | undefined;
-
-	if (!categoryEnum) return false;
-
-	if (validCombinations[categoryEnum].length === 0) return true;
-
-	const subCategoryEnum = subCategory
-		? (Object.values(SubCategory).find(
-				(sc) => sc.toLowerCase() === subCategory.toLowerCase(),
-			) as SubCategory | undefined)
-		: null;
-
-	return subCategoryEnum
-		? validCombinations[categoryEnum].includes(subCategoryEnum)
-		: false;
 }
 
 // Enhanced post fetching with proper typing (updated params type)
