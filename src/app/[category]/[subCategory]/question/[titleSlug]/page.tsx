@@ -7,7 +7,6 @@ import { PageParams } from "@/utils/types";
 import { getAllApprovedPosts } from "@/actions/post";
 import { generatePostPathFromPostId } from "@/utils/generatePostPath";
 import StructuredMetaData from "@/components/shared/StructuredMetaData";
-import { POST_AUTOMATIC_REVALIDATE_TIME } from "@/config";
 
 // incremental SSG,should be in the file
 export async function generateStaticParams() {
@@ -52,4 +51,4 @@ export default async function PostPage({ params }: { params: PageParams }) {
 }
 
 // automatic ISR configuration (fallback)
-export const revalidate = POST_AUTOMATIC_REVALIDATE_TIME;
+export const revalidate = 86400; // Revalidate every 1 day

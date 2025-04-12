@@ -24,6 +24,7 @@ export const extractMetadata = (
 	const { url } = options;
 	const content = post.content as ContentType;
 
+	// Generate metadata fields
 	const metaTitle = `${post.title} - ${post.topics?.join(", ") || "EBAT"}`;
 	const metaDescription =
 		getFirstParagraphText(content).slice(0, 150) ||
@@ -31,7 +32,12 @@ export const extractMetadata = (
 	const metaImage = getFirstImageUrl(content) || "/default-image.jpg";
 	const postUrl = `${process.env.ENV_URL}${url}`;
 	const authorName = post.author?.name || "Unknown Author";
-	const keywords = post.topics?.join(", ");
+
+	// Generate keywords
+	const topics = post.topics?.join(", ") || "";
+	const companies = post.companies?.join(", ") || "";
+	const additionalKeywords = `${post.category} question asked in, ${companies}`;
+	const keywords = `${topics}, ${additionalKeywords}`.trim();
 
 	return {
 		metaTitle,
@@ -63,8 +69,6 @@ export const generatePageMetadata = (
 		description: metaDescription,
 		alternates: {
 			canonical: postUrl,
-			prev: options?.prevUrl || null, // Add previous page URL if applicable
-			next: options?.nextUrl || null, // Add next page URL if applicable
 		},
 		openGraph: {
 			title: metaTitle,
