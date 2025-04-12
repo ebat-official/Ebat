@@ -134,7 +134,7 @@ function EditorContainer({
 					</Button>
 				</div>
 				<LexicalEditorWrapper
-					key="question"
+					key={postId}
 					postId={postId}
 					onChange={(data: EditorContent) =>
 						updateContent({ post: { ...content.post, ...data } })

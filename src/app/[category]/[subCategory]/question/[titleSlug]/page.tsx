@@ -9,8 +9,8 @@ import {
 	generateStructuredData,
 	PostWithAuthor,
 } from "@/utils/metadata";
-import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
-import { SerializedEditorState } from "lexical";
+import { ContentType } from "@/utils/types";
+import PostView from "@/components/main/PostView"; // Directly import PostView
 import { isValidCategoryCombo } from "@/utils/isValidCategoryCombo";
 
 // Updated Type definitions for Next.js 15
@@ -124,13 +124,6 @@ export default async function PostPage({ params }: { params: PageParams }) {
 	const awaitedParams = await params;
 	const post = await getPost(awaitedParams);
 	if (!post) return notFound();
-	console.log("post", post);
-
-	const questionHTML = await getHtml(
-		// @ts-ignore
-		post.content?.post?.blocks as SerializedEditorState,
-	);
-	console.log("pranav", questionHTML);
 
 	return (
 		<>
@@ -139,22 +132,8 @@ export default async function PostPage({ params }: { params: PageParams }) {
 				category={awaitedParams.category}
 				subCategory={awaitedParams.subCategory}
 			/>
-			<article className="max-w-3xl mx-auto py-8 px-4">
-				<header className="mb-8">
-					<div className="flex gap-2 mb-2">
-						<span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-							{awaitedParams.category}
-						</span>
-						{awaitedParams.subCategory &&
-							awaitedParams.subCategory !== "general" && (
-								<span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-									{awaitedParams.subCategory}
-								</span>
-							)}
-					</div>
-					<h1 className="text-3xl font-bold">{post.title}</h1>
-				</header>
-				<div dangerouslySetInnerHTML={{ __html: questionHTML }} />
+			<article>
+				<PostView post={post} />
 			</article>
 		</>
 	);

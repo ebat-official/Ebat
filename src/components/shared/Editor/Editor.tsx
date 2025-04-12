@@ -13,6 +13,8 @@ import { Separator } from "@/components/ui/separator";
 import PostContentSkeleton from "./PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
 import { emptyEditorState } from "../Lexical Editor/constants";
+import { PostType } from "@prisma/client";
+import { useEditorContext } from "../Lexical Editor/providers/EditorContext";
 
 // Dynamically import the Lexical Editor with SSR disabled
 const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {
@@ -20,7 +22,7 @@ const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {
 });
 
 interface EditorProps<T extends z.ZodType<EditorContent>> {
-	onChange: (data: z.infer<T>) => void;
+	onChange?: (data: z.infer<T>) => void;
 	answerHandler?: (data: z.infer<T>) => void;
 	editorId?: string;
 	defaultContent?: ContentType;
@@ -31,6 +33,8 @@ interface EditorProps<T extends z.ZodType<EditorContent>> {
 	postId: string;
 	dataLoading?: boolean;
 	answerPlaceHolder?: string;
+	isEditable?: boolean;
+	postType?: PostType;
 }
 
 export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
@@ -38,21 +42,25 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 	defaultContent = {},
 	showTitleField = true,
 	titlePlaceHolder = "Title",
-	contentPlaceHolder = "Type here to write your post...",
+	contentPlaceHolder = "",
 	showCommandDetail = true,
 	postId,
 	dataLoading = false,
 	answerHandler,
 	answerPlaceHolder = "",
+	isEditable = true,
+	postType,
 }: EditorProps<T>) => {
+	const { setMinHeight } = useEditorContext();
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [uploadError, setUploadError] = useState<string | null | undefined>(
 		null,
 	);
-
+	if (!isEditable) setMinHeight("0px");
 	const editorPostId = `editor-post-${postId}`;
-	const editorAnswerId = answerHandler ? `editor-answer-${postId}` : null;
+	const editorAnswerId =
+		answerHandler || defaultContent.answer ? `editor-answer-${postId}` : null;
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
@@ -77,8 +85,8 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 			)}
 
 			<div className="pt-8 min-w-[73%] min-h-[70vh]">
-				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full justify-between ">
-					<div className="h-full flex flex-col">
+				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full  ">
+					<div className={cn(" flex flex-col ", { "h-full": isEditable })}>
 						{showTitleField &&
 							(isLoading || dataLoading ? (
 								<Skeleton className="h-10 w-52" />
@@ -86,9 +94,11 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 								<TextareaAutosize
 									onChange={async () => {
 										const title = _titleRef.current?.value || "";
+										if (!isEditable || !onChange) return;
 										onChange({ title });
 									}}
 									ref={_titleRef}
+									readOnly={!isEditable}
 									defaultValue={defaultContent?.post?.title ?? ""}
 									placeholder={titlePlaceHolder}
 									className={cn(
@@ -101,13 +111,14 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 							isMounted && ( // Render Lexical Editor only on the client
 								<div id={editorPostId} className="mt-6">
 									<Editor
-										isEditable={true}
+										isEditable={isEditable}
 										content={defaultContent.post?.blocks} // Pass initial content
 										placeholder={contentPlaceHolder}
 										id={editorPostId}
 										autoFocus={false}
 										onChangeHandler={(content) => {
 											const title = _titleRef.current?.value || "";
+											if (!isEditable || !onChange) return;
 											onChange({ title, blocks: content });
 										}}
 									/>
@@ -127,7 +138,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 
 					{editorAnswerId && (
 						<>
-							<Separator className="py-0.5" />
+							{isEditable && <Separator className="py-0.5" />}
 
 							{isLoading || dataLoading ? (
 								dataLoading ? (
@@ -144,13 +155,14 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 								isMounted && ( // Render Lexical Editor only on the client
 									<div id={editorAnswerId} className="mt-1">
 										<Editor
-											isEditable={true}
+											isEditable={isEditable}
 											content={defaultContent.answer?.blocks} // Pass initial content
 											placeholder={answerPlaceHolder}
 											id={editorAnswerId}
 											autoFocus={false}
 											onChangeHandler={(content) => {
 												if (answerHandler) {
+													if (!isEditable || !onChange) return;
 													const title = _titleRef.current?.value || "";
 													answerHandler({ blocks: content });
 												}
