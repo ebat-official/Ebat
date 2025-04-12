@@ -57,7 +57,7 @@ function QuestionSidebar({
 		useState(INITIAL_DURATION);
 
 	useEffect(() => {
-		if (!postId) return;
+		if (!postId || dataLoading) return;
 		const data = consolidateData();
 		getSidebarData(data);
 		setLocalStorage(`sidebar-${postId}`, data);
