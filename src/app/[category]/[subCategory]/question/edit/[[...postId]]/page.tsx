@@ -3,9 +3,9 @@
 import React from "react";
 import { useParams, notFound } from "next/navigation";
 import isValidCategory from "@/utils/isValidCategory";
+import isValidSubCategory from "@/utils/isValidSubCategory";
 import { POST_ACTIONS } from "@/utils/contants";
-import { PostType } from "@prisma/client";
-import PostCreateEdit from "@/components/main/PostCreateEdit";
+import QuestionCreateEdit from "@/components/main/PostCreateEdit";
 
 function Page() {
 	const {
@@ -14,11 +14,11 @@ function Page() {
 		postId: postIdParam,
 	} = useParams();
 
+	const subCategory = (
+		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
+	)?.toUpperCase();
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
-	)?.toUpperCase();
-	const postType = (
-		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
 	)?.toUpperCase();
 
 	const postId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
@@ -26,20 +26,19 @@ function Page() {
 	// Validate dynamic parameters
 	if (
 		!category ||
-		!postType ||
-		!(postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) ||
+		!subCategory ||
+		!isValidSubCategory(subCategory) ||
 		!isValidCategory(category)
 	) {
 		notFound();
 	}
 
 	return (
-		<PostCreateEdit
+		<QuestionCreateEdit
 			category={category}
-			subCategory={postType}
+			subCategory={subCategory}
 			postId={postId}
-			action={POST_ACTIONS.CREATE}
-			postType={postType}
+			action={POST_ACTIONS.EDIT}
 		/>
 	);
 }

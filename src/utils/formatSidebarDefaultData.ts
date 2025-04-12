@@ -2,7 +2,7 @@ import { Post } from "@prisma/client";
 import { QuestionSidebarData } from "./types";
 
 const formatSidebarDefaultData = (
-	post: Post | undefined,
+	post: Post | undefined | null,
 ): QuestionSidebarData | undefined => {
 	if (!post) return;
 	return {

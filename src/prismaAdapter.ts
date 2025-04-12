@@ -29,7 +29,7 @@ export const prismaCustomAdapter = () => {
 					const userProfile = await prisma.userProfile.create({
 						data: {
 							userId: createdUser.id,
-							image: image || null, // Explicitly set to null if undefined
+							image: image || null,
 							name: name || null,
 							email: createdUser.email,
 						},

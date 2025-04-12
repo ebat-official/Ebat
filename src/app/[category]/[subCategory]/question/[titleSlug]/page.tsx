@@ -9,6 +9,9 @@ import {
 	generateStructuredData,
 	PostWithAuthor,
 } from "@/utils/metadata";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
+import { SerializedEditorState } from "lexical";
+import { isValidCategoryCombo } from "@/utils/isValidCategoryCombo";
 
 // Updated Type definitions for Next.js 15
 type PageParams = Promise<{
@@ -36,41 +39,6 @@ export async function generateStaticParams() {
 		subCategory: post.subCategory?.toLowerCase() ?? "general",
 		titleSlug: `${post.slug}-${post.id}`,
 	}));
-}
-
-// Enhanced category validation with type guards (unchanged)
-function isValidCategoryCombo(
-	category: string,
-	subCategory: string | null,
-): category is PostCategory {
-	const validCombinations: Record<PostCategory, SubCategory[]> = {
-		[PostCategory.FRONTEND]: [
-			SubCategory.JAVASCRIPT,
-			SubCategory.HTML,
-			SubCategory.CSS,
-			SubCategory.REACT,
-		],
-		[PostCategory.BACKEND]: [],
-		[PostCategory.ANDROID]: [],
-	};
-
-	const categoryEnum = Object.values(PostCategory).find(
-		(c) => c.toLowerCase() === category.toLowerCase(),
-	) as PostCategory | undefined;
-
-	if (!categoryEnum) return false;
-
-	if (validCombinations[categoryEnum].length === 0) return true;
-
-	const subCategoryEnum = subCategory
-		? (Object.values(SubCategory).find(
-				(sc) => sc.toLowerCase() === subCategory.toLowerCase(),
-			) as SubCategory | undefined)
-		: null;
-
-	return subCategoryEnum
-		? validCombinations[categoryEnum].includes(subCategoryEnum)
-		: false;
 }
 
 // Enhanced post fetching with proper typing (updated params type)
@@ -156,6 +124,13 @@ export default async function PostPage({ params }: { params: PageParams }) {
 	const awaitedParams = await params;
 	const post = await getPost(awaitedParams);
 	if (!post) return notFound();
+	console.log("post", post);
+
+	const questionHTML = await getHtml(
+		// @ts-ignore
+		post.content?.post?.blocks as SerializedEditorState,
+	);
+	console.log("pranav", questionHTML);
 
 	return (
 		<>
@@ -179,6 +154,7 @@ export default async function PostPage({ params }: { params: PageParams }) {
 					</div>
 					<h1 className="text-3xl font-bold">{post.title}</h1>
 				</header>
+				<div dangerouslySetInnerHTML={{ __html: questionHTML }} />
 			</article>
 		</>
 	);

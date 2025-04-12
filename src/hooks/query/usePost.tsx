@@ -1,12 +1,5 @@
 import { fetchPostById } from "@/utils/apiUtils";
-import { POST_ROUTE_TYPE, UNKNOWN_ERROR } from "@/utils/contants";
-import { ID_NOT_EXIST_ERROR } from "@/utils/errors";
-import {
-	ContentType,
-	postCreateOptions,
-	PostWithContent,
-	PostRouteType,
-} from "@/utils/types";
+import { postCreateOptions, PostWithContent } from "@/utils/types";
 import {
 	useQuery,
 	useQueryClient,
@@ -14,18 +7,20 @@ import {
 	UseQueryResult,
 } from "@tanstack/react-query";
 
-export function usePostDraft(
+// Hook for fetching a post by ID
+export function usePost(
 	postId: string | undefined,
 	options?: postCreateOptions,
 ): UseQueryResult<PostWithContent, Error> {
 	return useQuery<PostWithContent, Error>({
-		queryKey: ["post", postId],
-		queryFn: () => fetchPostById(postId!, POST_ROUTE_TYPE.DRAFTS),
+		queryKey: ["post", postId, options?.action],
+		queryFn: () => fetchPostById(postId!),
 		enabled: !!postId,
 		...options,
 	});
 }
 
+// Hook for invalidating a post query
 export function useInvalidatePost() {
 	const queryClient = useQueryClient();
 	return (postId: string) =>

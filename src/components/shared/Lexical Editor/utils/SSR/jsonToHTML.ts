@@ -4,6 +4,7 @@ import { parseHTML } from "linkedom";
 import { $generateHtmlFromNodes } from "@lexical/html";
 
 import createHeadlessEditor from "./headless";
+import { SerializedEditorState } from "lexical";
 
 function setupDom() {
 	const { window, document } = parseHTML("<html><body></body></html>");
@@ -31,7 +32,10 @@ function setupWindow() {
 	};
 }
 
-export async function getHtml(serializedEditorState: string) {
+export async function getHtml(serializedEditorState: SerializedEditorState) {
+	if (!serializedEditorState) {
+		return "";
+	}
 	const html: string = await new Promise((resolve) => {
 		const cleanup = setupWindow();
 		const editor = createHeadlessEditor({ namespace: "html-renderer" });

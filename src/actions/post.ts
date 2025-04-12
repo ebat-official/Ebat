@@ -15,6 +15,7 @@ import {
 	LIVE_POST_EDIT_ERROR,
 	UserNotAuthenticatedErr,
 	UserNotAuthorizedErr,
+	ValidationErr,
 } from "@/utils/errors";
 import { z } from "zod";
 import { PrismaJson } from "@/utils/types";
@@ -62,9 +63,7 @@ const checkPostLiveStatus = async (postId: string) => {
 
 	const isLivePost =
 		existingPost?.approvalStatus === PostApprovalStatus.APPROVED;
-	if (existingPost && isLivePost) {
-		throw LIVE_POST_EDIT_ERROR;
-	}
+	return { existingPost, isLivePost };
 };
 
 const buildBasePostData = (
@@ -94,9 +93,8 @@ export async function createDraftPost(
 	if (!validation.success) throw validation.error;
 
 	const user = await validateUser();
-	if (data.id) {
-		await checkPostOwnership(data.id, user.id);
-	}
+	if (!data.id) throw ValidationErr("Post ID is required");
+	await checkPostOwnership(data.id, user.id);
 
 	const postData = {
 		...buildBasePostData(user, data, "DRAFT"),
@@ -120,9 +118,11 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 	if (!validation.success) throw validation.error;
 
 	const user = await validateUser();
-	if (data.id) {
-		await checkPostOwnership(data.id, user.id);
-		await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status
+	if (!data.id) throw ValidationErr("Post ID is required");
+	await checkPostOwnership(data.id, user.id);
+	const { isLivePost } = await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status
+	if (isLivePost) {
+		throw LIVE_POST_EDIT_ERROR;
 	}
 
 	const postData = {
@@ -160,6 +160,87 @@ export async function getPostById(postId: string) {
 			authorId: true,
 			createdAt: true,
 			updatedAt: true,
+		},
+	});
+}
+
+export async function createPostEdit(data: z.infer<typeof PostValidator>) {
+	// Validate the input data
+	console.log("createPostEdit called");
+	const validation = PostValidator.safeParse(data);
+	if (!validation.success) throw validation.error;
+
+	const { isLivePost, existingPost } = await checkPostLiveStatus(data.id);
+	// Only allow updates if the post is not in LIVE status
+	if (!existingPost) {
+		throw FailedToEditPostErr("The post does not exist.");
+	}
+
+	if (!isLivePost) {
+		throw FailedToEditPostErr("Only live posts can be edited.");
+	}
+
+	const user = await validateUser();
+
+	// Build the post edit data
+	const postEditData = {
+		postId: data.id,
+		authorId: user.id,
+		title: data.title,
+		content: data.content,
+		type: data.type,
+		difficulty: data.difficulty,
+		companies: data.companies || [],
+		completionDuration: data.completionDuration || null,
+		topics: data.topics || [],
+		category: data.category,
+		subCategory: data.subCategory || null,
+		approvalLogs: [],
+	};
+
+	try {
+		const postEdit = await prisma.postEdit.upsert({
+			where: {
+				postId_authorId: {
+					postId: data.id,
+					authorId: user.id,
+				},
+			},
+			create: postEditData as PrismaJson,
+			update: postEditData as PrismaJson,
+		});
+
+		return postEdit.id;
+	} catch (error) {
+		throw FailedToEditPostErr("Failed to create the post edit.");
+	}
+}
+
+export async function getEditPostByPostId(postId: string) {
+	const user = await validateUser();
+	return prisma.postEdit.findUnique({
+		where: {
+			postId_authorId: {
+				postId,
+				authorId: user.id,
+			},
+		},
+		select: {
+			id: true,
+			postId: true,
+			authorId: true,
+			title: true,
+			content: true,
+			approvalStatus: true,
+			createdAt: true,
+			updatedAt: true,
+			type: true,
+			difficulty: true,
+			companies: true,
+			completionDuration: true,
+			topics: true,
+			category: true,
+			subCategory: true,
 		},
 	});
 }
