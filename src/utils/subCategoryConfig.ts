@@ -264,6 +264,8 @@ const subCategory = {
 		"AndroidBackgroundAndroidJobScheduler",
 		"AndroidBackgroundAndroidFirebaseJobDispatcher",
 	],
+	BLOGS: [],
+	SYSTEMDESIGN: [],
 };
 
 export default subCategory;
