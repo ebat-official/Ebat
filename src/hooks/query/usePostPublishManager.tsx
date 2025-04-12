@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useServerAction } from "@/hooks/useServerAction";
-import { createDraftPost, createPost } from "@/actions/post";
+import { createDraftPost, createPost, createPostEdit } from "@/actions/post";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
 import consolidatePostData from "@/utils/consolidatePostData";
-import { CategoryType, ContentType } from "@/utils/types";
+import { CategoryType, ContentType, PostActions } from "@/utils/types";
 import { PostType } from "@prisma/client";
+import { POST_ACTIONS } from "@/utils/contants";
 
 type PostParams = {
 	postId: string;
@@ -14,10 +15,14 @@ type PostParams = {
 	type: PostType;
 };
 
-export const usePostPublishManager = () => {
+export const usePostPublishManager = (
+	action: PostActions = POST_ACTIONS.CREATE,
+) => {
 	// Separate loading states for draft and publish actions
 	const [createDraft, isDrafting] = useServerAction(createDraftPost);
-	const [publishPost, isPublishing] = useServerAction(createPost);
+	const publishingAction =
+		action === POST_ACTIONS.EDIT ? createPostEdit : createPost;
+	const [publishPost, isPublishing] = useServerAction(publishingAction);
 
 	const [error, setError] = useState<unknown | null>(null);
 

@@ -196,8 +196,8 @@ model PostEdit {
   id                 String         @id @default(uuid())
   postId             String         
   authorId           String         @db.Uuid
-  content            Json // Suggested new content
-  approvalStatus             PostApprovalStatus @default(PENDING)
+  content            Json? // Suggested new content
+  approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
@@ -208,7 +208,9 @@ model PostEdit {
   completionDuration Int?
   topics             String[]       @default([])
   category           PostCategory
-  subCategory        String
+  subCategory        SubCategory?
+
+  @@unique([postId, authorId],name: "postId_authorId") // Ensure postId and authorId combination is unique
 }
 
 model Comment {

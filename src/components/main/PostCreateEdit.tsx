@@ -60,7 +60,7 @@ function PostCreateEdit({
 		isDrafting,
 		isPublishing,
 		error: postPublishError,
-	} = usePostPublishManager();
+	} = usePostPublishManager(action);
 
 	const {
 		data: postData,
@@ -169,7 +169,9 @@ function PostCreateEdit({
 			<StatusDialog>
 				<StatusDialog.Title>Post Published</StatusDialog.Title>
 				<StatusDialog.Content>
-					Your post has been published and sent for approval
+					{action === POST_ACTIONS.CREATE
+						? "Your post has been published and sent for approval"
+						: "Your post edit has sent for approval"}
 				</StatusDialog.Content>
 				<StatusDialog.Footer>
 					<Button
@@ -203,6 +205,7 @@ function PostCreateEdit({
 							actionDraftLoading={isDrafting}
 							actionPublishLoading={isPublishing}
 							defaultContent={postData?.content}
+							action={action}
 						/>
 					</RightPanelLayout.MainPanel>
 					<RightPanelLayout.SidePanel>

@@ -2,6 +2,7 @@ import { usePost } from "@/hooks/query/usePost";
 import { usePostDraft } from "@/hooks/query/usePostDraft";
 import { PostWithContent } from "@/utils/types";
 import { POST_ACTIONS } from "@/utils/contants";
+import { usePostEdit } from "./usePostEdit";
 
 type PostFetchParams = {
 	postId?: string;
@@ -20,10 +21,9 @@ export const usePostFetchManager = (params: PostFetchParams) => {
 	if (!enabled) {
 		return defaultReturnValue;
 	}
-
 	if (action === POST_ACTIONS.EDIT) {
 		// Call usePost for editing
-		return usePost(postId || "");
+		return usePostEdit(postId || "");
 	}
 	if (action === POST_ACTIONS.CREATE) {
 		// Call usePostDraft for creating

@@ -12,10 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
-import { ContentType, EditorContent } from "@/utils/types";
+import { ContentType, EditorContent, PostActions } from "@/utils/types";
 import { Loader2 } from "lucide-react";
 import { PostType } from "@prisma/client";
 import { emptyEditorState } from "../Lexical Editor/constants";
+import { POST_ACTIONS } from "@/utils/contants";
 
 interface EditorContainerProps {
 	postId: string;
@@ -26,6 +27,7 @@ interface EditorContainerProps {
 	publishHandler: (data: ContentType) => void;
 	actionDraftLoading?: boolean;
 	actionPublishLoading?: boolean;
+	action?: PostActions;
 }
 
 function EditorContainer({
@@ -37,15 +39,14 @@ function EditorContainer({
 	publishHandler,
 	actionDraftLoading,
 	actionPublishLoading,
+	action = POST_ACTIONS.CREATE,
 }: EditorContainerProps) {
 	const [content, setContent] = useState<ContentType>({});
 
-	const localStorageKey = `editor-${postId}`;
+	const localStorageKey = `editor-${action}_${postId}`;
 	const savedData = getLocalStorage<ContentType>(localStorageKey);
 
 	const updateContent = (newContent: Partial<ContentType>) => {
-		console.log("newContent", newContent);
-		console.log("newprev", content);
 		setContent((prev) => {
 			const updated = { ...prev, ...newContent };
 			setLocalStorage(localStorageKey, updated);
@@ -93,29 +94,31 @@ function EditorContainer({
 		<Card className="relative">
 			<CardContent className="flex h-full justify-center px-4 md:px-8">
 				<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 right-0 -translate-y-full">
-					<TooltipProvider>
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button
-									variant="outline"
-									className="justify-center items-center flex ga-2"
-									onClick={() => saveHandler(content)}
-									disabled={actionDraftLoading || actionPublishLoading}
-								>
-									{actionDraftLoading ? (
-										<Loader2 className="animate-spin" />
-									) : (
-										<CiSaveDown2 />
-									)}
+					{action !== POST_ACTIONS.EDIT && (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										variant="outline"
+										className="justify-center items-center flex ga-2"
+										onClick={() => saveHandler(content)}
+										disabled={actionDraftLoading || actionPublishLoading}
+									>
+										{actionDraftLoading ? (
+											<Loader2 className="animate-spin" />
+										) : (
+											<CiSaveDown2 />
+										)}
 
-									<span className="invisible md:visible">Save</span>
-								</Button>
-							</TooltipTrigger>
-							<TooltipContent>
-								<p>Save as draft</p>
-							</TooltipContent>
-						</Tooltip>
-					</TooltipProvider>
+										<span className="invisible md:visible">Save</span>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Save as draft</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					)}
 
 					<Button
 						disabled={actionDraftLoading || actionPublishLoading}

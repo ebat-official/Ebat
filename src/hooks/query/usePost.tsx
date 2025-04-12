@@ -1,31 +1,11 @@
-import { UNKNOWN_ERROR } from "@/utils/contants";
-import { ID_NOT_EXIST_ERROR } from "@/utils/errors";
-import { ContentType, postCreateOptions, PostWithContent } from "@/utils/types";
+import { fetchPostById } from "@/utils/apiUtils";
+import { postCreateOptions, PostWithContent } from "@/utils/types";
 import {
 	useQuery,
 	useQueryClient,
 	UseQueryOptions,
 	UseQueryResult,
 } from "@tanstack/react-query";
-
-// Fetch a post by its ID
-const fetchPostById = async (postId: string): Promise<PostWithContent> => {
-	if (!postId) throw ID_NOT_EXIST_ERROR;
-
-	const res = await fetch(`/api/posts/${postId}`);
-
-	if (!res.ok) {
-		let errorMessage = UNKNOWN_ERROR;
-		try {
-			const errorData = await res.json();
-			errorMessage = errorData || UNKNOWN_ERROR;
-		} catch {}
-		throw errorMessage;
-	}
-
-	const post = await res.json();
-	return { ...post, content: post.content as ContentType };
-};
 
 // Hook for fetching a post by ID
 export function usePost(

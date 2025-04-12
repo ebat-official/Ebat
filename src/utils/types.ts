@@ -2,7 +2,7 @@ import { OutputData } from "@editorjs/editorjs";
 import { Post, PostCategory, PostType, SubCategory } from "@prisma/client";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
-import { POST_ACTIONS } from "./contants";
+import { POST_ACTIONS, POST_ROUTE_TYPE } from "./contants";
 
 export interface ContentType {
 	post?: EditorContent;
@@ -44,3 +44,5 @@ export type postCreateOptions = Partial<
 
 export type PostActions = (typeof POST_ACTIONS)[keyof typeof POST_ACTIONS];
 export type DesignBlogType = Extract<PostType, "BLOGS" | "SYSTEMDESIGN">;
+export type PostRouteType =
+	(typeof POST_ROUTE_TYPE)[keyof typeof POST_ROUTE_TYPE];

@@ -40,3 +40,8 @@ export const POST_ACTIONS = {
 	EDIT: "edit",
 	CREATE: "create",
 } as const;
+export const POST_ROUTE_TYPE = {
+	DEFAULT: "",
+	DRAFTS: "draft",
+	EDIT: "edit",
+} as const;
