@@ -207,9 +207,6 @@ model PostEdit {
   companies          String[]       @default([])
   completionDuration Int?
   topics             String[]       @default([])
-  category           PostCategory
-  subCategory        SubCategory?
-
   @@unique([postId, authorId],name: "postId_authorId") // Ensure postId and authorId combination is unique
 }
 

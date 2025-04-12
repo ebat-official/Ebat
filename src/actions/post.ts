@@ -1,6 +1,7 @@
 "use server";
 import {
 	Difficulty,
+	Post,
 	PostApprovalStatus,
 	PostStatus,
 	PostType,
@@ -22,6 +23,8 @@ import { PrismaJson } from "@/utils/types";
 import { generateTitleSlug } from "@/utils/generateTileSlug";
 import { getCompletionDuration } from "@/utils/getCompletionDuration";
 import { getDefaultCoins } from "@/utils/getDefaultCoins";
+import { generatePostPath } from "@/utils/generatePostPath";
+import { revalidatePath } from "next/cache";
 
 // Shared utility functions
 const currentUser = async () => {
@@ -66,6 +69,17 @@ const checkPostLiveStatus = async (postId: string) => {
 	return { existingPost, isLivePost };
 };
 
+const revalidatePostPath = (post: Post) => {
+	const path = generatePostPath({
+		category: post.category,
+		subCategory: post.subCategory,
+		slug: post.slug || "",
+		id: post.id,
+		postType: post.type,
+	});
+	revalidatePath(path);
+};
+
 const buildBasePostData = (
 	user: { id: string },
 	data: z.infer<typeof PostDraftValidator> | z.infer<typeof PostValidator>,
@@ -102,14 +116,16 @@ export async function createDraftPost(
 		approvalLogs: [],
 	};
 
-	const post = await prisma.post.upsert({
-		where: { id: data.id || undefined },
-		create: postData,
-		update: postData,
-	});
-
-	if (!post) throw FailedToSaveDraftErr();
-	return post.id;
+	try {
+		const post = await prisma.post.upsert({
+			where: { id: data.id || undefined },
+			create: postData,
+			update: postData,
+		});
+		return post.id;
+	} catch (error) {
+		throw FailedToSaveDraftErr();
+	}
 }
 
 // Published Post Creation
@@ -142,6 +158,8 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 			update: postData,
 		});
 
+		// Trigger revalidation for the post's path
+		revalidatePostPath(post);
 		return post.id;
 	} catch (error) {
 		throw FailedToPublishPostErr();
@@ -183,8 +201,6 @@ export async function createPostEdit(data: z.infer<typeof PostValidator>) {
 		companies: data.companies || [],
 		completionDuration: data.completionDuration || null,
 		topics: data.topics || [],
-		category: data.category,
-		subCategory: data.subCategory || null,
 		approvalLogs: [],
 	};
 
@@ -229,8 +245,6 @@ export async function getEditPostByPostId(postId: string) {
 			companies: true,
 			completionDuration: true,
 			topics: true,
-			category: true,
-			subCategory: true,
 		},
 	});
 }

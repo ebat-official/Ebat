@@ -140,4 +140,4 @@ export default async function PostPage({ params }: { params: PageParams }) {
 }
 
 // ISR configuration remains the same
-export const revalidate = 60;
+export const revalidate = "1d";
