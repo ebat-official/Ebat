@@ -248,3 +248,17 @@ export async function getEditPostByPostId(postId: string) {
 		},
 	});
 }
+
+export async function getAllApprovedPosts() {
+	return await prisma.post.findMany({
+		where: {
+			approvalStatus: PostApprovalStatus.APPROVED,
+		},
+		select: {
+			slug: true,
+			id: true,
+			category: true,
+			subCategory: true,
+		},
+	});
+}

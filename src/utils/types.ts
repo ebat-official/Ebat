@@ -46,3 +46,9 @@ export type PostActions = (typeof POST_ACTIONS)[keyof typeof POST_ACTIONS];
 export type DesignBlogType = Extract<PostType, "BLOGS" | "SYSTEMDESIGN">;
 export type PostRouteType =
 	(typeof POST_ROUTE_TYPE)[keyof typeof POST_ROUTE_TYPE];
+
+export type PageParams = Promise<{
+	category: string;
+	subCategory: string;
+	titleSlug: string;
+}>;

@@ -1,38 +1,17 @@
-// app/[category]/[subCategory]/(system_design_and_blogs)/[titleSlug]/page.tsx
 import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
 import type { Metadata } from "next";
-import { POST_ID_LENGTH } from "@/config";
-import { PostApprovalStatus, PostCategory, SubCategory } from "@prisma/client";
-import {
-	generatePageMetadata,
-	generateStructuredData,
-	PostWithAuthor,
-} from "@/utils/metadata";
-import { ContentType } from "@/utils/types";
-import PostView from "@/components/main/PostView"; // Directly import PostView
-import { isValidCategoryCombo } from "@/utils/isValidCategoryCombo";
+import { generatePageMetadata } from "@/utils/metadata";
+import PostView from "@/components/main/PostView";
+import { getPostFromURL } from "@/utils/apiUtils";
+import { PageParams } from "@/utils/types";
+import { getAllApprovedPosts } from "@/actions/post";
+import { generatePostPathFromPostId } from "@/utils/generatePostPath";
+import StructuredMetaData from "@/components/shared/StructuredMetaData";
+import { POST_AUTOMATIC_REVALIDATE_TIME } from "@/config";
 
-// Updated Type definitions for Next.js 15
-type PageParams = Promise<{
-	category: string;
-	subCategory: string;
-	titleSlug: string;
-}>;
-
-// Generate static paths (unchanged)
+// incremental SSG,should be in the file
 export async function generateStaticParams() {
-	const posts = await prisma.post.findMany({
-		where: {
-			approvalStatus: PostApprovalStatus.APPROVED,
-		},
-		select: {
-			slug: true,
-			id: true,
-			category: true,
-			subCategory: true,
-		},
-	});
+	const posts = await getAllApprovedPosts();
 
 	return posts.map((post) => ({
 		category: post.category.toLowerCase(),
@@ -41,97 +20,30 @@ export async function generateStaticParams() {
 	}));
 }
 
-// Enhanced post fetching with proper typing (updated params type)
-async function getPost(params: {
-	category: string;
-	subCategory: string;
-	titleSlug: string;
-}): Promise<PostWithAuthor | null> {
-	const { titleSlug, category, subCategory } = params;
-
-	if (!isValidCategoryCombo(category, subCategory)) {
-		return null;
-	}
-
-	const id = titleSlug.slice(-POST_ID_LENGTH);
-	if (!id) return null;
-
-	try {
-		return await prisma.post.findUnique({
-			where: {
-				id,
-				category: category.toUpperCase() as PostCategory,
-				...(subCategory &&
-					subCategory !== "general" && {
-						subCategory: subCategory.toUpperCase() as SubCategory,
-					}),
-			},
-			include: {
-				author: {
-					select: {
-						name: true,
-					},
-				},
-			},
-		});
-	} catch (error) {
-		console.error("Error fetching post:", error);
-		return null;
-	}
-}
-
-// Metadata generation with updated typing for Next.js 15
+// Metadata Next.js 15 , should be in the file
 export async function generateMetadata({
 	params,
 }: {
 	params: PageParams;
 }): Promise<Metadata> {
 	const awaitedParams = await params;
-	const post = await getPost(awaitedParams);
+	const post = await getPostFromURL(awaitedParams);
 	if (!post) return {};
 
 	return generatePageMetadata(post, {
-		urlPrefix: `/${awaitedParams.category}/${awaitedParams.subCategory}`,
+		url: generatePostPathFromPostId(post),
 	});
-}
-
-// Structured data component (unchanged)
-function StructuredData({
-	post,
-	category,
-	subCategory,
-}: {
-	post: PostWithAuthor;
-	category: string;
-	subCategory: string;
-}) {
-	const structuredData = generateStructuredData(post, {
-		urlPrefix: `/${category}/${subCategory}`,
-	});
-
-	return (
-		<script
-			type="application/ld+json"
-			dangerouslySetInnerHTML={{
-				__html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-			}}
-		/>
-	);
 }
 
 // Main page component updated for Next.js 15
 export default async function PostPage({ params }: { params: PageParams }) {
 	const awaitedParams = await params;
-	const post = await getPost(awaitedParams);
+	const post = await getPostFromURL(awaitedParams);
 	if (!post) return notFound();
 
 	return (
 		<>
-			<StructuredData
-				post={post}
-				category={awaitedParams.category}
-				subCategory={awaitedParams.subCategory}
-			/>
+			<StructuredMetaData post={post} />
 			<article>
 				<PostView post={post} />
 			</article>
@@ -139,5 +51,5 @@ export default async function PostPage({ params }: { params: PageParams }) {
 	);
 }
 
-// ISR configuration remains the same
-export const revalidate = "1d";
+// automatic ISR configuration (fallback)
+export const revalidate = POST_AUTOMATIC_REVALIDATE_TIME;

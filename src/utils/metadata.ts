@@ -12,21 +12,21 @@ export interface PostWithAuthor extends Post {
 }
 
 export interface MetadataOptions {
-	urlPrefix?: string;
+	url?: string;
 }
 
 export const extractMetadata = (
 	post: PostWithAuthor,
 	options: MetadataOptions = {},
 ) => {
-	const { urlPrefix = "/questions" } = options;
+	const { url } = options;
 	const content = post.content as ContentType;
 
 	const metaTitle = post.title || "Default Title";
 	const metaDescription =
 		getFirstParagraphText(content).slice(0, 150) || "Default description";
 	const metaImage = getFirstImageUrl(content) || "/default-image.jpg";
-	const postUrl = `${process.env.ENV_URL}${urlPrefix}/${post.slug}-${post.id}`;
+	const postUrl = `${process.env.ENV_URL}${url}`;
 	const authorName = post.author?.name || "Unknown Author";
 
 	return {
