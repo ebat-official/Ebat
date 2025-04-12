@@ -13,6 +13,8 @@ export interface PostWithAuthor extends Post {
 
 export interface MetadataOptions {
 	url?: string;
+	prevUrl?: string; // For pagination (optional)
+	nextUrl?: string; // For pagination (optional)
 }
 
 export const extractMetadata = (
@@ -22,12 +24,14 @@ export const extractMetadata = (
 	const { url } = options;
 	const content = post.content as ContentType;
 
-	const metaTitle = post.title || "Default Title";
+	const metaTitle = `${post.title} - ${post.topics?.join(", ") || "EBAT"}`;
 	const metaDescription =
-		getFirstParagraphText(content).slice(0, 150) || "Default description";
+		getFirstParagraphText(content).slice(0, 150) ||
+		`Learn more about ${post.topics?.join(", ") || "various topics"} on EBAT`;
 	const metaImage = getFirstImageUrl(content) || "/default-image.jpg";
 	const postUrl = `${process.env.ENV_URL}${url}`;
 	const authorName = post.author?.name || "Unknown Author";
+	const keywords = post.topics?.join(", ");
 
 	return {
 		metaTitle,
@@ -35,7 +39,8 @@ export const extractMetadata = (
 		metaImage,
 		postUrl,
 		authorName,
-		publishedTime: new Date().toISOString(),
+		keywords,
+		publishedTime: post.createdAt.toISOString(),
 	};
 };
 
@@ -49,6 +54,7 @@ export const generatePageMetadata = (
 		metaImage,
 		postUrl,
 		authorName,
+		keywords,
 		publishedTime,
 	} = extractMetadata(post, options);
 
@@ -57,6 +63,8 @@ export const generatePageMetadata = (
 		description: metaDescription,
 		alternates: {
 			canonical: postUrl,
+			prev: options?.prevUrl || null, // Add previous page URL if applicable
+			next: options?.nextUrl || null, // Add next page URL if applicable
 		},
 		openGraph: {
 			title: metaTitle,
@@ -77,6 +85,7 @@ export const generatePageMetadata = (
 			index: true,
 			follow: true,
 		},
+		keywords, // Add keywords here
 	};
 };
 
@@ -91,6 +100,7 @@ export const generateStructuredData = (
 		postUrl,
 		authorName,
 		publishedTime,
+		keywords,
 	} = extractMetadata(post, options);
 
 	return {
@@ -105,5 +115,29 @@ export const generateStructuredData = (
 		datePublished: publishedTime,
 		image: metaImage,
 		url: postUrl,
+		keywords,
+		breadcrumb: {
+			"@type": "BreadcrumbList",
+			itemListElement: [
+				{
+					"@type": "ListItem",
+					position: 1,
+					name: "Home",
+					item: `${process.env.ENV_URL}/`,
+				},
+				{
+					"@type": "ListItem",
+					position: 2,
+					name: post.category,
+					item: `${process.env.ENV_URL}/category/${post.category.toLowerCase()}`,
+				},
+				{
+					"@type": "ListItem",
+					position: 3,
+					name: post.title,
+					item: postUrl,
+				},
+			],
+		},
 	};
 };
