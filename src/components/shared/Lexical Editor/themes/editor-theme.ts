@@ -1,13 +1,6 @@
 import type { EditorThemeClasses } from "lexical";
 
 import "./theme.css";
-import { FONT_FAMILY, FONT_SIZE, LINE_HEIGHT } from "../appSettings";
-
-const CONTENT_STYLES = `
-  ${FONT_FAMILY}
-  ${FONT_SIZE}
-  ${LINE_HEIGHT}
-`;
 
 const theme: EditorThemeClasses = {
 	code: `
@@ -55,7 +48,7 @@ const theme: EditorThemeClasses = {
 		checklist: "PlaygroundEditorTheme__checklist",
 		listitem: `
       PlaygroundEditorTheme__listItem
-      ${CONTENT_STYLES}
+      
     `,
 		listitemChecked: "PlaygroundEditorTheme__listItemChecked",
 		listitemUnchecked: "PlaygroundEditorTheme__listItemUnchecked",
@@ -80,7 +73,7 @@ const theme: EditorThemeClasses = {
 		ol: "ol",
 	},
 	paragraph: `
-    ${CONTENT_STYLES}
+    
     leading-7
   `,
 	link: `underline cursor-pointer text-blue-600 after:content-['_↗']`,
@@ -109,7 +102,7 @@ const theme: EditorThemeClasses = {
 		h6: "text-sm font-bold",
 	},
 	quote: `
-    ${CONTENT_STYLES}
+    
     mt-6 border-l-[4px] pl-6 italic
   `,
 	text: {

@@ -133,7 +133,7 @@ export default function Core({
 
 	const { pluginConfig, minHeight } = useEditorContext();
 	return (
-		<div className="relative flex">
+		<div className="relative flex editor">
 			<div
 				onMouseEnter={() => setIsHovering(true)}
 				onMouseLeave={() => setIsHovering(false)}

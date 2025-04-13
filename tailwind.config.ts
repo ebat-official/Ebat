@@ -73,6 +73,7 @@ export default {
 					...defaultTheme.fontFamily.serif,
 				],
 				code: ["var(--font-code)", ...defaultTheme.fontFamily.mono],
+				sans: ["system-ui", ...defaultTheme.fontFamily.sans],
 			},
 			typography: {
 				DEFAULT: {

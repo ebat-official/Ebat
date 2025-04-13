@@ -25,6 +25,13 @@
   -webkit-font-smoothing: antialiased;
 }
 
+.editor {
+  font-family: "system-ui" !important;
+}
+.editor * {
+  font-family: inherit;
+}
+
 /* ========== PARAGRAPHS ========== */
 .editor p {
   margin: 1.75em 0;

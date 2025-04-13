@@ -372,7 +372,3 @@ export const PLUGIN_CONFIG = {
 };
 export type pluginConfig = typeof PLUGIN_CONFIG;
 export type PluginConfigured = keyof typeof PLUGIN_NAMES;
-
-export const FONT_FAMILY = "font-sans !important";
-export const FONT_SIZE = "text-[16px]";
-export const LINE_HEIGHT = "leading-[28px]";

@@ -15,6 +15,8 @@ import { ContentType, EditorContent } from "@/utils/types";
 import { emptyEditorState } from "../Lexical Editor/constants";
 import { PostType } from "@prisma/client";
 import { useEditorContext } from "../Lexical Editor/providers/EditorContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { RiQuestionAnswerLine } from "react-icons/ri";
 
 // Dynamically import the Lexical Editor with SSR disabled
 const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {
@@ -85,7 +87,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 			)}
 
 			<div className="pt-8 min-w-[73%] min-h-[70vh]">
-				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full  ">
+				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full gap-2  ">
 					<div className={cn(" flex flex-col ", { "h-full": isEditable })}>
 						{showTitleField &&
 							(isLoading || dataLoading ? (
@@ -151,25 +153,35 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 								)
 							) : null}
 
-							{!dataLoading &&
-								isMounted && ( // Render Lexical Editor only on the client
-									<div id={editorAnswerId} className="mt-1">
-										<Editor
-											isEditable={isEditable}
-											content={defaultContent.answer?.blocks} // Pass initial content
-											placeholder={answerPlaceHolder}
-											id={editorAnswerId}
-											autoFocus={false}
-											onChangeHandler={(content) => {
-												if (answerHandler) {
-													if (!isEditable || !onChange) return;
-													const title = _titleRef.current?.value || "";
-													answerHandler({ blocks: content });
-												}
-											}}
-										/>
-									</div>
-								)}
+							{!dataLoading && isMounted && (
+								<div
+									className={cn({
+										"bg-foreground/5 text-card-foreground flex flex-col rounded-xl border p-2 shadow-sm ":
+											!isEditable,
+									})}
+								>
+									{!isEditable && (
+										<div className="flex gap-2 items-center pt-4 pl-4 text-md font-bold text-green-500">
+											<RiQuestionAnswerLine />
+											<span>Answer</span>
+										</div>
+									)}
+									<Editor
+										isEditable={isEditable}
+										content={defaultContent.answer?.blocks} // Pass initial content
+										placeholder={answerPlaceHolder}
+										id={editorAnswerId}
+										autoFocus={false}
+										onChangeHandler={(content) => {
+											if (answerHandler) {
+												if (!isEditable || !onChange) return;
+												const title = _titleRef.current?.value || "";
+												answerHandler({ blocks: content });
+											}
+										}}
+									/>
+								</div>
+							)}
 						</>
 					)}
 
