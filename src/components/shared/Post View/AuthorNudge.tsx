@@ -25,10 +25,10 @@ const AuthorNudge = ({ author }: { author: UserProfile }) => {
 
 			<div className="flex flex-col justify-center flex-shrink overflow-hidden">
 				<span className="text-sm font-bold capitalize ">
-					{truncateText(author.name || "", 30)?.toLowerCase() ||
+					{truncateText(author.name?.split(" ")[0] || "", 10)?.toLowerCase() ||
 						"Anonymous Author"}
 				</span>
-				<span className="text-sm opacity-80 font-medium capitalize">
+				<span className="hidden sm:block text-sm opacity-80 font-medium capitalize">
 					{truncateText(author.companyName || "", 30)?.toLowerCase()}
 				</span>
 			</div>

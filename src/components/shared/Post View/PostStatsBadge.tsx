@@ -36,8 +36,8 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({
 	userProfile,
 }) => {
 	return (
-		<Card className="border-none py-0">
-			<CardContent className="flex gap-4">
+		<Card className="border-none py-0 shadow-none bg-transparent">
+			<CardContent className="flex gap-1 sm:gap-4 px-0 sm:px-4 md:px-6">
 				<AuthorNudge author={userProfile} />
 				{post.difficulty && <DifficultyBadge difficulty={post.difficulty} />}
 				<CoinsBadge coins={post.coins || 0} />
@@ -62,7 +62,7 @@ const DifficultyBadge: FC<DifficultyBadgeProps> = ({ difficulty }) => {
 				className={colorMap[difficulty.toUpperCase()] || "text-gray-500"}
 			/>
 			<span
-				className={`font-bold text-sm capitalize ${
+				className={`font-semibold text-sm capitalize ${
 					colorMap[difficulty.toUpperCase()] || "text-gray-500"
 				}`}
 			>
@@ -80,7 +80,10 @@ const CoinsBadge: FC<CoinsBadgeProps> = ({ coins }) => {
 				<TooltipTrigger asChild>
 					<div className="flex items-center justify-center gap-1 cursor-pointer">
 						<BiCoinStack className="text-yellow-500" size={20} />
-						<span className="font-bold text-sm capitalize">{coins} coin</span>
+						<span className="font-semibold text-sm capitalize flex gap-1">
+							{coins}
+							<span className="hidden sm:block">coin</span>
+						</span>
 					</div>
 				</TooltipTrigger>
 				<TooltipContent>
@@ -100,8 +103,9 @@ const CompletionBadge: FC<CompletionBadgeProps> = ({ completionCount }) => {
 	return (
 		<div className="flex items-center justify-center gap-1">
 			<FiCheckCircle className="text-green-500" size={18} strokeWidth={3} />
-			<span className="font-bold text-sm capitalize">
-				{formatCount(completionCount)} completed
+			<span className="font-semibold text-sm capitalize flex gap-1">
+				{formatCount(completionCount)}
+				<span className="hidden sm:block">completed</span>
 			</span>
 		</div>
 	);

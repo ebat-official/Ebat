@@ -6,6 +6,7 @@ import { Card, CardContent } from "../../ui/card";
 import { Post, UserProfile } from "@prisma/client";
 import { LexicalViewer } from "./LexicalViewer";
 import { PostStatsBadge } from "./PostStatsBadge";
+import { Separator } from "@/components/ui/separator";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -18,12 +19,13 @@ const PostView: FC<PostViewProps> = ({ post, userProfile }) => {
 		<EditorProvider>
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel>
-					<Card className="relative">
-						<CardContent className="flex flex-col h-full justify-center px-4 md:px-8">
+					<Card className="relative items-center ">
+						<CardContent className="flex flex-col h-full justify-center px-4 md:px-8 max-w-3xl">
 							<h1 className="opacity-80 w-full overflow-hidden text-lg md:text-xl lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none mb-4 leading-relaxed">
 								{post.title}
 							</h1>
 							<PostStatsBadge post={post} userProfile={userProfile} />
+							<Separator className=" mt-2" />
 							<LexicalViewer
 								key={post.id}
 								postId={post.id}
