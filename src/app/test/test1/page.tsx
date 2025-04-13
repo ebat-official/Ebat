@@ -58,7 +58,6 @@ const InfiniteScroll = () => {
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
-				console.log(entries, loading);
 				if (entries[0].isIntersecting && !loading) {
 					loadMoreNumbers();
 				}

@@ -174,7 +174,7 @@ export async function getPostById(postId: string) {
 
 export async function createPostEdit(data: z.infer<typeof PostValidator>) {
 	// Validate the input data
-	console.log("createPostEdit called");
+
 	const validation = PostValidator.safeParse(data);
 	if (!validation.success) throw validation.error;
 

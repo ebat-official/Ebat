@@ -1,7 +1,8 @@
 import { generatePostPathFromPostId } from "@/utils/generatePostPath";
-import { generateStructuredData, PostWithAuthor } from "@/utils/metadata";
+import { generateStructuredData } from "@/utils/metadata";
+import { PostWithExtraDetails } from "@/utils/types";
 
-function StructuredMetaData({ post }: { post: PostWithAuthor }) {
+function StructuredMetaData({ post }: { post: PostWithExtraDetails }) {
 	const structuredData = generateStructuredData(post, {
 		url: generatePostPathFromPostId(post),
 	});

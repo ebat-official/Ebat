@@ -52,3 +52,9 @@ export type PageParams = Promise<{
 	subCategory: string;
 	titleSlug: string;
 }>;
+export type PostWithExtraDetails = Post & {
+	completionCount?: number;
+	author?: {
+		name: string | null;
+	} | null;
+};

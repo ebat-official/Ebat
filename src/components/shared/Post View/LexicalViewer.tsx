@@ -1,19 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic"; // Import dynamic from Next.js
-import TextareaAutosize from "react-textarea-autosize";
+import dynamic from "next/dynamic";
 import { z } from "zod";
-import useFileUpload from "@/hooks/useFileUpload";
 import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
-import PostContentSkeleton from "./PostContentSkelton";
+import PostContentSkeleton from "../Editor/PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
-import { emptyEditorState } from "../Lexical Editor/constants";
-import { PostType } from "@prisma/client";
 import { useEditorContext } from "../Lexical Editor/providers/EditorContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { RiQuestionAnswerLine } from "react-icons/ri";
@@ -24,30 +18,15 @@ const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {
 });
 
 interface EditorProps<T extends z.ZodType<EditorContent>> {
-	onChange: (data: z.infer<T>) => void;
-	answerHandler?: (data: z.infer<T>) => void;
-	editorId?: string;
 	defaultContent?: ContentType;
-	showTitleField?: boolean;
-	showCommandDetail?: boolean;
-	titlePlaceHolder?: string;
-	contentPlaceHolder?: string;
 	postId: string;
 	dataLoading?: boolean;
-	answerPlaceHolder?: string;
 }
 
-export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
-	onChange,
+export const LexicalViewer = <T extends z.ZodType<EditorContent>>({
 	defaultContent = {},
-	showTitleField = true,
-	titlePlaceHolder = "Title",
-	contentPlaceHolder = "",
-	showCommandDetail = true,
 	postId,
 	dataLoading = false,
-	answerHandler,
-	answerPlaceHolder = "",
 }: EditorProps<T>) => {
 	const { setMinHeight } = useEditorContext();
 	const [isMounted, setIsMounted] = useState(false);
@@ -55,9 +34,11 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 	const [uploadError, setUploadError] = useState<string | null | undefined>(
 		null,
 	);
+	setMinHeight("0px");
 	const editorPostId = `editor-post-${postId}`;
-	const editorAnswerId =
-		answerHandler || defaultContent.answer ? `editor-answer-${postId}` : null;
+	const editorAnswerId = defaultContent.answer
+		? `editor-answer-${postId}`
+		: null;
 	const _titleRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
@@ -83,38 +64,14 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 
 			<div className="pt-8 min-w-[73%] min-h-[70vh]">
 				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full gap-2  ">
-					<div className=" flex flex-col h-full">
-						{showTitleField &&
-							(isLoading || dataLoading ? (
-								<Skeleton className="h-10 w-52" />
-							) : (
-								<TextareaAutosize
-									onChange={async () => {
-										const title = _titleRef.current?.value || "";
-										onChange({ title });
-									}}
-									ref={_titleRef}
-									defaultValue={defaultContent?.post?.title ?? ""}
-									placeholder={titlePlaceHolder}
-									className={cn(
-										"w-full overflow-hidden text-lg md:text-xl lg:text-2xl font-bold bg-transparent appearance-none resize-none focus:outline-hidden",
-									)}
-								/>
-							))}
-
+					<div className=" flex flex-col">
 						{!dataLoading &&
 							isMounted && ( // Render Lexical Editor only on the client
-								<div id={editorPostId} className="mt-6">
+								<div id={editorPostId}>
 									<Editor
-										isEditable={true}
+										isEditable={false}
 										content={defaultContent.post?.blocks} // Pass initial content
-										placeholder={contentPlaceHolder}
 										id={editorPostId}
-										autoFocus={false}
-										onChangeHandler={(content) => {
-											const title = _titleRef.current?.value || "";
-											onChange({ title, blocks: content });
-										}}
 									/>
 								</div>
 							)}
@@ -132,8 +89,6 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 
 					{editorAnswerId && (
 						<>
-							<Separator className="py-0.5" />
-
 							{isLoading || dataLoading ? (
 								dataLoading ? (
 									<PostContentSkeleton
@@ -146,34 +101,25 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 							) : null}
 
 							{!dataLoading && isMounted && (
-								<Editor
-									isEditable={true}
-									content={defaultContent.answer?.blocks} // Pass initial content
-									placeholder={answerPlaceHolder}
-									id={editorAnswerId}
-									autoFocus={false}
-									onChangeHandler={(content) => {
-										if (answerHandler) {
-											answerHandler({ blocks: content });
-										}
-									}}
-								/>
+								<div
+									className={
+										"bg-foreground/5 text-card-foreground flex flex-col rounded-xl border p-2 shadow-sm "
+									}
+								>
+									<div className="flex gap-2 items-center pt-4 pl-4 text-md font-bold text-green-500">
+										<RiQuestionAnswerLine />
+										<span>Answer</span>
+									</div>
+
+									<Editor
+										isEditable={false}
+										content={defaultContent.answer?.blocks}
+										id={editorAnswerId}
+									/>
+								</div>
 							)}
 						</>
 					)}
-
-					{showCommandDetail &&
-						(isLoading || dataLoading ? (
-							<Skeleton className="px-1 h-6 py-2 w-64" />
-						) : (
-							<p className="text-sm text-gray-500">
-								Use{" "}
-								<kbd className="px-1 text-xs uppercase border rounded-md bg-muted">
-									/
-								</kbd>{" "}
-								to open the command menu.
-							</p>
-						))}
 				</div>
 			</div>
 		</>

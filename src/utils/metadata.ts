@@ -1,15 +1,9 @@
 // utils/metadata.ts
 import { Metadata } from "next";
 import { Post } from "@prisma/client";
-import { ContentType } from "@/utils/types";
+import { ContentType, PostWithExtraDetails } from "@/utils/types";
 import { getFirstImageUrl } from "@/utils/getFirstPostImage";
 import { getFirstParagraphText } from "@/utils/getFirstParagraphText";
-
-export interface PostWithAuthor extends Post {
-	author?: {
-		name: string | null;
-	} | null;
-}
 
 export interface MetadataOptions {
 	url?: string;
@@ -18,7 +12,7 @@ export interface MetadataOptions {
 }
 
 export const extractMetadata = (
-	post: PostWithAuthor,
+	post: PostWithExtraDetails,
 	options: MetadataOptions = {},
 ) => {
 	const { url } = options;
@@ -51,7 +45,7 @@ export const extractMetadata = (
 };
 
 export const generatePageMetadata = (
-	post: PostWithAuthor,
+	post: PostWithExtraDetails,
 	options?: MetadataOptions,
 ): Metadata => {
 	const {
@@ -94,7 +88,7 @@ export const generatePageMetadata = (
 };
 
 export const generateStructuredData = (
-	post: PostWithAuthor,
+	post: PostWithExtraDetails,
 	options?: MetadataOptions,
 ) => {
 	const {

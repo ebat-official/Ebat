@@ -1,3 +1,4 @@
+"use client";
 import { TableOfContentsEntry } from "@lexical/react/LexicalTableOfContentsPlugin";
 import React, {
 	createContext,

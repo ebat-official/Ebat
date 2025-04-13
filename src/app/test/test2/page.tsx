@@ -5,7 +5,7 @@ export default function infiniteScroll() {
 	const [numbers, setNumbers] = useState([...Array(20).keys()]);
 	const [loading, setLoading] = useState(false);
 	const observerRef = useRef(null);
-	console.log(numbers);
+
 	function loadMore() {
 		setLoading(true);
 		setTimeout(() => {

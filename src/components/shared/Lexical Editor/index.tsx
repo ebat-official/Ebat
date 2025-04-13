@@ -17,7 +17,7 @@ interface EditorProps {
 	placeholder?: string;
 	id?: string;
 	autoFocus?: boolean;
-	onChangeHandler: (data: SerializedEditorState) => void;
+	onChangeHandler?: (data: SerializedEditorState) => void;
 }
 
 export default function Editor({
@@ -43,6 +43,7 @@ export default function Editor({
 		},
 		editable: isEditable,
 	};
+	const changeHandler = onChangeHandler || (() => null);
 	return (
 		<LexicalComposer initialConfig={initialConfig}>
 			<SharedHistoryContext>
@@ -51,7 +52,7 @@ export default function Editor({
 						placeholder={placeholder}
 						id={id}
 						autoFocus={autoFocus}
-						onChangeHandler={onChangeHandler}
+						onChangeHandler={changeHandler}
 					/>
 				</ToolbarContext>
 			</SharedHistoryContext>

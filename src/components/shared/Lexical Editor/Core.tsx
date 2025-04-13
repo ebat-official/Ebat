@@ -165,7 +165,7 @@ export default function Core({
 								style={{ minHeight }}
 								id={id}
 								autoFocus={autoFocus}
-								className="z-20 p-1 border-0 outline-hidden -z-1 min mt-7"
+								className="z-20 p-1 border-0 outline-hidden"
 								aria-placeholder={placeholder}
 								placeholder={
 									<div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
