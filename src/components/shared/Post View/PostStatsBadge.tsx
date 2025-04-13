@@ -5,12 +5,32 @@ import { FiCheckCircle } from "react-icons/fi";
 import AuthorNudge from "./AuthorNudge";
 import { BiCoinStack, BiTargetLock } from "react-icons/bi";
 import { PostWithExtraDetails } from "@/utils/types";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
+// Interfaces
 interface PostStatsBadgeProps {
 	post: PostWithExtraDetails;
 	userProfile: UserProfile;
 }
 
+interface DifficultyBadgeProps {
+	difficulty: string;
+}
+
+interface CoinsBadgeProps {
+	coins: number;
+}
+
+interface CompletionBadgeProps {
+	completionCount: number;
+}
+
+// Main Component
 export const PostStatsBadge: FC<PostStatsBadgeProps> = ({
 	post,
 	userProfile,
@@ -28,10 +48,6 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({
 };
 
 // Difficulty Badge Component
-interface DifficultyBadgeProps {
-	difficulty: string;
-}
-
 const DifficultyBadge: FC<DifficultyBadgeProps> = ({ difficulty }) => {
 	const colorMap: Record<string, string> = {
 		EASY: "text-green-500",
@@ -46,35 +62,36 @@ const DifficultyBadge: FC<DifficultyBadgeProps> = ({ difficulty }) => {
 				className={colorMap[difficulty.toUpperCase()] || "text-gray-500"}
 			/>
 			<span
-				className={`font-bold text-sm ${
+				className={`font-bold text-sm capitalize ${
 					colorMap[difficulty.toUpperCase()] || "text-gray-500"
 				}`}
 			>
-				{difficulty}
+				{difficulty.toLowerCase()}
 			</span>
 		</div>
 	);
 };
 
-// Coins Badge Component
-interface CoinsBadgeProps {
-	coins: number;
-}
-
+// Coins Badge Component with Tooltip
 const CoinsBadge: FC<CoinsBadgeProps> = ({ coins }) => {
 	return (
-		<div className="flex items-center justify-center gap-1">
-			<BiCoinStack className="text-yellow-500" size={20} />
-			<span className="font-bold text-sm capitalize">{coins} coin</span>
-		</div>
+		<TooltipProvider>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<div className="flex items-center justify-center gap-1 cursor-pointer">
+						<BiCoinStack className="text-yellow-500" size={20} />
+						<span className="font-bold text-sm capitalize">{coins} coin</span>
+					</div>
+				</TooltipTrigger>
+				<TooltipContent>
+					<span>Earn coins upon completion</span>
+				</TooltipContent>
+			</Tooltip>
+		</TooltipProvider>
 	);
 };
 
 // Completion Badge Component
-interface CompletionBadgeProps {
-	completionCount: number;
-}
-
 const CompletionBadge: FC<CompletionBadgeProps> = ({ completionCount }) => {
 	const formatCount = (num: number) => {
 		return num >= 1000 ? `${(num / 1000).toFixed(1)}k` : num.toString();
