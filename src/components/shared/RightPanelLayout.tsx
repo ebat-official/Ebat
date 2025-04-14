@@ -30,12 +30,7 @@ function MainPanel({
 	className?: string;
 }) {
 	return (
-		<div
-			className={cn(
-				"flex-grow content md:container justify-self-center",
-				className,
-			)}
-		>
+		<div className={cn("flex-grow content  justify-self-center", className)}>
 			{children}
 		</div>
 	);
