@@ -27,7 +27,7 @@ export function Sidebar() {
 			<SidebarToggle
 				isOpen={isOpen}
 				setIsOpen={toggleOpen}
-				className="invisible lg:visible absolute top-[80px] -right-[16px] z-20"
+				className="invisible lg:visible absolute top-[112px] -right-[16px] z-20"
 			/>
 			<div
 				onMouseEnter={() => setIsHover(true)}

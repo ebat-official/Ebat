@@ -81,7 +81,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 				/>
 			)}
 
-			<div className="pt-8 min-w-[73%] min-h-[70vh]">
+			<div className="pt-8 min-w-[73%] min-h-[70vh] w-full">
 				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full gap-2  ">
 					<div className=" flex flex-col h-full">
 						{showTitleField &&
@@ -97,7 +97,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 									defaultValue={defaultContent?.post?.title ?? ""}
 									placeholder={titlePlaceHolder}
 									className={cn(
-										"w-full overflow-hidden text-lg md:text-xl lg:text-2xl font-bold bg-transparent appearance-none resize-none focus:outline-hidden",
+										"w-full opacity-80 overflow-hidden text-lg md:text-2xl lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-hidden",
 									)}
 								/>
 							))}
