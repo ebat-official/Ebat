@@ -13,7 +13,7 @@ function RightPanelLayout({
 	return (
 		<div
 			className={cn(
-				"flex flex-col md:flex-row w-full h-full gap-2 justify-between",
+				"flex flex-col md:flex-row w-full h-full gap-2 justify-between overflow-x-hidden",
 				className,
 			)}
 		>

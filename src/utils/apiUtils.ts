@@ -59,7 +59,15 @@ export async function getPostFromURL(params: {
 				include: {
 					author: {
 						select: {
-							name: true,
+							id: true,
+							userName: true,
+							userProfile: {
+								select: {
+									name: true,
+									image: true,
+									companyName: true,
+								},
+							},
 						},
 					},
 					_count: {
@@ -67,15 +75,27 @@ export async function getPostFromURL(params: {
 							completionStatus: true,
 						},
 					},
+					collaborators: {
+						select: {
+							id: true,
+							userName: true,
+							userProfile: {
+								select: {
+									name: true,
+									image: true,
+								},
+							},
+						},
+					},
 				},
 			})
 			.then((post) => {
 				if (!post) return null;
 
-				// Add completionCount as a standalone field
+				const completionCount = post._count?.completionStatus || 0;
 				return {
 					...post,
-					completionCount: post._count.completionStatus,
+					completionCount,
 				};
 			});
 	} catch (error) {

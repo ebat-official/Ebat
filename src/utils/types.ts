@@ -1,5 +1,11 @@
 import { OutputData } from "@editorjs/editorjs";
-import { Post, PostCategory, PostType, SubCategory } from "@prisma/client";
+import {
+	Post,
+	PostCategory,
+	PostType,
+	SubCategory,
+	User,
+} from "@prisma/client";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
 import { POST_ACTIONS, POST_ROUTE_TYPE } from "./contants";
@@ -54,7 +60,16 @@ export type PageParams = Promise<{
 }>;
 export type PostWithExtraDetails = Post & {
 	completionCount?: number;
-	author?: {
-		name: string | null;
-	} | null;
+	collaborators: Array<
+		Pick<User, "id" | "userName"> & {
+			userProfile: { name: string | null; image: string | null } | null;
+		}
+	>;
+	author: Pick<User, "id" | "userName"> & {
+		userProfile: {
+			name: string | null;
+			image: string | null;
+			companyName: string | null;
+		} | null;
+	};
 };

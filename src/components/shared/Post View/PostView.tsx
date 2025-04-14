@@ -7,14 +7,14 @@ import { Post, UserProfile } from "@prisma/client";
 import { LexicalViewer } from "./LexicalViewer";
 import { PostStatsBadge } from "./PostStatsBadge";
 import { Separator } from "@/components/ui/separator";
+import PostDetailsAccordian from "./PostDetailsAccordian";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
 	dataLoading?: boolean;
-	userProfile: UserProfile;
 };
 
-const PostView: FC<PostViewProps> = ({ post, userProfile }) => {
+const PostView: FC<PostViewProps> = ({ post }) => {
 	return (
 		<EditorProvider>
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
@@ -24,13 +24,16 @@ const PostView: FC<PostViewProps> = ({ post, userProfile }) => {
 							<h1 className="opacity-80 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none mb-4 leading-relaxed">
 								{post.title}
 							</h1>
-							<PostStatsBadge post={post} userProfile={userProfile} />
+							<PostStatsBadge post={post} />
 							<Separator className=" mt-2" />
 							<LexicalViewer
 								key={post.id}
 								postId={post.id}
 								defaultContent={post.content as ContentType}
 							/>
+							<div className="mt-4">
+								<PostDetailsAccordian post={post} />
+							</div>
 						</CardContent>
 					</Card>
 				</RightPanelLayout.MainPanel>

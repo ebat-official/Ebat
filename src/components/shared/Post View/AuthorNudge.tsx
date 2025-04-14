@@ -4,7 +4,11 @@ import Image from "next/image";
 import { UserProfile } from "@prisma/client";
 import { truncateText } from "../Lexical Editor/utils/truncateText";
 
-const AuthorNudge = ({ author }: { author: UserProfile }) => {
+const AuthorNudge = ({
+	author,
+}: {
+	author: Pick<UserProfile, "name" | "companyName" | "image">;
+}) => {
 	return (
 		<div className="flex items-center gap-2">
 			{/* Avatar Section */}

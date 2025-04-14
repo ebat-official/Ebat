@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Post as PrismaPost, User, UserProfile } from "@prisma/client";
 import { FC } from "react";
 import { FiCheckCircle } from "react-icons/fi";
 import AuthorNudge from "./AuthorNudge";
@@ -15,7 +14,6 @@ import {
 // Interfaces
 interface PostStatsBadgeProps {
 	post: PostWithExtraDetails;
-	userProfile: UserProfile;
 }
 
 interface DifficultyBadgeProps {
@@ -31,14 +29,13 @@ interface CompletionBadgeProps {
 }
 
 // Main Component
-export const PostStatsBadge: FC<PostStatsBadgeProps> = ({
-	post,
-	userProfile,
-}) => {
+export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 	return (
 		<Card className="border-none py-0 shadow-none bg-transparent">
 			<CardContent className="flex gap-1 sm:gap-4 px-0 sm:px-4 md:px-6">
-				<AuthorNudge author={userProfile} />
+				{post.author.userProfile && (
+					<AuthorNudge author={post.author.userProfile} />
+				)}
 				{post.difficulty && <DifficultyBadge difficulty={post.difficulty} />}
 				<CoinsBadge coins={post.coins || 0} />
 				<CompletionBadge completionCount={post.completionCount || 0} />
@@ -62,7 +59,7 @@ const DifficultyBadge: FC<DifficultyBadgeProps> = ({ difficulty }) => {
 				className={colorMap[difficulty.toUpperCase()] || "text-gray-500"}
 			/>
 			<span
-				className={`font-semibold text-sm capitalize ${
+				className={`font-medium text-sm capitalize ${
 					colorMap[difficulty.toUpperCase()] || "text-gray-500"
 				}`}
 			>
@@ -80,7 +77,7 @@ const CoinsBadge: FC<CoinsBadgeProps> = ({ coins }) => {
 				<TooltipTrigger asChild>
 					<div className="flex items-center justify-center gap-1 cursor-pointer">
 						<BiCoinStack className="text-yellow-500" size={20} />
-						<span className="font-semibold text-sm capitalize flex gap-1">
+						<span className="font-medium text-sm capitalize flex gap-1">
 							{coins}
 							<span className="hidden sm:block">coin</span>
 						</span>
@@ -103,7 +100,7 @@ const CompletionBadge: FC<CompletionBadgeProps> = ({ completionCount }) => {
 	return (
 		<div className="flex items-center justify-center gap-1">
 			<FiCheckCircle className="text-green-500" size={18} strokeWidth={3} />
-			<span className="font-semibold text-sm capitalize flex gap-1">
+			<span className="font-medium text-sm capitalize flex gap-1">
 				{formatCount(completionCount)}
 				<span className="hidden sm:block">completed</span>
 			</span>

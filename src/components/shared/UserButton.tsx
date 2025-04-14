@@ -31,6 +31,7 @@ import {
 import { Session } from "next-auth";
 
 const UserButton: FC<UserButtonProps> = ({ session }) => {
+	const userFirstLetter = session?.user?.name?.charAt(0).toUpperCase();
 	return (
 		<>
 			<DropdownMenu>
@@ -47,11 +48,15 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
 								referrerPolicy="no-referrer"
 							/>
 							<AvatarFallback>
-								<Image
-									className="rounded-full outline-hidden"
-									src={fallbackImg}
-									alt="AB"
-								/>
+								{userFirstLetter ? (
+									userFirstLetter
+								) : (
+									<Image
+										className="rounded-full outline-hidden"
+										src={fallbackImg}
+										alt="AB"
+									/>
+								)}
 							</AvatarFallback>
 						</Avatar>
 					</Button>

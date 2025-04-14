@@ -12,9 +12,17 @@ export interface CompanyList {
 	icon: IconType;
 }
 
+export function normalizeCompaniesData() {
+	return companiesData.map((company) => {
+		return {
+			label: company.label,
+			icon: <company.icon />,
+		};
+	});
+}
 const useCompanies = () => {
 	const normalizeCompanies = useMemo<Company[]>(
-		() => normalizeCompaniesData(companiesData),
+		() => normalizeCompaniesData(),
 		[],
 	);
 	const [companies, setCompanies] = useState<Company[]>(normalizeCompanies);
@@ -24,15 +32,6 @@ const useCompanies = () => {
 			setCompanies(normalizeCompanies); // Reset to original list
 		};
 	}, [normalizeCompanies]);
-
-	function normalizeCompaniesData(data: CompanyList[]): Company[] {
-		return data.map((company) => {
-			return {
-				label: company.label,
-				icon: <company.icon />,
-			};
-		});
-	}
 
 	// Memoizing the search function for better performance on repeated renders
 	const searchedCompanies = useCallback(

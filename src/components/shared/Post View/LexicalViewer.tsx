@@ -62,7 +62,7 @@ export const LexicalViewer = <T extends z.ZodType<EditorContent>>({
 				/>
 			)}
 
-			<div className="pt-8 min-w-[73%] min-h-[70vh]">
+			<div className="pt-8 min-w-[73%]">
 				<div className="prose prose-stone dark:prose-invert flex flex-col w-full h-full gap-2  ">
 					<div className=" flex flex-col">
 						{!dataLoading &&
@@ -103,10 +103,10 @@ export const LexicalViewer = <T extends z.ZodType<EditorContent>>({
 							{!dataLoading && isMounted && (
 								<div
 									className={
-										"bg-foreground/5 text-card-foreground flex flex-col rounded-xl border p-2 shadow-sm "
+										"bg-foreground/5 text-card-foreground flex flex-col rounded-xl border p-2 shadow-sm  min-h-[300px]"
 									}
 								>
-									<div className="flex gap-2 items-center pt-4 pl-4 text-md font-bold text-green-500">
+									<div className="flex gap-2 items-center pt-4 pl-4 text-md font-bold text-green-500 ">
 										<RiQuestionAnswerLine />
 										<span>Answer</span>
 									</div>

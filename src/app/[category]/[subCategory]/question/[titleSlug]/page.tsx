@@ -41,12 +41,11 @@ export default async function PostPage({ params }: { params: PageParams }) {
 	const awaitedParams = await params;
 	const post = await getPostFromURL(awaitedParams);
 	if (!post) return notFound();
-	const userProfile = await findUserProfile(post.authorId);
 	return (
 		<>
 			<StructuredMetaData post={post} />
 			<article>
-				<PostView post={post} userProfile={userProfile as UserProfile} />
+				<PostView post={post} />
 			</article>
 		</>
 	);
