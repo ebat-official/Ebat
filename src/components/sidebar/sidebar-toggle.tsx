@@ -6,11 +6,20 @@ import { Button } from "@/components/ui/button";
 interface SidebarToggleProps {
 	isOpen: boolean | undefined;
 	setIsOpen?: () => void;
+	className?: string; // Accept additional classes
 }
 
-export function SidebarToggle({ isOpen, setIsOpen }: SidebarToggleProps) {
+export function SidebarToggle({
+	isOpen,
+	setIsOpen,
+	className,
+}: SidebarToggleProps) {
 	return (
-		<div className="invisible lg:visible absolute top-[80px] -right-[16px] z-20">
+		<div
+			className={cn(
+				className, // Merge additional classes
+			)}
+		>
 			<Button
 				onClick={() => setIsOpen?.()}
 				className="rounded-md w-8 h-8"

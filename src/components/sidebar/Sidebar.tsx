@@ -24,7 +24,11 @@ export function Sidebar() {
 				settings.disabled && "hidden",
 			)}
 		>
-			<SidebarToggle isOpen={isOpen} setIsOpen={toggleOpen} />
+			<SidebarToggle
+				isOpen={isOpen}
+				setIsOpen={toggleOpen}
+				className="invisible lg:visible absolute top-[80px] -right-[16px] z-20"
+			/>
 			<div
 				onMouseEnter={() => setIsHover(true)}
 				onMouseLeave={() => setIsHover(false)}
