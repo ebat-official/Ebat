@@ -15,7 +15,7 @@ import { MdOutlinePublish } from "react-icons/md";
 import { ContentType, EditorContent, PostActions } from "@/utils/types";
 import { Loader2 } from "lucide-react";
 import { PostType } from "@prisma/client";
-import { emptyEditorState } from "../Lexical Editor/constants";
+import { emptyEditorState } from "../shared/Lexical Editor/constants";
 import { POST_ACTIONS } from "@/utils/contants";
 
 interface EditorContainerProps {

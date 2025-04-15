@@ -45,3 +45,11 @@ export const POST_ROUTE_TYPE = {
 	DRAFTS: "draft",
 	EDIT: "edit",
 } as const;
+
+export const COMMENT_SORT_OPTIONS = {
+	TOP: "TOP",
+	NEWEST: "NEWEST",
+	OLDEST: "OLDEST",
+	CONTROVERSIAL: "CONTROVERSIAL",
+	REPLIES: "REPLIES",
+} as const;

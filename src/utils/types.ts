@@ -8,7 +8,11 @@ import {
 } from "@prisma/client";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
-import { POST_ACTIONS, POST_ROUTE_TYPE } from "./contants";
+import {
+	COMMENT_SORT_OPTIONS,
+	POST_ACTIONS,
+	POST_ROUTE_TYPE,
+} from "./contants";
 
 export interface ContentType {
 	post?: EditorContent;
@@ -73,3 +77,5 @@ export type PostWithExtraDetails = Post & {
 		} | null;
 	};
 };
+
+export type CommentSortOption = keyof typeof COMMENT_SORT_OPTIONS;

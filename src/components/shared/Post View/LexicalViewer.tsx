@@ -6,7 +6,7 @@ import { z } from "zod";
 import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import { Skeleton } from "@/components/ui/skeleton";
-import PostContentSkeleton from "../Editor/PostContentSkelton";
+import PostContentSkeleton from "@/components/Editor/PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
 import { useEditorContext } from "../Lexical Editor/providers/EditorContext";
 import { Card, CardContent } from "@/components/ui/card";

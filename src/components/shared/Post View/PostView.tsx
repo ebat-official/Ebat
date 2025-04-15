@@ -8,6 +8,7 @@ import { LexicalViewer } from "./LexicalViewer";
 import { PostStatsBadge } from "./PostStatsBadge";
 import { Separator } from "@/components/ui/separator";
 import PostDetailsAccordian from "./PostDetailsAccordian";
+import Comment from "@/components/comment/Comment";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -34,6 +35,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 							<div className="mt-4">
 								<PostDetailsAccordian post={post} />
 							</div>
+							<Comment content={"dsfsd"} />
 						</CardContent>
 					</Card>
 				</RightPanelLayout.MainPanel>
