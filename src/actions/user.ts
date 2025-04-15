@@ -36,11 +36,11 @@ export async function findUserByEmail(email: string) {
 			select: {
 				id: true,
 				email: true,
-				name: true,
 				userName: true,
 				emailVerified: true,
 				userProfile: {
 					select: {
+						name: true,
 						id: true,
 						image: true,
 					},
