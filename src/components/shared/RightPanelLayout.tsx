@@ -44,14 +44,14 @@ function SidePanel({
 	className?: string;
 }) {
 	return (
-		<div className="relative">
+		<div className="relative ">
 			{/* Hidden Checkbox */}
 			<input type="checkbox" id="sidepanel-toggle" className="peer hidden" />
 
 			{/* Toggle Button */}
 			<label
 				htmlFor="sidepanel-toggle"
-				className="absolute z-50 w-8 h-8 bg-background -translate-x-[50%]  left-0 top-4 rounded-md shadow-md cursor-pointer flex justify-center items-center"
+				className="hidden md:absolute z-50 w-8 h-8 bg-background -translate-x-[50%]  left-0 top-4 rounded-md shadow-md cursor-pointer md:flex justify-center items-center"
 			>
 				<ChevronLeft
 					className={cn(
@@ -70,7 +70,7 @@ function SidePanel({
 			{/* Side Panel */}
 			<div
 				className={cn(
-					"rightsidebar bg-background md:w-[340px] xl:w-[400px] self-start fixed md:relative top-0 right-0 h-full shadow-lg transition-[width,transform] duration-400", // Added transition for width
+					"rightsidebar bg-background md:w-[340px] xl:w-[400px] self-start relative top-0 right-0 h-full shadow-lg transition-[width,transform] duration-400", // Added transition for width
 					"peer-checked:w-0 peer-checked:translate-x-full", // Collapse when checkbox is checked
 					className,
 				)}
