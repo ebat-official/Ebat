@@ -13,35 +13,14 @@ import {
 } from "lexical";
 
 import { Button } from "@/components/ui/button";
-import {
-	Bold,
-	Italic,
-	Strikethrough,
-	Underline,
-	Code,
-	List,
-	ListOrdered,
-	Quote,
-} from "lucide-react";
+import { Bold, Italic, Underline, Code } from "lucide-react";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
-import {
-	INSERT_UNORDERED_LIST_COMMAND,
-	INSERT_ORDERED_LIST_COMMAND,
-} from "@lexical/list";
+
 import BlockFormatDropDown from "@/components/shared/Lexical Editor/ui/drop-downs/block-format";
 import { useToolbarState } from "@/components/shared/Lexical Editor/providers/ToolbarContext";
-import { $createCodeNode, $isCodeNode } from "@lexical/code";
-import {
-	$convertFromMarkdownString,
-	$convertToMarkdownString,
-} from "@lexical/markdown";
-import { PLAYGROUND_TRANSFORMERS } from "@/components/shared/Lexical Editor/plugins/MarkdownTransformers";
-import { Toggle } from "@/components/ui/toggle";
-import { BsMarkdown } from "react-icons/bs";
 
 export default function Toolbar() {
 	const [editor] = useLexicalComposerContext(); // Use the editor instance from context
-	const [isLink, setIsLink] = useState(false);
 	const { toolbarState, updateToolbarState } = useToolbarState();
 
 	// Update toolbar state when selection changes
@@ -89,44 +68,8 @@ export default function Toolbar() {
 		}
 	};
 
-	const handleMarkdownToggle = useCallback(() => {
-		editor.update(() => {
-			const root = $getRoot();
-			const firstChild = root.getFirstChild();
-			if ($isCodeNode(firstChild) && firstChild?.getLanguage() === "markdown") {
-				$convertFromMarkdownString(
-					firstChild.getTextContent(),
-					PLAYGROUND_TRANSFORMERS,
-					undefined, // node
-					true, //shouldPreserveNewLinesInMarkdown
-				);
-			} else {
-				const markdown = $convertToMarkdownString(
-					PLAYGROUND_TRANSFORMERS,
-					undefined, //node
-					true,
-				);
-				const codeNode = $createCodeNode("markdown");
-				codeNode.append($createTextNode(markdown));
-				root.clear().append(codeNode);
-				if (markdown.length === 0) {
-					codeNode.select();
-				}
-			}
-		});
-	}, [editor]);
-
 	return (
-		<div className=" z-10 flex items-center gap-2 pb-2">
-			<Toggle
-				variant={"outline"}
-				onPressedChange={handleMarkdownToggle}
-				pressed={toolbarState.isLink}
-				aria-label="mark down"
-				type="button"
-			>
-				<BsMarkdown />
-			</Toggle>
+		<div className=" z-10 flex items-center gap-2 ">
 			<BlockFormatDropDown
 				commentMode
 				blockType={toolbarState.blockType}

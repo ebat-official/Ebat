@@ -15,8 +15,23 @@ import { LexicalOnChangePlugin } from "../../shared/Lexical Editor/lexical-on-ch
 import CodeHighlightPlugin from "../../shared/Lexical Editor/plugins/CodeHighlightPlugin";
 import ToolbarPlugin from "./Toolbar";
 import { mergeRegister } from "@lexical/utils";
-import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from "lexical";
+import {
+	$createTextNode,
+	$getRoot,
+	BLUR_COMMAND,
+	COMMAND_PRIORITY_LOW,
+	FOCUS_COMMAND,
+} from "lexical";
 import type { SerializedEditorState } from "lexical";
+import { Toggle } from "@/components/ui/toggle";
+import { $createCodeNode, $isCodeNode } from "@lexical/code";
+import {
+	$convertFromMarkdownString,
+	$convertToMarkdownString,
+} from "@lexical/markdown";
+import { PLAYGROUND_TRANSFORMERS } from "@/components/shared/Lexical Editor/plugins/MarkdownTransformers";
+import { BsMarkdown } from "react-icons/bs";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface CoreProps {
 	placeholder: string;
@@ -58,16 +73,43 @@ export default function Core({
 		);
 	}, [editor]);
 
+	const handleMarkdownToggle = useCallback(() => {
+		editor.update(() => {
+			const root = $getRoot();
+			const firstChild = root.getFirstChild();
+			if ($isCodeNode(firstChild) && firstChild?.getLanguage() === "markdown") {
+				$convertFromMarkdownString(
+					firstChild.getTextContent(),
+					PLAYGROUND_TRANSFORMERS,
+					undefined, // node
+					true, //shouldPreserveNewLinesInMarkdown
+				);
+			} else {
+				const markdown = $convertToMarkdownString(
+					PLAYGROUND_TRANSFORMERS,
+					undefined, //node
+					true,
+				);
+				const codeNode = $createCodeNode("markdown");
+				codeNode.append($createTextNode(markdown));
+				root.clear().append(codeNode);
+				if (markdown.length === 0) {
+					codeNode.select();
+				}
+			}
+		});
+	}, [editor]);
+
 	return (
 		<div className="relative flex editor flex-col">
-			<div className="pl-2">
+			<div className="p-2">
 				<RichTextPlugin
 					contentEditable={
 						<div className="relative">
 							<ContentEditable
 								id={id}
 								autoFocus={autoFocus}
-								className="z-20 p-1 border-0 outline-hidden min-h-40 "
+								className="z-20 p-1 border-0 outline-hidden min-h-20"
 								aria-placeholder={placeholder}
 								placeholder={
 									<div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
@@ -80,6 +122,15 @@ export default function Core({
 					ErrorBoundary={LexicalErrorBoundary}
 				/>
 			</div>
+			<Toggle
+				className="absolute right-3 -top-3"
+				variant={"outline"}
+				onPressedChange={handleMarkdownToggle}
+				aria-label="mark down"
+				type="button"
+			>
+				<BsMarkdown />
+			</Toggle>
 			<ToolbarPlugin />
 			<LexicalOnChangePlugin onChangeHandler={onChangeHandler} />
 			<LinkPlugin />

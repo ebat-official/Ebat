@@ -6,9 +6,9 @@ import { z } from "zod";
 import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
 import { Skeleton } from "@/components/ui/skeleton";
-import PostContentSkeleton from "@/components/Editor/PostContentSkelton";
+import PostContentSkeleton from "@/components/post edit/PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
-import { useEditorContext } from "../Lexical Editor/providers/EditorContext";
+import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { RiQuestionAnswerLine } from "react-icons/ri";
 

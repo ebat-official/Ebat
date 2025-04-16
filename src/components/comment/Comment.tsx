@@ -21,8 +21,8 @@ export default function Comment({ content }) {
 	return (
 		<div>
 			{isEditing ? (
-				<Card className=" pb-0">
-					<CardContent className="pl-2">
+				<Card className=" pb-0 ">
+					<CardContent className="pl-2 px-0">
 						<Editor />
 					</CardContent>
 				</Card>

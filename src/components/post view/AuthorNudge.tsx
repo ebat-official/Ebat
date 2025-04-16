@@ -1,8 +1,8 @@
 import fallbackImg from "@/assets/img/avatarFallback.webp";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Image from "next/image";
 import { UserProfile } from "@prisma/client";
-import { truncateText } from "../Lexical Editor/utils/truncateText";
+import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
 
 const AuthorNudge = ({
 	author,
