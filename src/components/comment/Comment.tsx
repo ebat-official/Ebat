@@ -11,9 +11,5 @@ const Editor = dynamic(() => import("./CommentEditor"), {
 export default function Comment({ content }) {
 	const [isEditing, setIsEditing] = useState(true);
 
-	return (
-		<div>
-			{isEditing ? <Editor initialContent={content} /> : <p>{content}</p>}
-		</div>
-	);
+	return <div>{isEditing ? <Editor /> : <p>{content}</p>}</div>;
 }

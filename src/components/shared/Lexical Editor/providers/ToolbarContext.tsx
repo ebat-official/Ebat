@@ -79,11 +79,7 @@ export type ContextShape = {
 
 const Context = createContext<ContextShape | undefined>(undefined);
 
-export const ToolbarContext = ({
-	children,
-}: {
-	children: ReactNode;
-}) => {
+export const ToolbarContext = ({ children }: { children: ReactNode }) => {
 	const [toolbarState, setToolbarState] = useState(INITIAL_TOOLBAR_STATE);
 	const selectionFontSize = toolbarState.fontSize;
 
@@ -115,7 +111,7 @@ export const useToolbarState = () => {
 	const context = useContext(Context);
 
 	if (context === undefined) {
-		throw new Error("useToolbarState must be used within a ToolbarProvider");
+		throw new Error("useToolbarState must be used within a ToolbarContext");
 	}
 
 	return context;

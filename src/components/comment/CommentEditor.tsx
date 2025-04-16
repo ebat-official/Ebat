@@ -1,74 +1,87 @@
-"use client";
-
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import React, { useCallback, useLayoutEffect, useState } from "react";
+import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
+import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { ListNode, ListItemNode } from "@lexical/list";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { LinkNode } from "@lexical/link";
-import theme from "../shared/Lexical Editor/themes/editor-theme";
+import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
+import { mergeRegister } from "@lexical/utils";
+import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from "lexical";
 
-interface CommentEditorProps {
+interface SimpleEditorProps {
 	placeholder?: string;
-	onChangeHandler?: (editorState: string) => void;
+	autoFocus?: boolean;
+	onChange?: (editorState: string) => void;
 }
 
-export default function CommentEditor({
-	placeholder = "Write a comment...",
-	onChangeHandler,
-}: CommentEditorProps) {
-	const initialConfig = {
-		namespace: "CommentEditor",
-		theme,
-		onError: (error: Error) => {
-			console.error("Lexical Error:", error);
-		},
-		editable: true,
-		nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode, LinkNode], // Register required nodes
-	};
+export default function SimpleEditor({
+	placeholder = "Write something...",
+	autoFocus = false,
+	onChange,
+}: SimpleEditorProps) {
+	const [editor] = useLexicalComposerContext();
+	const isEditable = useLexicalEditable();
+	const [hasFocus, setHasFocus] = useState(false);
+
+	useLayoutEffect(() => {
+		return mergeRegister(
+			editor.registerCommand(
+				FOCUS_COMMAND,
+				() => {
+					setHasFocus(true);
+					return false;
+				},
+				COMMAND_PRIORITY_LOW,
+			),
+			editor.registerCommand(
+				BLUR_COMMAND,
+				() => {
+					setHasFocus(false);
+					return false;
+				},
+				COMMAND_PRIORITY_LOW,
+			),
+		);
+	}, [editor]);
 
 	return (
-		<LexicalComposer initialConfig={initialConfig}>
+		<div className="editor-container">
 			<RichTextPlugin
 				contentEditable={
-					<div className="relative">
+					<div className="editor-inner">
 						<ContentEditable
-							className="border  border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="editor-content"
+							autoFocus={autoFocus}
 							aria-placeholder={placeholder}
 							placeholder={
-								<div className="text-primary opacity-60 overflow-hidden absolute truncate top-[7px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
-									{placeholder}
-								</div>
+								<div className="editor-placeholder">{placeholder}</div>
 							}
 						/>
 					</div>
 				}
 				ErrorBoundary={LexicalErrorBoundary}
 			/>
-			<OnChangePlugin
-				onChange={(editorState) => {
-					if (onChangeHandler) {
-						const serializedState = JSON.stringify(editorState);
-						onChangeHandler(serializedState);
-					}
-				}}
-			/>
+
+			{/* Core Plugins */}
+			<ClearEditorPlugin />
 			<HistoryPlugin />
-			<ListPlugin />
 			<LinkPlugin />
-			{/* <MarkdownShortcutPlugin /> */}
 			<HorizontalRulePlugin />
+			<ListPlugin />
 			<CheckListPlugin />
-			<TabIndentationPlugin maxIndent={3} />
-		</LexicalComposer>
+			<TablePlugin />
+			<MarkdownShortcutPlugin />
+			<ClickableLinkPlugin />
+			<TabIndentationPlugin />
+		</div>
 	);
 }

@@ -34,7 +34,6 @@ const blockTypeToBlockName = {
 	h5: "Heading 5",
 	h6: "Heading 6",
 	bullet: "Bullet List",
-	check: "Checklist",
 	number: "Numbered List",
 	code: "Code Block",
 	quote: "Blockquote",
@@ -105,13 +104,10 @@ export default function BlockFormatDropDown({
 				icon: <List className="size-4" />,
 				desc: "Bullet list for unordered items.",
 				label: "Bullet List",
-				func: () => formatBulletList(editor, blockType),
-			},
-			check: {
-				icon: <ListTodo className="size-4" />,
-				desc: "Checklist for tasks or to-dos.",
-				label: "check box",
-				func: () => formatCheckList(editor, blockType),
+				func: () => {
+					console.log(editor, blockType, "pranu");
+					formatBulletList(editor, blockType);
+				},
 			},
 			number: {
 				icon: <ListOrdered className="size-4" />,
