@@ -69,7 +69,7 @@ export default function Toolbar() {
 	};
 
 	return (
-		<div className=" z-10 flex items-center gap-2 ">
+		<div className=" z-10 flex items-center gap-0 sm:gap-2 ">
 			<BlockFormatDropDown
 				commentMode
 				blockType={toolbarState.blockType}
