@@ -47,6 +47,7 @@ export default function BlockFormatDropDown({
 	ShowChevronsUpDown = true,
 	side,
 	sideOffset,
+	commentMode = false,
 }: {
 	blockType: keyof typeof blockTypeToBlockName;
 	editor: LexicalEditor;
@@ -55,7 +56,58 @@ export default function BlockFormatDropDown({
 	ShowChevronsUpDown?: boolean;
 	side?: "top" | "right" | "bottom" | "left" | undefined;
 	sideOffset?: number;
+	commentMode?: boolean;
 }) {
+	const commentModeBlocks = useMemo(
+		() => ({
+			paragraph: {
+				icon: <Pilcrow className="size-4" />,
+				label: "paragraph",
+				desc: "Just start writing plain text.",
+				func: () => formatParagraph(editor),
+			},
+			h1: {
+				icon: <Heading1 className="size-4" />,
+				desc: "Heading 1 for sub-sections.",
+				label: "Heading 1",
+				func: () => formatHeading(editor, blockType, "h3"),
+			},
+			h2: {
+				icon: <Heading2 className="size-4" />,
+				desc: "Heading 2 for minor sections.",
+				label: "Heading 2",
+				func: () => formatHeading(editor, blockType, "h4"),
+			},
+			bullet: {
+				icon: <List className="size-4" />,
+				desc: "Bullet list for unordered items.",
+				label: "Bullet List",
+				func: () => {
+					console.log(editor, blockType, "pranu");
+					formatBulletList(editor, blockType);
+				},
+			},
+			number: {
+				icon: <ListOrdered className="size-4" />,
+				desc: "Numbered list for ordered items.",
+				label: "Numbered list",
+				func: () => formatNumberedList(editor, blockType),
+			},
+			code: {
+				icon: <Braces className="size-4" />,
+				desc: "Code block for snippets.",
+				label: "Code",
+				func: () => formatCode(editor, blockType),
+			},
+			quote: {
+				icon: <Quote className="size-4" />,
+				desc: "Blockquote for quotations.",
+				label: "Blockquote",
+				func: () => formatQuote(editor, blockType),
+			},
+		}),
+		[editor],
+	);
 	const Blocks = useMemo(
 		() => ({
 			paragraph: {
@@ -146,7 +198,7 @@ export default function BlockFormatDropDown({
 				</>
 			}
 			ShowChevronsUpDown={ShowChevronsUpDown}
-			values={Object.values(Blocks)}
+			values={Object.values(commentMode ? commentModeBlocks : Blocks)}
 		/>
 	);
 }

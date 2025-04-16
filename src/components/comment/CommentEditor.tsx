@@ -1,87 +1,56 @@
-import React, { useCallback, useLayoutEffect, useState } from "react";
-import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
-import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
-import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
-import { mergeRegister } from "@lexical/utils";
-import { BLUR_COMMAND, COMMAND_PRIORITY_LOW, FOCUS_COMMAND } from "lexical";
+"use client";
+import { SharedHistoryContext } from "../shared/Lexical Editor/providers/SharedHistoryContext";
+import { ToolbarContext } from "../shared/Lexical Editor/providers/ToolbarContext";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 
-interface SimpleEditorProps {
+import theme from "../shared/Lexical Editor/themes/editor-theme";
+import Core from "./config/Core";
+import nodes from "./config/nodes";
+import { useEffect } from "react";
+import type { SerializedEditorState } from "lexical";
+
+interface EditorProps {
+	isEditable: boolean;
+	content?: unknown;
+	namespace?: string;
 	placeholder?: string;
+	id?: string;
 	autoFocus?: boolean;
-	onChange?: (editorState: string) => void;
+	onChangeHandler?: (data: SerializedEditorState) => void;
 }
 
-export default function SimpleEditor({
-	placeholder = "Write something...",
+export default function Editor({
+	isEditable = true,
+	content,
+	placeholder = "Add a comment...",
+	id = "ebatEditor",
 	autoFocus = false,
-	onChange,
-}: SimpleEditorProps) {
-	const [editor] = useLexicalComposerContext();
-	const isEditable = useLexicalEditable();
-	const [hasFocus, setHasFocus] = useState(false);
-
-	useLayoutEffect(() => {
-		return mergeRegister(
-			editor.registerCommand(
-				FOCUS_COMMAND,
-				() => {
-					setHasFocus(true);
-					return false;
-				},
-				COMMAND_PRIORITY_LOW,
-			),
-			editor.registerCommand(
-				BLUR_COMMAND,
-				() => {
-					setHasFocus(false);
-					return false;
-				},
-				COMMAND_PRIORITY_LOW,
-			),
-		);
-	}, [editor]);
-
+	onChangeHandler,
+}: EditorProps) {
+	const initialConfig = {
+		namespace: id,
+		theme,
+		editorState:
+			typeof content === "string" ? content : JSON.stringify(content),
+		nodes: [...nodes],
+		onError: (error: Error) => {
+			throw error;
+		},
+		editable: isEditable,
+	};
+	const changeHandler = onChangeHandler || (() => null);
 	return (
-		<div className="editor-container">
-			<RichTextPlugin
-				contentEditable={
-					<div className="editor-inner">
-						<ContentEditable
-							className="editor-content"
-							autoFocus={autoFocus}
-							aria-placeholder={placeholder}
-							placeholder={
-								<div className="editor-placeholder">{placeholder}</div>
-							}
-						/>
-					</div>
-				}
-				ErrorBoundary={LexicalErrorBoundary}
-			/>
-
-			{/* Core Plugins */}
-			<ClearEditorPlugin />
-			<HistoryPlugin />
-			<LinkPlugin />
-			<HorizontalRulePlugin />
-			<ListPlugin />
-			<CheckListPlugin />
-			<TablePlugin />
-			<MarkdownShortcutPlugin />
-			<ClickableLinkPlugin />
-			<TabIndentationPlugin />
-		</div>
+		<LexicalComposer initialConfig={initialConfig}>
+			<SharedHistoryContext>
+				<ToolbarContext>
+					<Core
+						placeholder={placeholder}
+						id={id}
+						autoFocus={autoFocus}
+						onChangeHandler={changeHandler}
+					/>
+				</ToolbarContext>
+			</SharedHistoryContext>
+		</LexicalComposer>
 	);
 }
