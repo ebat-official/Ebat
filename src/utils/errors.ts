@@ -14,6 +14,7 @@ import {
 	ERROR,
 	FAILED_TO_EDIT_POST,
 	CANNOT_EDIT_PUBLISHED_POST,
+	FAILED_TO_ADD_COMMENT,
 } from "@/utils/contants";
 
 // Define errors with more user-friendly cause names
@@ -114,7 +115,21 @@ export const LIVE_POST_EDIT_ERROR = {
 	cause: FAILED_TO_EDIT_POST,
 	data: { message: "You cannot edit a live post in this route" },
 };
-
+export const COMMENT_ID_NOT_EXIST_ERROR = {
+	status: ERROR,
+	cause: FAILED_TO_EDIT_POST,
+	data: { message: "Comment Id is required" },
+};
+export const USERNAME_NOT_EXIST_ERROR = {
+	status: ERROR,
+	cause: FAILED_TO_EDIT_POST,
+	data: { message: "userName is required" },
+};
+export const COMMENT_ADDITION_ERROR = {
+	status: ERROR,
+	cause: FAILED_TO_ADD_COMMENT,
+	data: { message: "failed to add comment" },
+};
 // ✅ Functions to throw structured errors
 export function UserNotAuthenticatedErr() {
 	return Object.assign(
@@ -200,14 +215,11 @@ export function EmailNotVerifiedErr() {
 		EMAIL_NOT_VERIFIED_ERROR,
 	);
 }
-
-export const COMMENT_ID_NOT_EXIST_ERROR = {
-	status: ERROR,
-	cause: FAILED_TO_EDIT_POST,
-	data: { message: "Comment Id is required" },
-};
-export const USERNAME_NOT_EXIST_ERROR = {
-	status: ERROR,
-	cause: FAILED_TO_EDIT_POST,
-	data: { message: "userName is required" },
-};
+export function FailedToAddCommentErr(
+	message: string = COMMENT_ADDITION_ERROR.data.message,
+) {
+	return Object.assign(new Error(message), {
+		...COMMENT_ADDITION_ERROR,
+		data: { message },
+	});
+}

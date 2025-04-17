@@ -5,7 +5,10 @@ import { findBeautifulMentionNodes } from "./utils";
 export type MentionData = {
 	trigger: string;
 	value: string;
-	data?: unknown;
+	data?: {
+		id?: string;
+		label?: string;
+	};
 };
 
 interface MentionsPluginProps {

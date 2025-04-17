@@ -213,12 +213,12 @@ model PostEdit {
 
 model Comment {
   id        String           @id @default(uuid()) @db.Uuid
-  text      String
+  content   Json?
   createdAt DateTime         @default(now())
   author    User             @relation(fields: [authorId], references: [id])
   authorId  String           @db.Uuid
   post      Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String           @db.Uuid
+  postId    String
   votes     CommentVote[]
   parent    Comment?         @relation("CommentReplies", fields: [parentId], references: [id])
   parentId  String?          @db.Uuid
@@ -259,6 +259,7 @@ model CommentMention {
   commentId String   @db.Uuid
   createdAt DateTime @default(now())
 
+  @@unique([userId, commentId])
   @@index([commentId])
 }
 

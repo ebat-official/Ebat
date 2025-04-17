@@ -40,7 +40,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
 							<Separator className=" my-6 " />
 
-							<CommentContainer />
+							<CommentContainer postId={post.id} />
 						</CardContent>
 					</Card>
 				</RightPanelLayout.MainPanel>

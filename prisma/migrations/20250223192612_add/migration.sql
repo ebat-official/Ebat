@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Post" ALTER COLUMN "coins" SET DEFAULT 0;

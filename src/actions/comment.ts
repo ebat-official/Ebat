@@ -1,21 +1,36 @@
+"use server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import {
 	ValidationErr,
 	UserNotAuthenticatedErr,
 	FailedToSaveDraftErr,
+	FailedToAddCommentErr,
 } from "@/utils/errors";
 import { z } from "zod";
 import { CommentSortOption } from "@/utils/types";
-import { VoteType } from "@prisma/client";
+import { Comment, VoteType } from "@prisma/client";
 import { getCurrentUser } from "./user";
+import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 
 // Validator for comment data
+const MentionDataSchema = z.object({
+	trigger: z.string(),
+	value: z.string(),
+	data: z
+		.object({
+			id: z.string().optional(),
+			label: z.string().optional(),
+		})
+		.optional(),
+});
+
 const CommentValidator = z.object({
 	id: z.string().optional(), // Optional for editing
 	parentId: z.string().nullable().optional(), // Optional for top-level comments
 	postId: z.string(), // Required to associate the comment with a post
 	content: z.any(), // JSON content of the comment
+	mentions: z.array(MentionDataSchema), // Can be an empty array or valid MentionData[]
 });
 
 // Shared utility functions
@@ -35,23 +50,56 @@ export async function createComment(data: z.infer<typeof CommentValidator>) {
 	const user = await validateUser();
 
 	const commentData = {
-		id: data.id, // If `id` exists, it will be used for editing
-		parentId: data.parentId || null, // If `parentId` is not provided, set it to null
+		parentId: data.parentId || null,
 		postId: data.postId,
-		text: data.content, //
+		content: data.content,
 		authorId: user.id,
 	};
 
 	try {
-		const comment = await prisma.comment.upsert({
-			where: { id: data.id || undefined }, // If `id` exists, it will update the comment
-			create: commentData, // Create a new comment
-			update: commentData, // Update the existing comment
+		const result = await prisma.$transaction(async (prisma) => {
+			let comment: Comment;
+
+			if (data.id) {
+				// If id is provided, use upsert
+				comment = await prisma.comment.upsert({
+					where: { id: data.id },
+					create: {
+						...commentData,
+						id: data.id, // preserve id during create
+					},
+					update: commentData,
+				});
+			} else {
+				// Otherwise, just create
+				comment = await prisma.comment.create({
+					data: commentData,
+				});
+			}
+
+			const mentions = data.mentions || [];
+
+			if (mentions.length > 0) {
+				await prisma.commentMention.createMany({
+					data: mentions
+						.map((mention) => mention?.data?.id)
+						.filter((userId): userId is string => !!userId)
+						.map((userId) => ({
+							userId,
+							commentId: comment.id,
+						})),
+					skipDuplicates: true,
+				});
+			}
+
+			return comment;
 		});
 
-		return comment; // Return the ID of the created or updated comment
+		return result;
 	} catch (error) {
-		throw FailedToSaveDraftErr("Failed to save the comment.");
+		console.error("Error creating comment with mentions:", error);
+		const msg = error instanceof Error ? error.message : undefined;
+		throw FailedToAddCommentErr(msg);
 	}
 }
 

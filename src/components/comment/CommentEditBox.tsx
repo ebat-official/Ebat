@@ -8,6 +8,8 @@ import { Loader2 } from "lucide-react";
 import { FaRegCommentDots } from "react-icons/fa";
 import { SerializedEditorState } from "lexical";
 import { MentionData } from "../shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
+import { useServerAction } from "@/hooks/useServerAction";
+import { createComment } from "@/actions/comment";
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
 	loading: () => <Skeleton className="w-full mt-8 h-9" />,
@@ -15,17 +17,34 @@ const Editor = dynamic(() => import("./CommentEditor"), {
 
 interface CommentEditBoxProps {
 	content?: string;
-	parentId?: string | null;
+	parentId?: string | undefined;
+	commentId?: string | undefined;
+	postId: string;
 }
 
 export default function CommentEditBox({
 	content,
-	parentId = null,
+	parentId = undefined,
+	commentId = undefined,
+	postId,
 }: CommentEditBoxProps) {
 	const [comment, setComment] = useState<SerializedEditorState>();
 	const [mentions, setMentions] = useState<MentionData[]>([]);
+	const [createCommentAction, isLoading] = useServerAction(createComment);
 
-	const actionSavingLoading = false;
+	const commentData = {
+		id: commentId,
+		parentId: parentId,
+		postId: postId,
+		content: comment,
+		mentions: mentions,
+	};
+
+	const createCommentHanlder = () => {
+		console.log(comment, postId, "praa");
+		if (!comment || !postId) return;
+		createCommentAction(commentData);
+	};
 	console.log(comment, mentions);
 	return (
 		<div>
@@ -36,12 +55,12 @@ export default function CommentEditBox({
 						onMentionChangeHandler={setMentions}
 					/>
 					<Button
-						disabled={false}
-						onClick={() => null}
+						disabled={isLoading}
+						onClick={createCommentHanlder}
 						variant="outline"
-						className="rounded-full absolute right-0 bottom-0"
+						className="rounded-full absolute right-0 bottom-0 "
 					>
-						{actionSavingLoading ? (
+						{isLoading ? (
 							<Loader2 className="animate-spin" />
 						) : (
 							<FaRegCommentDots />
