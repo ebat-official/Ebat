@@ -83,7 +83,6 @@ export default function BlockFormatDropDown({
 				desc: "Bullet list for unordered items.",
 				label: "Bullet List",
 				func: () => {
-					console.log(editor, blockType, "pranu");
 					formatBulletList(editor, blockType);
 				},
 			},
@@ -157,7 +156,6 @@ export default function BlockFormatDropDown({
 				desc: "Bullet list for unordered items.",
 				label: "Bullet List",
 				func: () => {
-					console.log(editor, blockType, "pranu");
 					formatBulletList(editor, blockType);
 				},
 			},

@@ -31,24 +31,23 @@ import {
 } from "@lexical/markdown";
 import { PLAYGROUND_TRANSFORMERS } from "@/components/shared/Lexical Editor/plugins/MarkdownTransformers";
 import { BsMarkdown } from "react-icons/bs";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-	BeautifulMentionsMenuItemProps,
-	BeautifulMentionsMenuProps,
-	BeautifulMentionsPlugin,
-} from "lexical-beautiful-mentions";
+import { BeautifulMentionsPlugin } from "lexical-beautiful-mentions";
 import {
 	MentionMenu,
 	MentionMenuItem,
 } from "@/components/shared/Lexical Editor/ui/MentionMenu/MentionMenu";
-import { fetchCommentUsersByUserName } from "@/utils/apiUtils";
 import { handleUserMentionSearch } from "@/utils/handleUserMentionSearch";
+import {
+	MentionChangePlugin,
+	MentionData,
+} from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 
 interface CoreProps {
 	placeholder: string;
 	id: string;
 	autoFocus?: boolean;
 	onChangeHandler: (data: SerializedEditorState) => void;
+	onMentionChangeHandler: (mentions: MentionData[]) => void;
 }
 
 export default function Core({
@@ -56,6 +55,7 @@ export default function Core({
 	id,
 	autoFocus,
 	onChangeHandler,
+	onMentionChangeHandler,
 }: CoreProps) {
 	const [editor] = useLexicalComposerContext();
 	const [hasFocus, setHasFocus] = useState(() => {
@@ -157,6 +157,7 @@ export default function Core({
 				menuItemComponent={MentionMenuItem}
 				onSearch={handleUserMentionSearch}
 			/>
+			<MentionChangePlugin onMentionsChange={onMentionChangeHandler} />
 		</div>
 	);
 }

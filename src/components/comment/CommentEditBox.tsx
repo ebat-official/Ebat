@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import { FaRegCommentDots } from "react-icons/fa";
 import { SerializedEditorState } from "lexical";
+import { MentionData } from "../shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
 	loading: () => <Skeleton className="w-full mt-8 h-9" />,
@@ -22,13 +23,18 @@ export default function CommentEditBox({
 	parentId = null,
 }: CommentEditBoxProps) {
 	const [comment, setComment] = useState<SerializedEditorState>();
+	const [mentions, setMentions] = useState<MentionData[]>([]);
+
 	const actionSavingLoading = false;
-	console.log(comment);
+	console.log(comment, mentions);
 	return (
 		<div>
 			<Card className=" pb-2 px-2 ">
 				<CardContent className="pl-2 px-0 relative">
-					<Editor onChangeHandler={setComment} />
+					<Editor
+						onChangeHandler={setComment}
+						onMentionChangeHandler={setMentions}
+					/>
 					<Button
 						disabled={false}
 						onClick={() => null}

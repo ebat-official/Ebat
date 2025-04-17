@@ -6,16 +6,9 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import theme from "../shared/Lexical Editor/themes/editor-theme";
 import Core from "./config/Core";
 import nodes from "./config/nodes";
-import { useEffect } from "react";
 import type { SerializedEditorState } from "lexical";
-import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
-import { MdOutlinePublish } from "react-icons/md";
-import { TfiCommentsSmiley } from "react-icons/tfi";
-import { BiCommentDetail } from "react-icons/bi";
-import { FaRegCommentDots } from "react-icons/fa";
-import { BeautifulMentionsTheme } from "lexical-beautiful-mentions";
 import { beautifulMentionsTheme } from "../shared/Lexical Editor/ui/MentionMenu/MentionTheme";
+import { MentionData } from "../shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 interface EditorProps {
 	isEditable?: boolean;
 	content?: unknown;
@@ -24,6 +17,7 @@ interface EditorProps {
 	id?: string;
 	autoFocus?: boolean;
 	onChangeHandler?: (data: SerializedEditorState) => void;
+	onMentionChangeHandler: (mentions: MentionData[]) => void;
 }
 
 export default function Editor({
@@ -33,6 +27,7 @@ export default function Editor({
 	id = "comment",
 	autoFocus = false,
 	onChangeHandler,
+	onMentionChangeHandler,
 }: EditorProps) {
 	const initialConfig = {
 		namespace: id,
@@ -58,6 +53,7 @@ export default function Editor({
 						id={id}
 						autoFocus={autoFocus}
 						onChangeHandler={changeHandler}
+						onMentionChangeHandler={onMentionChangeHandler}
 					/>
 				</ToolbarContext>
 			</SharedHistoryContext>
