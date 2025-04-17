@@ -49,7 +49,6 @@ export default function Editor({
 		editable: isEditable,
 	};
 	const changeHandler = onChangeHandler || (() => null);
-	const actionSavingLoading = false;
 	return (
 		<LexicalComposer initialConfig={initialConfig}>
 			<SharedHistoryContext>

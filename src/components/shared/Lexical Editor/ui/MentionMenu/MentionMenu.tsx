@@ -22,7 +22,7 @@ export function MentionMenu({
 	return (
 		<Command
 			className={`
-		  absolute rounded-lg border shadow-md h-28 overflow-y-auto min-w-28 w-max 
+		  absolute rounded-lg border shadow-md h-max max-h-28 overflow-y-auto min-w-28 w-max 
 		  ${loading ? "opacity-70 pointer-events-none" : ""}
 		`}
 			{...props}
