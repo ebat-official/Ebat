@@ -41,6 +41,8 @@ import {
 	MentionMenu,
 	MentionMenuItem,
 } from "@/components/shared/Lexical Editor/ui/MentionMenu/MentionMenu";
+import { fetchCommentUsersByUserName } from "@/utils/apiUtils";
+import { handleUserMentionSearch } from "@/utils/handleUserMentionSearch";
 
 interface CoreProps {
 	placeholder: string;
@@ -109,36 +111,6 @@ export default function Core({
 		});
 	}, [editor]);
 
-	const mentionItems = {
-		"@": [
-			"Anton",
-			"Boris",
-			"Catherine",
-			"Dmitri",
-			"Elena",
-			"Felix",
-			"Gina",
-			"Anton",
-			"Boris",
-			"Catherine",
-			"Dmitri",
-			"Elena",
-			"Felix",
-			"Gina",
-			"Catherine",
-			"Dmitri",
-			"Elena",
-			"Felix",
-			"Gina",
-			"Anton",
-			"Boris",
-			"Catherine",
-			"Dmitri",
-		],
-		"#": ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape"],
-		"due:": ["Today", "Tomorrow", "01-01-2023"],
-	};
-
 	return (
 		<div className="relative flex editor flex-col">
 			<div className="p-2">
@@ -180,9 +152,10 @@ export default function Core({
 			<HistoryPlugin />
 			<TabIndentationPlugin maxIndent={3} />
 			<BeautifulMentionsPlugin
-				items={mentionItems}
+				triggers={["@"]}
 				menuComponent={MentionMenu}
 				menuItemComponent={MentionMenuItem}
+				onSearch={handleUserMentionSearch}
 			/>
 		</div>
 	);

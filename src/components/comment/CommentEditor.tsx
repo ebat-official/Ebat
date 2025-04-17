@@ -15,6 +15,7 @@ import { TfiCommentsSmiley } from "react-icons/tfi";
 import { BiCommentDetail } from "react-icons/bi";
 import { FaRegCommentDots } from "react-icons/fa";
 import { BeautifulMentionsTheme } from "lexical-beautiful-mentions";
+import { beautifulMentionsTheme } from "../shared/Lexical Editor/ui/MentionMenu/MentionTheme";
 interface EditorProps {
 	isEditable?: boolean;
 	content?: unknown;
@@ -29,31 +30,14 @@ export default function Editor({
 	isEditable = true,
 	content,
 	placeholder = "Add a comment...",
-	id = "ebatEditor",
+	id = "comment",
 	autoFocus = false,
 	onChangeHandler,
 }: EditorProps) {
-	const mentionsStyle =
-		"px-1 mx-2/3 mx-px align-baseline inline-block rounded break-words cursor-pointer leading-5";
-	const mentionsStyleFocused = "ring-2 ring-offset-1";
-
-	const beautifulMentionsTheme: BeautifulMentionsTheme = {
-		"@": `${mentionsStyle} bg-green-600 text-accent`,
-		"@Focused": `${mentionsStyleFocused} dark:ring-green-500 ring-green-600 ring-offset-background`,
-		"rec:": {
-			trigger: "text-blue-500",
-			value: "text-orange-500",
-			container:
-				"mx-[2px] px-[4px] rounded border border-muted cursor-pointer bg-red-500",
-			containerFocused:
-				"mx-[2px] px-[4px] rounded border border-muted cursor-pointer",
-		},
-		"\\w+:": `${mentionsStyle} dark:bg-gray-400 bg-gray-500 text-accent`,
-		"\\w+:Focused": `${mentionsStyleFocused} dark:ring-gray-400 ring-gray-500 ring-offset-background`,
-	};
 	const initialConfig = {
 		namespace: id,
 		theme: {
+			...theme,
 			beautifulMentions: beautifulMentionsTheme,
 		},
 		editorState:

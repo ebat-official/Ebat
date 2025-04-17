@@ -200,3 +200,14 @@ export function EmailNotVerifiedErr() {
 		EMAIL_NOT_VERIFIED_ERROR,
 	);
 }
+
+export const COMMENT_ID_NOT_EXIST_ERROR = {
+	status: ERROR,
+	cause: FAILED_TO_EDIT_POST,
+	data: { message: "Comment Id is required" },
+};
+export const USERNAME_NOT_EXIST_ERROR = {
+	status: ERROR,
+	cause: FAILED_TO_EDIT_POST,
+	data: { message: "userName is required" },
+};

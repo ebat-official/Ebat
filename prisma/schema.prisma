@@ -223,8 +223,8 @@ model Comment {
   parent    Comment?         @relation("CommentReplies", fields: [parentId], references: [id])
   parentId  String?          @db.Uuid
   replies   Comment[]        @relation("CommentReplies")
-  mentions  CommentMention[] @relation("CommentMentions") // Add this relation
-  Report    Report[]
+  mentions  CommentMention[] @relation("CommentMentions")
+  reports   Report[]         @relation("CommentReports")
 
   @@index([createdAt])
   @@index([postId, parentId])
@@ -253,13 +253,13 @@ model CommentVote {
 
 model CommentMention {
   id        String   @id @default(uuid()) @db.Uuid
-  user      User     @relation(fields: [userName], references: [userName])
-  userName  String
-  comment   Comment  @relation("CommentMentions", fields: [commentId], references: [id]) // Add this relation
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
+  comment   Comment  @relation("CommentMentions", fields: [commentId], references: [id])
   commentId String   @db.Uuid
   createdAt DateTime @default(now())
 
-  @@unique([userName, commentId]) // Ensure that a user can only be mentioned once in a comment
+  @@index([commentId])
 }
 
 model CompletionStatus {
@@ -290,7 +290,7 @@ model Report {
   reporterId String   @db.Uuid
   post       Post?    @relation(fields: [postId], references: [id])
   postId     String?
-  comment    Comment? @relation(fields: [commentId], references: [id])
+  comment    Comment? @relation("CommentReports", fields: [commentId], references: [id])
   commentId  String?  @db.Uuid
   reason     String
   createdAt  DateTime @default(now())
