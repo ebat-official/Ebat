@@ -32,6 +32,15 @@ import {
 import { PLAYGROUND_TRANSFORMERS } from "@/components/shared/Lexical Editor/plugins/MarkdownTransformers";
 import { BsMarkdown } from "react-icons/bs";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+	BeautifulMentionsMenuItemProps,
+	BeautifulMentionsMenuProps,
+	BeautifulMentionsPlugin,
+} from "lexical-beautiful-mentions";
+import {
+	MentionMenu,
+	MentionMenuItem,
+} from "@/components/shared/Lexical Editor/ui/MentionMenu/MentionMenu";
 
 interface CoreProps {
 	placeholder: string;
@@ -100,6 +109,36 @@ export default function Core({
 		});
 	}, [editor]);
 
+	const mentionItems = {
+		"@": [
+			"Anton",
+			"Boris",
+			"Catherine",
+			"Dmitri",
+			"Elena",
+			"Felix",
+			"Gina",
+			"Anton",
+			"Boris",
+			"Catherine",
+			"Dmitri",
+			"Elena",
+			"Felix",
+			"Gina",
+			"Catherine",
+			"Dmitri",
+			"Elena",
+			"Felix",
+			"Gina",
+			"Anton",
+			"Boris",
+			"Catherine",
+			"Dmitri",
+		],
+		"#": ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape"],
+		"due:": ["Today", "Tomorrow", "01-01-2023"],
+	};
+
 	return (
 		<div className="relative flex editor flex-col">
 			<div className="p-2">
@@ -140,6 +179,11 @@ export default function Core({
 			<CodeHighlightPlugin />
 			<HistoryPlugin />
 			<TabIndentationPlugin maxIndent={3} />
+			<BeautifulMentionsPlugin
+				items={mentionItems}
+				menuComponent={MentionMenu}
+				menuItemComponent={MentionMenuItem}
+			/>
 		</div>
 	);
 }

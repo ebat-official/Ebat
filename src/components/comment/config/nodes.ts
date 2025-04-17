@@ -8,7 +8,7 @@ import { OverflowNode } from "@lexical/overflow";
 import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { MarkNode } from "@lexical/mark";
-
+import { BeautifulMentionNode } from "lexical-beautiful-mentions";
 const commentNodes: Array<Klass<LexicalNode>> = [
 	HeadingNode, // For headings (e.g., H1, H2, H3)
 	ListNode, // For unordered and ordered lists
@@ -22,6 +22,7 @@ const commentNodes: Array<Klass<LexicalNode>> = [
 	OverflowNode, // For handling overflow content
 	HashtagNode, // For hashtags (optional, can be removed if not needed)
 	MarkNode,
+	BeautifulMentionNode, // For mentions (e.g., @username)
 ];
 
 export default commentNodes;

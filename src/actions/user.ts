@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { User, UserProfile } from "@prisma/client";
 import { validateVerificationToken } from "./auth";
+import { auth } from "@/auth";
 
 type UserWithProfile = User & { userProfile: UserProfile | null };
 
@@ -140,3 +141,8 @@ export async function updateUserName(id: string, userName: string) {
 		return null;
 	}
 }
+
+export const getCurrentUser = async () => {
+	const session = await auth();
+	return session?.user;
+};

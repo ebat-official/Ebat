@@ -8,7 +8,7 @@ import { LexicalViewer } from "./LexicalViewer";
 import { PostStatsBadge } from "./PostStatsBadge";
 import { Separator } from "@/components/ui/separator";
 import PostDetailsAccordian from "./PostDetailsAccordian";
-import Comment from "@/components/comment/Comment";
+import Comment from "@/components/comment/CommentEditBox";
 import CommentContainer from "@/components/comment/CommentContainer";
 
 type PostViewProps = {

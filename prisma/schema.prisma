@@ -66,6 +66,7 @@ enum SubCategory {
   CSS
   REACT
 }
+
 model User {
   id               String             @id @default(uuid()) @db.Uuid
   email            String             @unique
@@ -163,7 +164,7 @@ model ResetToken {
 model Post {
   id                 String             @id @default(nanoid())
   title              String?
-  slug               String?            @unique 
+  slug               String?            @unique
   content            Json?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -187,41 +188,45 @@ model Post {
   collaborators      User[]             @relation("PostCollaborators")
   approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
-  
+
   @@unique([id, slug], name: "PostIdSlug")
 }
 
 model PostEdit {
-  id                 String         @id @default(uuid())
-  postId             String         
-  authorId           String         @db.Uuid
+  id                 String             @id @default(uuid())
+  postId             String
+  authorId           String             @db.Uuid
   content            Json? // Suggested new content
   approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
   title              String?
   type               PostType
   difficulty         Difficulty?
-  companies          String[]       @default([])
+  companies          String[]           @default([])
   completionDuration Int?
-  topics             String[]       @default([])
-  @@unique([postId, authorId],name: "postId_authorId") // Ensure postId and authorId combination is unique
+  topics             String[]           @default([])
+
+  @@unique([postId, authorId], name: "postId_authorId") // Ensure postId and authorId combination is unique
 }
 
 model Comment {
-  id        String    @id @default(uuid()) @db.Uuid
+  id        String           @id @default(uuid()) @db.Uuid
   text      String
-  createdAt DateTime  @default(now())
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  String    @db.Uuid
-  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String    @db.Uuid
+  createdAt DateTime         @default(now())
+  author    User             @relation(fields: [authorId], references: [id])
+  authorId  String           @db.Uuid
+  post      Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String           @db.Uuid
   votes     CommentVote[]
-  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  parentId  String?   @db.Uuid
-  replies   Comment[] @relation("CommentReplies")
-  @@index([createdAt]) 
+  parent    Comment?         @relation("CommentReplies", fields: [parentId], references: [id])
+  parentId  String?          @db.Uuid
+  replies   Comment[]        @relation("CommentReplies")
+  mentions  CommentMention[] @relation("CommentMentions") // Add this relation
+  Report    Report[]
+
+  @@index([createdAt])
   @@index([postId, parentId])
 }
 
@@ -229,7 +234,7 @@ model Vote {
   user   User     @relation(fields: [userId], references: [id])
   userId String   @db.Uuid
   post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String   
+  postId String
   type   VoteType
 
   @@id([userId, postId])
@@ -250,7 +255,7 @@ model CommentMention {
   id        String   @id @default(uuid()) @db.Uuid
   user      User     @relation(fields: [userName], references: [userName])
   userName  String
-  comment   Comment  @relation("CommentMentions", fields: [commentId], references: [id])
+  comment   Comment  @relation("CommentMentions", fields: [commentId], references: [id]) // Add this relation
   commentId String   @db.Uuid
   createdAt DateTime @default(now())
 
@@ -260,7 +265,7 @@ model CommentMention {
 model CompletionStatus {
   id          String   @id @default(uuid()) @db.Uuid
   userId      String   @db.Uuid
-  postId      String   
+  postId      String
   completedAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
@@ -272,7 +277,7 @@ model CompletionStatus {
 model Bookmark {
   id     String @id @default(uuid()) @db.Uuid
   userId String @db.Uuid
-  postId String 
+  postId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
@@ -284,7 +289,7 @@ model Report {
   reporter   User     @relation(fields: [reporterId], references: [id])
   reporterId String   @db.Uuid
   post       Post?    @relation(fields: [postId], references: [id])
-  postId     String?  
+  postId     String?
   comment    Comment? @relation(fields: [commentId], references: [id])
   commentId  String?  @db.Uuid
   reason     String
