@@ -13,7 +13,7 @@ function RightPanelLayout({
 	return (
 		<div
 			className={cn(
-				"flex flex-col md:flex-row w-full h-full gap-2 justify-between overflow-x-hidden",
+				"flex flex-col md:flex-row w-full h-full gap-2 justify-between overflow-x-hidden p-2",
 				className,
 			)}
 		>
@@ -46,7 +46,7 @@ function SidePanel({
 	return (
 		<div className="relative ">
 			{/* Hidden Checkbox */}
-			<input type="checkbox" id="sidepanel-toggle" className="peer hidden" />
+			<input type="checkbox" id="sidepanel-toggle" className="hidden peer" />
 
 			{/* Toggle Button */}
 			<label
