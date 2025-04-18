@@ -203,10 +203,7 @@ export async function createPostEdit(data: z.infer<typeof PostValidator>) {
 		topics: data.topics || [],
 		approvalLogs: [],
 	};
-	const byteSize = new TextEncoder().encode(
-		JSON.stringify(postEditData.content),
-	).length;
-	console.log("pranav", byteSize);
+
 	try {
 		const postEdit = await prisma.postEdit.upsert({
 			where: {
