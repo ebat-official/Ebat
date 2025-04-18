@@ -7,6 +7,7 @@ import {
 } from "@/actions/user";
 import Google from "next-auth/providers/google";
 import Facebook from "next-auth/providers/facebook";
+import GitHub from "next-auth/providers/github";
 import Linkedin from "next-auth/providers/linkedin";
 import { EMAIL_NOT_VERIFIED } from "@/utils/contants";
 import Credentials from "next-auth/providers/credentials";
@@ -56,11 +57,12 @@ export default {
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			allowDangerousEmailAccountLinking: true,
 		}),
-		Facebook({
-			clientId: process.env.FACEBOOK_CLIENT_ID,
-			clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+		GitHub({
+			clientId: process.env.AUTH_GITHUB_ID,
+			clientSecret: process.env.AUTH_GITHUB_SECRET,
 			allowDangerousEmailAccountLinking: true,
 		}),
+
 		Linkedin({
 			clientId: process.env.LINKEDIN_CLIENT_ID,
 			clientSecret: process.env.LINKEDIN_CLIENT_SECRET,

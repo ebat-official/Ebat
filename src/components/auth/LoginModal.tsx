@@ -86,13 +86,7 @@ const LoginModal: FC<LoginModalProps> = ({
 							</div>
 						)}
 					</DialogFooter>
-					<p className="text-xs text-center text-gray-500 dark:text-white">
-						By signing up, you accept our{" "}
-						<Link href="/terms" className="text-blue-500 underline">
-							Terms of Use
-						</Link>
-						.
-					</p>
+
 					{!isLoginForm && (
 						<div className="flex items-center justify-start -mt-4 ">
 							<p className="text-sm leading-normal justify-self-start">
@@ -108,6 +102,13 @@ const LoginModal: FC<LoginModalProps> = ({
 							</Button>
 						</div>
 					)}
+					<p className="text-xs text-center text-gray-500 dark:text-white">
+						By signing up, you accept our{" "}
+						<Link href="/terms" className="text-blue-500 underline">
+							Terms of Use
+						</Link>
+						.
+					</p>
 				</>
 			</DialogContent>
 		</Dialog>
