@@ -13,7 +13,7 @@ export const sanitizeErrorMessage = (
 	return message;
 };
 
-export const handleError = (error: unknown, postType: PostType): string => {
+export const handleError = (error: unknown, postType?: PostType): string => {
 	if (error instanceof ZodError) {
 		const firstError = error.errors[0];
 
