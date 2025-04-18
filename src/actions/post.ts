@@ -146,7 +146,10 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 		title: data.title,
 		completionDuration: getCompletionDuration(data),
 		coins: getDefaultCoins(data),
-		approvalStatus: PostApprovalStatus.PENDING,
+		approvalStatus:
+			data.type === PostType.BLOGS
+				? PostApprovalStatus.APPROVED
+				: PostApprovalStatus.PENDING,
 		approvalLogs: [],
 		slug: generateTitleSlug(data.title),
 	};
@@ -160,7 +163,7 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 
 		// Trigger revalidation for the post's path
 		revalidatePostPath(post);
-		return post.id;
+		return { id: post.id, slug: post.slug };
 	} catch (error) {
 		throw FailedToPublishPostErr();
 	}
