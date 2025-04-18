@@ -2,11 +2,13 @@ import { POST_ID_LENGTH } from "@/config";
 import { UNKNOWN_ERROR } from "./contants";
 import { ID_NOT_EXIST_ERROR } from "./errors";
 import { isValidCategoryCombo } from "./isValidCategoryCombo";
+import { CommentMention } from "@prisma/client";
 import {
 	ContentType,
 	PostWithContent,
 	PostRouteType,
 	PostWithExtraDetails,
+	UserSearchResult,
 } from "./types";
 import { PostCategory, SubCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
@@ -102,4 +104,50 @@ export async function getPostFromURL(params: {
 		console.error("Error fetching post:", error);
 		return null;
 	}
+}
+
+export async function fetchMentionsByCommentId(
+	commentId: string,
+): Promise<UserSearchResult[]> {
+	if (!commentId) {
+		throw new Error("Comment ID is required to fetch mentions.");
+	}
+
+	const response = await fetch(`/api/comment/mentions/${commentId}`);
+
+	if (!response.ok) {
+		let errorMessage = "Failed to fetch mentions.";
+		try {
+			const errorData = await response.json();
+			errorMessage = errorData.error || errorMessage;
+		} catch {
+			// Ignore JSON parsing errors and use the default error message
+		}
+		throw new Error(errorMessage);
+	}
+
+	return response.json();
+}
+
+export async function fetchCommentUsersByUserName(
+	userName: string,
+): Promise<UserSearchResult[]> {
+	if (!userName) {
+		throw new Error("User name is required to fetch mentions.");
+	}
+
+	const response = await fetch(`/api/comment/users/${userName}`);
+
+	if (!response.ok) {
+		let errorMessage = "Failed to fetch mentions.";
+		try {
+			const errorData = await response.json();
+			errorMessage = errorData.error || errorMessage;
+		} catch {
+			// Ignore JSON parsing errors and use the default error message
+		}
+		throw new Error(errorMessage);
+	}
+
+	return response.json();
 }

@@ -16,7 +16,6 @@ import { LayoutContainerNode } from "./LayoutNode/LayoutContainerNode";
 import { CollapsibleContainerNode } from "./CollapsibleNode/CollapsibleContainerNode";
 import { CollapsibleContentNode } from "./CollapsibleNode/CollapsibleContentNode";
 import { CollapsibleTitleNode } from "./CollapsibleNode/CollapsibleTitleNode";
-import { LinkWithMetaDataNode } from "../plugins/LinkWithMetaData";
 import { TweetNode } from "./TweetNode";
 import { YouTubeNode } from "../plugins/YouTubeNode";
 import { Hint } from "./Hint";
@@ -50,7 +49,6 @@ const nodes: Array<Klass<LexicalNode>> = [
 	CollapsibleContainerNode,
 	CollapsibleContentNode,
 	CollapsibleTitleNode,
-	LinkWithMetaDataNode,
 	ExcalidrawNode,
 	EquationNode,
 ];
@@ -64,7 +62,6 @@ export const nestedNodes: Array<Klass<LexicalNode>> = [
 	QuoteNode,
 	CodeNode,
 	StepperNode,
-	LinkWithMetaDataNode,
 	ImageNode,
 ];
 export default nodes;

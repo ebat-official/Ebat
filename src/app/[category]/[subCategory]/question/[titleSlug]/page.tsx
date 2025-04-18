@@ -1,14 +1,12 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { generatePageMetadata } from "@/utils/metadata";
-import PostView from "@/components/shared/Post View/PostView";
+import PostView from "@/components/post view/PostView";
 import { getPostFromURL } from "@/utils/apiUtils";
 import { PageParams } from "@/utils/types";
 import { getAllApprovedPosts } from "@/actions/post";
 import { generatePostPathFromPostId } from "@/utils/generatePostPath";
 import StructuredMetaData from "@/components/shared/StructuredMetaData";
-import { findUserProfile } from "@/actions/userProfile";
-import { UserProfile } from "@prisma/client";
 
 // incremental SSG,should be in the file
 export async function generateStaticParams() {

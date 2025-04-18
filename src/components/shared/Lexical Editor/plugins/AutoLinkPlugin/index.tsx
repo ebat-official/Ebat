@@ -1,54 +1,34 @@
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useEffect } from "react";
-import { TOGGLE_LINK_COMMAND_LinkWithMetaDataNode } from "../LinkWithMetaData";
-import { $getSelection, $isRangeSelection } from "lexical";
-import { $isCodeHighlightNode } from "@lexical/code";
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+import type { JSX } from "react";
+
+import {
+	AutoLinkPlugin,
+	createLinkMatcherWithRegExp,
+} from "@lexical/react/LexicalAutoLinkPlugin";
+import * as React from "react";
 
 const URL_REGEX =
 	/((https?:\/\/(www\.)?)|(www\.))[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)(?<![-.+():%])/;
 
-export default function LexicalAutoLinkPlugin(): null {
-	const [editor] = useLexicalComposerContext();
-	useEffect(() => {
-		const handlePaste = (event: ClipboardEvent) => {
-			const pastedText = event.clipboardData?.getData("text/plain");
-			if (pastedText && URL_REGEX.test(pastedText)) {
-				event.preventDefault();
-				pastedText.split(" ").map((TEXT) => {
-					if (URL_REGEX.test(TEXT)) {
-						editor.update(() => {
-							const selection = $getSelection();
-							if ($isRangeSelection(selection)) {
-								const node = selection.anchor.getNode();
+const EMAIL_REGEX =
+	/(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
 
-								if (!$isCodeHighlightNode(node)) {
-									if (node && node.getTextContent() === TEXT) {
-										node.remove();
-									}
+const MATCHERS = [
+	createLinkMatcherWithRegExp(URL_REGEX, (text) => {
+		return text.startsWith("http") ? text : `https://${text}`;
+	}),
+	createLinkMatcherWithRegExp(EMAIL_REGEX, (text) => {
+		return `mailto:${text}`;
+	}),
+];
 
-									editor.dispatchCommand(
-										TOGGLE_LINK_COMMAND_LinkWithMetaDataNode,
-										TEXT,
-									);
-								}
-							}
-						});
-					}
-				});
-			}
-		};
-
-		const rootElement = editor.getRootElement();
-		if (rootElement) {
-			rootElement.addEventListener("paste", handlePaste);
-		}
-
-		return () => {
-			if (rootElement) {
-				rootElement.removeEventListener("paste", handlePaste);
-			}
-		};
-	}, [editor]);
-
-	return null;
+export default function LexicalAutoLinkPlugin(): JSX.Element {
+	return <AutoLinkPlugin matchers={MATCHERS} />;
 }

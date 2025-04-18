@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
-import EditorContainer from "@/components/shared/Editor/EditorContainer";
+import EditorContainer from "../post edit/EditorContainer";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { generateNanoId } from "@/lib/generateNanoid";

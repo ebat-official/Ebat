@@ -252,6 +252,9 @@ importers:
       lexical:
         specifier: ^0.29.0
         version: 0.29.0
+      lexical-beautiful-mentions:
+        specifier: 0.1.47
+        version: 0.1.47(@lexical/react@0.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(yjs@13.6.24))(@lexical/utils@0.29.0)(lexical@0.29.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       linkedom:
         specifier: ^0.18.9
         version: 0.18.9
@@ -3104,6 +3107,15 @@ packages:
 
   layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}
+
+  lexical-beautiful-mentions@0.1.47:
+    resolution: {integrity: sha512-egaA9mlmUCZ9sEdTj/GUga0CFlwbc1Rky8WEcZpyJqhvqGWOb4eIDgC82/8nCq+y+P0xq69BYF24yFEiocTn0g==}
+    peerDependencies:
+      '@lexical/react': '>=0.11.0'
+      '@lexical/utils': '>=0.11.0'
+      lexical: '>=0.11.0'
+      react: '>=17.x'
+      react-dom: '>=17.x'
 
   lexical@0.29.0:
     resolution: {integrity: sha512-eoBHUEn0LmExKeK6x2cFKU0FPaMk2Bc5HgiCzTiv5ymKtwWw7LeKcxaNPmLxRRdQpcWV1IMKjayAbw7Lt/Gu7w==}
@@ -7372,6 +7384,14 @@ snapshots:
   kleur@4.1.5: {}
 
   layout-base@1.0.2: {}
+
+  lexical-beautiful-mentions@0.1.47(@lexical/react@0.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(yjs@13.6.24))(@lexical/utils@0.29.0)(lexical@0.29.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@lexical/react': 0.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(yjs@13.6.24)
+      '@lexical/utils': 0.29.0
+      lexical: 0.29.0
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
 
   lexical@0.29.0: {}
 

@@ -32,6 +32,7 @@ export const DATABASE_ERROR = "Database Error";
 export const FAILED_TO_SAVE_DRAFT = "Failed To Save Draft";
 export const FAILED_TO_PUBLISH_POST = "Failed To Publish Post";
 export const FAILED_TO_EDIT_POST = "Failed To Edit Post";
+export const FAILED_TO_ADD_COMMENT = "Failed To Add Comment";
 export const FAILED_TO_EDIT_DRAFT = "Failed To Edit Post Draft";
 export const CANNOT_EDIT_PUBLISHED_POST = "Cannot Edit a Published Post";
 export const PASSWORD = "password";
@@ -44,4 +45,12 @@ export const POST_ROUTE_TYPE = {
 	DEFAULT: "",
 	DRAFTS: "draft",
 	EDIT: "edit",
+} as const;
+
+export const COMMENT_SORT_OPTIONS = {
+	TOP: "TOP",
+	NEWEST: "NEWEST",
+	OLDEST: "OLDEST",
+	CONTROVERSIAL: "CONTROVERSIAL",
+	REPLIES: "REPLIES",
 } as const;

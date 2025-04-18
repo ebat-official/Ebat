@@ -183,7 +183,7 @@ export default function index({
 				"fontFamily",
 				$getSelectionStyleValueForProperty(selection, "font-family", "Arial"),
 			);
-			let matchingParent;
+			let matchingParent: null | ReturnType<typeof $findMatchingParent> = null;
 			if ($isLinkNode(parent)) {
 				// If node is a link, we need to fetch the parent paragraph node to set format
 				matchingParent = $findMatchingParent(
@@ -383,7 +383,12 @@ export default function index({
 									<div className="flex flex-row gap-x-[5px]  items-center">
 										<BlockFormatDropDown
 											disabled={!isEditable}
-											blockType={toolbarState.blockType}
+											blockType={
+												toolbarState.blockType ===
+												blockTypeToBlockName.paragraph
+													? "paragraph"
+													: toolbarState.blockType
+											}
 											editor={activeEditor}
 										/>
 										<Separator orientation={"vertical"} />
@@ -431,7 +436,11 @@ export default function index({
 								<div className="flex flex-row gap-x-[5px]  items-center">
 									<BlockFormatDropDown
 										disabled={!isEditable}
-										blockType={toolbarState.blockType}
+										blockType={
+											toolbarState.blockType === "check"
+												? "paragraph"
+												: toolbarState.blockType
+										}
 										editor={activeEditor}
 									/>
 									<Separator orientation={"vertical"} />
