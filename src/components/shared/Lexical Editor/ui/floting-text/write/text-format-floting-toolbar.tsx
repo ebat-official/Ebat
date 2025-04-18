@@ -24,6 +24,7 @@ import TextFormat from "../../drop-downs/text-format";
 import Font from "../../drop-downs/font";
 import FontSize from "../../drop-downs/font-size";
 import AiButton from "../../ai/ai-button";
+import { EditorBlockType } from "@/utils/types";
 
 export default function TextFormatFloatingToolbar({
 	editor,
@@ -203,6 +204,7 @@ export default function TextFormatFloatingToolbar({
       /> */}
 			<BlockFormatDropDown
 				editor={editor}
+				//@ts-ignore
 				blockType={blockType}
 				style={{ height: "25px" }}
 				ShowChevronsUpDown={false}

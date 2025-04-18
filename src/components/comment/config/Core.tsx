@@ -42,7 +42,6 @@ import {
 	MentionData,
 } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 import FloatingLinkEditorPlugin from "@/components/shared/Lexical Editor/plugins/FloatingLinkEditorPlugin";
-import FloatingTextFormatToolbarPlugin from "@/components/shared/Lexical Editor/plugins/FloatingTextFormatToolbarPlugin";
 
 interface CoreProps {
 	placeholder: string;
@@ -166,10 +165,6 @@ export default function Core({
 				anchorElem={floatingAnchorElem}
 				isLinkEditMode={isLinkEditMode}
 				setIsLinkEditMode={setIsLinkEditMode}
-			/>
-			<FloatingTextFormatToolbarPlugin
-				setIsLinkEditMode={setIsLinkEditMode}
-				anchorElem={floatingAnchorElem}
 			/>
 			<BeautifulMentionsPlugin
 				triggers={["@"]}

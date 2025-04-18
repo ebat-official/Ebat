@@ -8,6 +8,7 @@ import {
 	PostWithContent,
 	PostRouteType,
 	PostWithExtraDetails,
+	UserSearchResult,
 } from "./types";
 import { PostCategory, SubCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
@@ -107,7 +108,7 @@ export async function getPostFromURL(params: {
 
 export async function fetchMentionsByCommentId(
 	commentId: string,
-): Promise<CommentMention[]> {
+): Promise<UserSearchResult[]> {
 	if (!commentId) {
 		throw new Error("Comment ID is required to fetch mentions.");
 	}
@@ -130,7 +131,7 @@ export async function fetchMentionsByCommentId(
 
 export async function fetchCommentUsersByUserName(
 	userName: string,
-): Promise<CommentMention[]> {
+): Promise<UserSearchResult[]> {
 	if (!userName) {
 		throw new Error("User name is required to fetch mentions.");
 	}

@@ -1,14 +1,14 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { COMMENT_ID_NOT_EXIST_ERROR, ID_NOT_EXIST_ERROR } from "@/utils/errors";
+import { COMMENT_ID_NOT_EXIST_ERROR } from "@/utils/errors";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const { id: commentId } = params;
+		const { id: commentId } = await params;
 
 		if (!commentId) {
 			return NextResponse.json(COMMENT_ID_NOT_EXIST_ERROR, { status: 404 });

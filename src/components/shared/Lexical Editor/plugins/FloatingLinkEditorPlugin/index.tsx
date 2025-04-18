@@ -277,7 +277,7 @@ function FloatingLinkEditor({
 		}
 	};
 
-	if (!isLink) return null;
+	if (!isLink) return <div />;
 
 	return (
 		<div

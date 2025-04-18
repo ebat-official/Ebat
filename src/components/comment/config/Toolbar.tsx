@@ -12,8 +12,10 @@ import {
 	$createTextNode,
 } from "lexical";
 
+import { EditorBlockType } from "@/utils/types";
+
 import { Button } from "@/components/ui/button";
-import { Bold, Italic, Underline, Code } from "lucide-react";
+import { Bold, Italic, Underline, Code, Link } from "lucide-react";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
 
 import BlockFormatDropDown from "@/components/shared/Lexical Editor/ui/drop-downs/block-format";
@@ -44,7 +46,7 @@ export default function Toolbar() {
 					: anchorNode.getTopLevelElementOrThrow();
 
 			if (element !== null) {
-				const type = element.getType();
+				const type = element.getType() as EditorBlockType; // Cast to BlockType
 				updateToolbarState("blockType", type);
 			}
 		}
@@ -73,7 +75,20 @@ export default function Toolbar() {
 		<div className="flex items-center gap-0 sm:gap-2">
 			<BlockFormatDropDown
 				commentMode
-				blockType={toolbarState.blockType}
+				blockType={
+					toolbarState.blockType as
+						| "number"
+						| "paragraph"
+						| "bullet"
+						| "code"
+						| "h1"
+						| "h2"
+						| "h3"
+						| "h4"
+						| "h5"
+						| "h6"
+						| "quote"
+				} // Narrow blockType to allowed values
 				editor={editor}
 			/>
 			{/* Bold */}
@@ -106,18 +121,6 @@ export default function Toolbar() {
 				<Underline className="w-4 h-4" />
 			</Button>
 
-			{/* Strikethrough */}
-			{/* <Button
-        variant={toolbarState.isStrikethrough ? "default" : "ghost"}
-        size="sm"
-        onClick={() =>
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")
-        }
-        aria-label="Strikethrough"
-      >
-        <Strikethrough className="w-4 h-4" />
-      </Button> */}
-
 			{/* Inline Code */}
 			<Button
 				variant={toolbarState.isCode ? "default" : "ghost"}
@@ -135,7 +138,7 @@ export default function Toolbar() {
 				onClick={insertLink}
 				aria-label="Insert Link"
 			>
-				<Underline className="w-4 h-4" />
+				<Link className="w-4 h-4" />
 			</Button>
 		</div>
 	);

@@ -5,10 +5,10 @@ import type { NextRequest } from "next/server";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { userName: string } },
+	{ params }: { params: Promise<{ userName: string }> },
 ) {
 	try {
-		const { userName } = params;
+		const { userName } = await params;
 
 		if (!userName) {
 			return NextResponse.json(USERNAME_NOT_EXIST_ERROR, { status: 400 });
