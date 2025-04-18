@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 import Image from "next/image";
 import googleIcon from "@/assets/svg/googleIcon.svg";
-import facebookIcon from "@/assets/svg/facebookIcon.svg";
 import linkedinIcon from "@/assets/svg/linkedinIcon.svg";
 import { signIn } from "next-auth/react";
 import useCurrentURL from "@/hooks/useCurrentURL";
 import { Button } from "../ui/button";
+import { FaGithub } from "react-icons/fa";
 
 interface SocialAuthProps {
 	loadingHandler: (isLoading: boolean) => void;
@@ -22,10 +22,11 @@ const SocialAuth: FC<SocialAuthProps> = ({ loadingHandler }) => {
 	return (
 		<div className="flex justify-around items-center gap-6 mt-4">
 			<Button
-				onClick={() => SocialLoginHandler("facebook")}
-				className="flex outline-0 relative items-center justify-center px-6 py-6  text-xs font-bold text-center text-gray-200 uppercase align-middle transition-all bg-transparent border border-gray-200 border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 hover:bg-transparent hover:opacity-75"
+				variant="outline"
+				onClick={() => SocialLoginHandler("github")}
+				className="flex relative items-center justify-center px-6 py-6 text-xs font-bold text-center text-gray-200 uppercase align-middle transition-all bg-transparent border border-gray-200 border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 hover:bg-transparent hover:opacity-75"
 			>
-				<Image priority src={facebookIcon} alt="facebook signup" />
+				<FaGithub size={26} className="text-gray-900 dark:text-white" />
 			</Button>
 
 			<Button
