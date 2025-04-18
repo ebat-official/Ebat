@@ -41,6 +41,8 @@ import {
 	MentionChangePlugin,
 	MentionData,
 } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
+import FloatingLinkEditorPlugin from "@/components/shared/Lexical Editor/plugins/FloatingLinkEditorPlugin";
+import FloatingTextFormatToolbarPlugin from "@/components/shared/Lexical Editor/plugins/FloatingTextFormatToolbarPlugin";
 
 interface CoreProps {
 	placeholder: string;
@@ -61,7 +63,10 @@ export default function Core({
 	const [hasFocus, setHasFocus] = useState(() => {
 		return editor.getRootElement() === document.activeElement;
 	});
-
+	const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
+	const [floatingAnchorElem, setFloatingAnchorElem] = useState<
+		HTMLDivElement | undefined
+	>();
 	useLayoutEffect(() => {
 		setHasFocus(editor.getRootElement() === document.activeElement);
 		return mergeRegister(
@@ -111,12 +116,18 @@ export default function Core({
 		});
 	}, [editor]);
 
+	const onRef = useCallback((_floatingAnchorElem: HTMLDivElement) => {
+		if (_floatingAnchorElem !== null) {
+			setFloatingAnchorElem(_floatingAnchorElem);
+		}
+	}, []);
+
 	return (
-		<div className="relative flex editor flex-col">
+		<div className="relative flex flex-col editor">
 			<div className="p-2">
 				<RichTextPlugin
 					contentEditable={
-						<div className="relative">
+						<div className="relative" ref={onRef}>
 							<ContentEditable
 								id={id}
 								autoFocus={autoFocus}
@@ -151,6 +162,15 @@ export default function Core({
 			<CodeHighlightPlugin />
 			<HistoryPlugin />
 			<TabIndentationPlugin maxIndent={3} />
+			<FloatingLinkEditorPlugin
+				anchorElem={floatingAnchorElem}
+				isLinkEditMode={isLinkEditMode}
+				setIsLinkEditMode={setIsLinkEditMode}
+			/>
+			<FloatingTextFormatToolbarPlugin
+				setIsLinkEditMode={setIsLinkEditMode}
+				anchorElem={floatingAnchorElem}
+			/>
 			<BeautifulMentionsPlugin
 				triggers={["@"]}
 				menuComponent={MentionMenu}

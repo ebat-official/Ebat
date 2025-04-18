@@ -14,7 +14,6 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { nestedNodes } from "../../nodes";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import LexicalAutoLinkPlugin from "../../plugins/AutoLinkPlugin";
-import { LinkWithMetaDataPlugin } from "../../plugins/LinkWithMetaData";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
@@ -96,20 +95,20 @@ export default function Step({
 			initial={{ opacity: 0, y: 30 }}
 			animate={{ opacity: 1, y: 0, transition: { duration: 0.15 } }}
 			exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
-			className="relative group my-2 flex w-full flex-row gap-x-6 select-none"
+			className="relative flex flex-row w-full my-2 select-none group gap-x-6"
 		>
-			<div className="h-7 w-7 absolute max-sm:w-5 max-sm:h-5 max-sm:text-xs rounded-full z-50 bg-muted cursor-grab flex items-center justify-center">
+			<div className="absolute z-50 flex items-center justify-center rounded-full h-7 w-7 max-sm:w-5 max-sm:h-5 max-sm:text-xs bg-muted cursor-grab">
 				{numberd + 1}
 			</div>
 
-			<div className="flex flex-col ml-10 w-full">
+			<div className="flex flex-col w-full ml-10">
 				<div
 					contentEditable
 					suppressContentEditableWarning
 					ref={titleRef}
 					onBlur={handleTitleBlur}
 					onKeyDown={handleTitleKeyDown}
-					className="scroll-m-20 border-none outline-hidden cursor-text break-words max-sm:text-lg text-2xl font-semibold tracking-tight"
+					className="text-2xl font-semibold tracking-tight break-words border-none scroll-m-20 outline-hidden cursor-text max-sm:text-lg"
 				>
 					{item.title}
 				</div>
@@ -123,10 +122,10 @@ export default function Step({
 					<ImagesPlugin />
 					<HorizontalRulePlugin />
 					<LexicalAutoLinkPlugin />
-					<LinkWithMetaDataPlugin />
+
 					<ListPlugin />
 					<CheckListPlugin />
-					<LinkWithMetaDataPlugin />
+
 					<TabIndentationPlugin maxIndent={7} />
 					<CodeHighlightPlugin />
 					<LinkPlugin />
@@ -134,7 +133,7 @@ export default function Step({
 						contentEditable={
 							<div ref={onRef} className="relative">
 								<ContentEditable
-									className="h-fit w-full resize-none cursor-text relative outline-hidden select-text whitespace-pre-wrap break-words"
+									className="relative w-full break-words whitespace-pre-wrap resize-none select-text h-fit cursor-text outline-hidden"
 									aria-placeholder="Write hint caption"
 									placeholder={
 										<div className="text-base font-medium text-[#999] overflow-hidden absolute top-[2px] left-[2px]  text-nowrap inline-block text-ellipsis pointer-events-none">

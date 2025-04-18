@@ -27,7 +27,6 @@ import PollPlugin from "./plugins/PollPlugin";
 import { LayoutPlugin } from "./plugins/LayoutPlugin";
 import CollapsiblePlugin from "./plugins/CollapsiblePlugin";
 import LexicalAutoLinkPlugin from "./plugins/AutoLinkPlugin";
-import { LinkWithMetaDataPlugin } from "./plugins/LinkWithMetaData";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
 import DragDropPaste from "./plugins/DragDropPastePlugin";
 import DraggableBlockPlugin from "./plugins/DraggableBlockPlugin";
@@ -195,7 +194,6 @@ export default function Core({
 				<DragDropPaste />
 				<TabIndentationPlugin maxIndent={7} />
 				<LexicalAutoLinkPlugin />
-				<LinkWithMetaDataPlugin />
 				<ListPlugin />
 				<LinkPlugin />
 				{pluginConfig[PLUGIN_NAMES.STEPPER].isEnabled && <StepperPlugin />}

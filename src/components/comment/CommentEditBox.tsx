@@ -13,16 +13,12 @@ import { createComment } from "@/actions/comment";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
 import LoginModal from "@/components/auth/LoginModal";
 import { toast } from "@/hooks/use-toast";
-import {
-	USERNAME_NOT_EXIST_ERROR,
-	COMMENT_ADDITION_ERROR,
-	UNAUTHENTICATED_ERROR,
-} from "@/utils/errors";
+import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { handleError } from "@/utils/handleError";
 
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
-	loading: () => <Skeleton className="w-full mt-8 h-9" />,
+	loading: () => <Skeleton className="w-full h-full" />,
 });
 
 interface CommentEditBoxProps {
@@ -102,6 +98,7 @@ export default function CommentEditBox({
 					<Editor
 						onChangeHandler={setComment}
 						onMentionChangeHandler={setMentions}
+						content={content}
 					/>
 					<Button
 						disabled={isLoading}

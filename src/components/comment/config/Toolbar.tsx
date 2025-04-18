@@ -18,6 +18,7 @@ import { TOGGLE_LINK_COMMAND } from "@lexical/link";
 
 import BlockFormatDropDown from "@/components/shared/Lexical Editor/ui/drop-downs/block-format";
 import { useToolbarState } from "@/components/shared/Lexical Editor/providers/ToolbarContext";
+import { sanitizeUrl } from "@/components/shared/Lexical Editor/utils/url";
 
 export default function Toolbar() {
 	const [editor] = useLexicalComposerContext(); // Use the editor instance from context
@@ -60,16 +61,16 @@ export default function Toolbar() {
 		);
 	}, [editor, updateToolbar]);
 
-	const insertLink = () => {
+	const insertLink = useCallback(() => {
 		if (!toolbarState.isLink) {
-			editor.dispatchCommand(TOGGLE_LINK_COMMAND, "https://");
+			editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
 		} else {
 			editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
 		}
-	};
+	}, [editor, toolbarState.isLink]);
 
 	return (
-		<div className=" flex items-center gap-0 sm:gap-2 ">
+		<div className="flex items-center gap-0 sm:gap-2">
 			<BlockFormatDropDown
 				commentMode
 				blockType={toolbarState.blockType}
