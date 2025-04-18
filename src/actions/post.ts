@@ -48,8 +48,8 @@ const getPostDetails = async (postId: string) => {
 const checkPostOwnership = async (postId: string, userId: string) => {
 	const existingPost = await getPostDetails(postId);
 
-	if (existingPost && existingPost.authorId !== userId)
-		throw UserNotAuthorizedErr();
+	if (existingPost && existingPost.authorId !== userId) return false;
+	return true;
 };
 
 const checkPostStatus = async (postId: string, allowedStatus: PostStatus[]) => {
@@ -108,7 +108,8 @@ export async function createDraftPost(
 
 	const user = await validateUser();
 	if (!data.id) throw ValidationErr("Post ID is required");
-	await checkPostOwnership(data.id, user.id);
+	const isOwner = await checkPostOwnership(data.id, user.id);
+	if (!isOwner) throw UserNotAuthorizedErr();
 
 	const postData = {
 		...buildBasePostData(user, data, "DRAFT"),
@@ -135,7 +136,12 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 
 	const user = await validateUser();
 	if (!data.id) throw ValidationErr("Post ID is required");
-	await checkPostOwnership(data.id, user.id);
+	//return true if post not exists or owner is current user
+	const isOwner = await checkPostOwnership(data.id, user.id);
+	if (!isOwner) {
+		if (!(data.type === PostType.BLOGS)) throw UserNotAuthorizedErr();
+		createPostEdit(data);
+	}
 	const { isLivePost } = await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status
 	if (isLivePost) {
 		throw LIVE_POST_EDIT_ERROR;
@@ -175,7 +181,9 @@ export async function getPostById(postId: string) {
 	});
 }
 
-export async function createPostEdit(data: z.infer<typeof PostValidator>) {
+export async function createPostEdit(
+	data: z.infer<typeof PostValidator>,
+): Promise<{ id: string; slug: string | null }> {
 	// Validate the input data
 
 	const validation = PostValidator.safeParse(data);
@@ -219,7 +227,7 @@ export async function createPostEdit(data: z.infer<typeof PostValidator>) {
 			update: postEditData as PrismaJson,
 		});
 
-		return postEdit.id;
+		return { id: postEdit.postId, slug: "" };
 	} catch (error) {
 		throw FailedToEditPostErr("Failed to create the post edit.");
 	}
