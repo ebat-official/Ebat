@@ -12,6 +12,7 @@ import {
 } from "./types";
 import { PostCategory, SubCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import pako from "pako";
 
 export const fetchPostById = async (
 	postId: string,
@@ -93,6 +94,12 @@ export async function getPostFromURL(params: {
 			})
 			.then((post) => {
 				if (!post) return null;
+
+				if (post.content) {
+					post.content = JSON.parse(
+						pako.inflate(post.content, { to: "string" }),
+					);
+				}
 
 				const completionCount = post._count?.completionStatus || 0;
 				return {
