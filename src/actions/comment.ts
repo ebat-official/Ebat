@@ -159,32 +159,6 @@ async function getComments(
 				},
 			});
 
-		case "CONTROVERSIAL": {
-			// This requires fetching all votes to calculate ratio
-			const comments = await prisma.comment.findMany({
-				...baseQuery,
-				include: {
-					...baseQuery.include,
-					votes: true,
-				},
-			});
-
-			return comments
-				.map((comment) => {
-					const upvotes = comment.votes.filter(
-						(v) => v.type === VoteType.UP,
-					).length;
-					const downvotes = comment.votes.filter(
-						(v) => v.type === VoteType.DOWN,
-					).length;
-					return {
-						...comment,
-						controversyScore: Math.min(upvotes, downvotes), // Simple controversy metric
-					};
-				})
-				.sort((a, b) => b.controversyScore - a.controversyScore);
-		}
-
 		default:
 			return await prisma.comment.findMany({
 				...baseQuery,
