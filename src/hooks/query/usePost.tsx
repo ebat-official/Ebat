@@ -1,4 +1,4 @@
-import { fetchPostById } from "@/utils/apiUtils";
+import { fetchPostById } from "@/utils/api utils/apiUtils";
 import { postCreateOptions, PostWithContent } from "@/utils/types";
 import {
 	useQuery,

@@ -1,4 +1,4 @@
-import { fetchCommentUsersByUserName } from "./apiUtils";
+import { fetchCommentUsersByUserName } from "./api utils/apiUtils";
 
 import { debounce } from "lodash-es";
 
