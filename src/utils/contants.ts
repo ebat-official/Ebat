@@ -48,7 +48,7 @@ export const POST_ROUTE_TYPE = {
 } as const;
 
 export const COMMENT_SORT_OPTIONS = {
-	TOP: "TOP",
-	NEWEST: "NEWEST",
-	OLDEST: "OLDEST",
+	TOP: "top",
+	NEWEST: "newest",
+	OLDEST: "oldest",
 } as const;

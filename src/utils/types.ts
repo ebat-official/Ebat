@@ -78,7 +78,8 @@ export type PostWithExtraDetails = Post & {
 	};
 };
 
-export type CommentSortOption = keyof typeof COMMENT_SORT_OPTIONS;
+export type CommentSortOption =
+	(typeof COMMENT_SORT_OPTIONS)[keyof typeof COMMENT_SORT_OPTIONS];
 
 export type EditorBlockType =
 	| "number"

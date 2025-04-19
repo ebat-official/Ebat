@@ -3,6 +3,7 @@ import { Redis } from "@upstash/redis";
 import { getCommentsWithVotes } from "@/utils/api utils/comment";
 import { CommentSortOption } from "@/utils/types";
 import { redis } from "@/lib/redis";
+import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
 
 export async function GET(
 	request: NextRequest,
@@ -17,7 +18,7 @@ export async function GET(
 		const { searchParams } = new URL(request.url);
 
 		// Parse query parameters with defaults
-		const sort = searchParams.get("sort") ?? "TOP";
+		const sort = searchParams.get("sort") ?? COMMENT_SORT_OPTIONS.TOP;
 		const take = Number.parseInt(searchParams.get("take") ?? "10");
 		const skip = Number.parseInt(searchParams.get("skip") ?? "0");
 		const depth = Number.parseInt(searchParams.get("depth") ?? "1");
@@ -41,6 +42,8 @@ export async function GET(
 						status: 200,
 						headers: {
 							"X-Cache": "HIT",
+							"Cache-Control": "public, max-age=120",
+							"Content-Type": "application/json",
 						},
 					});
 				}
@@ -66,17 +69,27 @@ export async function GET(
 		// Cache if first page
 		if (shouldCache) {
 			try {
-				await redis.setex(cacheKey, 120, data); // Cache for 120 seconds
+				await redis.set(cacheKey, data);
 			} catch (err) {
 				console.error("Redis setex error — skipping cache:", err);
 			}
 		}
 
+		if (shouldCache) {
+			return NextResponse.json(data, {
+				status: 200,
+				headers: {
+					"Cache-Control": "public, max-age=120",
+					"Content-Type": "application/json",
+				},
+			});
+		}
+
 		return NextResponse.json(data, {
 			status: 200,
 			headers: {
-				"X-Cache": shouldCache ? "MISS" : "SKIP",
-				"Cache-Control": "public, max-age=60", // Allow edge/CDN caching
+				"Cache-Control": "public, max-age=60",
+				"Content-Type": "application/json",
 			},
 		});
 	} catch (error) {

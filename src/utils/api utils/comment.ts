@@ -5,6 +5,7 @@ import {
 	CommentWithVotes,
 	PaginatedComments,
 } from "../types";
+import { COMMENT_SORT_OPTIONS } from "../contants";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,7 @@ export async function getCommentsWithVotes(
 	postId: string,
 	parentId: string | null = null,
 	{
-		sort = "TOP" as CommentSortOption,
+		sort = COMMENT_SORT_OPTIONS.TOP as CommentSortOption,
 		take = 10,
 		skip = 0,
 		depth = 1,
@@ -57,7 +58,7 @@ export async function getCommentsWithVotes(
       WHERE c."postId" = ${postId}
         AND c."parentId" ${parentId ? Prisma.sql`= ${parentId}` : Prisma.sql`IS NULL`}
         ${
-					sort === "TOP"
+					sort === COMMENT_SORT_OPTIONS.TOP
 						? Prisma.sql`AND COALESCE((
           SELECT SUM(CASE WHEN v.type = 'UP' THEN 1 ELSE -1 END)
           FROM "CommentVote" v WHERE v."commentId" = c.id
@@ -67,9 +68,9 @@ export async function getCommentsWithVotes(
       GROUP BY c.id
       ORDER BY 
         ${
-					sort === "TOP"
+					sort === COMMENT_SORT_OPTIONS.TOP
 						? Prisma.sql`(SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) - SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END)) DESC`
-						: sort === "NEWEST"
+						: sort === COMMENT_SORT_OPTIONS.NEWEST
 							? Prisma.sql`c."createdAt" DESC`
 							: Prisma.sql`c."createdAt" ASC`
 				}

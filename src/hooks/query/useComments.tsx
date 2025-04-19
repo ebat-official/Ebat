@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { fetchComments } from "@/utils/api utils/comment";
 import type { CommentSortOption, PaginatedComments } from "@/utils/types"; // Replace with actual path
+import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
 
 interface UseCommentsOptions {
 	page?: number;
@@ -34,7 +35,7 @@ export function useComments(
 				page: options?.page || 1,
 				take: options?.take || 10,
 				depth: options?.depth || 1,
-				sort: options?.sort || "TOP",
+				sort: options?.sort || COMMENT_SORT_OPTIONS.TOP,
 			}),
 		enabled: !!postId, // Ensure the query is only run when postId is available
 		...options, // Spread in additional options passed to the hook
