@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { generatePageMetadata } from "@/utils/metadata";
 import PostView from "@/components/post view/PostView";
-import { getPostFromURL } from "@/utils/apiUtils";
+import { getPostFromURL } from "@/utils/api utils/apiUtils";
 import { PageParams } from "@/utils/types";
 import { getAllApprovedPosts } from "@/actions/post";
 import { generatePostPathFromPostId } from "@/utils/generatePostPath";

@@ -76,7 +76,7 @@ const theme: EditorThemeClasses = {
     
     leading-7
   `,
-	link: `underline cursor-pointer text-blue-600 after:content-['_↗']`,
+	link: "underline cursor-pointer text-blue-600",
 	hr: "w-full h-1 border-input",
 	table: "PlaygroundEditorTheme__table",
 	tableCell: "PlaygroundEditorTheme__tableCell",
