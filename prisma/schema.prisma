@@ -165,7 +165,7 @@ model Post {
   id                 String             @id @default(nanoid())
   title              String?
   slug               String?            @unique
-  content            Json?
+  content            Bytes?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   author             User               @relation(fields: [authorId], references: [id])
@@ -196,7 +196,7 @@ model PostEdit {
   id                 String             @id @default(uuid())
   postId             String
   authorId           String             @db.Uuid
-  content            Json? // Suggested new content
+  content            Bytes?
   approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
   createdAt          DateTime           @default(now())
@@ -213,7 +213,7 @@ model PostEdit {
 
 model Comment {
   id        String           @id @default(uuid()) @db.Uuid
-  content   Json?
+  content   Bytes?
   createdAt DateTime         @default(now())
   author    User             @relation(fields: [authorId], references: [id])
   authorId  String           @db.Uuid
@@ -226,8 +226,9 @@ model Comment {
   mentions  CommentMention[] @relation("CommentMentions")
   reports   Report[]         @relation("CommentReports")
 
-  @@index([createdAt])
-  @@index([postId, parentId])
+  @@index([postId, parentId]) // For thread queries
+  @@index([createdAt]) // For time-based sorting
+  @@index([parentId]) // For reply lookups
 }
 
 model Vote {
@@ -238,6 +239,7 @@ model Vote {
   type   VoteType
 
   @@id([userId, postId])
+  @@index([postId, type])
 }
 
 model CommentVote {
@@ -249,6 +251,7 @@ model CommentVote {
   type      VoteType
 
   @@unique([userId, commentId])
+  @@index([commentId, type])
 }
 
 model CommentMention {

@@ -1,4 +1,4 @@
-import { fetchPostById } from "@/utils/apiUtils";
+import { fetchPostById } from "@/utils/api utils/apiUtils";
 import { POST_ROUTE_TYPE, UNKNOWN_ERROR } from "@/utils/contants";
 import { ID_NOT_EXIST_ERROR } from "@/utils/errors";
 import {

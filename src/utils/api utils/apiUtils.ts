@@ -1,7 +1,7 @@
 import { POST_ID_LENGTH } from "@/config";
-import { UNKNOWN_ERROR } from "./contants";
-import { ID_NOT_EXIST_ERROR } from "./errors";
-import { isValidCategoryCombo } from "./isValidCategoryCombo";
+import { UNKNOWN_ERROR } from "../contants";
+import { ID_NOT_EXIST_ERROR } from "../errors";
+import { isValidCategoryCombo } from "../isValidCategoryCombo";
 import { CommentMention } from "@prisma/client";
 import {
 	ContentType,
@@ -9,9 +9,10 @@ import {
 	PostRouteType,
 	PostWithExtraDetails,
 	UserSearchResult,
-} from "./types";
+} from "../types";
 import { PostCategory, SubCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import pako from "pako";
 
 export const fetchPostById = async (
 	postId: string,
@@ -93,6 +94,12 @@ export async function getPostFromURL(params: {
 			})
 			.then((post) => {
 				if (!post) return null;
+
+				if (post.content) {
+					post.content = JSON.parse(
+						pako.inflate(post.content, { to: "string" }),
+					);
+				}
 
 				const completionCount = post._count?.completionStatus || 0;
 				return {
