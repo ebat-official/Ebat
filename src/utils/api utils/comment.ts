@@ -126,6 +126,11 @@ export async function getCommentsWithVotes(
 			content = null;
 		}
 
+		const likes = Number(row.likes);
+		const dislikes = Number(row.dislikes);
+		const replyCount = Number(row.reply_count);
+		const totalVotes = likes + dislikes;
+
 		return {
 			id: row.id,
 			content,
@@ -142,27 +147,27 @@ export async function getCommentsWithVotes(
 					}
 				: undefined,
 			_count: {
-				replies: row.reply_count,
-				votes: row.likes + row.dislikes,
+				replies: replyCount,
+				votes: totalVotes,
 			},
 			votesAggregate: {
-				_count: { _all: row.likes + row.dislikes },
-				_sum: { voteValue: row.likes - row.dislikes },
+				_count: { _all: totalVotes },
+				_sum: { voteValue: likes - dislikes },
 			},
-			likes: row.likes,
-			dislikes: row.dislikes,
-			repliesExist: row.reply_count > 0,
+			likes,
+			dislikes,
+			repliesExist: replyCount > 0,
 			repliesLoaded: false,
 			replies: [],
 			repliesPagination: {
-				hasMore: row.reply_count > replyTake,
+				hasMore: replyCount > replyTake,
 				nextSkip: replyTake,
-				totalCount: row.reply_count,
+				totalCount: replyCount,
 			},
 		};
 	});
 
-	const totalCount = result[0]?.total_count || 0;
+	const totalCount = Number(result[0]?.total_count || 0);
 	const totalPages = Math.ceil(totalCount / take);
 
 	if (depth > 0) {
