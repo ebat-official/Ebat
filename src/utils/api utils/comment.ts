@@ -1,12 +1,12 @@
+import { Prisma, PrismaClient } from "@prisma/client";
 import pako from "pako";
-
-import { Prisma } from "@prisma/client";
-import prisma from "@/lib/prisma";
 import {
 	CommentSortOption,
 	CommentWithVotes,
 	PaginatedComments,
 } from "../types";
+
+const prisma = new PrismaClient();
 
 export async function getCommentsWithVotes(
 	postId: string,
@@ -36,62 +36,64 @@ export async function getCommentsWithVotes(
 	} = {},
 ): Promise<PaginatedComments> {
 	const baseQuery = Prisma.sql`
-      WITH paginated_comments AS (
-        SELECT 
-          c.*,
-          COUNT(*) OVER() as total_count,
-          ${
-						includeVotes
-							? Prisma.sql`
-            SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) as likes,
-            SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END) as dislikes,
-          `
-							: Prisma.sql`
-            0 as likes,
-            0 as dislikes,
-          `
-					}
-          (SELECT COUNT(*) FROM "Comment" r WHERE r."parentId" = c.id) as reply_count
-        FROM "Comment" c
-        ${includeVotes ? Prisma.sql`LEFT JOIN "CommentVote" cv ON cv."commentId" = c.id` : Prisma.empty}
-        WHERE c."postId" = ${postId}
-          AND c."parentId" ${parentId ? Prisma.sql`= ${parentId}` : Prisma.sql`IS NULL`}
-          ${
-						sort === "TOP"
-							? Prisma.sql`AND COALESCE((
-            SELECT SUM(CASE WHEN v.type = 'UP' THEN 1 ELSE -1 END)
-            FROM "CommentVote" v WHERE v."commentId" = c.id
-          ), 0) >= ${minScore}`
-							: Prisma.empty
-					}
-        GROUP BY c.id
-        ORDER BY 
-          ${
-						sort === "TOP"
-							? Prisma.sql`(SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) - SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END)) DESC`
-							: sort === "NEWEST"
-								? Prisma.sql`c."createdAt" DESC`
-								: Prisma.sql`c."createdAt" ASC`
-					}
-        LIMIT ${take}
-        OFFSET ${skip}
-      )
+    WITH paginated_comments AS (
       SELECT 
-        pc.*,
+        c.*,
+        COUNT(*) OVER() as total_count,
         ${
-					includeAuthor
+					includeVotes
 						? Prisma.sql`
-          json_build_object(
-            'id', a.id,
-            'name', a.name,
-            'avatar', a.avatar
-          ) as author
+          SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) as likes,
+          SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END) as dislikes,
         `
-						: Prisma.sql`NULL as author`
+						: Prisma.sql`
+          0 as likes,
+          0 as dislikes,
+        `
 				}
-      FROM paginated_comments pc
-      ${includeAuthor ? Prisma.sql`JOIN "User" a ON a.id = pc."authorId"` : Prisma.empty}
-    `;
+        (SELECT COUNT(*) FROM "Comment" r WHERE r."parentId" = c.id) as reply_count
+      FROM "Comment" c
+      ${includeVotes ? Prisma.sql`LEFT JOIN "CommentVote" cv ON cv."commentId" = c.id` : Prisma.empty}
+      WHERE c."postId" = ${postId}
+        AND c."parentId" ${parentId ? Prisma.sql`= ${parentId}` : Prisma.sql`IS NULL`}
+        ${
+					sort === "TOP"
+						? Prisma.sql`AND COALESCE((
+          SELECT SUM(CASE WHEN v.type = 'UP' THEN 1 ELSE -1 END)
+          FROM "CommentVote" v WHERE v."commentId" = c.id
+        ), 0) >= ${minScore}`
+						: Prisma.empty
+				}
+      GROUP BY c.id
+      ORDER BY 
+        ${
+					sort === "TOP"
+						? Prisma.sql`(SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) - SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END)) DESC`
+						: sort === "NEWEST"
+							? Prisma.sql`c."createdAt" DESC`
+							: Prisma.sql`c."createdAt" ASC`
+				}
+      LIMIT ${take}
+      OFFSET ${skip}
+    )
+    SELECT 
+      pc.*,
+      ${
+				includeAuthor
+					? Prisma.sql`
+        json_build_object(
+          'id', a.id,
+          'userName', a."userName",
+          'name', up.name,
+          'image', up.image
+        ) as author
+      `
+					: Prisma.sql`NULL as author`
+			}
+    FROM paginated_comments pc
+    ${includeAuthor ? Prisma.sql`JOIN "User" a ON a.id = pc."authorId"` : Prisma.empty}
+    ${includeAuthor ? Prisma.sql`LEFT JOIN "UserProfile" up ON up."userId" = a.id` : Prisma.empty}
+  `;
 
 	interface RawCommentResult {
 		id: string;
@@ -106,8 +108,9 @@ export async function getCommentsWithVotes(
 		reply_count: number;
 		author?: {
 			id: string;
-			name: string;
-			avatar?: string | null;
+			userName: string | null;
+			name: string | null;
+			image?: string | null;
 		};
 	}
 
@@ -131,10 +134,11 @@ export async function getCommentsWithVotes(
 			postId: row.postId,
 			parentId: row.parentId,
 			author: includeAuthor
-				? row.author || {
-						id: row.authorId,
-						name: "Unknown",
-						avatar: null,
+				? {
+						id: row.author?.id || row.authorId,
+						userName: row.author?.userName || "Unknown",
+						name: row.author?.name || "Unknown",
+						image: row.author?.image || null,
 					}
 				: undefined,
 			_count: {
