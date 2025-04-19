@@ -78,6 +78,7 @@
 		"@radix-ui/react-tooltip": "^1.1.8",
 		"@tanstack/react-query": "^5.66.9",
 		"@uiw/react-color": "^2.4.5",
+		"@upstash/redis": "1.34.8",
 		"ai": "^4.1.66",
 		"axios": "^1.7.9",
 		"babel-plugin-react-compiler": "19.0.0-beta-714736e-20250131",

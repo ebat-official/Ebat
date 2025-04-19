@@ -120,7 +120,7 @@ export async function fetchMentionsByCommentId(
 		throw new Error("Comment ID is required to fetch mentions.");
 	}
 
-	const response = await fetch(`/api/comment/mentions/${commentId}`);
+	const response = await fetch(`/api/comments/mentions/${commentId}`);
 
 	if (!response.ok) {
 		let errorMessage = "Failed to fetch mentions.";
@@ -143,7 +143,7 @@ export async function fetchCommentUsersByUserName(
 		throw new Error("User name is required to fetch mentions.");
 	}
 
-	const response = await fetch(`/api/comment/users/${userName}`);
+	const response = await fetch(`/api/comments/users/${userName}`);
 
 	if (!response.ok) {
 		let errorMessage = "Failed to fetch mentions.";

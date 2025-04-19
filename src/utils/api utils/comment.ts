@@ -2,84 +2,13 @@ import pako from "pako";
 
 import { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import {
+	CommentSortOption,
+	CommentWithVotes,
+	PaginatedComments,
+} from "../types";
 
-export type CommentSortOption = "TOP" | "NEWEST" | "OLDEST";
-
-export type CommentWithVotes = {
-	id: string;
-	content: string | null;
-	createdAt: Date;
-	authorId: string;
-	postId: string;
-	parentId: string | null;
-	author?: {
-		id: string;
-		name: string;
-		avatar?: string | null;
-	};
-	_count: {
-		replies: number;
-		votes: number;
-	};
-	votesAggregate: {
-		_count: { _all: number };
-		_sum: { voteValue: number };
-	};
-	likes: number;
-	dislikes: number;
-	repliesExist: boolean;
-	repliesLoaded: boolean;
-	replies: CommentWithVotes[];
-	repliesPagination: {
-		hasMore: boolean;
-		nextSkip: number;
-		totalCount: number;
-	};
-};
-
-export type PaginatedComments = {
-	comments: CommentWithVotes[];
-	pagination: {
-		hasMore: boolean;
-		totalCount: number;
-		currentPage: number;
-		totalPages: number;
-		nextSkip?: number;
-	};
-};
-
-export interface RawCommentResult {
-	id: string;
-	content: Buffer | null;
-	createdAt: Date;
-	authorId: string;
-	postId: string;
-	parentId: string | null;
-	total_count: number;
-	likes: number;
-	dislikes: number;
-	reply_count: number;
-	author?: {
-		id: string;
-		name: string;
-		avatar?: string | null;
-	};
-}
-
-export type GetOptimizedCommentsOptions = {
-	sort?: CommentSortOption;
-	take?: number;
-	skip?: number;
-	depth?: number;
-	replyTake?: number;
-	replySkip?: number;
-	currentPage?: number;
-	minScore?: number;
-	includeAuthor?: boolean;
-	includeVotes?: boolean;
-};
-
-async function getCommentsWithVotes(
+export async function getCommentsWithVotes(
 	postId: string,
 	parentId: string | null = null,
 	{
@@ -284,4 +213,42 @@ async function getCommentsWithVotes(
 			nextSkip: skip + take < totalCount ? skip + take : undefined,
 		},
 	};
+}
+
+// lib/api/comments.ts
+
+export async function fetchComments(
+	postId: string,
+	options: {
+		page?: number;
+		take?: number;
+		depth?: number;
+		sort?: CommentSortOption;
+	} = {},
+): Promise<PaginatedComments> {
+	if (!postId) {
+		throw new Error("Post ID is required to fetch comments.");
+	}
+
+	const query = new URLSearchParams({
+		...(options.page && { page: options.page.toString() }),
+		...(options.take && { take: options.take.toString() }),
+		...(options.depth && { depth: options.depth.toString() }),
+		...(options.sort && { sort: options.sort }),
+	});
+
+	const response = await fetch(`/api/comments/${postId}?${query.toString()}`);
+
+	if (!response.ok) {
+		let errorMessage = "Failed to fetch comments.";
+		try {
+			const errorData = await response.json();
+			errorMessage = errorData.error || errorMessage;
+		} catch {
+			// Fallback to generic error
+		}
+		throw new Error(errorMessage);
+	}
+
+	return response.json();
 }
