@@ -25,6 +25,7 @@ import { getCompletionDuration } from "@/utils/getCompletionDuration";
 import { getDefaultCoins } from "@/utils/getDefaultCoins";
 import { generatePostPath } from "@/utils/generatePostPath";
 import { revalidatePath } from "next/cache";
+import pako from "pako";
 
 // Shared utility functions
 const currentUser = async () => {
@@ -89,7 +90,7 @@ const buildBasePostData = (
 	authorId: user.id,
 	status,
 	title: data.title || null,
-	content: data.content as PrismaJson,
+	content: pako.deflate(JSON.stringify(data.content)),
 	type: data.type,
 	difficulty: data.difficulty as Difficulty,
 	companies: data.companies || [],
@@ -167,9 +168,15 @@ export async function createPost(data: z.infer<typeof PostValidator>) {
 }
 
 export async function getPostById(postId: string) {
-	return prisma.post.findUnique({
+	const post = await prisma.post.findUnique({
 		where: { id: postId },
 	});
+
+	if (post?.content) {
+		post.content = JSON.parse(pako.inflate(post.content, { to: "string" }));
+	}
+	console.log(post?.content, "mola");
+	return post;
 }
 
 export async function createPostEdit(data: z.infer<typeof PostValidator>) {
@@ -224,7 +231,7 @@ export async function createPostEdit(data: z.infer<typeof PostValidator>) {
 
 export async function getEditPostByPostId(postId: string) {
 	const user = await validateUser();
-	return prisma.postEdit.findUnique({
+	const postEdit = await prisma.postEdit.findUnique({
 		where: {
 			postId_authorId: {
 				postId,
@@ -247,10 +254,18 @@ export async function getEditPostByPostId(postId: string) {
 			topics: true,
 		},
 	});
+
+	if (postEdit?.content) {
+		postEdit.content = JSON.parse(
+			pako.inflate(postEdit.content, { to: "string" }),
+		);
+	}
+
+	return postEdit;
 }
 
 export async function getAllApprovedPosts() {
-	return await prisma.post.findMany({
+	const posts = await prisma.post.findMany({
 		where: {
 			approvalStatus: PostApprovalStatus.APPROVED,
 		},
@@ -259,6 +274,14 @@ export async function getAllApprovedPosts() {
 			id: true,
 			category: true,
 			subCategory: true,
+			content: true, // Include content if needed
 		},
+	});
+
+	return posts.map((post) => {
+		if (post.content) {
+			post.content = JSON.parse(pako.inflate(post.content, { to: "string" }));
+		}
+		return post;
 	});
 }

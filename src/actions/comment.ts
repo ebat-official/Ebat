@@ -12,6 +12,7 @@ import { CommentSortOption } from "@/utils/types";
 import { Comment, VoteType } from "@prisma/client";
 import { getCurrentUser } from "./user";
 import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
+import pako from "pako";
 
 // Validator for comment data
 const MentionDataSchema = z.object({
@@ -52,7 +53,7 @@ export async function createComment(data: z.infer<typeof CommentValidator>) {
 	const commentData = {
 		parentId: data.parentId || null,
 		postId: data.postId,
-		content: data.content,
+		content: pako.deflate(JSON.stringify(data.content)), // Compress content
 		authorId: user.id,
 	};
 
@@ -132,9 +133,10 @@ async function getComments(
 	};
 
 	// Apply different sorting based on the option
+	let comments: Comment[];
 	switch (sortOption) {
 		case "TOP":
-			return await prisma.comment.findMany({
+			comments = await prisma.comment.findMany({
 				...baseQuery,
 				orderBy: {
 					votes: {
@@ -142,25 +144,28 @@ async function getComments(
 					},
 				},
 			});
+			break;
 
 		case "NEWEST":
-			return await prisma.comment.findMany({
+			comments = await prisma.comment.findMany({
 				...baseQuery,
 				orderBy: {
 					createdAt: "desc",
 				},
 			});
+			break;
 
 		case "OLDEST":
-			return await prisma.comment.findMany({
+			comments = await prisma.comment.findMany({
 				...baseQuery,
 				orderBy: {
 					createdAt: "asc",
 				},
 			});
+			break;
 
 		default:
-			return await prisma.comment.findMany({
+			comments = await prisma.comment.findMany({
 				...baseQuery,
 				orderBy: {
 					votes: {
@@ -168,5 +173,16 @@ async function getComments(
 					},
 				},
 			});
+			break;
 	}
+
+	// Decompress content for each comment
+	return comments.map((comment) => {
+		if (comment.content) {
+			comment.content = JSON.parse(
+				pako.inflate(comment.content, { to: "string" }),
+			);
+		}
+		return comment;
+	});
 }
