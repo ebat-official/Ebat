@@ -45,7 +45,7 @@ function PostCreateEdit({
 	const [postId, setPostId] = useState<string>(initialPostId || "");
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
-	const [postPublished, setPostPublished] = useState<boolean>(false);
+	const [postPublished, setPostPublished] = useState<boolean | string>(false);
 	const [blockUserAccess, setBlockUserAccess] = useState<{
 		message?: string;
 		title?: string;
@@ -60,7 +60,7 @@ function PostCreateEdit({
 		isDrafting,
 		isPublishing,
 		error: postPublishError,
-	} = usePostPublishManager(action);
+	} = usePostPublishManager(subCategory, action);
 
 	const {
 		data: postData,
@@ -144,7 +144,7 @@ function PostCreateEdit({
 		const data = getPostData(postContent);
 		const result = await publish(data);
 		if (result.data) {
-			setPostPublished(true);
+			setPostPublished(result.data.slug || true);
 		}
 	};
 

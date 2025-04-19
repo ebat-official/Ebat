@@ -3,7 +3,12 @@ import { useServerAction } from "@/hooks/useServerAction";
 import { createDraftPost, createPost, createPostEdit } from "@/actions/post";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
 import consolidatePostData from "@/utils/consolidatePostData";
-import { CategoryType, ContentType, PostActions } from "@/utils/types";
+import {
+	CategoryType,
+	ContentType,
+	PostActions,
+	SubCategoryType,
+} from "@/utils/types";
 import { PostType } from "@prisma/client";
 import { POST_ACTIONS } from "@/utils/contants";
 
@@ -16,12 +21,15 @@ type PostParams = {
 };
 
 export const usePostPublishManager = (
+	subCategory: SubCategoryType,
 	action: PostActions = POST_ACTIONS.CREATE,
 ) => {
 	// Separate loading states for draft and publish actions
 	const [createDraft, isDrafting] = useServerAction(createDraftPost);
 	const publishingAction =
-		action === POST_ACTIONS.EDIT ? createPostEdit : createPost;
+		action === POST_ACTIONS.CREATE || subCategory === PostType.BLOGS
+			? createPost
+			: createPostEdit;
 	const [publishPost, isPublishing] = useServerAction(publishingAction);
 
 	const [error, setError] = useState<unknown | null>(null);
