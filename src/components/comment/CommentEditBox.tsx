@@ -49,7 +49,6 @@ export default function CommentEditBox({
 		content: comment,
 		mentions: mentions,
 	};
-
 	const createCommentHandler = async () => {
 		try {
 			if (!comment || !postId) {
@@ -96,6 +95,7 @@ export default function CommentEditBox({
 			<Card className="pb-2 px-2">
 				<CardContent className="pl-2 px-0 relative">
 					<Editor
+						id={parentId}
 						onChangeHandler={setComment}
 						onMentionChangeHandler={setMentions}
 						content={content}

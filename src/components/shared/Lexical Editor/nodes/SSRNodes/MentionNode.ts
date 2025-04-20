@@ -1,9 +1,10 @@
 import {
 	DecoratorNode,
-	LexicalNode,
+	DOMExportOutput,
 	SerializedLexicalNode,
 	Spread,
 } from "lexical";
+import { mentionsStyle } from "../../ui/MentionMenu/MentionTheme";
 
 type MentionData = {
 	id: string;
@@ -67,8 +68,7 @@ export class MentionNode extends DecoratorNode<null> {
 	createDOM(): HTMLElement {
 		const span = document.createElement("span");
 		span.textContent = `@${this.__value}`;
-		span.style.color = "#2563eb"; // blue-600
-		span.style.fontWeight = "500";
+		span.style.fontWeight = "700";
 		return span;
 	}
 
@@ -76,7 +76,8 @@ export class MentionNode extends DecoratorNode<null> {
 		const element = document.createElement("span");
 		element.textContent = `@${this.__value}`;
 		element.setAttribute("data-id", this.__data.id);
-		element.setAttribute("style", "color: #2563eb; font-weight: 500;");
+		element.setAttribute("data-user-name", this.__value);
+		element.setAttribute("class", mentionsStyle);
 		return { element };
 	}
 

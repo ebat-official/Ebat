@@ -14,11 +14,13 @@ import {
 	ChevronUp,
 } from "lucide-react";
 import { CommentWithVotes } from "@/utils/types";
+import CommentEditBox from "./CommentEditBox";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
+	postId: string;
 };
-export function CommentViewBox({ comment }: CommentViewBoxProps) {
+export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 	const {
 		id,
 		author,
@@ -28,11 +30,10 @@ export function CommentViewBox({ comment }: CommentViewBoxProps) {
 		dislikes,
 		replies: initialReplies = [],
 	} = comment;
-
 	const [isReplying, setIsReplying] = useState(false);
 	const [replyContent, setReplyContent] = useState("");
 	const [replies, setReplies] = useState<CommentWithVotes[]>(initialReplies);
-	const [areRepliesExpanded, setAreRepliesExpanded] = useState(false);
+	const [areRepliesExpanded, setAreRepliesExpanded] = useState(true);
 	const handleReplySubmit = () => {
 		if (replyContent.trim()) {
 			//   const newReply = {
@@ -114,12 +115,7 @@ export function CommentViewBox({ comment }: CommentViewBoxProps) {
 						{/* Reply form */}
 						{isReplying && (
 							<div className="mt-3 space-y-2">
-								<Textarea
-									value={replyContent}
-									onChange={(e) => setReplyContent(e.target.value)}
-									placeholder="Write your reply..."
-									className="min-h-[80px]"
-								/>
+								<CommentEditBox postId={postId} parentId={id} />
 								<div className="flex gap-2">
 									<Button size="sm" onClick={handleReplySubmit}>
 										Post Reply
@@ -163,7 +159,7 @@ export function CommentViewBox({ comment }: CommentViewBoxProps) {
 				{areRepliesExpanded && replies.length > 0 && (
 					<div className="ml-10 mt-2 border-l-2 pl-4">
 						{replies.map((reply) => (
-							<CommentViewBox key={reply.id} comment={reply} />
+							<CommentViewBox key={reply.id} comment={reply} postId={postId} />
 						))}
 					</div>
 				)}

@@ -1,7 +1,10 @@
 import { BeautifulMentionsTheme } from "lexical-beautiful-mentions";
 
-const mentionsStyle =
-	"px-1 mx-2/3 mx-px font-medium font- align-baseline text-foreground inline-block rounded break-words cursor-pointer leading-5 bg-foreground/10";
+/**
+ * this mentionsStyle style is used in SSR parser as well
+ */
+export const mentionsStyle =
+	"text-blue-500 px-1 mx-2/3 mx-px font-medium font- align-baseline inline-block rounded break-words cursor-pointer leading-5 bg-foreground/10";
 const mentionsStyleFocused = "ring-2 ring-offset-1";
 
 export const beautifulMentionsTheme: BeautifulMentionsTheme = {

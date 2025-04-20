@@ -38,64 +38,68 @@ export async function getCommentsWithVotes(
 	} = {},
 ): Promise<PaginatedComments> {
 	const baseQuery = Prisma.sql`
-    WITH paginated_comments AS (
-      SELECT 
-        c.*,
-        COUNT(*) OVER() as total_count,
-        ${
-					includeVotes
-						? Prisma.sql`
-          SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) as likes,
-          SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END) as dislikes,
-        `
-						: Prisma.sql`
-          0 as likes,
-          0 as dislikes,
-        `
-				}
-        (SELECT COUNT(*) FROM "Comment" r WHERE r."parentId" = c.id) as reply_count
-      FROM "Comment" c
-      ${includeVotes ? Prisma.sql`LEFT JOIN "CommentVote" cv ON cv."commentId" = c.id` : Prisma.empty}
-      WHERE c."postId" = ${postId}
-        AND c."parentId" ${parentId ? Prisma.sql`= ${parentId}` : Prisma.sql`IS NULL`}
-        ${
-					sort === COMMENT_SORT_OPTIONS.TOP
-						? Prisma.sql`AND COALESCE((
-          SELECT SUM(CASE WHEN v.type = 'UP' THEN 1 ELSE -1 END)
-          FROM "CommentVote" v WHERE v."commentId" = c.id
-        ), 0) >= ${minScore}`
-						: Prisma.empty
-				}
-      GROUP BY c.id
-      ORDER BY 
-        ${
-					sort === COMMENT_SORT_OPTIONS.TOP
-						? Prisma.sql`(SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) - SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END)) DESC`
-						: sort === COMMENT_SORT_OPTIONS.NEWEST
-							? Prisma.sql`c."createdAt" DESC`
-							: Prisma.sql`c."createdAt" ASC`
-				}
-      LIMIT ${take}
-      OFFSET ${skip}
-    )
-    SELECT 
-      pc.*,
-      ${
-				includeAuthor
+	  WITH paginated_comments AS (
+		SELECT 
+		  c.*,
+		  COUNT(*) OVER() as total_count,
+		  ${
+				includeVotes
 					? Prisma.sql`
-        json_build_object(
-          'id', a.id,
-          'userName', a."userName",
-          'name', up.name,
-          'image', up.image
-        ) as author
-      `
-					: Prisma.sql`NULL as author`
+			SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) as likes,
+			SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END) as dislikes,
+		  `
+					: Prisma.sql`
+			0 as likes,
+			0 as dislikes,
+		  `
 			}
-    FROM paginated_comments pc
-    ${includeAuthor ? Prisma.sql`JOIN "User" a ON a.id = pc."authorId"` : Prisma.empty}
-    ${includeAuthor ? Prisma.sql`LEFT JOIN "UserProfile" up ON up."userId" = a.id` : Prisma.empty}
-  `;
+		  (SELECT COUNT(*) FROM "Comment" r WHERE r."parentId" = c.id) as reply_count
+		FROM "Comment" c
+		${includeVotes ? Prisma.sql`LEFT JOIN "CommentVote" cv ON cv."commentId" = c.id` : Prisma.empty}
+		WHERE c."postId" = ${postId}
+		  ${
+				parentId
+					? Prisma.sql`AND c."parentId" = ${parentId}::uuid`
+					: Prisma.sql`AND c."parentId" IS NULL`
+			}
+		  ${
+				sort === COMMENT_SORT_OPTIONS.TOP
+					? Prisma.sql`AND COALESCE((
+			SELECT SUM(CASE WHEN v.type = 'UP' THEN 1 ELSE -1 END)
+			FROM "CommentVote" v WHERE v."commentId" = c.id
+		  ), 0) >= ${minScore}`
+					: Prisma.empty
+			}
+		GROUP BY c.id
+		ORDER BY 
+		  ${
+				sort === COMMENT_SORT_OPTIONS.TOP
+					? Prisma.sql`(SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END) - SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END)) DESC`
+					: sort === COMMENT_SORT_OPTIONS.NEWEST
+						? Prisma.sql`c."createdAt" DESC`
+						: Prisma.sql`c."createdAt" ASC`
+			}
+		LIMIT ${take}
+		OFFSET ${skip}
+	  )
+	  SELECT 
+		pc.*,
+		${
+			includeAuthor
+				? Prisma.sql`
+		json_build_object(
+		  'id', a.id,
+		  'userName', a."userName",
+		  'name', up.name,
+		  'image', up.image
+		) as author
+	  `
+				: Prisma.sql`NULL as author`
+		}
+	  FROM paginated_comments pc
+	  ${includeAuthor ? Prisma.sql`JOIN "User" a ON a.id = pc."authorId"` : Prisma.empty}
+	  ${includeAuthor ? Prisma.sql`LEFT JOIN "UserProfile" up ON up."userId" = a.id` : Prisma.empty}
+	`;
 
 	interface RawCommentResult {
 		id: string;
@@ -177,7 +181,7 @@ export async function getCommentsWithVotes(
 		}),
 	);
 
-	const totalCount = Number(result[0]?.total_count || 0);
+	const totalCount = result.length > 0 ? Number(result[0].total_count) : 0;
 	const totalPages = Math.ceil(totalCount / take);
 
 	if (depth > 0) {
