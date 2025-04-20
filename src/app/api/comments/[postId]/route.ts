@@ -24,7 +24,7 @@ export async function GET(
 		const depth = Number.parseInt(searchParams.get("depth") ?? "1");
 		const replyTake = Number.parseInt(searchParams.get("replyTake") ?? "5");
 		const replySkip = Number.parseInt(searchParams.get("replySkip") ?? "0");
-		const currentPage = Number.parseInt(searchParams.get("currentPage") ?? "1");
+		const currentPage = Number.parseInt(searchParams.get("page") ?? "1");
 		const minScore = Number.parseInt(searchParams.get("minScore") ?? "0");
 		const includeAuthor = searchParams.get("includeAuthor") !== "false";
 		const includeVotes = searchParams.get("includeVotes") !== "false";

@@ -18,7 +18,7 @@ import { handleError } from "@/utils/handleError";
 
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
-	loading: () => <Skeleton className="w-full h-full" />,
+	loading: () => <Skeleton className="w-full h-28 " />,
 });
 
 interface CommentEditBoxProps {

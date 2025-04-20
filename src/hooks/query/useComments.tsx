@@ -32,10 +32,10 @@ export function useComments(
 		],
 		queryFn: () =>
 			fetchComments(postId!, {
-				page: options?.page || 1,
-				take: options?.take || 10,
-				depth: options?.depth || 1,
-				sort: options?.sort || COMMENT_SORT_OPTIONS.TOP,
+				page: options?.page,
+				take: options?.take,
+				depth: options?.depth,
+				sort: options?.sort,
 			}),
 		enabled: !!postId, // Ensure the query is only run when postId is available
 		...options, // Spread in additional options passed to the hook

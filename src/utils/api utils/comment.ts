@@ -6,6 +6,7 @@ import {
 	PaginatedComments,
 } from "../types";
 import { COMMENT_SORT_OPTIONS } from "../contants";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 
 const prisma = new PrismaClient();
 
@@ -117,56 +118,64 @@ export async function getCommentsWithVotes(
 
 	const result = await prisma.$queryRaw<RawCommentResult[]>(baseQuery);
 
-	const processed: CommentWithVotes[] = result.map((row) => {
-		let content: string | null = null;
-		try {
-			content = row.content
-				? JSON.parse(pako.inflate(row.content, { to: "string" }))
-				: null;
-		} catch {
-			content = null;
-		}
+	const processed: CommentWithVotes[] = await Promise.all(
+		result.map(async (row) => {
+			let content: string | null = null;
+			try {
+				// Decompress the content
+				const decompressedContent = row.content
+					? JSON.parse(pako.inflate(row.content, { to: "string" }))
+					: null;
 
-		const likes = Number(row.likes);
-		const dislikes = Number(row.dislikes);
-		const replyCount = Number(row.reply_count);
-		const totalVotes = likes + dislikes;
+				// Convert the decompressed content to HTML
+				content = decompressedContent
+					? await getHtml(decompressedContent)
+					: null;
+			} catch {
+				content = null;
+			}
 
-		return {
-			id: row.id,
-			content,
-			createdAt: row.createdAt,
-			authorId: row.authorId,
-			postId: row.postId,
-			parentId: row.parentId,
-			author: includeAuthor
-				? {
-						id: row.author?.id || row.authorId,
-						userName: row.author?.userName || "Unknown",
-						name: row.author?.name || "Unknown",
-						image: row.author?.image || null,
-					}
-				: undefined,
-			_count: {
-				replies: replyCount,
-				votes: totalVotes,
-			},
-			votesAggregate: {
-				_count: { _all: totalVotes },
-				_sum: { voteValue: likes - dislikes },
-			},
-			likes,
-			dislikes,
-			repliesExist: replyCount > 0,
-			repliesLoaded: false,
-			replies: [],
-			repliesPagination: {
-				hasMore: replyCount > replyTake,
-				nextSkip: replyTake,
-				totalCount: replyCount,
-			},
-		};
-	});
+			const likes = Number(row.likes);
+			const dislikes = Number(row.dislikes);
+			const replyCount = Number(row.reply_count);
+			const totalVotes = likes + dislikes;
+
+			return {
+				id: row.id,
+				content,
+				createdAt: row.createdAt,
+				authorId: row.authorId,
+				postId: row.postId,
+				parentId: row.parentId,
+				author: includeAuthor
+					? {
+							id: row.author?.id || row.authorId,
+							userName: row.author?.userName || "Unknown",
+							name: row.author?.name || "Unknown",
+							image: row.author?.image || null,
+						}
+					: undefined,
+				_count: {
+					replies: replyCount,
+					votes: totalVotes,
+				},
+				votesAggregate: {
+					_count: { _all: totalVotes },
+					_sum: { voteValue: likes - dislikes },
+				},
+				likes,
+				dislikes,
+				repliesExist: replyCount > 0,
+				repliesLoaded: false,
+				replies: [],
+				repliesPagination: {
+					hasMore: replyCount > replyTake,
+					nextSkip: replyTake,
+					totalCount: replyCount,
+				},
+			};
+		}),
+	);
 
 	const totalCount = Number(result[0]?.total_count || 0);
 	const totalPages = Math.ceil(totalCount / take);

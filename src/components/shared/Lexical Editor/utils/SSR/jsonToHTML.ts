@@ -5,6 +5,7 @@ import { $generateHtmlFromNodes } from "@lexical/html";
 
 import createHeadlessEditor from "./headless";
 import { SerializedEditorState } from "lexical";
+import { LexicalNodeType } from "./nodes";
 
 function setupDom() {
 	const { window, document } = parseHTML("<html><body></body></html>");
@@ -32,13 +33,17 @@ function setupWindow() {
 	};
 }
 
-export async function getHtml(serializedEditorState: SerializedEditorState) {
+export async function getHtml(
+	serializedEditorState: SerializedEditorState,
+	nodes?: LexicalNodeType[],
+) {
 	if (!serializedEditorState) {
 		return "";
 	}
+
 	const html: string = await new Promise((resolve) => {
 		const cleanup = setupWindow();
-		const editor = createHeadlessEditor({ namespace: "html-renderer" });
+		const editor = createHeadlessEditor({ namespace: "html-renderer", nodes });
 
 		editor.setEditorState(editor.parseEditorState(serializedEditorState));
 		cleanup();
@@ -51,10 +56,9 @@ export async function getHtml(serializedEditorState: SerializedEditorState) {
 
 				resolve(_html);
 			} catch (e) {
-				console.log(e);
+				console.error(e);
 			}
 		});
 	});
-
 	return html;
 }

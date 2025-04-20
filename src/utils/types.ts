@@ -107,10 +107,11 @@ export type CommentWithVotes = {
 	authorId: string;
 	postId: string;
 	parentId: string | null;
-	user?: {
+	author?: {
 		id: string;
-		name: string;
+		name?: string;
 		image?: string | null;
+		userName: string;
 	};
 	_count: {
 		replies: number;
