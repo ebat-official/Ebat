@@ -78,7 +78,8 @@ export type PostWithExtraDetails = Post & {
 	};
 };
 
-export type CommentSortOption = keyof typeof COMMENT_SORT_OPTIONS;
+export type CommentSortOption =
+	(typeof COMMENT_SORT_OPTIONS)[keyof typeof COMMENT_SORT_OPTIONS];
 
 export type EditorBlockType =
 	| "number"
@@ -97,4 +98,79 @@ export type EditorBlockType =
 export type UserSearchResult = {
 	id: string;
 	userName: string;
+};
+
+export type CommentWithVotes = {
+	id: string;
+	content: string | null;
+	createdAt: Date;
+	authorId: string;
+	postId: string;
+	parentId: string | null;
+	author?: {
+		id: string;
+		name?: string;
+		image?: string | null;
+		userName: string;
+	};
+	_count: {
+		replies: number;
+		votes: number;
+	};
+	votesAggregate: {
+		_count: { _all: number };
+		_sum: { voteValue: number };
+	};
+	likes: number;
+	dislikes: number;
+	repliesExist: boolean;
+	repliesLoaded: boolean;
+	replies: CommentWithVotes[];
+	repliesPagination: {
+		hasMore: boolean;
+		nextSkip: number;
+		totalCount: number;
+	};
+};
+
+export type PaginatedComments = {
+	comments: CommentWithVotes[];
+	pagination: {
+		hasMore: boolean;
+		totalCount: number;
+		currentPage: number;
+		totalPages: number;
+		nextSkip?: number;
+	};
+};
+
+export interface RawCommentResult {
+	id: string;
+	content: Buffer | null;
+	createdAt: Date;
+	authorId: string;
+	postId: string;
+	parentId: string | null;
+	total_count: number;
+	likes: number;
+	dislikes: number;
+	reply_count: number;
+	author?: {
+		id: string;
+		name: string;
+		avatar?: string | null;
+	};
+}
+
+export type GetOptimizedCommentsOptions = {
+	sort?: CommentSortOption;
+	take?: number;
+	skip?: number;
+	depth?: number;
+	replyTake?: number;
+	replySkip?: number;
+	currentPage?: number;
+	minScore?: number;
+	includeAuthor?: boolean;
+	includeVotes?: boolean;
 };

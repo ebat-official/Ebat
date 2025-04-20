@@ -13,6 +13,7 @@ import { Comment, VoteType } from "@prisma/client";
 import { getCurrentUser } from "./user";
 import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 import pako from "pako";
+import { invalidateCommentsCache } from "@/lib/invalidateCache";
 
 // Validator for comment data
 const MentionDataSchema = z.object({
@@ -92,6 +93,7 @@ export async function createComment(data: z.infer<typeof CommentValidator>) {
 					skipDuplicates: true,
 				});
 			}
+			invalidateCommentsCache(data.postId);
 
 			return comment;
 		});
@@ -102,87 +104,4 @@ export async function createComment(data: z.infer<typeof CommentValidator>) {
 		const msg = error instanceof Error ? error.message : undefined;
 		throw FailedToAddCommentErr(msg);
 	}
-}
-
-async function getComments(
-	postId: string,
-	parentId: string | null = null,
-	sortOption: CommentSortOption = "TOP",
-	take = 10,
-	skip = 0,
-) {
-	// Base query configuration
-	const baseQuery = {
-		where: {
-			postId,
-			parentId,
-		},
-		include: {
-			author: true,
-			_count: {
-				select: {
-					replies: true,
-					votes: {
-						where: { type: VoteType.UP },
-					},
-				},
-			},
-		},
-		take,
-		skip,
-	};
-
-	// Apply different sorting based on the option
-	let comments: Comment[];
-	switch (sortOption) {
-		case "TOP":
-			comments = await prisma.comment.findMany({
-				...baseQuery,
-				orderBy: {
-					votes: {
-						_count: "desc",
-					},
-				},
-			});
-			break;
-
-		case "NEWEST":
-			comments = await prisma.comment.findMany({
-				...baseQuery,
-				orderBy: {
-					createdAt: "desc",
-				},
-			});
-			break;
-
-		case "OLDEST":
-			comments = await prisma.comment.findMany({
-				...baseQuery,
-				orderBy: {
-					createdAt: "asc",
-				},
-			});
-			break;
-
-		default:
-			comments = await prisma.comment.findMany({
-				...baseQuery,
-				orderBy: {
-					votes: {
-						_count: "desc",
-					},
-				},
-			});
-			break;
-	}
-
-	// Decompress content for each comment
-	return comments.map((comment) => {
-		if (comment.content) {
-			comment.content = JSON.parse(
-				pako.inflate(comment.content, { to: "string" }),
-			);
-		}
-		return comment;
-	});
 }

@@ -184,7 +184,6 @@ export async function getPostById(postId: string) {
 	if (post?.content) {
 		post.content = JSON.parse(pako.inflate(post.content, { to: "string" }));
 	}
-	console.log(post?.content, "mola");
 	return post;
 }
 
