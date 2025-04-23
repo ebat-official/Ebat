@@ -61,19 +61,24 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 	};
 
 	return (
-		<Card className="mb-4">
-			<CardContent className="p-4">
-				<div className="flex items-start gap-3">
-					<Avatar className="h-9 w-9">
-						<AvatarImage
-							src={author?.image || undefined}
-							alt="avatar"
-							referrerPolicy="no-referrer"
-						/>
-						<AvatarFallback>{author?.userName.charAt(0)}</AvatarFallback>
-					</Avatar>
+		<Card className=" shadow-none border-0 py-0 pt-8">
+			<CardContent className="p-0">
+				<div className="flex items-stretch gap-2">
+					<div className=" flex  relative">
+						<Avatar className="h-10 w-10 ">
+							<AvatarImage
+								src={author?.image || undefined}
+								alt="avatar"
+								referrerPolicy="no-referrer"
+							/>
+							<AvatarFallback>{author?.userName.charAt(0)}</AvatarFallback>
+						</Avatar>
+						{areRepliesExpanded && replies.length > 0 && (
+							<div className="w-[1px] h-full bg-accent-foreground/20 absolute top-0  left-1/2 -translate-x-1/2" />
+						)}
+					</div>
 
-					<div className="flex-1">
+					<div className="flex flex-col gap-2">
 						{/* Header with author and timestamp */}
 						<div className="flex items-center gap-2">
 							<h4 className="font-semibold">{author?.userName}</h4>
@@ -84,19 +89,19 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 
 						{/* Comment content */}
 						<p
-							className="mt-1 text-sm"
+							className="text-sm"
 							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 							dangerouslySetInnerHTML={{ __html: content || "" }}
 						/>
 
 						{/* Action buttons */}
-						<div className="mt-2 flex items-center gap-4">
-							<Button variant="ghost" size="sm" className="gap-1">
+						<div className="flex items-center">
+							<Button variant="ghost" size="sm" className="gap-1 pb-0">
 								<ThumbsUp className="h-4 w-4" />
 								<span>{likes}</span>
 							</Button>
 
-							<Button variant="ghost" size="sm" className="gap-1">
+							<Button variant="ghost" size="sm" className="gap-1 pb-0">
 								<ThumbsDown className="h-4 w-4" />
 								<span>{dislikes}</span>
 							</Button>
@@ -104,7 +109,7 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 							<Button
 								variant="ghost"
 								size="sm"
-								className="gap-1"
+								className="gap-1 pb-0"
 								onClick={() => setIsReplying(!isReplying)}
 							>
 								<Reply className="h-4 w-4" />
@@ -157,9 +162,22 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 
 				{/* Nested replies - conditionally rendered */}
 				{areRepliesExpanded && replies.length > 0 && (
-					<div className="ml-10 mt-2 border-l-2 pl-4">
-						{replies.map((reply) => (
-							<CommentViewBox key={reply.id} comment={reply} postId={postId} />
+					<div className="replies flex flex-col">
+						{replies.map((reply, indx) => (
+							<div className="flex" key={reply.id}>
+								<div
+									aria-hidden="true"
+									className="thread flex justify-end items-start relative  w-10"
+								>
+									<div className="box-border bg-red-500 h-12 border-0 border-accent-foreground/20 border-solid border-b cursor-pointer w-[calc(50%+0.5px)] border-l rounded-bl-lg" />
+
+									{replies.length > 1 && indx !== replies.length - 1 && (
+										<div className="w-[1px] h-full bg-accent-foreground/20 absolute top-0  left-1/2 -translate-x-1/2" />
+									)}
+								</div>
+
+								<CommentViewBox comment={reply} postId={postId} />
+							</div>
 						))}
 					</div>
 				)}
