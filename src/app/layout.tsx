@@ -39,7 +39,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} font-source-serif antialiased relative var(--background)`}
+				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} font-source-serif antialiased relative var(--background) overflow-x-hidden`}
 			>
 				<SessionProvider>
 					<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

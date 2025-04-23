@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { CommentWithVotes } from "@/utils/types";
 import CommentEditBox from "./CommentEditBox";
+import { FaCircleChevronUp } from "react-icons/fa6";
+import { FaChevronUp } from "react-icons/fa";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
@@ -61,11 +63,11 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 	};
 
 	return (
-		<Card className=" shadow-none border-0 py-0 pt-8">
+		<Card className=" shadow-none border-0 py-0 pt-8 w-full">
 			<CardContent className="p-0">
 				<div className="flex items-stretch gap-2">
-					<div className=" flex  relative">
-						<Avatar className="h-10 w-10 ">
+					<div className=" flex  relative flex-col justify-between items-center">
+						<Avatar className="h-10 w-10 z-10">
 							<AvatarImage
 								src={author?.image || undefined}
 								alt="avatar"
@@ -74,11 +76,20 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 							<AvatarFallback>{author?.userName.charAt(0)}</AvatarFallback>
 						</Avatar>
 						{areRepliesExpanded && replies.length > 0 && (
-							<div className="w-[1px] h-full bg-accent-foreground/20 absolute top-0  left-1/2 -translate-x-1/2" />
+							<div className="w-[1px] h-full bg-gray-200 dark:bg-gray-800 absolute top-0  left-1/2 -translate-x-1/2" />
+						)}
+						{replies.length > 0 && (
+							<button
+								type="button"
+								onClick={() => setAreRepliesExpanded((prev) => !prev)}
+								className="z-10 w-4 h-4 rounded-full bg-foreground/10 flex justify-between items-center p-1 mb-2"
+							>
+								<FaChevronUp />
+							</button>
 						)}
 					</div>
 
-					<div className="flex flex-col gap-2">
+					<div className="flex flex-col gap-2 w-full">
 						{/* Header with author and timestamp */}
 						<div className="flex items-center gap-2">
 							<h4 className="font-semibold">{author?.userName}</h4>
@@ -96,12 +107,12 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 
 						{/* Action buttons */}
 						<div className="flex items-center">
-							<Button variant="ghost" size="sm" className="gap-1 pb-0">
+							<Button variant="ghost" size="sm" className="gap-1 p-0">
 								<ThumbsUp className="h-4 w-4" />
 								<span>{likes}</span>
 							</Button>
 
-							<Button variant="ghost" size="sm" className="gap-1 pb-0">
+							<Button variant="ghost" size="sm" className="gap-1 p-0">
 								<ThumbsDown className="h-4 w-4" />
 								<span>{dislikes}</span>
 							</Button>
@@ -169,10 +180,10 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 									aria-hidden="true"
 									className="thread flex justify-end items-start relative  w-10"
 								>
-									<div className="box-border bg-red-500 h-12 border-0 border-accent-foreground/20 border-solid border-b cursor-pointer w-[calc(50%+0.5px)] border-l rounded-bl-lg" />
+									<div className="box-border relative  h-12 border-0 border-accent-foreground/20 border-solid border-b cursor-pointer w-[calc(50%+0.5px)] border-l rounded-bl-lg" />
 
 									{replies.length > 1 && indx !== replies.length - 1 && (
-										<div className="w-[1px] h-full bg-accent-foreground/20 absolute top-0  left-1/2 -translate-x-1/2" />
+										<div className="w-[1px] h-full bg-gray-200 dark:bg-gray-800 absolute top-0  left-1/2 -translate-x-1/2" />
 									)}
 								</div>
 
