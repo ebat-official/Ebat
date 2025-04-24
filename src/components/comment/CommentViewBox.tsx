@@ -17,7 +17,8 @@ import {
 import { CommentWithVotes } from "@/utils/types";
 import CommentEditBox from "./CommentEditBox";
 import { FaCircleChevronUp } from "react-icons/fa6";
-import { FaChevronUp } from "react-icons/fa";
+import { FaChevronUp, FaRegComment, FaRegCommentDots } from "react-icons/fa";
+import { BsCaretUp } from "react-icons/bs";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
@@ -64,11 +65,11 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 	};
 
 	return (
-		<Card className=" shadow-none border-0 py-0 pt-8 w-full">
+		<Card className=" shadow-none border-0 py-0 pt-6 w-full">
 			<CardContent className="p-0">
 				<div className="flex items-stretch">
 					<div className=" flex  relative flex-col justify-between items-center w-10">
-						<Avatar className="h-10 z-10">
+						<Avatar className="h-10 w-full z-10">
 							<AvatarImage
 								src={author?.image || undefined}
 								alt="avatar"
@@ -101,7 +102,7 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 						)}
 					</div>
 
-					<div className="flex flex-col gap-2 w-full">
+					<div className="flex flex-col gap-2 w-full pl-2 ">
 						{/* Header with author and timestamp */}
 						<div className="flex items-center gap-2">
 							<h4 className="font-semibold">{author?.userName}</h4>
@@ -112,53 +113,57 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 
 						{/* Comment content */}
 						<p
-							className="text-sm"
+							className="text-sm first-letter:capitalize"
 							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 							dangerouslySetInnerHTML={{ __html: content || "" }}
 						/>
 
 						{/* Action buttons */}
-						<div className="flex items-center">
-							<Button variant="ghost" size="sm" className="gap-1 p-0">
-								<ThumbsUp className="h-4 w-4" />
-								<span>{likes}</span>
-							</Button>
+						<div className="flex items-center gap-2 ">
+							<Card className="flex  py-0 w-fit">
+								<CardContent className="px-0 flex justify-center items-center p-1 gap-1">
+									<button type="button">
+										<BsCaretUp />
+									</button>
+									<span className="text-xs">{likes - dislikes}</span>
 
-							<Button variant="ghost" size="sm" className="gap-1 p-0">
-								<ThumbsDown className="h-4 w-4" />
-								<span>{dislikes}</span>
-							</Button>
-
+									<button type="button">
+										<BsCaretUp className="rotate-x-180" />
+									</button>
+								</CardContent>
+							</Card>
 							<Button
 								variant="ghost"
 								size="sm"
-								className="gap-1 pb-0"
+								className="gap-1 pb-0 opacity-80"
 								onClick={() => setIsReplying(!isReplying)}
 							>
-								<Reply className="h-4 w-4" />
+								<FaRegCommentDots />
 								Reply
 							</Button>
 						</div>
 
 						{/* Reply form */}
-						{isReplying && (
-							<div className="mt-3 space-y-2">
-								<CommentEditBox postId={postId} parentId={id} />
-								<div className="flex gap-2">
-									<Button size="sm" onClick={handleReplySubmit}>
-										Post Reply
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => setIsReplying(false)}
-									>
-										Cancel
-									</Button>
-								</div>
-							</div>
-						)}
-
+						<AnimatePresence>
+							{isReplying && (
+								<motion.div
+									initial={{ opacity: 0, height: 0 }}
+									animate={{ opacity: 1, height: "auto" }}
+									exit={{ opacity: 0, height: 0 }}
+									transition={{
+										duration: 0.3,
+										ease: "easeInOut",
+									}}
+									className="mt-3 space-y-2"
+								>
+									<CommentEditBox
+										postId={postId}
+										parentId={id}
+										cancelHandler={() => setIsReplying(false)}
+									/>
+								</motion.div>
+							)}
+						</AnimatePresence>
 						{/* Replies toggle - only show if there are replies */}
 						{/* {replies.length > 0 && (
               <Button
@@ -202,7 +207,7 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 										aria-hidden="true"
 										className="thread flex justify-end items-start relative  w-10"
 									>
-										<div className="box-border relative border-gray-200 dark:border-gray-800  h-12 border-0  border-solid border-b cursor-pointer w-[calc(50%+0.5px)] border-l rounded-bl-lg" />
+										<div className="box-border relative border-gray-200 dark:border-gray-800  h-10 border-0  border-solid border-b cursor-pointer w-[calc(50%+0.5px)] border-l rounded-bl-lg" />
 
 										{replies.length > 1 && indx !== replies.length - 1 && (
 											<div className="w-[1px] h-full bg-gray-200 dark:bg-gray-800 absolute top-0  left-1/2 -translate-x-1/2" />
