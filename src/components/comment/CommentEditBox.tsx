@@ -15,6 +15,7 @@ import LoginModal from "@/components/auth/LoginModal";
 import { toast } from "@/hooks/use-toast";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { handleError } from "@/utils/handleError";
+import { IoMdClose } from "react-icons/io";
 
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
@@ -26,6 +27,7 @@ interface CommentEditBoxProps {
 	parentId?: string | undefined;
 	commentId?: string | undefined;
 	postId: string;
+	cancelHandler?: () => void;
 }
 
 export default function CommentEditBox({
@@ -33,6 +35,7 @@ export default function CommentEditBox({
 	parentId = undefined,
 	commentId = undefined,
 	postId,
+	cancelHandler,
 }: CommentEditBoxProps) {
 	const [comment, setComment] = useState<SerializedEditorState>();
 	const [mentions, setMentions] = useState<MentionData[]>([]);
@@ -100,19 +103,39 @@ export default function CommentEditBox({
 						onMentionChangeHandler={setMentions}
 						content={content}
 					/>
-					<Button
-						disabled={isLoading}
-						onClick={createCommentHandler}
-						variant="outline"
-						className="rounded-full absolute right-0 bottom-0"
-					>
-						{isLoading ? (
-							<Loader2 className="animate-spin" />
-						) : (
-							<FaRegCommentDots />
+					<div className="absolute right-0 bottom-0 flex gap-2">
+						{cancelHandler && (
+							<>
+								<Button
+									className="hidden sm:block"
+									variant="link"
+									onClick={cancelHandler}
+								>
+									Cancel
+								</Button>
+								<Button
+									className="sm:hidden rounded-full"
+									variant="outline"
+									onClick={cancelHandler}
+								>
+									<IoMdClose />
+								</Button>
+							</>
 						)}
-						<span className="hidden md:block font-semibold">Comment</span>
-					</Button>
+						<Button
+							disabled={isLoading}
+							onClick={createCommentHandler}
+							variant="outline"
+							className="rounded-full "
+						>
+							{isLoading ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								<FaRegCommentDots />
+							)}
+							<span className="hidden md:block font-semibold">Comment</span>
+						</Button>
+					</div>
 				</CardContent>
 			</Card>
 		</div>

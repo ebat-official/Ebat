@@ -72,7 +72,7 @@ export default function Toolbar() {
 	}, [editor, toolbarState.isLink]);
 
 	return (
-		<div className="flex items-center gap-0 sm:gap-2">
+		<div className="flex items-center lg:gap-2">
 			<BlockFormatDropDown
 				commentMode
 				blockType={
