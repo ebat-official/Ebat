@@ -16,7 +16,7 @@ const CommentContainer: FC<CommentContainerProps> = ({ postId }) => {
 	const { data, error, isLoading, isFetching } = useComments(postId, {
 		page,
 		take: 100,
-		depth: 10,
+		depth: 3,
 		sort: COMMENT_SORT_OPTIONS.TOP,
 	});
 	return (
