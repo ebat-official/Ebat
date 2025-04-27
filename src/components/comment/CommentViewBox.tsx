@@ -19,12 +19,18 @@ import CommentEditBox from "./CommentEditBox";
 import { FaCircleChevronUp } from "react-icons/fa6";
 import { FaChevronUp, FaRegComment, FaRegCommentDots } from "react-icons/fa";
 import { BsCaretUp } from "react-icons/bs";
+import { TbTriangle } from "react-icons/tb";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
 	postId: string;
+	depth?: number;
 };
-export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
+export function CommentViewBox({
+	comment,
+	postId,
+	depth = 1,
+}: CommentViewBoxProps) {
 	const {
 		id,
 		author,
@@ -35,57 +41,39 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 		replies: initialReplies = [],
 	} = comment;
 	const [isReplying, setIsReplying] = useState(false);
-	const [replyContent, setReplyContent] = useState("");
 	const [replies, setReplies] = useState<CommentWithVotes[]>(initialReplies);
 	const [areRepliesExpanded, setAreRepliesExpanded] = useState(true);
-	const handleReplySubmit = () => {
-		if (replyContent.trim()) {
-			//   const newReply = {
-			//     id: `reply-${Date.now()}`,
-			//     author: {
-			//       name: "You",
-			//       image: "",
-			//     },
-			//     content: replyContent,
-			//     createdAt: new Date().toISOString(),
-			//     likes: 0,
-			//     dislikes: 0,
-			//   };
-
-			//   setReplies((prev) => [...prev, newReply]);
-			setReplyContent("");
-			setIsReplying(false);
-			// Auto-expand when adding a new reply
-			if (!areRepliesExpanded) setAreRepliesExpanded(true);
-		}
-	};
 
 	const toggleReplies = () => {
 		setAreRepliesExpanded((prev) => !prev);
+	};
+
+	const commentAddHandler = (comment: CommentWithVotes) => {
+		setReplies((prev) => [comment, ...prev]);
+		setIsReplying(false);
 	};
 
 	return (
 		<Card className=" shadow-none border-0 py-0 pt-6 w-full">
 			<CardContent className="p-0">
 				<div className="flex items-stretch">
-					<div className=" flex  relative flex-col justify-between items-center w-10">
-						<Avatar className="h-10 w-full z-10">
+					<div className=" flex  relative flex-col justify-between items-center w-4 md:w-8  lg:w-10 pb-1">
+						<Avatar className="relative min-w-6 flex h-auto w-auto aspect-square shrink-0 overflow-hidden rounded-full z-10">
 							<AvatarImage
+								className="size-full object-cover"
 								src={author?.image || undefined}
 								alt="avatar"
 								referrerPolicy="no-referrer"
 							/>
-							<AvatarFallback>{author?.userName.charAt(0)}</AvatarFallback>
+							<AvatarFallback className="flex size-full items-center justify-center">
+								{author?.userName.charAt(0)}
+							</AvatarFallback>
 						</Avatar>
 						{areRepliesExpanded && replies.length > 0 && (
 							<div className="w-[1px] h-full bg-gray-200 dark:bg-gray-800 absolute top-0  left-1/2 -translate-x-1/2" />
 						)}
 						{replies.length > 0 && (
-							<button
-								type="button"
-								onClick={() => setAreRepliesExpanded((prev) => !prev)}
-								className="z-10"
-							>
+							<button type="button" onClick={toggleReplies} className="z-10">
 								<motion.div
 									className="w-4 h-4 rounded-full bg-foreground/10 flex justify-between items-center p-1 mb-2"
 									animate={{
@@ -102,18 +90,18 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 						)}
 					</div>
 
-					<div className="flex flex-col gap-2 w-full pl-2 ">
+					<div className="flex flex-col gap-2 w-full px-2 sm:p-2  ">
 						{/* Header with author and timestamp */}
 						<div className="flex items-center gap-2">
 							<h4 className="font-semibold">{author?.userName}</h4>
-							<span className="text-sm text-muted-foreground">
+							<span className="text-sm text-muted-foreground hidden md:block">
 								{formatDistanceToNow(new Date(createdAt))} ago
 							</span>
 						</div>
 
 						{/* Comment content */}
-						<p
-							className="text-sm first-letter:capitalize"
+						<div
+							className="text-sm first-letter:capitalize lexicalContentView"
 							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 							dangerouslySetInnerHTML={{ __html: content || "" }}
 						/>
@@ -121,26 +109,31 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 						{/* Action buttons */}
 						<div className="flex items-center gap-2 ">
 							<Card className="flex  py-0 w-fit">
-								<CardContent className="px-0 flex justify-center items-center p-1 gap-1">
+								<CardContent className=" flex justify-center items-center py-1 px-2 gap-1">
 									<button type="button">
-										<BsCaretUp />
+										<TbTriangle size={12} />
 									</button>
 									<span className="text-xs">{likes - dislikes}</span>
 
 									<button type="button">
-										<BsCaretUp className="rotate-x-180" />
+										<TbTriangle
+											size={12}
+											className="rotate-x-180 fill-gray-500 stroke-gray-500"
+										/>
 									</button>
 								</CardContent>
 							</Card>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="gap-1 pb-0 opacity-80"
-								onClick={() => setIsReplying(!isReplying)}
-							>
-								<FaRegCommentDots />
-								Reply
-							</Button>
+							{depth < 3 && (
+								<Button
+									variant="ghost"
+									size="sm"
+									className="gap-1 pb-0 opacity-80"
+									onClick={() => setIsReplying(!isReplying)}
+								>
+									<FaRegCommentDots />
+									Reply
+								</Button>
+							)}
 						</div>
 
 						{/* Reply form */}
@@ -160,6 +153,8 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 										postId={postId}
 										parentId={id}
 										cancelHandler={() => setIsReplying(false)}
+										commentAddHandler={commentAddHandler}
+										autoFocus
 									/>
 								</motion.div>
 							)}
@@ -205,7 +200,7 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 								<div className="flex" key={reply.id}>
 									<div
 										aria-hidden="true"
-										className="thread flex justify-end items-start relative  w-10"
+										className="thread flex justify-end items-start relative w-4 md:w-8  lg:w-10"
 									>
 										<div className="box-border relative border-gray-200 dark:border-gray-800  h-10 border-0  border-solid border-b cursor-pointer w-[calc(50%+0.5px)] border-l rounded-bl-lg" />
 
@@ -214,7 +209,11 @@ export function CommentViewBox({ comment, postId }: CommentViewBoxProps) {
 										)}
 									</div>
 
-									<CommentViewBox comment={reply} postId={postId} />
+									<CommentViewBox
+										comment={reply}
+										postId={postId}
+										depth={depth + 1}
+									/>
 								</div>
 							))}
 						</motion.div>

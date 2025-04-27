@@ -2,8 +2,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FC } from "react";
 import { FiCheckCircle } from "react-icons/fi";
 import AuthorNudge from "./AuthorNudge";
-import { BiCoinStack, BiTargetLock } from "react-icons/bi";
+import { BiTargetLock } from "react-icons/bi";
 import { PostWithExtraDetails } from "@/utils/types";
+import { GiTwoCoins } from "react-icons/gi";
+
 import {
 	Tooltip,
 	TooltipContent,
@@ -76,10 +78,14 @@ const CoinsBadge: FC<CoinsBadgeProps> = ({ coins }) => {
 			<Tooltip>
 				<TooltipTrigger asChild>
 					<div className="flex items-center justify-center gap-1 cursor-pointer">
-						<BiCoinStack className="text-yellow-500" size={20} />
+						<GiTwoCoins
+							className="text-yellow-500"
+							size={25}
+							//   strokeWidth={1}
+						/>
 						<span className="font-medium text-sm capitalize flex gap-1">
 							{coins}
-							<span className="hidden sm:block">coin</span>
+							<span className="hidden sm:block">coins</span>
 						</span>
 					</div>
 				</TooltipTrigger>
