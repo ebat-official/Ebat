@@ -18,9 +18,9 @@ import { CommentSkeleton } from "./CommentSkelton";
 interface CommentListProps {
 	comments: PaginatedComments | undefined;
 	postId: string;
-	currentPage?: number;
-	setCurrentPage?: number;
-	isLoading?: boolean;
+	currentPage: number;
+	setCurrentPage: (pageNo: number) => void;
+	isLoading: boolean;
 }
 
 export function CommentList({
@@ -31,7 +31,8 @@ export function CommentList({
 	isLoading,
 }: CommentListProps) {
 	const commentsExists = comments?.comments?.length;
-	console.log(isLoading, "loading", typeof isLoading);
+	const totalPages = comments?.pagination.totalPages || 0;
+	console.log(isLoading, "loading", typeof isLoading, comments);
 	return (
 		<div className="flex flex-col gap-10">
 			<div className="space-y-4">
@@ -66,30 +67,47 @@ export function CommentList({
 					</>
 				)}
 			</div>
-			<Pagination>
-				<PaginationContent>
-					<PaginationItem>
-						<PaginationPrevious href="#" />
-					</PaginationItem>
-					<PaginationItem>
-						<PaginationLink href="#">1</PaginationLink>
-					</PaginationItem>
-					<PaginationItem>
-						<PaginationLink href="#" isActive>
-							2
-						</PaginationLink>
-					</PaginationItem>
-					<PaginationItem>
-						<PaginationLink href="#">3</PaginationLink>
-					</PaginationItem>
-					<PaginationItem>
-						<PaginationEllipsis />
-					</PaginationItem>
-					<PaginationItem>
-						<PaginationNext href="#" />
-					</PaginationItem>
-				</PaginationContent>
-			</Pagination>
+			{commentsExists && (
+				<Pagination>
+					<PaginationContent>
+						<PaginationItem>
+							<PaginationPrevious
+								aria-disabled={currentPage <= 1}
+								onClick={() => setCurrentPage(currentPage - 1)}
+								tabIndex={currentPage <= 1 ? -1 : undefined}
+								className={
+									currentPage <= 1
+										? "pointer-events-none opacity-50"
+										: undefined
+								}
+							/>
+						</PaginationItem>
+						{comments?.pagination?.totalPages &&
+							Array.from({ length: totalPages }, (_, index) => (
+								<PaginationItem key={index}>
+									<PaginationLink
+										isActive={currentPage === index + 1}
+										onClick={() => setCurrentPage(index + 1)}
+									>
+										{index + 1}
+									</PaginationLink>
+								</PaginationItem>
+							))}
+						<PaginationItem>
+							<PaginationNext
+								onClick={() => setCurrentPage(currentPage + 1)}
+								aria-disabled={currentPage >= totalPages - 1}
+								tabIndex={currentPage >= totalPages - 1 ? -1 : undefined}
+								className={
+									currentPage >= totalPages
+										? "pointer-events-none opacity-50"
+										: undefined
+								}
+							/>
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
+			)}
 		</div>
 	);
 }

@@ -14,6 +14,7 @@ interface UseCommentsOptions {
 	take?: number;
 	depth?: number;
 	sort?: CommentSortOption;
+	skip?: number;
 }
 
 // Hook for fetching comments for a given post
@@ -29,13 +30,11 @@ export function useComments(
 			options?.take,
 			options?.depth,
 			options?.sort,
+			options?.skip,
 		],
 		queryFn: () =>
 			fetchComments(postId!, {
-				page: options?.page,
-				take: options?.take,
-				depth: options?.depth,
-				sort: options?.sort,
+				...options,
 			}),
 		enabled: !!postId, // Ensure the query is only run when postId is available
 		...options, // Spread in additional options passed to the hook

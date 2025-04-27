@@ -246,6 +246,7 @@ export async function fetchComments(
 		page?: number;
 		take?: number;
 		depth?: number;
+		skip?: number;
 		sort?: CommentSortOption;
 	} = {},
 ): Promise<PaginatedComments> {
@@ -257,9 +258,9 @@ export async function fetchComments(
 		...(options.page && { page: options.page.toString() }),
 		...(options.take && { take: options.take.toString() }),
 		...(options.depth && { depth: options.depth.toString() }),
+		...(options.skip && { skip: options.skip.toString() }),
 		...(options.sort && { sort: options.sort }),
 	});
-
 	const response = await fetch(`/api/comments/${postId}?${query.toString()}`);
 
 	if (!response.ok) {

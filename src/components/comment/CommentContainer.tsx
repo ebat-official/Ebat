@@ -12,13 +12,15 @@ type CommentContainerProps = {
 };
 
 const CommentContainer: FC<CommentContainerProps> = ({ postId }) => {
-	const [page, setPage] = useState(2);
+	const [page, setPage] = useState(1);
 	const [comments, setComments] = useState<CommentWithVotes[]>([]);
+	const COMMENTS_TAKE = 5;
 	const { data, error, isLoading } = useComments(postId, {
 		page,
-		take: 10,
+		take: COMMENTS_TAKE,
 		depth: 3,
 		sort: COMMENT_SORT_OPTIONS.TOP,
+		skip: (page - 1) * COMMENTS_TAKE,
 	});
 
 	useEffect(() => {
@@ -36,7 +38,13 @@ const CommentContainer: FC<CommentContainerProps> = ({ postId }) => {
 				<span className="text-md font-bold">Comments</span>
 				<Badge className="bg-blue-400 rounded-4xl ">25</Badge>
 			</div>
-			<CommentList comments={data} postId={postId} isLoading={isLoading} />
+			<CommentList
+				comments={data}
+				postId={postId}
+				isLoading={isLoading}
+				setCurrentPage={setPage}
+				currentPage={page}
+			/>
 		</div>
 	);
 };
