@@ -1,6 +1,17 @@
 "use client";
 
-import React, { useCallback, useLayoutEffect, useState } from "react";
+declare global {
+	interface Window {
+		clearEditorContent?: () => void;
+	}
+}
+
+import React, {
+	useCallback,
+	useImperativeHandle,
+	useLayoutEffect,
+	useState,
+} from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -49,6 +60,7 @@ interface CoreProps {
 	autoFocus?: boolean;
 	onChangeHandler: (data: SerializedEditorState) => void;
 	onMentionChangeHandler: (mentions: MentionData[]) => void;
+	ref?: React.RefObject<HTMLElement | undefined>;
 }
 
 export default function Core({
@@ -57,6 +69,7 @@ export default function Core({
 	autoFocus,
 	onChangeHandler,
 	onMentionChangeHandler,
+	ref,
 }: CoreProps) {
 	const [editor] = useLexicalComposerContext();
 	const [hasFocus, setHasFocus] = useState(() => {
@@ -87,6 +100,20 @@ export default function Core({
 			),
 		);
 	}, [editor]);
+
+	const clearEditorContent = () => {
+		editor.update(() => {
+			const root = $getRoot();
+			root.clear();
+		});
+	};
+
+	// Expose the clearEditorContent function to the parent via ref
+	if (ref) {
+		useImperativeHandle(ref, () => ({
+			clearEditorContent,
+		}));
+	}
 
 	const handleMarkdownToggle = useCallback(() => {
 		editor.update(() => {

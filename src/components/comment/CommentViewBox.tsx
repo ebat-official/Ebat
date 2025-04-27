@@ -19,6 +19,7 @@ import CommentEditBox from "./CommentEditBox";
 import { FaCircleChevronUp } from "react-icons/fa6";
 import { FaChevronUp, FaRegComment, FaRegCommentDots } from "react-icons/fa";
 import { BsCaretUp } from "react-icons/bs";
+import { TbTriangle } from "react-icons/tb";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
@@ -40,33 +41,16 @@ export function CommentViewBox({
 		replies: initialReplies = [],
 	} = comment;
 	const [isReplying, setIsReplying] = useState(false);
-	const [replyContent, setReplyContent] = useState("");
 	const [replies, setReplies] = useState<CommentWithVotes[]>(initialReplies);
 	const [areRepliesExpanded, setAreRepliesExpanded] = useState(true);
-	const handleReplySubmit = () => {
-		if (replyContent.trim()) {
-			//   const newReply = {
-			//     id: `reply-${Date.now()}`,
-			//     author: {
-			//       name: "You",
-			//       image: "",
-			//     },
-			//     content: replyContent,
-			//     createdAt: new Date().toISOString(),
-			//     likes: 0,
-			//     dislikes: 0,
-			//   };
-
-			//   setReplies((prev) => [...prev, newReply]);
-			setReplyContent("");
-			setIsReplying(false);
-			// Auto-expand when adding a new reply
-			if (!areRepliesExpanded) setAreRepliesExpanded(true);
-		}
-	};
 
 	const toggleReplies = () => {
 		setAreRepliesExpanded((prev) => !prev);
+	};
+
+	const commentAddHandler = (comment: CommentWithVotes) => {
+		setReplies((prev) => [comment, ...prev]);
+		setIsReplying(false);
 	};
 
 	return (
@@ -89,11 +73,7 @@ export function CommentViewBox({
 							<div className="w-[1px] h-full bg-gray-200 dark:bg-gray-800 absolute top-0  left-1/2 -translate-x-1/2" />
 						)}
 						{replies.length > 0 && (
-							<button
-								type="button"
-								onClick={() => setAreRepliesExpanded((prev) => !prev)}
-								className="z-10"
-							>
+							<button type="button" onClick={toggleReplies} className="z-10">
 								<motion.div
 									className="w-4 h-4 rounded-full bg-foreground/10 flex justify-between items-center p-1 mb-2"
 									animate={{
@@ -129,14 +109,17 @@ export function CommentViewBox({
 						{/* Action buttons */}
 						<div className="flex items-center gap-2 ">
 							<Card className="flex  py-0 w-fit">
-								<CardContent className="px-0 flex justify-center items-center p-1 gap-1">
+								<CardContent className=" flex justify-center items-center py-1 px-2 gap-1">
 									<button type="button">
-										<BsCaretUp />
+										<TbTriangle size={12} />
 									</button>
 									<span className="text-xs">{likes - dislikes}</span>
 
 									<button type="button">
-										<BsCaretUp className="rotate-x-180" />
+										<TbTriangle
+											size={12}
+											className="rotate-x-180 fill-gray-500 stroke-gray-500"
+										/>
 									</button>
 								</CardContent>
 							</Card>
@@ -170,6 +153,8 @@ export function CommentViewBox({
 										postId={postId}
 										parentId={id}
 										cancelHandler={() => setIsReplying(false)}
+										commentAddHandler={commentAddHandler}
+										autoFocus
 									/>
 								</motion.div>
 							)}

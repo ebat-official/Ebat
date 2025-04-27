@@ -18,6 +18,7 @@ interface EditorProps {
 	autoFocus?: boolean;
 	onChangeHandler?: (data: SerializedEditorState) => void;
 	onMentionChangeHandler: (mentions: MentionData[]) => void;
+	ref?: React.RefObject<HTMLElement | undefined>;
 }
 
 export default function Editor({
@@ -28,6 +29,7 @@ export default function Editor({
 	autoFocus = false,
 	onChangeHandler,
 	onMentionChangeHandler,
+	ref,
 }: EditorProps) {
 	const initialConfig = {
 		namespace: id,
@@ -54,6 +56,7 @@ export default function Editor({
 						autoFocus={autoFocus}
 						onChangeHandler={changeHandler}
 						onMentionChangeHandler={onMentionChangeHandler}
+						ref={ref}
 					/>
 				</ToolbarContext>
 			</SharedHistoryContext>

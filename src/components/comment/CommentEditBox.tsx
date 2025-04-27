@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import dynamic from "next/dynamic";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,13 +9,14 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { SerializedEditorState } from "lexical";
 import { MentionData } from "../shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 import { useServerAction } from "@/hooks/useServerAction";
-import { createComment } from "@/actions/comment";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
 import LoginModal from "@/components/auth/LoginModal";
 import { toast } from "@/hooks/use-toast";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { handleError } from "@/utils/handleError";
 import { IoMdClose } from "react-icons/io";
+import { CommentWithVotes } from "@/utils/types";
+import { createEditComment } from "@/actions/comment";
 
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
@@ -28,6 +29,8 @@ interface CommentEditBoxProps {
 	commentId?: string | undefined;
 	postId: string;
 	cancelHandler?: () => void;
+	commentAddHandler?: (comment: CommentWithVotes) => void;
+	autoFocus: boolean;
 }
 
 export default function CommentEditBox({
@@ -36,15 +39,17 @@ export default function CommentEditBox({
 	commentId = undefined,
 	postId,
 	cancelHandler,
+	commentAddHandler,
+	autoFocus,
 }: CommentEditBoxProps) {
 	const [comment, setComment] = useState<SerializedEditorState>();
 	const [mentions, setMentions] = useState<MentionData[]>([]);
-	const [createCommentAction, isLoading] = useServerAction(createComment);
+	const [createCommentAction, isLoading] = useServerAction(createEditComment);
 	const [editorContent, setEditorContent] = useState(
 		content || emptyEditorState,
 	);
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
-
+	const editorRef = useRef<HTMLElement>(undefined);
 	const commentData = {
 		id: commentId,
 		parentId: parentId,
@@ -63,7 +68,11 @@ export default function CommentEditBox({
 			}
 
 			const newComment = await createCommentAction(commentData);
-			setEditorContent(emptyEditorState);
+			if (editorRef.current) {
+				//@ts-ignore
+				editorRef.current.clearEditorContent?.(); // Call the clearEditorContent function
+			}
+			if (commentAddHandler) commentAddHandler(newComment);
 			// Show success toast
 			toast({
 				title: "Comment Added",
@@ -86,7 +95,6 @@ export default function CommentEditBox({
 			});
 		}
 	};
-
 	return (
 		<div>
 			{loginModalMessage && (
@@ -102,6 +110,8 @@ export default function CommentEditBox({
 						onChangeHandler={setComment}
 						onMentionChangeHandler={setMentions}
 						content={content}
+						ref={editorRef}
+						autoFocus={autoFocus}
 					/>
 					<div className="absolute right-0 bottom-0 flex gap-2">
 						{cancelHandler && (

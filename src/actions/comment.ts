@@ -8,13 +8,17 @@ import {
 	FailedToAddCommentErr,
 } from "@/utils/errors";
 import { z } from "zod";
-import { CommentSortOption } from "@/utils/types";
-import { Comment, VoteType } from "@prisma/client";
+import { CommentSortOption, CommentWithVotes } from "@/utils/types";
+import { Comment, Prisma, VoteType } from "@prisma/client";
 import { getCurrentUser } from "./user";
 import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 import pako from "pako";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 
+type CommentIncludeType = Prisma.CommentGetPayload<{
+	include: typeof commentInclude;
+}>;
 // Validator for comment data
 const MentionDataSchema = z.object({
 	trigger: z.string(),
@@ -43,8 +47,81 @@ const validateUser = async () => {
 	return user;
 };
 
+// Include object for comment queries
+const commentInclude = {
+	author: {
+		select: {
+			id: true,
+			userName: true,
+			userProfile: {
+				select: {
+					name: true,
+					image: true,
+				},
+			},
+		},
+	},
+	_count: {
+		select: {
+			replies: true,
+			votes: true,
+		},
+	},
+	votes: {
+		select: {
+			type: true,
+		},
+	},
+};
+
+async function formatCommentWithVotes(
+	comment: CommentIncludeType,
+): Promise<CommentWithVotes> {
+	return {
+		id: comment.id,
+		content: await getHtml(comment.content),
+		createdAt: comment.createdAt,
+		authorId: comment.authorId,
+		postId: comment.postId,
+		parentId: comment.parentId,
+		author: comment.author
+			? {
+					id: comment.author.id,
+					userName: comment.author.userName || "",
+					name: comment.author.userProfile?.name || undefined,
+					image: comment.author.userProfile?.image || null,
+				}
+			: undefined,
+		_count: {
+			replies: comment._count.replies,
+			votes: comment._count.votes,
+		},
+		votesAggregate: {
+			_count: { _all: comment.votes.length },
+			_sum: {
+				voteValue: comment.votes.reduce(
+					(sum, vote) => sum + (vote.type === "UP" ? 1 : -1),
+					0,
+				),
+			},
+		},
+		likes: comment.votes.filter((vote) => vote.type === "UP").length,
+		dislikes: comment.votes.filter((vote) => vote.type === "DOWN").length,
+		repliesExist: comment._count.replies > 0,
+		repliesLoaded: false,
+		replies: [],
+		repliesPagination: {
+			hasMore: false,
+			nextSkip: 0,
+			totalCount: comment._count.replies,
+		},
+	};
+}
+
 // Create or edit a comment
-export async function createComment(data: z.infer<typeof CommentValidator>) {
+export async function createEditComment(
+	data: z.infer<typeof CommentValidator>,
+): Promise<CommentWithVotes> {
 	// Validate the input data
 	const validation = CommentValidator.safeParse(data);
 	if (!validation.success) throw ValidationErr("Invalid comment data.");
@@ -60,22 +137,21 @@ export async function createComment(data: z.infer<typeof CommentValidator>) {
 
 	try {
 		const result = await prisma.$transaction(async (prisma) => {
-			let comment: Comment;
+			// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+			let comment;
 
 			if (data.id) {
-				// If id is provided, use upsert
-				comment = await prisma.comment.upsert({
+				// If id is provided, use update
+				comment = await prisma.comment.update({
 					where: { id: data.id },
-					create: {
-						...commentData,
-						id: data.id, // preserve id during create
-					},
-					update: commentData,
+					data: commentData,
+					include: commentInclude, // Reuse the include object
 				});
 			} else {
-				// Otherwise, just create
+				// Otherwise, create
 				comment = await prisma.comment.create({
 					data: commentData,
+					include: commentInclude, // Reuse the include object
 				});
 			}
 
@@ -94,8 +170,8 @@ export async function createComment(data: z.infer<typeof CommentValidator>) {
 				});
 			}
 			invalidateCommentsCache(data.postId);
-
-			return comment;
+			comment.content = data.content;
+			return formatCommentWithVotes(comment);
 		});
 
 		return result;

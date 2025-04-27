@@ -8,6 +8,25 @@ import {
 import { COMMENT_SORT_OPTIONS } from "../contants";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 
+interface RawCommentResult {
+	id: string;
+	content: Buffer;
+	createdAt: Date;
+	authorId: string;
+	postId: string;
+	parentId: string | null;
+	total_count: number;
+	likes: number;
+	dislikes: number;
+	reply_count: number;
+	author?: {
+		id: string;
+		userName: string | null;
+		name: string | null;
+		image?: string | null;
+	};
+}
+
 const prisma = new PrismaClient();
 
 export async function getCommentsWithVotes(
@@ -100,25 +119,6 @@ export async function getCommentsWithVotes(
 	  ${includeAuthor ? Prisma.sql`JOIN "User" a ON a.id = pc."authorId"` : Prisma.empty}
 	  ${includeAuthor ? Prisma.sql`LEFT JOIN "UserProfile" up ON up."userId" = a.id` : Prisma.empty}
 	`;
-
-	interface RawCommentResult {
-		id: string;
-		content: Buffer;
-		createdAt: Date;
-		authorId: string;
-		postId: string;
-		parentId: string | null;
-		total_count: number;
-		likes: number;
-		dislikes: number;
-		reply_count: number;
-		author?: {
-			id: string;
-			userName: string | null;
-			name: string | null;
-			image?: string | null;
-		};
-	}
 
 	const result = await prisma.$queryRaw<RawCommentResult[]>(baseQuery);
 
