@@ -49,7 +49,9 @@ export default function CommentEditBox({
 		content || emptyEditorState,
 	);
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
-	const editorRef = useRef<HTMLElement>(undefined);
+	const editorRef = useRef<{ clearEditorContent: () => void } | undefined>(
+		undefined,
+	);
 	const commentData = {
 		id: commentId,
 		parentId: parentId,

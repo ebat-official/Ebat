@@ -18,7 +18,7 @@ interface EditorProps {
 	autoFocus?: boolean;
 	onChangeHandler?: (data: SerializedEditorState) => void;
 	onMentionChangeHandler: (mentions: MentionData[]) => void;
-	ref?: React.RefObject<HTMLElement | undefined>;
+	ref?: React.RefObject<{ clearEditorContent: () => void } | undefined>;
 }
 
 export default function Editor({

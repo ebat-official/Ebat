@@ -60,7 +60,7 @@ interface CoreProps {
 	autoFocus?: boolean;
 	onChangeHandler: (data: SerializedEditorState) => void;
 	onMentionChangeHandler: (mentions: MentionData[]) => void;
-	ref?: React.RefObject<HTMLElement | undefined>;
+	ref?: React.RefObject<{ clearEditorContent: () => void } | undefined>;
 }
 
 export default function Core({
@@ -110,9 +110,13 @@ export default function Core({
 
 	// Expose the clearEditorContent function to the parent via ref
 	if (ref) {
-		useImperativeHandle(ref, () => ({
-			clearEditorContent,
-		}));
+		useImperativeHandle(
+			ref,
+			() => ({
+				clearEditorContent,
+			}),
+			[clearEditorContent],
+		);
 	}
 
 	const handleMarkdownToggle = useCallback(() => {
