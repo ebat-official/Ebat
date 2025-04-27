@@ -79,6 +79,7 @@ async function formatCommentWithVotes(
 ): Promise<CommentWithVotes> {
 	return {
 		id: comment.id,
+		// @ts-ignore
 		content: await getHtml(comment.content),
 		createdAt: comment.createdAt,
 		authorId: comment.authorId,

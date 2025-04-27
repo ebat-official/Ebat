@@ -14,9 +14,9 @@ type CommentContainerProps = {
 const CommentContainer: FC<CommentContainerProps> = ({ postId }) => {
 	const [page, setPage] = useState(2);
 	const [comments, setComments] = useState<CommentWithVotes[]>([]);
-	const { data, error, isLoading, isFetching } = useComments(postId, {
+	const { data, error, isLoading } = useComments(postId, {
 		page,
-		take: 100,
+		take: 10,
 		depth: 3,
 		sort: COMMENT_SORT_OPTIONS.TOP,
 	});
@@ -36,7 +36,7 @@ const CommentContainer: FC<CommentContainerProps> = ({ postId }) => {
 				<span className="text-md font-bold">Comments</span>
 				<Badge className="bg-blue-400 rounded-4xl ">25</Badge>
 			</div>
-			<CommentList comments={comments} postId={postId} />
+			<CommentList comments={data} postId={postId} isLoading={isLoading} />
 		</div>
 	);
 };

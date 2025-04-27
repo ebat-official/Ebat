@@ -30,7 +30,7 @@ interface CommentEditBoxProps {
 	postId: string;
 	cancelHandler?: () => void;
 	commentAddHandler?: (comment: CommentWithVotes) => void;
-	autoFocus: boolean;
+	autoFocus?: boolean;
 }
 
 export default function CommentEditBox({
