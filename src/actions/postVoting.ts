@@ -23,10 +23,9 @@ export async function voteAction(data: z.infer<typeof VoteValidator>) {
 
 	const voteData = {
 		postId: data.postId,
-		type: data.type, // This can be "UP", "DOWN", or null
+		type: data.type,
 		userId: user.id,
 	};
-	console.log(voteData, "voteData");
 
 	if (voteData.type === null) {
 		// Delete the vote if type is null

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	HiThumbUp,
@@ -16,32 +16,50 @@ import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { useSession } from "next-auth/react";
 import { useServerAction } from "@/hooks/useServerAction";
 import { cn } from "@/lib/utils";
+import { useVotes } from "@/hooks/query/useVotes";
 
 function PostLikeButton({ postId }: { postId: string }) {
-	const [crntVote, setCrntVote] = useState<VoteType | null>(null);
+	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
 	const [voteCount, setVoteCount] = useState(0);
 	const [createVoteAction, isLoading] = useServerAction(voteAction);
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
 	const { data: session } = useSession();
+
+	const { data, isLoading: isFetching, isError } = useVotes(postId);
+
+	useEffect(() => {
+		const upVotes = data?.upVotes || 0;
+		const downVotes = data?.downVotes || 0;
+		const totalVotes = upVotes - downVotes;
+		setVoteCount(totalVotes);
+	}, [data]);
+
 	const voteHandler = async (type: VoteType) => {
 		if (isLoading) return;
 		if (!session) {
 			setLoginModalMessage("Sign in to add a vote.");
 			return;
 		}
+		const previousVoteType = currentVoteType;
 
 		try {
-			if (crntVote === type) {
-				setCrntVote(null);
+			if (currentVoteType === type) {
+				setCurrentVoteType(null);
 				setVoteCount((prev) => (type === VoteType.UP ? prev - 1 : prev + 1));
 				await createVoteAction({ postId, type: null });
 			} else {
-				setCrntVote(type);
+				setCurrentVoteType(type);
 				setVoteCount((prev) => (type === VoteType.UP ? prev + 1 : prev - 1));
 				await createVoteAction({ postId, type });
 			}
 		} catch (error) {
-			setVoteCount((prev) => (type === VoteType.UP ? prev - 1 : prev + 1));
+			setCurrentVoteType(previousVoteType);
+			setVoteCount((prev) => {
+				if (previousVoteType === type) {
+					return type === VoteType.UP ? prev + 1 : prev - 1;
+				}
+				return type === VoteType.UP ? prev - 1 : prev + 1;
+			});
 			const errorMessage = handleError(error);
 			if (errorMessage === UNAUTHENTICATED_ERROR.data.message) {
 				setLoginModalMessage("Please login to add a vote.");
@@ -68,7 +86,7 @@ function PostLikeButton({ postId }: { postId: string }) {
 					className="p-0.5 text-xs w-7 h-7 border-[1px]"
 					onClick={() => voteHandler(VoteType.UP)}
 				>
-					{crntVote === VoteType.UP ? (
+					{currentVoteType === VoteType.UP ? (
 						<HiThumbUp className="w-4 h-4 text-blue-500" />
 					) : (
 						<HiOutlineThumbUp className="w-4 h-4 text-gray-500" />
@@ -81,7 +99,7 @@ function PostLikeButton({ postId }: { postId: string }) {
 					className="p-0.5 text-xs w-7 h-7 border-[1px]"
 					onClick={() => voteHandler(VoteType.DOWN)}
 				>
-					{crntVote === VoteType.DOWN ? (
+					{currentVoteType === VoteType.DOWN ? (
 						<HiThumbDown className="w-4 h-4 text-red-500" />
 					) : (
 						<HiOutlineThumbDown className="w-4 h-4 text-gray-500" />
