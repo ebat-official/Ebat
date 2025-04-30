@@ -45,6 +45,7 @@ function PostLikeButton({ postId }: { postId: string }) {
 			return;
 		}
 		const previousVoteType = currentVoteType;
+		const previousVoteCount = voteCount;
 
 		try {
 			if (currentVoteType === type) {
@@ -58,12 +59,7 @@ function PostLikeButton({ postId }: { postId: string }) {
 			}
 		} catch (error) {
 			setCurrentVoteType(previousVoteType);
-			setVoteCount((prev) => {
-				if (previousVoteType === type) {
-					return type === VoteType.UP ? prev + 1 : prev - 1;
-				}
-				return type === VoteType.UP ? prev - 1 : prev + 1;
-			});
+			setVoteCount(previousVoteCount);
 			const errorMessage = handleError(error);
 			if (errorMessage === UNAUTHENTICATED_ERROR.data.message) {
 				setLoginModalMessage("Please login to add a vote.");
@@ -84,10 +80,10 @@ function PostLikeButton({ postId }: { postId: string }) {
 					message={loginModalMessage}
 				/>
 			)}
-			<div className="flex flex-col items-center  gap-1 pl-4">
+			<div className="flex flex-col items-center gap-1 pl-4">
 				<Button
 					variant="outline"
-					className="p-0.5 text-xs w-7 h-7 border-[1px]"
+					className="p-0.5 text-xs w-7 h-7 "
 					onClick={() => voteHandler(VoteType.UP)}
 				>
 					{currentVoteType === VoteType.UP ? (
@@ -100,7 +96,7 @@ function PostLikeButton({ postId }: { postId: string }) {
 
 				<Button
 					variant="outline"
-					className="p-0.5 text-xs w-7 h-7 border-[1px]"
+					className="p-0.5 text-xs w-7 h-7 "
 					onClick={() => voteHandler(VoteType.DOWN)}
 				>
 					{currentVoteType === VoteType.DOWN ? (
