@@ -1,31 +1,26 @@
-import prisma from "@/lib/prisma";
+import { getCurrentUser } from "@/actions/user";
+import { fetchVoteCounts } from "@/utils/api utils/vote";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { postId: string } },
+	{ params }: { params: Promise<{ postId: string }> },
 ) {
 	try {
-		const { postId } = params;
+		const { postId } = await params;
 		if (!postId || typeof postId !== "string") {
 			return NextResponse.json({ error: "Invalid postId" }, { status: 400 });
 		}
-		const votes = await prisma.vote.groupBy({
-			by: ["type"],
-			where: {
-				postId,
-			},
-			_count: {
-				type: true,
-			},
-		});
 
-		const upVotes = votes.find((vote) => vote.type === "UP")?._count.type || 0;
-		const downVotes =
-			votes.find((vote) => vote.type === "DOWN")?._count.type || 0;
+		const user = await getCurrentUser();
+
+		const { upVotes, downVotes, userVoteType } = await fetchVoteCounts(
+			postId,
+			user?.id,
+		);
 
 		return NextResponse.json(
-			{ upVotes, downVotes },
+			{ upVotes, downVotes, userVoteType },
 			{
 				status: 200,
 				headers: {

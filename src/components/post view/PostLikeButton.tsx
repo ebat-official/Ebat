@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { useServerAction } from "@/hooks/useServerAction";
 import { cn } from "@/lib/utils";
 import { useVotes } from "@/hooks/query/useVotes";
+import { formatNumInK } from "@/utils/formatNumInK";
 
 function PostLikeButton({ postId }: { postId: string }) {
 	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
@@ -30,12 +31,15 @@ function PostLikeButton({ postId }: { postId: string }) {
 	useEffect(() => {
 		const upVotes = data?.upVotes || 0;
 		const downVotes = data?.downVotes || 0;
+		const userVoteType = data?.userVoteType ?? null;
 		const totalVotes = upVotes - downVotes;
+
+		setCurrentVoteType(userVoteType);
 		setVoteCount(totalVotes);
 	}, [data]);
 
 	const voteHandler = async (type: VoteType) => {
-		if (isLoading) return;
+		if (isLoading || isFetching) return;
 		if (!session) {
 			setLoginModalMessage("Sign in to add a vote.");
 			return;
@@ -92,7 +96,7 @@ function PostLikeButton({ postId }: { postId: string }) {
 						<HiOutlineThumbUp className="w-4 h-4 text-gray-500" />
 					)}
 				</Button>
-				<div className="text-xs  my-1">{voteCount}</div>
+				<div className="text-xs  my-1">{formatNumInK(voteCount)}</div>
 
 				<Button
 					variant="outline"
