@@ -6,7 +6,6 @@ import {
 	setEmailVerified,
 } from "@/actions/user";
 import Google from "next-auth/providers/google";
-import Facebook from "next-auth/providers/facebook";
 import GitHub from "next-auth/providers/github";
 import Linkedin from "next-auth/providers/linkedin";
 import { EMAIL_NOT_VERIFIED } from "@/utils/contants";
