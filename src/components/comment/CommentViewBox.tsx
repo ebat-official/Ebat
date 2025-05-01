@@ -20,6 +20,7 @@ import { FaCircleChevronUp } from "react-icons/fa6";
 import { FaChevronUp, FaRegComment, FaRegCommentDots } from "react-icons/fa";
 import { BsCaretUp } from "react-icons/bs";
 import { TbTriangle } from "react-icons/tb";
+import CommentLikeButton from "./CommentLikeButton";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
@@ -108,21 +109,7 @@ export function CommentViewBox({
 
 						{/* Action buttons */}
 						<div className="flex items-center gap-2 ">
-							<Card className="flex  py-0 w-fit">
-								<CardContent className=" flex justify-center items-center py-1 px-2 gap-1">
-									<button type="button">
-										<TbTriangle size={12} />
-									</button>
-									<span className="text-xs">{likes - dislikes}</span>
-
-									<button type="button">
-										<TbTriangle
-											size={12}
-											className="rotate-x-180 fill-gray-500 stroke-gray-500"
-										/>
-									</button>
-								</CardContent>
-							</Card>
+							<CommentLikeButton commentId={id} />
 							{depth < 3 && (
 								<Button
 									variant="ghost"
