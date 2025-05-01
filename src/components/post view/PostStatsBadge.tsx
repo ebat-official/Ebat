@@ -12,6 +12,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatNumInK } from "@/utils/formatNumInK";
 
 // Interfaces
 interface PostStatsBadgeProps {
@@ -99,15 +100,11 @@ const CoinsBadge: FC<CoinsBadgeProps> = ({ coins }) => {
 
 // Completion Badge Component
 const CompletionBadge: FC<CompletionBadgeProps> = ({ completionCount }) => {
-	const formatCount = (num: number) => {
-		return num >= 1000 ? `${(num / 1000).toFixed(1)}k` : num.toString();
-	};
-
 	return (
 		<div className="flex items-center justify-center gap-1">
 			<FiCheckCircle className="text-green-500" size={18} strokeWidth={3} />
 			<span className="font-medium text-sm capitalize flex gap-1">
-				{formatCount(completionCount)}
+				{formatNumInK(completionCount)}
 				<span className="hidden sm:block">completed</span>
 			</span>
 		</div>
