@@ -1,7 +1,11 @@
 import React, { FC } from "react";
 import { EditorProvider } from "../shared/Lexical Editor/providers/EditorContext";
 import RightPanelLayout from "../shared/RightPanelLayout";
-import { ContentType, PostWithExtraDetails } from "@/utils/types";
+import {
+	ContentReturnType,
+	ContentType,
+	PostWithExtraDetails,
+} from "@/utils/types";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Post, UserProfile } from "@prisma/client";
 import { LexicalViewer } from "./LexicalViewer";
@@ -10,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import PostDetailsAccordian from "./PostDetailsAccordian";
 import Comment from "@/components/comment/CommentEditBox";
 import CommentContainer from "@/components/comment/CommentContainer";
+import { PostContentRender } from "./PostContentRender";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -22,20 +27,20 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel className="flex flex-col gap-2">
 					<Card className="relative items-center ">
-						<CardContent className="flex flex-col h-full justify-center px-4 md:px-8 w-full max-w-3xl ">
-							<h1 className="opacity-80 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none mb-4 leading-relaxed">
+						<CardContent className="flex flex-col h-full justify-center px-4 md:px-8 w-full max-w-3xl gap-4 ">
+							<h1 className="opacity-80 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none  leading-relaxed">
 								{post.title}
 							</h1>
 							<PostStatsBadge post={post} />
-							<Separator className=" mt-2" />
-							<LexicalViewer
+							<Separator />
+							{/* <LexicalViewer
 								key={post.id}
 								postId={post.id}
 								defaultContent={post.content as ContentType}
-							/>
-							<div className="mt-4">
-								<PostDetailsAccordian post={post} />
-							</div>
+							/> */}
+							<PostContentRender content={post.content as ContentReturnType} />
+
+							<PostDetailsAccordian post={post} />
 						</CardContent>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
 							<Separator className=" my-6 " />

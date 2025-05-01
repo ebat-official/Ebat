@@ -18,6 +18,10 @@ export interface ContentType {
 	post?: EditorContent;
 	answer?: EditorContent;
 }
+export interface ContentReturnType {
+	post?: string;
+	answer?: string;
+}
 
 export type PrismaJson = ReturnType<typeof JSON.parse> | null | undefined;
 
@@ -45,6 +49,10 @@ export interface EditorContent {
 	title?: string;
 	blocks?: SerializedEditorState;
 }
+export interface EditorReturnContent {
+	title?: string;
+	blocks?: string;
+}
 export type PostWithContent = Post & { content: ContentType };
 export type postCreateOptions = Partial<
 	UseQueryOptions<PostWithContent, Error>
@@ -62,7 +70,8 @@ export type PageParams = Promise<{
 	subCategory: string;
 	titleSlug: string;
 }>;
-export type PostWithExtraDetails = Post & {
+export type PostWithExtraDetails = Omit<Post, "content"> & {
+	content: Uint8Array | ContentReturnType;
 	completionCount?: number;
 	collaborators: Array<
 		Pick<User, "id" | "userName"> & {

@@ -34,7 +34,6 @@ import { INSERT_LAYOUT_COMMAND } from "../../plugins/LayoutPlugin";
 import { INSERT_COLLAPSIBLE_COMMAND } from "../../plugins/CollapsiblePlugin";
 import {
 	AutoEmbedDialog,
-	TwitterEmbedConfig,
 	YoutubeEmbedConfig,
 } from "../../plugins/AutoEmbedPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
@@ -42,7 +41,6 @@ import { INSERT_EXCALIDRAW_COMMAND } from "../../plugins/ExcalidrawPlugin";
 import { PLUGIN_NAMES } from "../../constants";
 import { PLUGIN_CONFIG } from "../../appSettings";
 import { boolean } from "zod";
-import { InsertEquationDialog } from "../../plugins/EquationsPlugin";
 
 const InsertMediaDialog = lazy(() =>
 	import("../models/insertMedia").then((module) => ({
@@ -53,11 +51,6 @@ const InsertGif = lazy(() => import("../models/insert-gif"));
 const InsertTableBody = lazy(() =>
 	import("../../ui/models/insert-table").then((module) => ({
 		default: module.InsertTable,
-	})),
-);
-const InsertPoll = lazy(() =>
-	import("../../ui/models/insert-poll").then((module) => ({
-		default: module.InsertPoll,
 	})),
 );
 
@@ -201,27 +194,6 @@ export default function InsertNode({
 								);
 							},
 						};
-					case PLUGIN_NAMES.POLL:
-						return {
-							label: pluginName,
-							icon: <SquarePenIcon className="w-4 h-4" />,
-							func: () => {
-								showModal(
-									PLUGIN_NAMES.POLL,
-									"Please type your question.",
-									(onClose) => (
-										<Suspense
-											fallback={
-												<Skeleton className="mx-2 w-[400px] h-[100px]" />
-											}
-										>
-											<InsertPoll activeEditor={editor} onClose={onClose} />
-										</Suspense>
-									),
-									true,
-								);
-							},
-						};
 					case PLUGIN_NAMES.TWO_COLUMNS_EQUAL:
 						return {
 							label: pluginName,
@@ -265,24 +237,6 @@ export default function InsertNode({
 								editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined);
 							},
 						};
-					case PLUGIN_NAMES.TWITTER:
-						return {
-							label: pluginName,
-							icon: <Twitter className="w-4 h-4" />,
-							func: () => {
-								showModal(
-									PLUGIN_NAMES.TWITTER,
-									"Insert a URL to embed a live preview. Works with Twitter, Google Drive, Vimeo, and more.",
-									(onClose) => (
-										<AutoEmbedDialog
-											embedConfig={TwitterEmbedConfig}
-											onClose={onClose}
-										/>
-									),
-									true,
-								);
-							},
-						};
 					case PLUGIN_NAMES.YOUTUBE:
 						return {
 							label: pluginName,
@@ -307,30 +261,6 @@ export default function InsertNode({
 							icon: <AlertCircle />,
 							func: () => {
 								editor.dispatchCommand(INSERT_HINT_COMMAND, "info");
-							},
-						};
-					case PLUGIN_NAMES.EQUATION:
-						return {
-							label: pluginName,
-							icon: <Sigma className="w-4 h-4" />,
-							func: () => {
-								showModal(
-									PLUGIN_NAMES.EQUATION,
-									"Insert Equation",
-									(onClose) => (
-										<Suspense
-											fallback={
-												<Skeleton className="mx-2 w-[400px] h-[100px]" />
-											}
-										>
-											<InsertEquationDialog
-												activeEditor={editor}
-												onClose={onClose}
-											/>
-										</Suspense>
-									),
-									true,
-								);
 							},
 						};
 				}

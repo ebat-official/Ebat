@@ -23,14 +23,12 @@ import ShortcutsPlugin from "./plugins/ShortcutsPlugin";
 import TabFocusPlugin from "./plugins/TabFocusPlugin";
 import TableCellResizerPlugin from "./plugins/TableCellResizer";
 import ImagesPlugin from "./plugins/ImagesPlugin";
-import PollPlugin from "./plugins/PollPlugin";
 import { LayoutPlugin } from "./plugins/LayoutPlugin";
 import CollapsiblePlugin from "./plugins/CollapsiblePlugin";
 import LexicalAutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
 import DragDropPaste from "./plugins/DragDropPastePlugin";
 import DraggableBlockPlugin from "./plugins/DraggableBlockPlugin";
-import TwitterPlugin from "./plugins/TwitterPlugin";
 import AutoEmbedPlugin from "./plugins/AutoEmbedPlugin";
 import YouTubePlugin from "./plugins/YouTubePlugin";
 import HintPlugin from "./nodes/Hint";
@@ -73,9 +71,6 @@ const FloatingTextFormatToolbarPlugin = dynamic(
 	() => import("./plugins/FloatingTextFormatToolbarPlugin"),
 	{ ssr: false },
 );
-const EquationsPlugin = dynamic(() => import("./plugins/EquationsPlugin"), {
-	ssr: false,
-});
 
 interface CoreProps {
 	placeholder: string;
@@ -186,7 +181,6 @@ export default function Core({
 				<LinkPlugin />
 				<HorizontalRulePlugin />
 				<TabFocusPlugin />
-				{pluginConfig[PLUGIN_NAMES.PARAGRAPH].isEnabled && <PollPlugin />}
 				<TableCellResizerPlugin />
 				<LayoutPlugin />
 				<CollapsiblePlugin />
@@ -197,12 +191,10 @@ export default function Core({
 				<ListPlugin />
 				<LinkPlugin />
 				{pluginConfig[PLUGIN_NAMES.STEPPER].isEnabled && <StepperPlugin />}
-				{pluginConfig[PLUGIN_NAMES.TWITTER].isEnabled && <TwitterPlugin />}
 				{pluginConfig[PLUGIN_NAMES.CHECK_LIST].isEnabled && <CheckListPlugin />}
 				{pluginConfig[PLUGIN_NAMES.IMAGE].isEnabled && <ImagesPlugin />}
 				{pluginConfig[PLUGIN_NAMES.HINT].isEnabled && <HintPlugin />}
 				{pluginConfig[PLUGIN_NAMES.YOUTUBE].isEnabled && <YouTubePlugin />}
-				{pluginConfig[PLUGIN_NAMES.EQUATION].isEnabled && <EquationsPlugin />}
 				<HistoryPlugin externalHistoryState={historyState} />
 				<MarkdownShortcutPlugin />
 				<ClickableLinkPlugin disabled={isEditable} />
