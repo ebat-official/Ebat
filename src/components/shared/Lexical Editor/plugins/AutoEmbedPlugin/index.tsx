@@ -12,7 +12,6 @@ import { useMemo, useState } from "react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { INSERT_YOUTUBE_COMMAND } from "../YouTubePlugin";
-import { INSERT_TWEET_COMMAND } from "../TwitterPlugin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Twitter, Youtube } from "lucide-react";
@@ -69,44 +68,7 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
 	type: "youtube-video",
 };
 
-export const TwitterEmbedConfig: PlaygroundEmbedConfig = {
-	// e.g. Tweet or Google Map.
-	contentName: "Tweet",
-
-	exampleUrl: "https://twitter.com/jack/status/20",
-
-	// Icon for display.
-	icon: <Twitter className="h-4 w-4" />,
-
-	// Create the Lexical embed node from the url data.
-	insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
-		editor.dispatchCommand(INSERT_TWEET_COMMAND, result.id);
-	},
-
-	// For extra searching.
-	keywords: ["tweet", "twitter"],
-
-	// Determine if a given URL is a match and return url data.
-	parseUrl: (text: string) => {
-		const match =
-			/^https:\/\/(twitter|x)\.com\/(#!\/)?(\w+)\/status(es)*\/(\d+)/.exec(
-				text,
-			);
-
-		if (match != null) {
-			return {
-				id: match[5],
-				url: match[1],
-			};
-		}
-
-		return null;
-	},
-
-	type: "tweet",
-};
-
-export const EmbedConfigs = [TwitterEmbedConfig, YoutubeEmbedConfig];
+export const EmbedConfigs = [YoutubeEmbedConfig];
 
 function AutoEmbedMenuItem({
 	index,
@@ -289,7 +251,8 @@ export default function AutoEmbedPlugin(): React.JSX.Element {
 									className="typeahead-popover auto-embed-menu"
 									style={{
 										marginLeft: `${Math.max(
-											parseFloat(anchorElementRef.current.style.width) - 200,
+											Number.parseFloat(anchorElementRef.current.style.width) -
+												200,
 											0,
 										)}px`,
 										width: 200,

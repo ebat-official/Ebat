@@ -1,5 +1,5 @@
 import { PostCategory, PostType, SubCategory, Post } from "@prisma/client";
-import { SubCategoryType } from "./types";
+import { PostWithExtraDetails, SubCategoryType } from "./types";
 
 export function generatePostPath({
 	category,
@@ -19,7 +19,7 @@ export function generatePostPath({
 	}${postType?.toLowerCase()}/${slug}-${id}`;
 }
 
-export const generatePostPathFromPostId = (post: Post) => {
+export const generatePostPathFromPostId = (post: PostWithExtraDetails) => {
 	return generatePostPath({
 		category: post.category,
 		subCategory: post.subCategory,

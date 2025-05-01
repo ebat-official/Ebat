@@ -54,7 +54,6 @@ import {
 import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
 import { cn } from "@/lib/utils";
 import { INSERT_LAYOUT_COMMAND } from "../LayoutPlugin";
-import { INSERT_POLL_COMMAND } from "../PollPlugin";
 import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
 import useModal from "../../ui/models/use-model";
 import {
@@ -69,11 +68,7 @@ import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ImagePayload } from "../../nodes/ImageNode";
 import { INSERT_IMAGE_COMMAND } from "../ImagesPlugin";
-import {
-	AutoEmbedDialog,
-	TwitterEmbedConfig,
-	YoutubeEmbedConfig,
-} from "../AutoEmbedPlugin";
+import { AutoEmbedDialog, YoutubeEmbedConfig } from "../AutoEmbedPlugin";
 import {
 	initialEditorState,
 	INSERT_STEPPER_COMMAND,
@@ -82,10 +77,6 @@ import { INSERT_EXCALIDRAW_COMMAND } from "../ExcalidrawPlugin";
 import { useEditorContext } from "../../providers/EditorContext";
 import { PLUGIN_NAMES } from "../../constants";
 import { type pluginConfig, PluginConfigured } from "../../appSettings";
-import {
-	INSERT_EQUATION_COMMAND,
-	InsertEquationDialog,
-} from "../EquationsPlugin";
 const InsertGif = React.lazy(() => import("../../ui/models/insert-gif"));
 const InsertMediaDialog = React.lazy(() =>
 	import("../../ui/models/insertMedia").then((module) => ({
@@ -280,14 +271,6 @@ function getBaseOptions(
 							}),
 					});
 
-				case PLUGIN_NAMES.POLL:
-					return new ComponentPickerOption(pluginName, {
-						...baseProps,
-						icon: <SquarePenIcon className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
-						onSelect: () =>
-							editor.dispatchCommand(INSERT_POLL_COMMAND, "type the Question"),
-					});
-
 				case PLUGIN_NAMES.CODE:
 					return new ComponentPickerOption(pluginName, {
 						...baseProps,
@@ -327,25 +310,6 @@ function getBaseOptions(
 								(onClose) => (
 									<AutoEmbedDialog
 										embedConfig={YoutubeEmbedConfig}
-										onClose={onClose}
-									/>
-								),
-								true,
-							);
-						},
-					});
-
-				case PLUGIN_NAMES.TWITTER:
-					return new ComponentPickerOption(pluginName, {
-						...baseProps,
-						icon: <Twitter className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
-						onSelect: () => {
-							showModal(
-								"Twitter tweet",
-								"Insert a URL to embed a live preview. Works with Twitter",
-								(onClose) => (
-									<AutoEmbedDialog
-										embedConfig={TwitterEmbedConfig}
 										onClose={onClose}
 									/>
 								),
@@ -464,24 +428,6 @@ function getBaseOptions(
 								content: newEditor,
 							};
 							editor.dispatchCommand(INSERT_STEPPER_COMMAND, [newStep]);
-						},
-					});
-				case PLUGIN_NAMES.EQUATION:
-					return new ComponentPickerOption(pluginName, {
-						...baseProps,
-						icon: <Sigma className="w-9 h-9 max-sm:h-5 max-sm:w-5" />,
-						onSelect: () => {
-							showModal(
-								PLUGIN_NAMES.EQUATION,
-								"Insert Equation",
-								(onClose) => (
-									<InsertEquationDialog
-										activeEditor={editor}
-										onClose={onClose}
-									/>
-								),
-								true,
-							);
 						},
 					});
 

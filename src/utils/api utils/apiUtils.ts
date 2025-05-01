@@ -9,10 +9,12 @@ import {
 	PostRouteType,
 	PostWithExtraDetails,
 	UserSearchResult,
+	ContentReturnType,
 } from "../types";
 import { PostCategory, SubCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import pako from "pako";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 
 export const fetchPostById = async (
 	postId: string,
@@ -52,61 +54,75 @@ export async function getPostFromURL(params: {
 	if (!id) return null;
 
 	try {
-		return await prisma.post
-			.findUnique({
-				where: {
-					id,
-					category: category.toUpperCase() as PostCategory,
-					subCategory: subCategory.toUpperCase() as SubCategory,
-				},
-				include: {
-					author: {
-						select: {
-							id: true,
-							userName: true,
-							userProfile: {
-								select: {
-									name: true,
-									image: true,
-									companyName: true,
-								},
-							},
-						},
-					},
-					_count: {
-						select: {
-							completionStatus: true,
-						},
-					},
-					collaborators: {
-						select: {
-							id: true,
-							userName: true,
-							userProfile: {
-								select: {
-									name: true,
-									image: true,
-								},
+		const post = await prisma.post.findUnique({
+			where: {
+				id,
+				category: category.toUpperCase() as PostCategory,
+				subCategory: subCategory.toUpperCase() as SubCategory,
+			},
+			include: {
+				author: {
+					select: {
+						id: true,
+						userName: true,
+						userProfile: {
+							select: {
+								name: true,
+								image: true,
+								companyName: true,
 							},
 						},
 					},
 				},
-			})
-			.then((post) => {
-				if (!post) return null;
+				_count: {
+					select: {
+						completionStatus: true,
+					},
+				},
+				collaborators: {
+					select: {
+						id: true,
+						userName: true,
+						userProfile: {
+							select: {
+								name: true,
+								image: true,
+							},
+						},
+					},
+				},
+			},
+		});
 
-				if (post.content) {
-					post.content = JSON.parse(
-						pako.inflate(post.content, { to: "string" }),
-					);
-				}
+		if (!post) return null;
 
-				const completionCount = post._count?.completionStatus || 0;
-				return {
-					...post,
-					completionCount,
-				};
-			});
+		const ContentHtml: ContentReturnType = {
+			post: "",
+			answer: "",
+		};
+
+		if (post.content) {
+			const parsedContent = JSON.parse(
+				pako.inflate(post.content, { to: "string" }),
+			) as ContentType;
+
+			if (parsedContent.post?.blocks) {
+				const postHtml = await getHtml(parsedContent.post.blocks);
+				ContentHtml.post = postHtml;
+			}
+			if (parsedContent.answer?.blocks) {
+				const answerHtml = await getHtml(parsedContent.answer.blocks);
+				ContentHtml.answer = answerHtml;
+			}
+		}
+
+		const completionCount = post._count?.completionStatus || 0;
+
+		return {
+			...post,
+			content: ContentHtml,
+			completionCount,
+		};
 	} catch (error) {
 		console.error("Error fetching post:", error);
 		return null;

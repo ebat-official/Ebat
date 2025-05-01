@@ -15,6 +15,7 @@ import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionP
 import pako from "pako";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
+import commentNodes from "@/components/comment/config/nodes";
 
 type CommentIncludeType = Prisma.CommentGetPayload<{
 	include: typeof commentInclude;
@@ -80,7 +81,7 @@ async function formatCommentWithVotes(
 	return {
 		id: comment.id,
 		// @ts-ignore
-		content: await getHtml(comment.content),
+		content: await getHtml(comment.content, commentNodes),
 		createdAt: comment.createdAt,
 		authorId: comment.authorId,
 		postId: comment.postId,

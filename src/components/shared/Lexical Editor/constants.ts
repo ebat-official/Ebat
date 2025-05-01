@@ -70,7 +70,6 @@ export const PLUGIN_NAMES = {
 	FOUR_COLUMNS_EQUAL: "4 columns (equal width)",
 	TWO_COLUMNS_25_75: "2 columns (25% - 75%)",
 	COLLAPSIBLE_CONTAINER: "Collapsible container",
-	EQUATION: "Equations",
 } as const;
 export type PluginNames = keyof typeof PLUGIN_NAMES;
 
