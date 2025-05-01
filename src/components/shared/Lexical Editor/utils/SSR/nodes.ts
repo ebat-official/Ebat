@@ -49,7 +49,7 @@ const nodes: LexicalNodeType[] = [
 	ImageNode,
 ];
 
-const commentNodes: LexicalNodeType[] = [
+export const commentNodes: LexicalNodeType[] = [
 	HeadingNode,
 	QuoteNode,
 	ListNode,

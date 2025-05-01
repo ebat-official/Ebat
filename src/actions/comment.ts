@@ -15,7 +15,7 @@ import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionP
 import pako from "pako";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
-import commentNodes from "@/components/comment/config/nodes";
+import { commentNodes } from "@/components/shared/Lexical Editor/utils/SSR/nodes";
 
 type CommentIncludeType = Prisma.CommentGetPayload<{
 	include: typeof commentInclude;
