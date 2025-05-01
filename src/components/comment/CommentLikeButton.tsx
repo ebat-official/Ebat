@@ -10,6 +10,7 @@ import { formatNumInK } from "@/utils/formatNumInK";
 import { CommentVoteAction } from "@/actions/commentVoting";
 import { useServerAction } from "@/hooks/useServerAction";
 import LoginModal from "../auth/LoginModal";
+import { cn } from "@/lib/utils";
 
 function CommentLikeButton({ commentId }: { commentId: string }) {
 	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
@@ -65,11 +66,11 @@ function CommentLikeButton({ commentId }: { commentId: string }) {
 						<button type="button" onClick={() => voteHandler(VoteType.UP)}>
 							<TbTriangle
 								size={12}
-								className={`${
+								className={cn(
 									currentVoteType === VoteType.UP
 										? "fill-gray-500 stroke-gray-500"
-										: "fill-none stroke-gray-500"
-								}`}
+										: "fill-none stroke-gray-500",
+								)}
 							/>
 						</button>
 						<span className="text-xs">{formatNumInK(voteCount)}</span>
@@ -77,11 +78,12 @@ function CommentLikeButton({ commentId }: { commentId: string }) {
 						<button type="button" onClick={() => voteHandler(VoteType.DOWN)}>
 							<TbTriangle
 								size={12}
-								className={`rotate-180 ${
+								className={cn(
+									"rotate-180",
 									currentVoteType === VoteType.DOWN
 										? "fill-gray-500 stroke-gray-500"
-										: "fill-none stroke-gray-500"
-								}`}
+										: "fill-none stroke-gray-500",
+								)}
 							/>
 						</button>
 					</CardContent>
