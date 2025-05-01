@@ -66,26 +66,23 @@ function CommentLikeButton({ commentId }: { commentId: string }) {
 						<button type="button" onClick={() => voteHandler(VoteType.UP)}>
 							<TbTriangle
 								size={12}
-								className={cn(
-									currentVoteType === VoteType.UP
-										? "fill-gray-500 stroke-gray-500"
-										: "fill-none stroke-gray-500",
-								)}
+								className={cn({
+									"fill-gray-500 stroke-gray-500":
+										currentVoteType === VoteType.UP,
+								})}
 							/>
 						</button>
 						<span className="text-xs">{formatNumInK(voteCount)}</span>
-
 						<button type="button" onClick={() => voteHandler(VoteType.DOWN)}>
 							<TbTriangle
 								size={12}
-								className={cn(
-									"rotate-180",
-									currentVoteType === VoteType.DOWN
-										? "fill-gray-500 stroke-gray-500"
-										: "fill-none stroke-gray-500",
-								)}
+								className={cn("rotate-180", {
+									"fill-gray-500 stroke-gray-500":
+										currentVoteType === VoteType.DOWN,
+								})}
 							/>
 						</button>
+						"rotate-180",
 					</CardContent>
 				</Card>
 			</div>
