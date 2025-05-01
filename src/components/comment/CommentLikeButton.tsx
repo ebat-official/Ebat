@@ -11,13 +11,21 @@ import { CommentVoteAction } from "@/actions/commentVoting";
 import { useServerAction } from "@/hooks/useServerAction";
 import LoginModal from "../auth/LoginModal";
 import { cn } from "@/lib/utils";
+import { CommentWithVotes } from "@/utils/types";
 
-function CommentLikeButton({ commentId }: { commentId: string }) {
+function CommentLikeButton({ comment }: { comment: CommentWithVotes }) {
 	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
 	const [voteCount, setVoteCount] = useState(0);
 	const [createVoteAction, isLoading] = useServerAction(CommentVoteAction);
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
 	const { data: session } = useSession();
+	const { id: commentId, upVotes, downVotes, userVoteType } = comment;
+
+	useEffect(() => {
+		const totalVotes = upVotes - downVotes;
+		setVoteCount(totalVotes);
+		setCurrentVoteType(userVoteType);
+	}, [comment]);
 
 	const voteHandler = async (type: VoteType) => {
 		if (isLoading) return;

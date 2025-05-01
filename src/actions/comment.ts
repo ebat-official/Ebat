@@ -76,7 +76,7 @@ const commentInclude = {
 };
 
 async function formatCommentWithVotes(
-	comment: CommentIncludeType,
+	comment: CommentIncludeType & { userVoteType?: VoteType | null },
 ): Promise<CommentWithVotes> {
 	return {
 		id: comment.id,
@@ -107,8 +107,9 @@ async function formatCommentWithVotes(
 				),
 			},
 		},
-		likes: comment.votes.filter((vote) => vote.type === "UP").length,
-		dislikes: comment.votes.filter((vote) => vote.type === "DOWN").length,
+		upVotes: comment.votes.filter((vote) => vote.type === "UP").length,
+		downVotes: comment.votes.filter((vote) => vote.type === "DOWN").length,
+		userVoteType: comment.userVoteType || null,
 		repliesExist: comment._count.replies > 0,
 		repliesLoaded: false,
 		replies: [],
