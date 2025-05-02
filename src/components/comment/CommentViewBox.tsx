@@ -37,8 +37,6 @@ export function CommentViewBox({
 		author,
 		content,
 		createdAt,
-		likes,
-		dislikes,
 		replies: initialReplies = [],
 	} = comment;
 	const [isReplying, setIsReplying] = useState(false);
@@ -109,7 +107,7 @@ export function CommentViewBox({
 
 						{/* Action buttons */}
 						<div className="flex items-center gap-2 ">
-							<CommentLikeButton commentId={id} />
+							<CommentLikeButton comment={comment} />
 							{depth < 3 && (
 								<Button
 									variant="ghost"

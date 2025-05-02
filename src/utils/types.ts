@@ -5,6 +5,7 @@ import {
 	PostType,
 	SubCategory,
 	User,
+	VoteType,
 } from "@prisma/client";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
@@ -130,8 +131,9 @@ export type CommentWithVotes = {
 		_count: { _all: number };
 		_sum: { voteValue: number };
 	};
-	likes: number;
-	dislikes: number;
+	upVotes: number;
+	downVotes: number;
+	userVoteType: VoteType | null;
 	repliesExist: boolean;
 	repliesLoaded: boolean;
 	replies: CommentWithVotes[];

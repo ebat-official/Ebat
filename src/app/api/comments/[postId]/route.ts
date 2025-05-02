@@ -4,6 +4,7 @@ import { getCommentsWithVotes } from "@/utils/api utils/comment";
 import { CommentSortOption } from "@/utils/types";
 import { redis } from "@/lib/redis";
 import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import { getCurrentUser } from "@/actions/user";
 
 export async function GET(
 	request: NextRequest,
@@ -52,8 +53,10 @@ export async function GET(
 			}
 		}
 
+		const user = await getCurrentUser();
+
 		// Fetch from DB
-		const data = await getCommentsWithVotes(postId, parentId, {
+		const data = await getCommentsWithVotes(postId, parentId, user?.id, {
 			sort: sort as CommentSortOption,
 			take,
 			skip,
