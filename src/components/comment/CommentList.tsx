@@ -39,7 +39,7 @@ export function CommentList({
 					<div className="flex flex-col gap-5">
 						{Array(5)
 							.fill(0)
-							.map((key) => (
+							.map((_, key) => (
 								<CommentSkeleton key={key} />
 							))}
 					</div>
@@ -66,7 +66,7 @@ export function CommentList({
 					</>
 				)}
 			</div>
-			{commentsExists && (
+			{!!commentsExists && (
 				<Pagination>
 					<PaginationContent>
 						<PaginationItem>
