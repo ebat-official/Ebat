@@ -13,7 +13,13 @@ import LoginModal from "../auth/LoginModal";
 import { cn } from "@/lib/utils";
 import { CommentWithVotes } from "@/utils/types";
 
-function CommentLikeButton({ comment }: { comment: CommentWithVotes }) {
+function CommentLikeButton({
+	comment,
+	postId,
+}: {
+	comment: CommentWithVotes;
+	postId: string;
+}) {
 	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
 	const [voteCount, setVoteCount] = useState(0);
 	const [createVoteAction, isLoading] = useServerAction(CommentVoteAction);
@@ -40,11 +46,11 @@ function CommentLikeButton({ comment }: { comment: CommentWithVotes }) {
 			if (currentVoteType === type) {
 				setCurrentVoteType(null);
 				setVoteCount((prev) => (type === VoteType.UP ? prev - 1 : prev + 1));
-				await createVoteAction({ commentId, type: null });
+				await createVoteAction({ commentId, type: null, postId });
 			} else {
 				setCurrentVoteType(type);
 				setVoteCount((prev) => (type === VoteType.UP ? prev + 1 : prev - 1));
-				await createVoteAction({ commentId, type });
+				await createVoteAction({ commentId, type, postId });
 			}
 		} catch (error) {
 			setCurrentVoteType(previousVoteType);
@@ -90,7 +96,6 @@ function CommentLikeButton({ comment }: { comment: CommentWithVotes }) {
 								})}
 							/>
 						</button>
-						"rotate-180",
 					</CardContent>
 				</Card>
 			</div>

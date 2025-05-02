@@ -4,8 +4,10 @@ import { z } from "zod";
 import { getCurrentUser } from "./user";
 import { VoteType } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import { invalidateCommentsCache } from "@/lib/invalidateCache";
 
 const CommentVoteValidator = z.object({
+	postId: z.string(),
 	commentId: z.string(),
 	type: z.union([z.nativeEnum(VoteType), z.null()]),
 });
@@ -58,4 +60,5 @@ export async function CommentVoteAction(
 			},
 		});
 	}
+	invalidateCommentsCache(data.postId);
 }

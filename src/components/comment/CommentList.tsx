@@ -31,7 +31,7 @@ export function CommentList({
 	isLoading,
 }: CommentListProps) {
 	const commentsExists = comments?.comments?.length;
-	const totalPages = comments?.pagination.totalPages || 0;
+	const totalPages = comments?.pagination?.totalPages || 0;
 	return (
 		<div className="flex flex-col gap-10">
 			<div className="space-y-4">

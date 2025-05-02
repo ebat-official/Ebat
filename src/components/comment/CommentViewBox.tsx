@@ -107,7 +107,7 @@ export function CommentViewBox({
 
 						{/* Action buttons */}
 						<div className="flex items-center gap-2 ">
-							<CommentLikeButton comment={comment} />
+							<CommentLikeButton comment={comment} postId={postId} />
 							{depth < 3 && (
 								<Button
 									variant="ghost"

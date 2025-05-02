@@ -146,7 +146,7 @@ export type CommentWithVotes = {
 
 export type PaginatedComments = {
 	comments: CommentWithVotes[];
-	pagination: {
+	pagination?: {
 		hasMore: boolean;
 		totalCount: number;
 		currentPage: number;
