@@ -515,3 +515,9 @@
 .PlaygroundEditorTheme__nestedListItem:after {
   display: none;
 }
+[data-lexical-layout-container] {
+  display: grid;
+}
+.Collapsible__container {
+  transition: all ease-in-out 0.3s;
+}

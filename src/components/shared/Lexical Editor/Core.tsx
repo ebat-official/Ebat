@@ -17,7 +17,7 @@ import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 import ShortcutsPlugin from "./plugins/ShortcutsPlugin";
 import TabFocusPlugin from "./plugins/TabFocusPlugin";
@@ -133,24 +133,24 @@ export default function Core({
 				onMouseLeave={() => setIsHovering(false)}
 				className="flex-1"
 			>
-				<AnimatePresence>
-					{isEditable && (hasFocus || isHovering) && (
-						<motion.div
-							initial={{ opacity: 0, y: -10 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: -10 }}
-							transition={{ duration: 0.3 }}
-							className="fixed top-0 left-0 z-50"
-						>
-							<ToolbarPlugin
-								editor={editor}
-								activeEditor={activeEditor}
-								setActiveEditor={setActiveEditor}
-								setIsLinkEditMode={setIsLinkEditMode}
-							/>
-						</motion.div>
-					)}
-				</AnimatePresence>
+				<motion.div
+					initial={false}
+					animate={{
+						opacity: isEditable && (hasFocus || isHovering) ? 1 : 0,
+						y: isEditable && (hasFocus || isHovering) ? 0 : -10,
+						pointerEvents:
+							isEditable && (hasFocus || isHovering) ? "auto" : "none",
+					}}
+					transition={{ duration: 0.3 }}
+					className="fixed top-0 left-0 z-50 "
+				>
+					<ToolbarPlugin
+						editor={editor}
+						activeEditor={activeEditor}
+						setActiveEditor={setActiveEditor}
+						setIsLinkEditMode={setIsLinkEditMode}
+					/>
+				</motion.div>
 
 				<RichTextPlugin
 					contentEditable={

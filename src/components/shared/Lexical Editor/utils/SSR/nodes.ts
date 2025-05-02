@@ -20,6 +20,7 @@ import { CollapsibleContainerNode } from "../../nodes/CollapsibleNode/Collapsibl
 import { CollapsibleContentNode } from "../../nodes/CollapsibleNode/CollapsibleContentNode";
 import { CollapsibleTitleNode } from "../../nodes/CollapsibleNode/CollapsibleTitleNode";
 import { HintNode } from "../../nodes/SSRNodes/HintNode";
+import { LayoutContainerNode } from "../../nodes/LayoutNode/LayoutContainerNode";
 
 export type LexicalNodeType = Klass<LexicalNode> | LexicalNodeReplacement;
 const nodes: LexicalNodeType[] = [
@@ -47,6 +48,7 @@ const nodes: LexicalNodeType[] = [
 	HorizontalRuleNode,
 	YouTubeNode,
 	ImageNode,
+	LayoutContainerNode,
 ];
 
 export const commentNodes: LexicalNodeType[] = [
