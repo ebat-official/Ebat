@@ -5,13 +5,13 @@ import {
 	MAX_POSTS_IMAGE_SIZE,
 	MAX_POSTS_VIDEO_SIZE,
 } from "@/config";
+import { SUCCESS } from "@/utils/contants";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { GenerateActionReturnType } from "@/utils/types";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-type SignedURLResponse =
-	| { status: "success"; data: { url: string; fileKey: string } }
-	| { status: "error"; cause?: string; data: { message: string } };
+type ResponseData = { url: string; fileKey: string };
 
 type GetSignedURLParams = {
 	fileType: string;
@@ -40,10 +40,10 @@ export async function getSignedURL({
 	fileSize,
 	checksum,
 	metadata,
-}: GetSignedURLParams): Promise<SignedURLResponse> {
+}: GetSignedURLParams): Promise<GenerateActionReturnType<ResponseData>> {
 	const session = await auth();
 	if (!session) {
-		return UNAUTHENTICATED_ERROR as SignedURLResponse;
+		return UNAUTHENTICATED_ERROR;
 	}
 
 	if (
@@ -88,5 +88,5 @@ export async function getSignedURL({
 		expiresIn: 60 * 5,
 	}); // 5 minutes
 
-	return { status: "success", data: { url: signedUrl, fileKey } };
+	return { status: SUCCESS, data: { url: signedUrl, fileKey } };
 }

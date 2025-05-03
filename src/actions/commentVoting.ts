@@ -1,10 +1,12 @@
 "use server";
-import { UserNotAuthenticatedErr, ValidationErr } from "@/utils/errors";
+import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { z } from "zod";
-import { getCurrentUser } from "./user";
+import { validateUser } from "./user";
 import { VoteType } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
+import { SUCCESS } from "@/utils/contants";
+import { GenerateActionReturnType } from "@/utils/types";
 
 const CommentVoteValidator = z.object({
 	postId: z.string(),
@@ -12,18 +14,15 @@ const CommentVoteValidator = z.object({
 	type: z.union([z.nativeEnum(VoteType), z.null()]),
 });
 
-const validateUser = async () => {
-	const user = await getCurrentUser();
-	if (!user) throw UserNotAuthenticatedErr();
-	return user;
-};
 export async function CommentVoteAction(
 	data: z.infer<typeof CommentVoteValidator>,
-) {
+): Promise<GenerateActionReturnType<string>> {
 	const validatedData = CommentVoteValidator.parse(data);
 
-	if (!validatedData) throw ValidationErr("Invalid vote data");
+	if (!validatedData) return VALIDATION_ERROR;
 	const user = await validateUser();
+
+	if (!user) return UNAUTHENTICATED_ERROR;
 
 	const voteData = {
 		commentId: data.commentId,
@@ -61,4 +60,5 @@ export async function CommentVoteAction(
 		});
 	}
 	invalidateCommentsCache(data.postId);
+	return { status: SUCCESS, data: SUCCESS };
 }

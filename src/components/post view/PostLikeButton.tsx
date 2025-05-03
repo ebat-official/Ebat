@@ -18,6 +18,7 @@ import { useServerAction } from "@/hooks/useServerAction";
 import { cn } from "@/lib/utils";
 import { useVotes } from "@/hooks/query/useVotes";
 import { formatNumInK } from "@/utils/formatNumInK";
+import { ERROR } from "@/utils/contants";
 
 function PostLikeButton({ postId }: { postId: string }) {
 	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
@@ -51,11 +52,13 @@ function PostLikeButton({ postId }: { postId: string }) {
 			if (currentVoteType === type) {
 				setCurrentVoteType(null);
 				setVoteCount((prev) => (type === VoteType.UP ? prev - 1 : prev + 1));
-				await createVoteAction({ postId, type: null });
+				const vote = await createVoteAction({ postId, type: null });
+				if (vote?.status === ERROR) throw ERROR;
 			} else {
 				setCurrentVoteType(type);
 				setVoteCount((prev) => (type === VoteType.UP ? prev + 1 : prev - 1));
-				await createVoteAction({ postId, type });
+				const vote = await createVoteAction({ postId, type });
+				if (vote?.status === ERROR) throw ERROR;
 			}
 		} catch (error) {
 			setCurrentVoteType(previousVoteType);

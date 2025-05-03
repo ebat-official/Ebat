@@ -35,7 +35,7 @@ const useFileUpload = () => {
 			});
 
 			if (signedURLResult.status !== "success") {
-				throw new Error(signedURLResult.cause || signedURLResult.data.message);
+				throw new Error(signedURLResult.data.message);
 			}
 
 			// Step 3: Upload the file to S3 using the signed URL

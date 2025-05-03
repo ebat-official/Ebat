@@ -12,6 +12,7 @@ import { useServerAction } from "@/hooks/useServerAction";
 import LoginModal from "../auth/LoginModal";
 import { cn } from "@/lib/utils";
 import { CommentWithVotes } from "@/utils/types";
+import { ERROR } from "@/utils/contants";
 
 function CommentLikeButton({
 	comment,
@@ -46,11 +47,13 @@ function CommentLikeButton({
 			if (currentVoteType === type) {
 				setCurrentVoteType(null);
 				setVoteCount((prev) => (type === VoteType.UP ? prev - 1 : prev + 1));
-				await createVoteAction({ commentId, type: null, postId });
+				const vote = await createVoteAction({ commentId, type: null, postId });
+				if (vote?.status === ERROR) throw ERROR;
 			} else {
 				setCurrentVoteType(type);
 				setVoteCount((prev) => (type === VoteType.UP ? prev + 1 : prev - 1));
-				await createVoteAction({ commentId, type, postId });
+				const vote = await createVoteAction({ commentId, type, postId });
+				if (vote?.status === ERROR) throw ERROR;
 			}
 		} catch (error) {
 			setCurrentVoteType(previousVoteType);
