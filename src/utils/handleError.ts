@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 import { PostType } from "@prisma/client";
-import { CustomErrorType } from "./types";
+import { CustomErrorType, GenerateActionReturnType } from "./types";
 import { INVALID_DIFFICULTY } from "./contants";
 
 export const sanitizeErrorMessage = (
@@ -12,6 +12,12 @@ export const sanitizeErrorMessage = (
 	}
 	return message;
 };
+
+export function isErrorAction<SuccessDataType>(
+	action: GenerateActionReturnType<SuccessDataType>,
+): action is { status: "error"; data: { message: string } } {
+	return action.status === "error";
+}
 
 export const handleError = (error: unknown, postType?: PostType): string => {
 	if (error instanceof ZodError) {
@@ -28,6 +34,10 @@ export const handleError = (error: unknown, postType?: PostType): string => {
 		}
 
 		return sanitizeErrorMessage(errorMessage, postType);
+	}
+	if (isErrorAction(error as GenerateActionReturnType<unknown>)) {
+		// @ts-ignore
+		return sanitizeErrorMessage(error?.data?.message);
 	}
 
 	if (error instanceof Error) {

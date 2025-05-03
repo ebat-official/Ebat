@@ -1,22 +1,23 @@
 "use server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import {
-	ValidationErr,
-	UserNotAuthenticatedErr,
-	FailedToSaveDraftErr,
-	FailedToAddCommentErr,
-	UserNotAuthorizedErr,
-} from "@/utils/errors";
+import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { z } from "zod";
-import { CommentSortOption, CommentWithVotes } from "@/utils/types";
+import {
+	CommentSortOption,
+	CommentWithVotes,
+	ErrorType,
+	GenerateActionReturnType,
+	SuccessType,
+} from "@/utils/types";
 import { Comment, Prisma, VoteType } from "@prisma/client";
-import { getCurrentUser } from "./user";
+import { getCurrentUser, validateUser } from "./user";
 import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 import pako from "pako";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { commentNodes } from "@/components/shared/Lexical Editor/utils/SSR/nodes";
+import { SUCCESS } from "@/utils/contants";
 
 type CommentIncludeType = Prisma.CommentGetPayload<{
 	include: typeof commentInclude;
@@ -40,14 +41,6 @@ const CommentValidator = z.object({
 	content: z.any(), // JSON content of the comment
 	mentions: z.array(MentionDataSchema), // Can be an empty array or valid MentionData[]
 });
-
-// Shared utility functions
-
-const validateUser = async () => {
-	const user = await getCurrentUser();
-	if (!user) throw UserNotAuthenticatedErr();
-	return user;
-};
 
 // Include object for comment queries
 const commentInclude = {
@@ -141,12 +134,14 @@ async function formatCommentWithVotes(
 // Create or edit a comment
 export async function createEditComment(
 	data: z.infer<typeof CommentValidator>,
-): Promise<CommentWithVotes> {
+): Promise<GenerateActionReturnType<CommentWithVotes>> {
 	// Validate the input data
 	const validation = CommentValidator.safeParse(data);
-	if (!validation.success) throw ValidationErr("Invalid comment data.");
+	if (!validation.success) return VALIDATION_ERROR;
 
 	const user = await validateUser();
+
+	if (!user) return UNAUTHENTICATED_ERROR;
 
 	const commentData = {
 		parentId: data.parentId || null,
@@ -155,58 +150,52 @@ export async function createEditComment(
 		authorId: user.id,
 	};
 
-	try {
-		if (data.id) {
-			const isOwner = await checkCommentOwnership(data.id, user.id);
-			if (!isOwner) {
-				throw UserNotAuthorizedErr();
-			}
+	if (data.id) {
+		const isOwner = await checkCommentOwnership(data.id, user.id);
+		if (!isOwner) {
+			return UNAUTHENTICATED_ERROR;
 		}
-		const result = await prisma.$transaction(async (prisma) => {
-			// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-			let comment;
-
-			if (data.id) {
-				// Check ownership before updating the comment
-				// If id is provided, use update
-				comment = await prisma.comment.update({
-					where: { id: data.id },
-					data: {
-						content: commentData.content,
-					},
-					include: commentInclude, // Reuse the include object
-				});
-			} else {
-				// Otherwise, create
-				comment = await prisma.comment.create({
-					data: commentData,
-					include: commentInclude, // Reuse the include object
-				});
-			}
-
-			const mentions = data.mentions || [];
-
-			if (mentions.length > 0) {
-				await prisma.commentMention.createMany({
-					data: mentions
-						.map((mention) => mention?.data?.id)
-						.filter((userId): userId is string => !!userId)
-						.map((userId) => ({
-							userId,
-							commentId: comment.id,
-						})),
-					skipDuplicates: true,
-				});
-			}
-			invalidateCommentsCache(data.postId);
-			comment.content = data.content;
-			return formatCommentWithVotes(comment);
-		});
-
-		return result;
-	} catch (error) {
-		console.error("Error creating comment with mentions:", error);
-		const msg = error instanceof Error ? error.message : undefined;
-		throw FailedToAddCommentErr(msg);
 	}
+	const result = await prisma.$transaction(async (prisma) => {
+		// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+		let comment;
+
+		if (data.id) {
+			// Check ownership before updating the comment
+			// If id is provided, use update
+			comment = await prisma.comment.update({
+				where: { id: data.id },
+				data: {
+					content: commentData.content,
+				},
+				include: commentInclude, // Reuse the include object
+			});
+		} else {
+			// Otherwise, create
+			comment = await prisma.comment.create({
+				data: commentData,
+				include: commentInclude, // Reuse the include object
+			});
+		}
+
+		const mentions = data.mentions || [];
+
+		if (mentions.length > 0) {
+			await prisma.commentMention.createMany({
+				data: mentions
+					.map((mention) => mention?.data?.id)
+					.filter((userId): userId is string => !!userId)
+					.map((userId) => ({
+						userId,
+						commentId: comment.id,
+					})),
+				skipDuplicates: true,
+			});
+		}
+		invalidateCommentsCache(data.postId);
+		comment.content = data.content;
+		return formatCommentWithVotes(comment);
+	});
+
+	return { status: SUCCESS, data: result };
 }

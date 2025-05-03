@@ -146,3 +146,9 @@ export const getCurrentUser = async () => {
 	const session = await auth();
 	return session?.user;
 };
+
+export const validateUser = async () => {
+	const user = await getCurrentUser();
+	if (!user) return false;
+	return user;
+};

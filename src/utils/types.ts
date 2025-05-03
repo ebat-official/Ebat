@@ -11,8 +11,10 @@ import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
 import {
 	COMMENT_SORT_OPTIONS,
+	ERROR,
 	POST_ACTIONS,
 	POST_ROUTE_TYPE,
+	SUCCESS,
 } from "./contants";
 
 export interface ContentType {
@@ -185,3 +187,16 @@ export type GetOptimizedCommentsOptions = {
 	includeAuthor?: boolean;
 	includeVotes?: boolean;
 };
+
+export type GenerateActionReturnType<SuccessDataType> =
+	| {
+			status: SuccessType;
+			data: SuccessDataType;
+	  }
+	| {
+			status: ErrorType;
+			data: { message: string };
+	  };
+
+export type SuccessType = typeof SUCCESS;
+export type ErrorType = typeof ERROR;

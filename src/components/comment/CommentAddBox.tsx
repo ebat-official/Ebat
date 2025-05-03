@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import dynamic from "next/dynamic";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,6 +18,7 @@ import { IoMdClose } from "react-icons/io";
 import { CommentWithVotes } from "@/utils/types";
 import { createEditComment } from "@/actions/comment";
 
+import { ERROR } from "@/utils/contants";
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
 	loading: () => <Skeleton className="w-full h-28 " />,
@@ -68,11 +69,15 @@ export default function CommentAddBox({
 				return;
 			}
 
-			const newComment = await createCommentAction(commentData);
+			const response = await createCommentAction(commentData);
 			if (editorRef.current) {
 				//@ts-ignore
 				editorRef.current.clearEditorContent?.(); // Call the clearEditorContent function
 			}
+			if (response.status === ERROR) {
+				throw response;
+			}
+			const newComment = response.data;
 			if (commentAddHandler) commentAddHandler(newComment);
 			// Show success toast
 			toast({
