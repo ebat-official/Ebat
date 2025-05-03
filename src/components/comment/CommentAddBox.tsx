@@ -23,7 +23,7 @@ const Editor = dynamic(() => import("./CommentEditor"), {
 	loading: () => <Skeleton className="w-full h-28 " />,
 });
 
-interface CommentEditBoxProps {
+interface CommentAddBoxProps {
 	content?: string;
 	parentId?: string | undefined;
 	commentId?: string | undefined;
@@ -31,9 +31,10 @@ interface CommentEditBoxProps {
 	cancelHandler?: () => void;
 	commentAddHandler?: (comment: CommentWithVotes) => void;
 	autoFocus?: boolean;
+	editHtml?: string;
 }
 
-export default function CommentEditBox({
+export default function CommentAddBox({
 	content,
 	parentId = undefined,
 	commentId = undefined,
@@ -41,13 +42,11 @@ export default function CommentEditBox({
 	cancelHandler,
 	commentAddHandler,
 	autoFocus,
-}: CommentEditBoxProps) {
+	editHtml,
+}: CommentAddBoxProps) {
 	const [comment, setComment] = useState<SerializedEditorState>();
 	const [mentions, setMentions] = useState<MentionData[]>([]);
 	const [createCommentAction, isLoading] = useServerAction(createEditComment);
-	const [editorContent, setEditorContent] = useState(
-		content || emptyEditorState,
-	);
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
 	const editorRef = useRef<{ clearEditorContent: () => void } | undefined>(
 		undefined,
@@ -114,6 +113,7 @@ export default function CommentEditBox({
 						content={content}
 						ref={editorRef}
 						autoFocus={autoFocus}
+						editHtml={editHtml}
 					/>
 					<div className="absolute right-0 bottom-0 flex gap-2">
 						{cancelHandler && (

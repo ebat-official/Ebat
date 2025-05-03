@@ -5,7 +5,6 @@ import { LiaCommentsSolid } from "react-icons/lia";
 import {
 	Pagination,
 	PaginationContent,
-	PaginationEllipsis,
 	PaginationItem,
 	PaginationLink,
 	PaginationNext,
@@ -14,24 +13,19 @@ import {
 import { Card, CardContent } from "../ui/card";
 import { FaComments } from "react-icons/fa";
 import { CommentSkeleton } from "./CommentSkelton";
+import { useCommentContext } from "./CommentContext";
 
-interface CommentListProps {
-	comments: PaginatedComments | undefined;
-	postId: string;
-	currentPage: number;
-	setCurrentPage: (pageNo: number) => void;
-	isLoading: boolean;
-}
+export function CommentList() {
+	const {
+		comments,
+		isLoading,
+		currentPage,
+		setCurrentPage,
+		totalPages,
+		postId,
+	} = useCommentContext();
+	const commentsExists = comments?.length;
 
-export function CommentList({
-	comments,
-	postId,
-	currentPage,
-	setCurrentPage,
-	isLoading,
-}: CommentListProps) {
-	const commentsExists = comments?.comments?.length;
-	const totalPages = comments?.pagination?.totalPages || 0;
 	return (
 		<div className="flex flex-col gap-10">
 			<div className="space-y-4">
@@ -56,7 +50,7 @@ export function CommentList({
 								</CardContent>
 							</Card>
 						)}
-						{comments?.comments.map((comment) => (
+						{comments.map((comment) => (
 							<CommentViewBox
 								key={comment.id}
 								comment={comment}
@@ -81,7 +75,7 @@ export function CommentList({
 								}
 							/>
 						</PaginationItem>
-						{comments?.pagination?.totalPages &&
+						{totalPages &&
 							Array.from({ length: totalPages }, (_, index) => (
 								<PaginationItem key={index}>
 									<PaginationLink

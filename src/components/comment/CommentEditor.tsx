@@ -19,6 +19,7 @@ interface EditorProps {
 	onChangeHandler?: (data: SerializedEditorState) => void;
 	onMentionChangeHandler: (mentions: MentionData[]) => void;
 	ref?: React.RefObject<{ clearEditorContent: () => void } | undefined>;
+	editHtml?: string;
 }
 
 export default function Editor({
@@ -30,6 +31,7 @@ export default function Editor({
 	onChangeHandler,
 	onMentionChangeHandler,
 	ref,
+	editHtml,
 }: EditorProps) {
 	const initialConfig = {
 		namespace: id,
@@ -57,6 +59,7 @@ export default function Editor({
 						onChangeHandler={changeHandler}
 						onMentionChangeHandler={onMentionChangeHandler}
 						ref={ref}
+						editHtml={editHtml}
 					/>
 				</ToolbarContext>
 			</SharedHistoryContext>

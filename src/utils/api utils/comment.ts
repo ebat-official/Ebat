@@ -124,7 +124,6 @@ export async function getCommentsWithVotes(
 	${includeAuthor ? Prisma.sql`LEFT JOIN "UserProfile" up ON up."userId" = a.id` : Prisma.empty}
   `;
 
-	console.log("base", baseQuery, userId);
 	const result = await prisma.$queryRaw<RawCommentResult[]>(baseQuery);
 
 	const processed: CommentWithVotes[] = await Promise.all(

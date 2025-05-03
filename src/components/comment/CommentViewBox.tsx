@@ -1,26 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { formatDistanceToNow } from "date-fns";
-import {
-	ThumbsUp,
-	ThumbsDown,
-	Reply,
-	ChevronDown,
-	ChevronUp,
-} from "lucide-react";
 import { CommentWithVotes } from "@/utils/types";
-import CommentEditBox from "./CommentEditBox";
-import { FaCircleChevronUp } from "react-icons/fa6";
-import { FaChevronUp, FaRegComment, FaRegCommentDots } from "react-icons/fa";
-import { BsCaretUp } from "react-icons/bs";
-import { TbTriangle } from "react-icons/tb";
+import { FaChevronUp, FaRegCommentDots } from "react-icons/fa";
 import CommentLikeButton from "./CommentLikeButton";
+import { CommentActionButton } from "./CommentActionButton";
+import CommentAddBox from "./CommentAddBox";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
@@ -35,13 +25,19 @@ export function CommentViewBox({
 	const {
 		id,
 		author,
-		content,
+		content: initialContent,
 		createdAt,
 		replies: initialReplies = [],
 	} = comment;
 	const [isReplying, setIsReplying] = useState(false);
 	const [replies, setReplies] = useState<CommentWithVotes[]>(initialReplies);
 	const [areRepliesExpanded, setAreRepliesExpanded] = useState(true);
+	const [isEditMode, setIsEditMode] = useState(false);
+	const [content, setContent] = useState(initialContent);
+
+	useEffect(() => {
+		setContent(initialContent);
+	}, [initialContent]);
 
 	const toggleReplies = () => {
 		setAreRepliesExpanded((prev) => !prev);
@@ -99,11 +95,26 @@ export function CommentViewBox({
 						</div>
 
 						{/* Comment content */}
-						<div
-							className="text-sm first-letter:capitalize lexicalContentView"
-							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-							dangerouslySetInnerHTML={{ __html: content || "" }}
-						/>
+						{isEditMode ? (
+							<CommentAddBox
+								commentId={id}
+								postId={postId}
+								parentId={id}
+								cancelHandler={() => setIsEditMode(false)}
+								commentAddHandler={(comment) => {
+									setContent(comment.content);
+									setIsEditMode(false);
+								}}
+								autoFocus
+								editHtml={content || ""}
+							/>
+						) : (
+							<div
+								className="text-sm first-letter:capitalize lexicalContentView"
+								// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+								dangerouslySetInnerHTML={{ __html: content || "" }}
+							/>
+						)}
 
 						{/* Action buttons */}
 						<div className="flex items-center gap-2 ">
@@ -119,6 +130,12 @@ export function CommentViewBox({
 									Reply
 								</Button>
 							)}
+							<CommentActionButton
+								commentId={id}
+								editModeHandler={() => {
+									setIsEditMode((prev) => !prev);
+								}}
+							/>
 						</div>
 
 						{/* Reply form */}
@@ -134,7 +151,7 @@ export function CommentViewBox({
 									}}
 									className="mt-3 space-y-2"
 								>
-									<CommentEditBox
+									<CommentAddBox
 										postId={postId}
 										parentId={id}
 										cancelHandler={() => setIsReplying(false)}
@@ -144,27 +161,6 @@ export function CommentViewBox({
 								</motion.div>
 							)}
 						</AnimatePresence>
-						{/* Replies toggle - only show if there are replies */}
-						{/* {replies.length > 0 && (
-              <Button
-                variant="link"
-                size="sm"
-                className="mt-2 pl-0 gap-1"
-                onClick={toggleReplies}
-              >
-                {areRepliesExpanded ? (
-                  <>
-                    <ChevronUp className="h-4 w-4" />
-                    Hide replies
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="h-4 w-4" />
-                    Show replies ({replies.length})
-                  </>
-                )}
-              </Button>
-            )} */}
 					</div>
 				</div>
 

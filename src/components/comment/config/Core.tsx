@@ -8,6 +8,7 @@ declare global {
 
 import React, {
 	useCallback,
+	useEffect,
 	useImperativeHandle,
 	useLayoutEffect,
 	useState,
@@ -53,6 +54,7 @@ import {
 	MentionData,
 } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
 import FloatingLinkEditorPlugin from "@/components/shared/Lexical Editor/plugins/FloatingLinkEditorPlugin";
+import { insertHtmlIntoEditor } from "@/components/shared/Lexical Editor/utils/InsertHtmlIntoEditor";
 
 interface CoreProps {
 	placeholder: string;
@@ -61,6 +63,7 @@ interface CoreProps {
 	onChangeHandler: (data: SerializedEditorState) => void;
 	onMentionChangeHandler: (mentions: MentionData[]) => void;
 	ref?: React.RefObject<{ clearEditorContent: () => void } | undefined>;
+	editHtml?: string;
 }
 
 export default function Core({
@@ -70,6 +73,7 @@ export default function Core({
 	onChangeHandler,
 	onMentionChangeHandler,
 	ref,
+	editHtml,
 }: CoreProps) {
 	const [editor] = useLexicalComposerContext();
 	const [hasFocus, setHasFocus] = useState(() => {
@@ -151,6 +155,12 @@ export default function Core({
 			setFloatingAnchorElem(_floatingAnchorElem);
 		}
 	}, []);
+
+	useEffect(() => {
+		if (editor && editHtml) {
+			insertHtmlIntoEditor(editor, editHtml);
+		}
+	}, [editor, editHtml]);
 
 	return (
 		<div className="relative flex flex-col editor">

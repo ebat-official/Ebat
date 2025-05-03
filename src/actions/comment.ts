@@ -6,6 +6,7 @@ import {
 	UserNotAuthenticatedErr,
 	FailedToSaveDraftErr,
 	FailedToAddCommentErr,
+	UserNotAuthorizedErr,
 } from "@/utils/errors";
 import { z } from "zod";
 import { CommentSortOption, CommentWithVotes } from "@/utils/types";
@@ -75,6 +76,22 @@ const commentInclude = {
 	},
 };
 
+const checkCommentOwnership = async (
+	commentId: string,
+	userId: string,
+): Promise<boolean> => {
+	const existingComment = await prisma.comment.findUnique({
+		where: { id: commentId },
+		select: { authorId: true },
+	});
+
+	if (!existingComment) {
+		throw new Error("Comment not found.");
+	}
+
+	return existingComment.authorId === userId;
+};
+
 async function formatCommentWithVotes(
 	comment: CommentIncludeType & { userVoteType?: VoteType | null },
 ): Promise<CommentWithVotes> {
@@ -139,15 +156,24 @@ export async function createEditComment(
 	};
 
 	try {
+		if (data.id) {
+			const isOwner = await checkCommentOwnership(data.id, user.id);
+			if (!isOwner) {
+				throw UserNotAuthorizedErr();
+			}
+		}
 		const result = await prisma.$transaction(async (prisma) => {
 			// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
 			let comment;
 
 			if (data.id) {
+				// Check ownership before updating the comment
 				// If id is provided, use update
 				comment = await prisma.comment.update({
 					where: { id: data.id },
-					data: commentData,
+					data: {
+						content: commentData.content,
+					},
 					include: commentInclude, // Reuse the include object
 				});
 			} else {

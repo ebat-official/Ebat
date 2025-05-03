@@ -12,7 +12,7 @@ import { LexicalViewer } from "./LexicalViewer";
 import { PostStatsBadge } from "./PostStatsBadge";
 import { Separator } from "@/components/ui/separator";
 import PostDetailsAccordian from "./PostDetailsAccordian";
-import Comment from "@/components/comment/CommentEditBox";
+import Comment from "@/components/comment/CommentAddBox";
 import CommentContainer from "@/components/comment/CommentContainer";
 import { PostContentRender } from "./PostContentRender";
 import PostLikeButton from "./PostLikeButton";
