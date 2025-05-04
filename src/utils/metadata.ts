@@ -1,9 +1,13 @@
 // utils/metadata.ts
 import { Metadata } from "next";
 import { Post } from "@prisma/client";
-import { ContentType, PostWithExtraDetails } from "@/utils/types";
+import {
+	ContentReturnType,
+	ContentType,
+	PostWithExtraDetails,
+} from "@/utils/types";
 import { getFirstImageUrl } from "@/utils/getFirstPostImage";
-import { getFirstParagraphText } from "@/utils/getFirstParagraphText";
+import { getMetaDescription } from "./getMetaDescription";
 
 export interface MetadataOptions {
 	url?: string;
@@ -16,17 +20,16 @@ export const extractMetadata = (
 	options: MetadataOptions = {},
 ) => {
 	const { url } = options;
-	const content = post.content as ContentType;
+	const content = post.content as ContentReturnType;
 
 	// Generate metadata fields
 	const metaTitle = `${post.title} - ${post.topics?.join(", ") || "EBAT"}`;
 	const metaDescription =
-		getFirstParagraphText(content).slice(0, 150) ||
+		getMetaDescription(content.post || "") ||
 		`Learn more about ${post.topics?.join(", ") || "various topics"} on EBAT`;
-	const metaImage = getFirstImageUrl(content) || "/default-image.jpg";
+	const metaImage = getFirstImageUrl(content.post || "");
 	const postUrl = `${process.env.ENV_URL}${url}`;
 	const authorName = post.author?.userProfile?.name || "Unknown Author";
-
 	// Generate keywords
 	const topics = post.topics?.join(", ") || "";
 	const companies = post.companies?.join(", ") || "";
