@@ -131,88 +131,19 @@ export const COMMENT_ADDITION_ERROR = {
 	cause: FAILED_TO_ADD_COMMENT,
 	data: { message: "failed to add comment" },
 };
-// ✅ Functions to throw structured errors
-export function UserNotAuthenticatedErr() {
-	return Object.assign(
-		new Error(UNAUTHENTICATED_ERROR.data.message),
-		UNAUTHENTICATED_ERROR,
-	);
-}
-
-export function UserNotAuthorizedErr() {
-	return Object.assign(
-		new Error(UNAUTHORIZED_ERROR.data.message),
-		UNAUTHORIZED_ERROR,
-	);
-}
 
 export function ValidationErr(message: string) {
-	return Object.assign(new Error(message), {
+	return {
 		...VALIDATION_ERROR,
 		data: { message },
-	});
+	};
 }
 
-export function DatabaseErr(message: string) {
-	return Object.assign(new Error(message), {
-		...DATABASE_ERROR,
-		data: { message },
-	});
-}
-
-export function UnknownErr(message: string = UNKNOWN_ERROR.data.message) {
-	return Object.assign(new Error(message), {
-		...UNKNOWN_ERROR,
-		data: { message },
-	});
-}
-
-export function FailedToSaveDraftErr() {
-	return Object.assign(
-		new Error(FAILED_TO_SAVE_DRAFT_ERROR.data.message),
-		FAILED_TO_SAVE_DRAFT_ERROR,
-	);
-}
-
-export function FailedToPublishPostErr() {
-	return Object.assign(
-		new Error(FAILED_TO_PUBLISH_POST_ERROR.data.message),
-		FAILED_TO_PUBLISH_POST_ERROR,
-	);
-}
 export function FailedToEditPostErr(
 	message: string = FAILED_TO_EDIT_POST_ERROR.data.message,
 ) {
-	return Object.assign(new Error(message), {
+	return {
 		...FAILED_TO_EDIT_POST_ERROR,
 		data: { message },
-	});
-}
-
-export function InvalidUsernamePasswordErr() {
-	return Object.assign(
-		new Error(INVALID_USERNAME_PASSWORD_ERROR.data.message),
-		INVALID_USERNAME_PASSWORD_ERROR,
-	);
-}
-
-export function EmailAlreadyExistsErr() {
-	return Object.assign(
-		new Error(EMAIL_ALREADY_EXISTS_ERROR.data.message),
-		EMAIL_ALREADY_EXISTS_ERROR,
-	);
-}
-
-export function NoUserFoundErr() {
-	return Object.assign(
-		new Error(NO_USER_FOUND_ERROR.data.message),
-		NO_USER_FOUND_ERROR,
-	);
-}
-
-export function EmailNotVerifiedErr() {
-	return Object.assign(
-		new Error(EMAIL_NOT_VERIFIED_ERROR.data.message),
-		EMAIL_NOT_VERIFIED_ERROR,
-	);
+	};
 }

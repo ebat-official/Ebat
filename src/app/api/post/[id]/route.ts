@@ -7,7 +7,7 @@ import {
 	POST_NOT_EXIST_ERROR,
 	POST_NOT_PUBLISHED_ERROR,
 } from "@/utils/errors";
-import { getPostById } from "@/actions/post";
+import { getPostById } from "@/utils/api utils/posts";
 
 export async function GET(
 	request: NextRequest,

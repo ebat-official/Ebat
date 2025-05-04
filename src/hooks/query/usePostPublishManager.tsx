@@ -10,7 +10,7 @@ import {
 	SubCategoryType,
 } from "@/utils/types";
 import { PostType } from "@prisma/client";
-import { POST_ACTIONS } from "@/utils/contants";
+import { ERROR, POST_ACTIONS } from "@/utils/contants";
 
 type PostParams = {
 	postId: string;
@@ -75,6 +75,9 @@ export const usePostPublishManager = (
 
 		try {
 			const data = await createDraft(validated.data);
+			if (data.status === ERROR) {
+				throw data;
+			}
 			setError(null);
 			return { data, error: null, isLoading: false };
 		} catch (error) {
@@ -92,8 +95,9 @@ export const usePostPublishManager = (
 
 		try {
 			const data = await publishPost(validated.data);
+			if (data.status === ERROR) throw data;
 			setError(null);
-			return { data, error: null, isLoading: false };
+			return { data: data.data, error: null, isLoading: false };
 		} catch (error) {
 			setError(error);
 			return { error, isLoading: false };

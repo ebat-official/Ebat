@@ -4,7 +4,7 @@ import { generatePageMetadata } from "@/utils/metadata";
 import PostView from "@/components/post view/PostView";
 import { getPostFromURL } from "@/utils/api utils/apiUtils";
 import { PageParams } from "@/utils/types";
-import { getAllApprovedPosts } from "@/actions/post";
+import { getAllApprovedPosts } from "@/utils/api utils/posts";
 import { generatePostPathFromPostId } from "@/utils/generatePostPath";
 import StructuredMetaData from "@/components/shared/StructuredMetaData";
 

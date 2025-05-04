@@ -164,7 +164,7 @@ model ResetToken {
 model Post {
   id                 String             @id @default(nanoid())
   title              String?
-  slug               String?            @unique
+  slug               String?            
   content            Bytes?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt

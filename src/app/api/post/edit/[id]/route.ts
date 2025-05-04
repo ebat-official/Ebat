@@ -9,7 +9,7 @@ import {
 	UNAUTHENTICATED_ERROR,
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
-import { getEditPostByPostId, getPostById } from "@/actions/post";
+import { getEditPostByPostId, getPostById } from "@/utils/api utils/posts";
 
 export async function GET(
 	request: Request,
