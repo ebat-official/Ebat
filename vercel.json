@@ -1,0 +1,17 @@
+{
+	"routes": [
+		{
+			"src": "/robots.txt",
+			"headers": {
+				"Content-Type": "text/plain"
+			},
+			"dest": "/robots.txt"
+		},
+		{
+			"src": "/(.*)",
+			"headers": {
+				"X-Robots-Tag": "noindex, nofollow"
+			}
+		}
+	]
+}
