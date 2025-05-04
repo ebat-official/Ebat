@@ -2,7 +2,7 @@ import { POST_ID_LENGTH } from "@/config";
 import { UNKNOWN_ERROR } from "../contants";
 import { ID_NOT_EXIST_ERROR } from "../errors";
 import { isValidCategoryCombo } from "../isValidCategoryCombo";
-import { CommentMention } from "@prisma/client";
+import { CommentMention, PostType } from "@prisma/client";
 import {
 	ContentType,
 	PostWithContent,
@@ -46,9 +46,10 @@ export async function getPostFromURL(params: {
 }): Promise<PostWithExtraDetails | null> {
 	const { titleSlug, category, subCategory } = params;
 
-	if (!isValidCategoryCombo(category, subCategory)) {
-		return null;
-	}
+	// will do it later if required
+	// if (!isValidCategoryCombo(category, subCategory)) {
+	// 	return null;
+	// }
 
 	const id = titleSlug.slice(-POST_ID_LENGTH);
 	if (!id) return null;
@@ -57,8 +58,6 @@ export async function getPostFromURL(params: {
 		const post = await prisma.post.findUnique({
 			where: {
 				id,
-				category: category.toUpperCase() as PostCategory,
-				subCategory: subCategory.toUpperCase() as SubCategory,
 			},
 			include: {
 				author: {
