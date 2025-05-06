@@ -116,6 +116,7 @@ export type CommentWithVotes = {
 	id: string;
 	content: string | null;
 	createdAt: Date;
+	updatedAt: Date;
 	authorId: string;
 	postId: string;
 	parentId: string | null;

@@ -12,9 +12,11 @@ type CommentContextType = {
 	commentSortOption: CommentSortOption;
 	setCurrentPage: (page: number) => void;
 	setCommentSortOption: (option: CommentSortOption) => void;
-	addComment: (comment: CommentWithVotes) => void;
+	addComment: (comment: CommentWithVotes, parentId?: string) => void;
 	postId: string;
 	totalPages: number;
+	deleteComment: (commentId: string) => void;
+	updateComment: (commentId: string, newContent: string) => void;
 };
 
 const CommentContext = createContext<CommentContextType | undefined>(undefined);
@@ -43,6 +45,7 @@ export const CommentProvider: React.FC<CommentProviderProps> = ({
 		COMMENT_SORT_OPTIONS.TOP,
 	);
 	const [comments, setComments] = useState<CommentWithVotes[]>([]);
+	const [totalComments, setTotalComments] = useState(0);
 
 	const { data, isLoading } = useComments(postId, {
 		page: currentPage,
@@ -52,17 +55,134 @@ export const CommentProvider: React.FC<CommentProviderProps> = ({
 		skip: (currentPage - 1) * COMMENTS_TAKE,
 	});
 
-	const totalComments = data?.pagination?.totalCount || 0;
 	const totalPages = data?.pagination?.totalPages || 0;
 
 	useEffect(() => {
 		setComments(data?.comments || []);
+		setTotalComments(data?.pagination?.totalCount || 0);
 	}, [data]);
 
-	const addComment = (comment: CommentWithVotes) => {
-		setComments((prev) => [comment, ...prev]);
+	const addComment = (comment: CommentWithVotes, parentId?: string) => {
+		if (!parentId) {
+			// If it's a top-level comment, add it to the root level
+			setComments((prev) => [comment, ...prev]);
+			return;
+		}
+
+		// Recursive function to find the parent and add the comment
+		const addCommentRecursive = (
+			comments: CommentWithVotes[],
+			parentId: string,
+		): CommentWithVotes[] => {
+			return comments.map((parentComment) => {
+				if (parentComment.id === parentId) {
+					// Found the parent, add the new comment to its replies
+					return {
+						...parentComment,
+						replies: [comment, ...parentComment.replies], // Add the new comment to the replies
+						updatedAt: new Date(), // Update the parent's updatedAt field
+					};
+				}
+
+				// Recursively process the replies
+				const updatedReplies = addCommentRecursive(
+					parentComment.replies,
+					parentId,
+				);
+
+				// If the comment is in the replies, update the parent's updatedAt
+				if (updatedReplies !== parentComment.replies) {
+					return {
+						...parentComment,
+						replies: updatedReplies,
+						updatedAt: new Date(), // Update the parent's updatedAt field
+					};
+				}
+
+				return parentComment; // No changes, return the original comment
+			});
+		};
+
+		// Update the comments state with the new structure
+		setComments((prev) => addCommentRecursive(prev, parentId));
 	};
 
+	const deleteCommentRecursive = (
+		commentId: string,
+		comments: CommentWithVotes[],
+	): { updatedComments: CommentWithVotes[]; found: boolean } => {
+		let found = false;
+
+		const updatedComments = comments.filter((comment) => {
+			if (comment.id === commentId) {
+				found = true; // Mark as found and skip this comment
+				if (!comment.parentId) {
+					setTotalComments((prev) => prev - 1);
+				}
+				return false;
+			}
+
+			const { updatedComments: updatedReplies, found: replyFound } =
+				deleteCommentRecursive(commentId, comment.replies);
+
+			if (replyFound) {
+				found = true; // Mark as found if the comment was found in replies
+				comment.updatedAt = new Date(); // this is require to update the keys of rendering
+			}
+
+			comment.replies = [...updatedReplies]; // Update replies
+			return true;
+		});
+
+		return { updatedComments, found };
+	};
+
+	const updateCommentRecursive = (
+		commentId: string,
+		newContent: string,
+		comments: CommentWithVotes[],
+	): { updatedComments: CommentWithVotes[]; found: boolean } => {
+		let found = false;
+
+		const updatedComments = comments.map((comment) => {
+			if (comment.id === commentId) {
+				found = true; // Mark as found and update the content
+				return {
+					...comment,
+					content: newContent,
+				};
+			}
+
+			const { updatedComments: updatedReplies, found: replyFound } =
+				updateCommentRecursive(commentId, newContent, comment.replies);
+
+			if (replyFound) {
+				found = true; // Mark as found if the comment was found in replies
+			}
+
+			return {
+				...comment,
+				replies: updatedReplies, // Update replies
+			};
+		});
+
+		return { updatedComments, found };
+	};
+
+	const deleteComment = (commentId: string) => {
+		const { updatedComments } = deleteCommentRecursive(commentId, comments);
+		setComments(JSON.parse(JSON.stringify(updatedComments)));
+	};
+
+	const updateComment = (commentId: string, newContent: string) => {
+		const { updatedComments } = updateCommentRecursive(
+			commentId,
+			newContent,
+			comments,
+		);
+
+		setComments([...updatedComments]);
+	};
 	return (
 		<CommentContext.Provider
 			value={{
@@ -76,6 +196,8 @@ export const CommentProvider: React.FC<CommentProviderProps> = ({
 				addComment,
 				postId,
 				totalPages,
+				deleteComment,
+				updateComment,
 			}}
 		>
 			{children}

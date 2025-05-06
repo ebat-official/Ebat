@@ -12,6 +12,7 @@ interface RawCommentResult {
 	id: string;
 	content: Buffer;
 	createdAt: Date;
+	updatedAt: Date;
 	authorId: string;
 	postId: string;
 	parentId: string | null;
@@ -151,6 +152,7 @@ export async function getCommentsWithVotes(
 				id: row.id,
 				content,
 				createdAt: row.createdAt,
+				updatedAt: row.updatedAt,
 				authorId: row.authorId,
 				postId: row.postId,
 				parentId: row.parentId,

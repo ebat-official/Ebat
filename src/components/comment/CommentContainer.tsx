@@ -11,16 +11,8 @@ type CommentContainerProps = {
 };
 
 const CommentInner = () => {
-	const {
-		comments,
-		totalComments,
-		isLoading,
-		currentPage,
-		setCurrentPage,
-		setCommentSortOption,
-		addComment,
-		postId,
-	} = useCommentContext();
+	const { totalComments, setCommentSortOption, addComment, postId } =
+		useCommentContext();
 
 	return (
 		<div className="flex flex-col gap-8">

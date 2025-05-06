@@ -11,6 +11,7 @@ import { FaChevronUp, FaRegCommentDots } from "react-icons/fa";
 import CommentLikeButton from "./CommentLikeButton";
 import { CommentActionButton } from "./CommentActionButton";
 import CommentAddBox from "./CommentAddBox";
+import { useCommentContext } from "./CommentContext";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
@@ -25,7 +26,7 @@ export function CommentViewBox({
 	const {
 		id,
 		author,
-		content: initialContent,
+		content,
 		createdAt,
 		replies: initialReplies = [],
 	} = comment;
@@ -33,20 +34,21 @@ export function CommentViewBox({
 	const [replies, setReplies] = useState<CommentWithVotes[]>(initialReplies);
 	const [areRepliesExpanded, setAreRepliesExpanded] = useState(true);
 	const [isEditMode, setIsEditMode] = useState(false);
-	const [content, setContent] = useState(initialContent);
-
-	useEffect(() => {
-		setContent(initialContent);
-	}, [initialContent]);
-
+	const { updateComment } = useCommentContext();
 	const toggleReplies = () => {
 		setAreRepliesExpanded((prev) => !prev);
 	};
+	const { addComment } = useCommentContext();
 
 	const commentAddHandler = (comment: CommentWithVotes) => {
-		setReplies((prev) => [comment, ...prev]);
+		setReplies((prev) => [comment, ...prev]); //handling this locally remove the layou shift
+		addComment(comment);
 		setIsReplying(false);
 	};
+
+	useEffect(() => {
+		setReplies(initialReplies);
+	}, [initialReplies]);
 
 	return (
 		<Card className=" shadow-none border-0 py-0 pt-6 w-full">
@@ -102,7 +104,7 @@ export function CommentViewBox({
 								parentId={id}
 								cancelHandler={() => setIsEditMode(false)}
 								commentAddHandler={(comment) => {
-									setContent(comment.content);
+									updateComment(id, comment.content || "");
 									setIsEditMode(false);
 								}}
 								autoFocus
@@ -131,6 +133,7 @@ export function CommentViewBox({
 								</Button>
 							)}
 							<CommentActionButton
+								postId={postId}
 								commentId={id}
 								editModeHandler={() => {
 									setIsEditMode((prev) => !prev);
@@ -178,7 +181,10 @@ export function CommentViewBox({
 							}}
 						>
 							{replies.map((reply, indx) => (
-								<div className="flex" key={reply.id}>
+								<div
+									className="flex"
+									key={`${comment.id}-${comment.updatedAt}`}
+								>
 									<div
 										aria-hidden="true"
 										className="thread flex justify-end items-start relative w-4 md:w-8  lg:w-10"

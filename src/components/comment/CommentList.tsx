@@ -25,7 +25,6 @@ export function CommentList() {
 		postId,
 	} = useCommentContext();
 	const commentsExists = comments?.length;
-
 	return (
 		<div className="flex flex-col gap-10">
 			<div className="space-y-4">
@@ -52,7 +51,7 @@ export function CommentList() {
 						)}
 						{comments.map((comment) => (
 							<CommentViewBox
-								key={comment.id}
+								key={`${comment.id}-${comment.updatedAt}`}
 								comment={comment}
 								postId={postId}
 							/>

@@ -43,7 +43,7 @@ export async function GET(
 						status: 200,
 						headers: {
 							"X-Cache": "HIT",
-							"Cache-Control": "public, max-age=120",
+							"Cache-Control": "public, max-age=10",
 							"Content-Type": "application/json",
 						},
 					});
@@ -82,7 +82,7 @@ export async function GET(
 			return NextResponse.json(data, {
 				status: 200,
 				headers: {
-					"Cache-Control": "public, max-age=30",
+					"Cache-Control": "public, max-age=10",
 					"Content-Type": "application/json",
 				},
 			});
@@ -91,7 +91,7 @@ export async function GET(
 		return NextResponse.json(data, {
 			status: 200,
 			headers: {
-				"Cache-Control": "public, max-age=30",
+				"Cache-Control": "public, max-age=10",
 				"Content-Type": "application/json",
 			},
 		});

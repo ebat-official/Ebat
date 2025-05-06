@@ -215,6 +215,7 @@ model Comment {
   id        String           @id @default(uuid()) @db.Uuid
   content   Bytes
   createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now())
   author    User             @relation(fields: [authorId], references: [id])
   authorId  String           @db.Uuid
   post      Post             @relation(fields: [postId], references: [id], onDelete: Cascade)

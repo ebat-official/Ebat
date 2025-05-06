@@ -17,7 +17,7 @@ import pako from "pako";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { commentNodes } from "@/components/shared/Lexical Editor/utils/SSR/nodes";
-import { SUCCESS } from "@/utils/contants";
+import { ERROR, SUCCESS } from "@/utils/contants";
 
 type CommentIncludeType = Prisma.CommentGetPayload<{
 	include: typeof commentInclude;
@@ -93,6 +93,7 @@ async function formatCommentWithVotes(
 		// @ts-ignore
 		content: await getHtml(comment.content, commentNodes),
 		createdAt: comment.createdAt,
+		updatedAt: comment.updatedAt,
 		authorId: comment.authorId,
 		postId: comment.postId,
 		parentId: comment.parentId,
@@ -148,6 +149,7 @@ export async function createEditComment(
 		postId: data.postId,
 		content: pako.deflate(JSON.stringify(data.content)), // Compress content
 		authorId: user.id,
+		updatedAt: new Date(),
 	};
 
 	if (data.id) {
@@ -198,4 +200,45 @@ export async function createEditComment(
 	});
 
 	return { status: SUCCESS, data: result };
+}
+
+export async function deleteComment(
+	commentId: string,
+	postId: string,
+): Promise<GenerateActionReturnType<string>> {
+	// Validate the user
+	const user = await validateUser();
+
+	if (!user) return UNAUTHENTICATED_ERROR;
+
+	// Check if the comment exists and belongs to the user
+	const existingComment = await prisma.comment.findUnique({
+		where: { id: commentId },
+		select: { authorId: true },
+	});
+
+	if (!existingComment) {
+		return {
+			status: ERROR,
+			data: { message: "Comment not found." },
+		};
+	}
+
+	if (existingComment.authorId !== user.id) {
+		return {
+			status: ERROR,
+			data: { message: "You are not authorized to delete this comment." },
+		};
+	}
+
+	// Delete the comment (children will be deleted automatically due to `onDelete: Cascade`)
+	await prisma.comment.delete({
+		where: { id: commentId },
+	});
+	invalidateCommentsCache(postId);
+	// Return success response
+	return {
+		status: SUCCESS,
+		data: SUCCESS,
+	};
 }

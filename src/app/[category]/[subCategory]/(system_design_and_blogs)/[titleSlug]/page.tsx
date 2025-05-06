@@ -38,7 +38,6 @@ export async function generateMetadata({
 export default async function PostPage({ params }: { params: PageParams }) {
 	const awaitedParams = await params;
 	const post = await getPostFromURL(awaitedParams);
-	console.log("pranav", awaitedParams, post);
 	if (!post) return notFound();
 	return (
 		<>
