@@ -6,33 +6,55 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Post } from "@prisma/client";
+import { Post, PostType } from "@prisma/client";
 import { normalizeCompaniesData } from "@/hooks/useCompanyList";
 import companiesData from "@/utils/companyListConfig";
 import { AiOutlineTag } from "react-icons/ai";
 import { IoPeopleOutline } from "react-icons/io5";
+import { CiCircleList, CiViewList } from "react-icons/ci";
 
 import { RiBuilding2Line } from "react-icons/ri";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
-import { PostWithExtraDetails } from "@/utils/types";
+import {
+	PostWithExtraDetails,
+	TableOfContent as TableOfContentType,
+} from "@/utils/types";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { TableOfContent } from "@/components/post view/TableOfContent";
+import { Card, CardContent } from "../ui/card";
+import { FaListUl } from "react-icons/fa";
+
 type PostDetailsAccordianProps = {
 	post: PostWithExtraDetails;
 };
 
 const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 	return (
-		<Accordion type="single" collapsible className="w-full">
-			<CompaniesAccordion companies={post.companies} />
-			<TopicsAccordion topics={post.topics} />
-			<CollaboratorsAccordion collaborators={post.collaborators} />
-		</Accordion>
+		<Card>
+			<CardContent>
+				<Accordion
+					type="single"
+					collapsible
+					className="w-full"
+					defaultValue="table-of-content"
+				>
+					<CompaniesAccordion companies={post.companies} />
+					<TopicsAccordion topics={post.topics} />
+					<CollaboratorsAccordion collaborators={post.collaborators} />
+					{(post.type === PostType.BLOGS ||
+						post.type === PostType.SYSTEMDESIGN) &&
+						post.tableOfContent?.length && (
+							<TableOfContentAccordion tableOfContent={post.tableOfContent} />
+						)}
+				</Accordion>
+			</CardContent>
+		</Card>
 	);
 };
 
@@ -155,6 +177,26 @@ const CollaboratorsAccordion: FC<{
 						</p>
 					)}
 				</div>
+			</AccordionContent>
+		</AccordionItem>
+	);
+};
+
+// Table of Content Accordion
+const TableOfContentAccordion: FC<{
+	tableOfContent: TableOfContentType | undefined;
+}> = ({ tableOfContent }) => {
+	return (
+		<AccordionItem value="table-of-content">
+			<AccordionTrigger>
+				<div className="flex gap-2 items-center">
+					<CiCircleList size={20} />
+
+					<span>Table of Contents</span>
+				</div>
+			</AccordionTrigger>
+			<AccordionContent>
+				<TableOfContent tableOfContent={tableOfContent} />
 			</AccordionContent>
 		</AccordionItem>
 	);

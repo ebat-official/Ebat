@@ -1,22 +1,14 @@
 import React, { FC } from "react";
 import { EditorProvider } from "../shared/Lexical Editor/providers/EditorContext";
 import RightPanelLayout from "../shared/RightPanelLayout";
-import {
-	ContentReturnType,
-	ContentType,
-	PostWithExtraDetails,
-} from "@/utils/types";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Post, UserProfile } from "@prisma/client";
-import { LexicalViewer } from "./LexicalViewer";
+import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
+import { Card, CardContent } from "../ui/card";
 import { PostStatsBadge } from "./PostStatsBadge";
 import { Separator } from "@/components/ui/separator";
 import PostDetailsAccordian from "./PostDetailsAccordian";
-import Comment from "@/components/comment/CommentAddBox";
 import CommentContainer from "@/components/comment/CommentContainer";
 import { PostContentRender } from "./PostContentRender";
 import PostLikeButton from "./PostLikeButton";
-import { TableOfContent } from "./TableOfContent";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -40,7 +32,6 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 								<PostContentRender
 									content={post.content as ContentReturnType}
 								/>
-								<PostDetailsAccordian post={post} />
 							</CardContent>
 						</div>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
@@ -51,9 +42,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 					</Card>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>
-					<div className=" ">
-						<TableOfContent tableOfContent={post.tableOfContent} />
-					</div>
+					<PostDetailsAccordian post={post} />
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
 		</EditorProvider>
