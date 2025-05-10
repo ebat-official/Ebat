@@ -27,7 +27,7 @@ export const TableOfContent: FC<TableOfContentProps> = ({ tableOfContent }) => {
 					<a
 						href={`#${item.id}`}
 						className={cn(
-							"hover:underline text-ellipsis overflow-hidden whitespace-nowrap capitalize",
+							"hover:underline text-ellipsis overflow-hidden sm:whitespace-nowrap capitalize",
 							item.level === 1 && "font-semibold text-sm ",
 							item.level === 2 && "text-sm",
 							item.level === 3 && "pl-2 text-sm",

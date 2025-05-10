@@ -36,13 +36,17 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 						</div>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
 							<Separator className=" my-6 " />
-
+							<div className="md:hidden">
+								<PostDetailsAccordian post={post} />
+							</div>
 							<CommentContainer postId={post.id} />
 						</CardContent>
 					</Card>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>
-					<PostDetailsAccordian post={post} />
+					<div className="hidden md:block">
+						<PostDetailsAccordian post={post} />
+					</div>
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
 		</EditorProvider>
