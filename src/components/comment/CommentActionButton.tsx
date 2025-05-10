@@ -50,11 +50,6 @@ export function CommentActionButton({
 		}
 	};
 
-	const handleReport = () => {
-		console.log(`Report comment ${commentId}`);
-		// Future: call report action here
-	};
-
 	return (
 		<>
 			<DropdownMenu>
@@ -66,7 +61,7 @@ export function CommentActionButton({
 					<DropdownMenuItem onClick={() => setShowDeleteConfirmation(true)}>
 						Delete
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={handleReport}>Report</DropdownMenuItem>
+					{/* <DropdownMenuItem onClick={handleReport}>Report</DropdownMenuItem> */}
 				</DropdownMenuContent>
 			</DropdownMenu>
 
