@@ -76,6 +76,7 @@ export type PageParams = Promise<{
 export type PostWithExtraDetails = Omit<Post, "content"> & {
 	content: Uint8Array | ContentReturnType;
 	completionCount?: number;
+	tableOfContent?: TableOfContent;
 	collaborators: Array<
 		Pick<User, "id" | "userName"> & {
 			userProfile: { name: string | null; image: string | null } | null;
@@ -201,3 +202,9 @@ export type GenerateActionReturnType<SuccessDataType> =
 
 export type SuccessType = typeof SUCCESS;
 export type ErrorType = typeof ERROR;
+
+export type TableOfContent = {
+	id: string;
+	title: string;
+	level: number;
+}[];

@@ -10,11 +10,13 @@ import {
 	PostWithExtraDetails,
 	UserSearchResult,
 	ContentReturnType,
+	TableOfContent,
 } from "../types";
 import { PostCategory, SubCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import pako from "pako";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
+import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
 
 export const fetchPostById = async (
 	postId: string,
@@ -99,6 +101,7 @@ export async function getPostFromURL(params: {
 			post: "",
 			answer: "",
 		};
+		let tableOfContent: TableOfContent = [];
 
 		if (post.content) {
 			const parsedContent = JSON.parse(
@@ -107,7 +110,9 @@ export async function getPostFromURL(params: {
 
 			if (parsedContent.post?.blocks) {
 				const postHtml = await getHtml(parsedContent.post.blocks);
-				ContentHtml.post = postHtml;
+				const { toc, htmlWithAnchors } = extractTOCAndEnhanceHTML(postHtml);
+				ContentHtml.post = htmlWithAnchors;
+				tableOfContent = toc;
 			}
 			if (parsedContent.answer?.blocks) {
 				const answerHtml = await getHtml(parsedContent.answer.blocks);
@@ -121,6 +126,7 @@ export async function getPostFromURL(params: {
 			...post,
 			content: ContentHtml,
 			completionCount,
+			tableOfContent,
 		};
 	} catch (error) {
 		console.error("Error fetching post:", error);

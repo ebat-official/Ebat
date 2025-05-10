@@ -16,6 +16,7 @@ import Comment from "@/components/comment/CommentAddBox";
 import CommentContainer from "@/components/comment/CommentContainer";
 import { PostContentRender } from "./PostContentRender";
 import PostLikeButton from "./PostLikeButton";
+import { TableOfContent } from "./TableOfContent";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -50,7 +51,9 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 					</Card>
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel>
-					<div className="h-screen " />
+					<div className=" ">
+						<TableOfContent tableOfContent={post.tableOfContent} />
+					</div>
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
 		</EditorProvider>

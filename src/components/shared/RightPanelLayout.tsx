@@ -70,7 +70,7 @@ function SidePanel({
 			{/* Side Panel */}
 			<div
 				className={cn(
-					"rightsidebar bg-background md:w-[340px] xl:w-[400px] self-start relative top-0 right-0 h-full shadow-lg transition-[width,transform] duration-400", // Added transition for width
+					"rightsidebar bg-background md:w-[340px] xl:w-[400px] self-start relative top-0 right-0 shadow-lg transition-[width,transform] duration-400", // Added transition for width
 					"peer-checked:w-0 peer-checked:translate-x-full", // Collapse when checkbox is checked
 					className,
 				)}
