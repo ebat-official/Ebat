@@ -10,8 +10,8 @@ const TooltipAccordianTrigger = ({
 	<Tooltip>
 		<TooltipTrigger asChild>
 			<div className="flex items-center justify-center gap-1">
-				<span>{label}</span>
 				{icon}
+				<span>{label}</span>
 			</div>
 		</TooltipTrigger>
 		<TooltipContent>

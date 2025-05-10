@@ -39,12 +39,14 @@ const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 		<Card>
 			<CardContent>
 				<Accordion
-					type="single"
-					collapsible
 					className="w-full"
-					defaultValue="table-of-content"
+					defaultValue={["table-of-content", "companies"]}
+					type="multiple"
 				>
-					<CompaniesAccordion companies={post.companies} />
+					{post.companies?.length > 0 && (
+						<CompaniesAccordion companies={post.companies} />
+					)}
+
 					<TopicsAccordion topics={post.topics} />
 					<CollaboratorsAccordion collaborators={post.collaborators} />
 					{(post.type === PostType.BLOGS ||
