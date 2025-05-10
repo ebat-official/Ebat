@@ -12,7 +12,7 @@ export const TableOfContent: FC<TableOfContentProps> = ({ tableOfContent }) => {
 		return null;
 	}
 	return (
-		<ul className="flex flex-col gap-2 relative">
+		<ul className="flex flex-col gap-4 relative">
 			{tableOfContent.map((item) => (
 				<li key={item.id} className="flex gap-2 items-center">
 					<div>
@@ -37,7 +37,7 @@ export const TableOfContent: FC<TableOfContentProps> = ({ tableOfContent }) => {
 					</a>
 				</li>
 			))}
-			<div className="w-[1px] ml-1 left-0 top-1/2 -translate-y-1/2 h-[87%] bg-green-600 absolute" />
+			<div className="w-[1px] ml-1 left-0 top-1/2 -translate-y-1/2 h-[90%] bg-green-600 absolute" />
 		</ul>
 	);
 };

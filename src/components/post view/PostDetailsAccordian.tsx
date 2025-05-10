@@ -70,7 +70,7 @@ const TopicsAccordion: FC<{ topics: string[] }> = ({ topics }) => {
 					<span>Topics</span>
 				</div>
 			</AccordionTrigger>
-			<AccordionContent>
+			<AccordionContent className="mt-2">
 				<div className="flex flex-wrap gap-2">
 					{topics.length > 0 ? (
 						topics.map((topic, index) => (
@@ -101,7 +101,7 @@ const CompaniesAccordion: FC<{ companies: string[] }> = ({ companies }) => {
 					<span>Companies</span>
 				</div>
 			</AccordionTrigger>
-			<AccordionContent>
+			<AccordionContent className="mt-2">
 				<div className="flex flex-wrap gap-2">
 					{companies.length > 0 ? (
 						companies.map((companyName, index) => {
@@ -142,7 +142,7 @@ const CollaboratorsAccordion: FC<{
 					<span>Collaborators</span>
 				</div>
 			</AccordionTrigger>
-			<AccordionContent>
+			<AccordionContent className="mt-2">
 				<div className="flex flex-wrap gap-2">
 					{collaborators?.length > 0 ? (
 						collaborators.map((collaborator) => {
@@ -193,11 +193,10 @@ const TableOfContentAccordion: FC<{
 			<AccordionTrigger>
 				<div className="flex gap-2 items-center">
 					<CiCircleList size={20} />
-
 					<span>Table of Contents</span>
 				</div>
 			</AccordionTrigger>
-			<AccordionContent>
+			<AccordionContent className="mt-2">
 				<TableOfContent tableOfContent={tableOfContent} />
 			</AccordionContent>
 		</AccordionItem>
