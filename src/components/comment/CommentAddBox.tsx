@@ -112,7 +112,7 @@ export default function CommentAddBox({
 			<Card className="pb-2 px-2">
 				<CardContent className="pl-2 px-0 relative">
 					<Editor
-						id={parentId}
+						id={commentId || parentId}
 						onChangeHandler={setComment}
 						onMentionChangeHandler={setMentions}
 						content={content}

@@ -62,8 +62,8 @@ export const CommentProvider: React.FC<CommentProviderProps> = ({
 		setTotalComments(data?.pagination?.totalCount || 0);
 	}, [data]);
 
-	const addComment = (comment: CommentWithVotes, parentId?: string) => {
-		if (!parentId) {
+	const addComment = (comment: CommentWithVotes) => {
+		if (!comment.parentId) {
 			// If it's a top-level comment, add it to the root level
 			setComments((prev) => [comment, ...prev]);
 			return;
@@ -102,9 +102,9 @@ export const CommentProvider: React.FC<CommentProviderProps> = ({
 				return parentComment; // No changes, return the original comment
 			});
 		};
-
+		const updatedComments = addCommentRecursive(comments, comment.parentId);
 		// Update the comments state with the new structure
-		setComments((prev) => addCommentRecursive(prev, parentId));
+		setComments(updatedComments);
 	};
 
 	const deleteCommentRecursive = (
@@ -153,17 +153,19 @@ export const CommentProvider: React.FC<CommentProviderProps> = ({
 				};
 			}
 
+			// Recursively update replies
 			const { updatedComments: updatedReplies, found: replyFound } =
 				updateCommentRecursive(commentId, newContent, comment.replies);
 
 			if (replyFound) {
 				found = true; // Mark as found if the comment was found in replies
+				return {
+					...comment,
+					replies: updatedReplies, // Properly update the replies array
+				};
 			}
 
-			return {
-				...comment,
-				replies: updatedReplies, // Update replies
-			};
+			return comment; // Return the original comment if no changes
 		});
 
 		return { updatedComments, found };
@@ -180,7 +182,6 @@ export const CommentProvider: React.FC<CommentProviderProps> = ({
 			newContent,
 			comments,
 		);
-
 		setComments([...updatedComments]);
 	};
 	return (

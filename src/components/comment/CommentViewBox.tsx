@@ -12,6 +12,7 @@ import CommentLikeButton from "./CommentLikeButton";
 import { CommentActionButton } from "./CommentActionButton";
 import CommentAddBox from "./CommentAddBox";
 import { useCommentContext } from "./CommentContext";
+import { useSession } from "next-auth/react";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
@@ -34,11 +35,12 @@ export function CommentViewBox({
 	const [replies, setReplies] = useState<CommentWithVotes[]>(initialReplies);
 	const [areRepliesExpanded, setAreRepliesExpanded] = useState(true);
 	const [isEditMode, setIsEditMode] = useState(false);
-	const { updateComment } = useCommentContext();
+	const { updateComment, addComment } = useCommentContext();
+	const { data: session } = useSession();
+	const isAuthor = session?.user?.id === author?.id;
 	const toggleReplies = () => {
 		setAreRepliesExpanded((prev) => !prev);
 	};
-	const { addComment } = useCommentContext();
 
 	const commentAddHandler = (comment: CommentWithVotes) => {
 		setReplies((prev) => [comment, ...prev]); //handling this locally remove the layou shift
@@ -132,13 +134,15 @@ export function CommentViewBox({
 									Reply
 								</Button>
 							)}
-							<CommentActionButton
-								postId={postId}
-								commentId={id}
-								editModeHandler={() => {
-									setIsEditMode((prev) => !prev);
-								}}
-							/>
+							{isAuthor && (
+								<CommentActionButton
+									postId={postId}
+									commentId={id}
+									editModeHandler={() => {
+										setIsEditMode((prev) => !prev);
+									}}
+								/>
+							)}
 						</div>
 
 						{/* Reply form */}
@@ -158,7 +162,9 @@ export function CommentViewBox({
 										postId={postId}
 										parentId={id}
 										cancelHandler={() => setIsReplying(false)}
-										commentAddHandler={commentAddHandler}
+										commentAddHandler={(cmnt) => {
+											commentAddHandler(cmnt);
+										}}
 										autoFocus
 									/>
 								</motion.div>
