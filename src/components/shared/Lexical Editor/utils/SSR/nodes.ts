@@ -21,7 +21,7 @@ import { CollapsibleContentNode } from "../../nodes/CollapsibleNode/CollapsibleC
 import { CollapsibleTitleNode } from "../../nodes/CollapsibleNode/CollapsibleTitleNode";
 import { HintNode } from "../../nodes/SSRNodes/HintNode";
 import { LayoutContainerNode } from "../../nodes/LayoutNode/LayoutContainerNode";
-import { ExcalidrawNode } from "../../nodes/SSRNodes/ExcalidrawNode";
+// import { ExcalidrawNode } from "../../nodes/SSRNodes/ExcalidrawNode";
 
 export type LexicalNodeType = Klass<LexicalNode> | LexicalNodeReplacement;
 const nodes: LexicalNodeType[] = [
