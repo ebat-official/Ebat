@@ -26,7 +26,6 @@ export const TableOfContent: FC<TableOfContentProps> = ({ tableOfContent }) => {
 			{
 				root: null, // Use the viewport as the root
 				rootMargin: "0px",
-				threshold: 0.5, // Trigger when 50% of the element is visible
 			},
 		);
 
