@@ -48,7 +48,9 @@ const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 						post.tableOfContent?.length && (
 							<TableOfContentAccordion tableOfContent={post.tableOfContent} />
 						)}
-					{post.companies?.length > 0 && (
+					{((post.type !== PostType.BLOGS &&
+						post.type !== PostType.SYSTEMDESIGN) ||
+						post.companies?.length > 0) && (
 						<CompaniesAccordion companies={post.companies} />
 					)}
 

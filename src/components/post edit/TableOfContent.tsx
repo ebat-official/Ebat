@@ -16,12 +16,12 @@ export const TableOfContent: FC<TableOfContentProps> = () => {
 	const { scrollToNode } = useScrollToNode();
 	if (!tableOfContent?.length) {
 		return (
-			<div className="flex text-sm  mt-4  h-16 gap-2">
-				<IoIosInformationCircleOutline size={26} />
+			<div className="flex text-sm  mt-4  gap-2">
+				<IoIosInformationCircleOutline size={30} />
 				<span className="text-muted-foreground">
-					Adding <strong>h1</strong>, <strong>h2</strong>, or{" "}
-					<strong>h3</strong> elements will automatically create a table of
-					contents.
+					Adding <strong>Heading 1</strong>, <strong>Heading 2</strong>, or{" "}
+					<strong>Heading 3</strong> elements will automatically create a table
+					of contents.
 				</span>
 			</div>
 		);
