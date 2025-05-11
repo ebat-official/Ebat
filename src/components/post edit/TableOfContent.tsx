@@ -12,8 +12,8 @@ import { IoIosInformationCircleOutline } from "react-icons/io";
 interface TableOfContentProps {}
 
 export const TableOfContent: FC<TableOfContentProps> = () => {
-	const { tableOfContent } = useEditorContext();
-	const { scrollToNode, selectedKey } = useScrollToNode();
+	const { tableOfContent, selectedContentKey } = useEditorContext();
+	const { scrollToNode } = useScrollToNode();
 	if (!tableOfContent?.length) {
 		return (
 			<div className="flex text-sm  mt-4  h-16 gap-2">
@@ -47,7 +47,7 @@ export const TableOfContent: FC<TableOfContentProps> = () => {
 								tag === "h1" && "font-semibold text-sm ",
 								tag === "h2" && "text-sm",
 								tag === "h3" && "pl-2 text-sm",
-								selectedKey === key && "text-green-600",
+								selectedContentKey === key && "text-green-600",
 							)}
 						>
 							{text}

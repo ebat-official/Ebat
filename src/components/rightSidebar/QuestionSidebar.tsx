@@ -128,7 +128,7 @@ function QuestionSidebar({
 		<Card>
 			<CardContent>
 				<Accordion
-					defaultValue={["difficulty", "companies", "table of contents"]}
+					defaultValue={["difficulty", "table of contents"]}
 					type="multiple"
 					className="w-full"
 				>

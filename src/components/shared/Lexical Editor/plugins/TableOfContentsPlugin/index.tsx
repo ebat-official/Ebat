@@ -45,10 +45,10 @@ function TableOfContentsList({
 }: {
 	tableOfContents: Array<TableOfContentsEntry>;
 }) {
-	const selectedIndex = useRef(0);
 	const [editor] = useLexicalComposerContext();
 	const [showTable, setShowTable] = useState(false);
-	const { scrollToNode, selectedKey, setSelectedKey } = useScrollToNode();
+	const { scrollToNode, selectedKey, setSelectedKey, selectedIndex } =
+		useScrollToNode();
 
 	useEffect(() => {
 		function scrollCallback() {

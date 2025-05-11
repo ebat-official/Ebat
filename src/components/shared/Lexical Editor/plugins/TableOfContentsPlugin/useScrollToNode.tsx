@@ -1,11 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { NodeKey } from "lexical";
 import { useEditorContext } from "../../providers/EditorContext";
 
 export function useScrollToNode() {
 	const [selectedKey, setSelectedKey] = useState<NodeKey | null>(null);
 	const selectedIndex = useRef<number>(0);
-	const { editor } = useEditorContext();
+	const { editor, setSelectedContentKey } = useEditorContext();
+
+	useEffect(() => {
+		setSelectedContentKey(selectedKey);
+	}, [selectedKey]);
 
 	const scrollToNode = (key: NodeKey, currIndex: number) => {
 		editor?.getEditorState().read(() => {
@@ -16,8 +20,6 @@ export function useScrollToNode() {
 
 				// Smooth scroll to the element
 				domElement.scrollIntoView({ behavior: "smooth", block: "center" });
-
-				// Update selected key and index
 				setSelectedKey(key);
 				selectedIndex.current = currIndex;
 

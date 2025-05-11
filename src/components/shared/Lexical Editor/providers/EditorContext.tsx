@@ -8,7 +8,7 @@ import React, {
 	useCallback,
 	useMemo,
 } from "react";
-import { LexicalEditor } from "lexical"; // Import LexicalEditor type
+import { LexicalEditor, NodeKey } from "lexical"; // Import LexicalEditor type
 import { PLUGIN_CONFIG, pluginConfig, PluginConfigured } from "../appSettings";
 import { PluginNames } from "../constants";
 
@@ -23,6 +23,8 @@ interface EditorContextType {
 	setMinHeight: (height: string) => void;
 	editor: LexicalEditor | null; // Add editor state
 	setEditor: (editor: LexicalEditor) => void; // Add setter for editor
+	selectedContentKey: NodeKey | null; // Add selected content key state
+	setSelectedContentKey: (key: NodeKey | null) => void; // Add setter for selected content key
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -37,7 +39,9 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
 	const [pluginConfig, setPluginConfig] = useState(PLUGIN_CONFIG);
 	const [minHeight, setMinHeight] = useState<string>("250px");
 	const [editor, setEditor] = useState<LexicalEditor | null>(null); // Add editor state
-
+	const [selectedContentKey, setSelectedContentKey] = useState<NodeKey | null>(
+		null,
+	);
 	const setPlugin = useCallback((plugin: PluginNames, options: object) => {
 		setPluginConfig((prev) => ({
 			...prev,
@@ -59,7 +63,9 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
 			minHeight,
 			setMinHeight,
 			editor,
-			setEditor, // Expose setter
+			setEditor,
+			selectedContentKey,
+			setSelectedContentKey,
 		};
 	}, [id, tableOfContent, pluginConfig, setPlugin, minHeight, editor]);
 

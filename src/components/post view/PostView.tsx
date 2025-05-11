@@ -43,7 +43,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 						</CardContent>
 					</Card>
 				</RightPanelLayout.MainPanel>
-				<RightPanelLayout.SidePanel>
+				<RightPanelLayout.SidePanel className="sticky">
 					<div className="hidden md:block">
 						<PostDetailsAccordian post={post} />
 					</div>

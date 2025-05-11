@@ -208,7 +208,7 @@ function PostCreateEdit({
 							action={action}
 						/>
 					</RightPanelLayout.MainPanel>
-					<RightPanelLayout.SidePanel>
+					<RightPanelLayout.SidePanel className="sticky">
 						<QuestionSidebar
 							postType={postType}
 							postId={postId}
