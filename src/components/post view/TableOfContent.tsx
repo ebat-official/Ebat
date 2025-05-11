@@ -64,7 +64,6 @@ export const TableOfContent: FC<TableOfContentProps> = ({ tableOfContent }) => {
 						</div>
 						<a
 							href={`#${item.id}`}
-							onClick={() => setActiveId(item.id)}
 							className={cn(
 								"hover:underline text-ellipsis overflow-hidden sm:whitespace-nowrap capitalize",
 								item.level === 1 && "font-semibold text-sm",
