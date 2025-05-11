@@ -24,7 +24,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 						<div className="flex w-full justify-center">
 							<PostLikeButton postId={post.id} />
 							<CardContent className="flex flex-col h-full justify-center px-4 md:px-8 w-full max-w-3xl gap-4">
-								<h1 className="opacity-80 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none leading-relaxed">
+								<h1 className="opacity-90 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none leading-relaxed">
 									{post.title}
 								</h1>
 								<PostStatsBadge post={post} />

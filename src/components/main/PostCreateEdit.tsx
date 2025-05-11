@@ -210,6 +210,7 @@ function PostCreateEdit({
 					</RightPanelLayout.MainPanel>
 					<RightPanelLayout.SidePanel>
 						<QuestionSidebar
+							postType={postType}
 							postId={postId}
 							topicCategory={subCategory || "JAVASCRIPT"}
 							getSidebarData={setSidebarData}

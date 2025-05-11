@@ -8,18 +8,21 @@ import React, {
 	useCallback,
 	useMemo,
 } from "react";
+import { LexicalEditor } from "lexical"; // Import LexicalEditor type
 import { PLUGIN_CONFIG, pluginConfig, PluginConfigured } from "../appSettings";
 import { PluginNames } from "../constants";
 
 interface EditorContextType {
 	id: string;
 	setId: (id: string) => void;
-	tableOfContents: Array<TableOfContentsEntry>;
-	setTableOfContents: (entries: Array<TableOfContentsEntry>) => void;
+	tableOfContent: Array<TableOfContentsEntry>;
+	setTableOfContent: (entries: Array<TableOfContentsEntry>) => void;
 	pluginConfig: pluginConfig;
 	setPlugin: (plugin: PluginConfigured, options: object) => void;
 	minHeight: string;
 	setMinHeight: (height: string) => void;
+	editor: LexicalEditor | null; // Add editor state
+	setEditor: (editor: LexicalEditor) => void; // Add setter for editor
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -28,11 +31,12 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
 	const [id, setId] = useState<string>("");
-	const [tableOfContents, setTableOfContents] = useState<
+	const [tableOfContent, setTableOfContent] = useState<
 		Array<TableOfContentsEntry>
 	>([]);
 	const [pluginConfig, setPluginConfig] = useState(PLUGIN_CONFIG);
 	const [minHeight, setMinHeight] = useState<string>("250px");
+	const [editor, setEditor] = useState<LexicalEditor | null>(null); // Add editor state
 
 	const setPlugin = useCallback((plugin: PluginNames, options: object) => {
 		setPluginConfig((prev) => ({
@@ -48,14 +52,16 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
 		return {
 			id,
 			setId,
-			tableOfContents,
-			setTableOfContents,
+			tableOfContent,
+			setTableOfContent,
 			pluginConfig,
 			setPlugin,
 			minHeight,
 			setMinHeight,
+			editor,
+			setEditor, // Expose setter
 		};
-	}, [id, tableOfContents, pluginConfig, setPlugin]);
+	}, [id, tableOfContent, pluginConfig, setPlugin, minHeight, editor]);
 
 	return (
 		<EditorContext.Provider value={contextValue}>

@@ -90,12 +90,19 @@ export default function Core({
 	const [floatingAnchorElem, setFloatingAnchorElem] =
 		useState<HTMLDivElement | null>(null);
 	const [editor] = useLexicalComposerContext();
+	const { pluginConfig, minHeight, setEditor } = useEditorContext(); // Access setEditor from context
+
 	const [activeEditor, setActiveEditor] = useState(editor);
 	const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
 	const [hasFocus, setHasFocus] = useState(() => {
 		return editor.getRootElement() === document.activeElement;
 	});
 	const [isHovering, setIsHovering] = useState(false); // Track hover state
+
+	// Set the editor instance in the context
+	useLayoutEffect(() => {
+		setEditor(editor); // Set the editor instance in the context
+	}, [editor, setEditor]);
 
 	useLayoutEffect(() => {
 		setHasFocus(editor.getRootElement() === document.activeElement);
@@ -125,7 +132,6 @@ export default function Core({
 		}
 	}, []);
 
-	const { pluginConfig, minHeight } = useEditorContext();
 	return (
 		<div className="relative flex editor">
 			<div

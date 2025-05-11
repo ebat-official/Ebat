@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useEditorContext } from "../../providers/EditorContext";
+import { useScrollToNode } from "./useScrollToNode";
 
 const MARGIN_ABOVE_EDITOR = 624;
 const HEADING_WIDTH = 9;
@@ -44,25 +45,10 @@ function TableOfContentsList({
 }: {
 	tableOfContents: Array<TableOfContentsEntry>;
 }) {
-	const [selectedKey, setSelectedKey] = useState("");
 	const selectedIndex = useRef(0);
 	const [editor] = useLexicalComposerContext();
 	const [showTable, setShowTable] = useState(false);
-	function scrollToNode(key: NodeKey, currIndex: number) {
-		editor.getEditorState().read(() => {
-			const domElement = editor.getElementByKey(key);
-			if (domElement !== null) {
-				domElement.classList.add("ScrollToStyle");
-				domElement.scrollIntoView({ behavior: "smooth", block: "center" });
-
-				setSelectedKey(key);
-				selectedIndex.current = currIndex;
-				setTimeout(() => {
-					domElement.classList.remove("ScrollToStyle");
-				}, 2000);
-			}
-		});
-	}
+	const { scrollToNode, selectedKey, setSelectedKey } = useScrollToNode();
 
 	useEffect(() => {
 		function scrollCallback() {
@@ -199,14 +185,14 @@ function TableOfContentsList({
 }
 
 export default function TableOfContentsPlugin() {
-	const { setTableOfContents } = useEditorContext();
+	const { setTableOfContent } = useEditorContext();
 
 	return (
 		<LexicalTableOfContentsPlugin>
 			{(tableOfContents) => {
 				useEffect(() => {
-					setTableOfContents(tableOfContents);
-				}, [tableOfContents, setTableOfContents]);
+					setTableOfContent(tableOfContents);
+				}, [tableOfContents, setTableOfContent]);
 
 				return <TableOfContentsList tableOfContents={tableOfContents} />;
 			}}

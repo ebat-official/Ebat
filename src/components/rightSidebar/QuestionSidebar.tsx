@@ -21,6 +21,9 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import { QuestionSidebarData, TopicCategory } from "@/utils/types";
+import { CiCircleList } from "react-icons/ci";
+import { TableOfContent } from "../post edit/TableOfContent";
+import { PostType } from "@prisma/client";
 
 export type Duration = {
 	days: string;
@@ -34,6 +37,7 @@ interface QuestionSidebarProps {
 	postId: string;
 	defaultContent?: QuestionSidebarData | undefined;
 	dataLoading?: boolean;
+	postType: PostType;
 }
 
 const INITIAL_DURATION: Duration = { days: "0", minutes: "5", hours: "0" };
@@ -44,6 +48,7 @@ function QuestionSidebar({
 	postId,
 	defaultContent,
 	dataLoading,
+	postType,
 }: QuestionSidebarProps) {
 	const { companies, searchCompanies } = useCompanies();
 	const { topics, searchTopics } = useTopics(topicCategory);
@@ -123,7 +128,7 @@ function QuestionSidebar({
 		<Card>
 			<CardContent>
 				<Accordion
-					defaultValue={["difficulty", "companies"]}
+					defaultValue={["difficulty", "companies", "table of contents"]}
 					type="multiple"
 					className="w-full"
 				>
@@ -194,6 +199,20 @@ function QuestionSidebar({
 							/>
 						</AccordionContent>
 					</AccordionItem>
+					{(postType === PostType.BLOGS ||
+						postType === PostType.SYSTEMDESIGN) && (
+						<AccordionItem value="table of contents">
+							<AccordionTrigger>
+								<TooltipAccordianTrigger
+									label="Table of Contents"
+									icon={<CiCircleList size={20} />}
+								/>
+							</AccordionTrigger>
+							<AccordionContent>
+								<TableOfContent />
+							</AccordionContent>
+						</AccordionItem>
+					)}
 				</Accordion>
 			</CardContent>
 		</Card>
