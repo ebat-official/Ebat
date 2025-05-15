@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { zones } from "./constants";
 import { useEditorContext } from "../../providers/EditorContext";
 import { EditorFileUpload } from "@/utils/types";
+import { compressImage } from "@/utils/compressImage";
 
 interface FileUploadZoneProps {
 	InsertMedia: (files: { url: string; alt: string }[]) => void;
@@ -73,8 +74,9 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 		const uploadedFiles: EditorFileUpload[] = [];
 
 		for (const file of newFiles) {
+			const compressedImage = await compressImage(file);
 			try {
-				const { status, data } = await uploadFile(file, { postId });
+				const { status, data } = await uploadFile(compressedImage, { postId });
 				if (status === "error") throw new Error(data.message);
 				uploadedFiles.push({
 					url: data.url || "",

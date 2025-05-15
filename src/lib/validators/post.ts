@@ -119,16 +119,16 @@ const BasePostValidator = z
 		}
 
 		// Ensure thumbnail is required for BLOGS and SYSTEMDESIGN
-		if (
-			(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN) &&
-			!data.thumbnail
-		) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: "Thumbnail is required for blogs and system design posts.",
-				path: ["thumbnail"],
-			});
-		}
+		// if (
+		// 	(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN) &&
+		// 	!data.thumbnail
+		// ) {
+		// 	ctx.addIssue({
+		// 		code: z.ZodIssueCode.custom,
+		// 		message: "Thumbnail is required for blogs and system design posts.",
+		// 		path: ["thumbnail"],
+		// 	});
+		// }
 	});
 
 // Create the main validator with conditional content rules

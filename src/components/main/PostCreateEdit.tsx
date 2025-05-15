@@ -125,7 +125,7 @@ function PostCreateEdit({
 					? undefined
 					: subCategory,
 			postContent: content,
-			thumbnail: postData?.thumbnail || thumbnail,
+			thumbnail: thumbnail || postData?.thumbnail,
 			sidebarData,
 			type: postType,
 		};

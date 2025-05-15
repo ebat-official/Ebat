@@ -83,6 +83,7 @@
 		"axios": "^1.7.9",
 		"babel-plugin-react-compiler": "19.0.0-beta-714736e-20250131",
 		"bcryptjs": "^3.0.2",
+		"browser-image-compression": "2.0.2",
 		"canvas": "3.1.0",
 		"cheerio": "1.0.0",
 		"class-variance-authority": "^0.7.1",
