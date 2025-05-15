@@ -13,6 +13,7 @@ interface ConsolidatePostDataProps {
 	type: PostType;
 	sidebarData: Record<string, unknown>;
 	subCategory?: SubCategoryType;
+	thumbnail?: string | null;
 }
 
 const consolidatePostData = ({
@@ -22,6 +23,7 @@ const consolidatePostData = ({
 	type,
 	sidebarData,
 	subCategory,
+	thumbnail,
 }: ConsolidatePostDataProps) => {
 	return {
 		id: postId,
@@ -30,6 +32,7 @@ const consolidatePostData = ({
 		title: postContent?.post?.title,
 		content: postContent,
 		subCategory,
+		thumbnail,
 		...sidebarData,
 	};
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Upload, Loader2, X, Image, UploadCloudIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import useFileUpload from "@/hooks/useFileUpload";
 import { toast } from "sonner";
 import { zones } from "./constants";
 import { useEditorContext } from "../../providers/EditorContext";
+import { EditorFileUpload } from "@/utils/types";
 
 interface FileUploadZoneProps {
 	InsertMedia: (files: { url: string; alt: string }[]) => void;
@@ -21,11 +22,17 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 	closeHandler,
 }) => {
 	const [draggedZone, setDraggedZone] = useState<number | null>(null);
-	const [files, setFiles] = useState<{ url: string; alt: string }[]>([]);
+	const [files, setFiles] = useState<EditorFileUpload[]>([]);
 	const [uploading, setUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const { uploadFile, progress } = useFileUpload();
-	const { id: postId } = useEditorContext();
+	const { id: postId, addFilesToContext } = useEditorContext();
+
+	useEffect(() => {
+		if (files.length > 0) {
+			addFilesToContext(files);
+		}
+	}, [files]);
 
 	const handleDragEnter = (index: number) => (e: React.DragEvent) => {
 		e.preventDefault();
@@ -63,14 +70,17 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 	const upload = async (newFiles: File[]) => {
 		setUploading(true);
 
-		const uploadedFiles: { url: string; alt: string }[] = [];
+		const uploadedFiles: EditorFileUpload[] = [];
 
 		for (const file of newFiles) {
 			try {
 				const { status, data } = await uploadFile(file, { postId });
 				if (status === "error") throw new Error(data.message);
-
-				uploadedFiles.push({ url: data.url || "", alt: file.name });
+				uploadedFiles.push({
+					url: data.url || "",
+					alt: file.name,
+					type: data.type || "",
+				});
 			} catch (error) {
 				closeHandler();
 				const errMsg = `Error uploading file "${file.name}": ${
@@ -80,7 +90,6 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 				toast.error(errMsg);
 			}
 		}
-
 		setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
 		setUploading(false);
 	};

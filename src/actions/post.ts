@@ -83,6 +83,7 @@ const buildBasePostData = (
 	topics: data.topics || [],
 	category: data.category,
 	subCategory: data.subCategory,
+	thumbnail: data.thumbnail || null,
 });
 
 // Draft Post Creation

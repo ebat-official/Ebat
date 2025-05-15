@@ -46,6 +46,7 @@ function PostCreateEdit({
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
 	const [postPublished, setPostPublished] = useState<boolean | string>(false);
+	const [postThumbnail, setPostThumbnail] = useState<string | null>();
 	const [blockUserAccess, setBlockUserAccess] = useState<{
 		message?: string;
 		title?: string;
@@ -115,6 +116,7 @@ function PostCreateEdit({
 	}, [postPublishError]);
 
 	const getPostData = (postContent: ContentType) => {
+		const { thumbnail, ...content } = postContent;
 		return {
 			postId,
 			category,
@@ -122,7 +124,8 @@ function PostCreateEdit({
 				postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN
 					? undefined
 					: subCategory,
-			postContent,
+			postContent: content,
+			thumbnail: postData?.thumbnail || thumbnail,
 			sidebarData,
 			type: postType,
 		};
@@ -142,6 +145,12 @@ function PostCreateEdit({
 
 	const publishHandler = async (postContent: ContentType) => {
 		const data = getPostData(postContent);
+		if (
+			(postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) &&
+			!data.thumbnail
+		) {
+			//thumbnail is required for blogs and system design
+		}
 		const result = await publish(data);
 		if (result.data) {
 			setPostPublished(result.data.slug || true);

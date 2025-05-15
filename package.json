@@ -82,7 +82,7 @@
 		"ai": "^4.1.66",
 		"axios": "^1.7.9",
 		"babel-plugin-react-compiler": "19.0.0-beta-714736e-20250131",
-		"bcryptjs": "^2.4.3",
+		"bcryptjs": "^3.0.2",
 		"canvas": "3.1.0",
 		"cheerio": "1.0.0",
 		"class-variance-authority": "^0.7.1",
@@ -128,7 +128,6 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@tailwindcss/postcss": "^4.0.0",
-		"@types/bcryptjs": "^2.4.6",
 		"@types/lodash-es": "^4.17.12",
 		"@types/node": "^20",
 		"@types/pako": "2.0.3",

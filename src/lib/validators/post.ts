@@ -37,6 +37,7 @@ export const PostDraftValidator = z
 		companies: z.array(z.string()).optional(),
 		completionDuration: z.number().int().positive().optional(),
 		topics: z.array(z.string()).optional(),
+		thumbnail: z.string().url().optional(),
 		category: z.nativeEnum(PostCategory, {
 			errorMap: () => ({ message: INVALID_CATEGORY }),
 		}),
@@ -92,6 +93,7 @@ const BasePostValidator = z
 			post: z.custom<EditorContent>().optional(),
 			answer: z.custom<EditorContent>().optional(),
 		}),
+		thumbnail: z.string().url().optional(),
 	})
 	.superRefine((data, ctx) => {
 		// Ensure subCategory is required if the type is not BLOGS or SYSTEMDESIGN
@@ -113,6 +115,18 @@ const BasePostValidator = z
 				code: z.ZodIssueCode.custom,
 				message: INVALID_DIFFICULTY,
 				path: ["difficulty"],
+			});
+		}
+
+		// Ensure thumbnail is required for BLOGS and SYSTEMDESIGN
+		if (
+			(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN) &&
+			!data.thumbnail
+		) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Thumbnail is required for blogs and system design posts.",
+				path: ["thumbnail"],
 			});
 		}
 	});

@@ -11,6 +11,7 @@ import React, {
 import { LexicalEditor, NodeKey } from "lexical"; // Import LexicalEditor type
 import { PLUGIN_CONFIG, pluginConfig, PluginConfigured } from "../appSettings";
 import { PluginNames } from "../constants";
+import { EditorFileUpload } from "@/utils/types";
 
 interface EditorContextType {
 	id: string;
@@ -25,6 +26,8 @@ interface EditorContextType {
 	setEditor: (editor: LexicalEditor) => void; // Add setter for editor
 	selectedContentKey: NodeKey | null; // Add selected content key state
 	setSelectedContentKey: (key: NodeKey | null) => void; // Add setter for selected content key
+	files: EditorFileUpload[];
+	addFilesToContext: (files: EditorFileUpload[]) => void;
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -51,23 +54,24 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
 			},
 		}));
 	}, []);
-
-	const contextValue = useMemo(() => {
-		return {
-			id,
-			setId,
-			tableOfContent,
-			setTableOfContent,
-			pluginConfig,
-			setPlugin,
-			minHeight,
-			setMinHeight,
-			editor,
-			setEditor,
-			selectedContentKey,
-			setSelectedContentKey,
-		};
-	}, [id, tableOfContent, pluginConfig, setPlugin, minHeight, editor]);
+	const [files, setFiles] = useState<EditorFileUpload[]>([]);
+	const contextValue = {
+		id,
+		setId,
+		tableOfContent,
+		setTableOfContent,
+		pluginConfig,
+		setPlugin,
+		minHeight,
+		setMinHeight,
+		editor,
+		setEditor,
+		selectedContentKey,
+		setSelectedContentKey,
+		files,
+		addFilesToContext: (files: EditorFileUpload[]) =>
+			setFiles((prev) => [...prev, ...files]),
+	};
 
 	return (
 		<EditorContext.Provider value={contextValue}>

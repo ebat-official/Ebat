@@ -17,6 +17,8 @@ import { Loader2 } from "lucide-react";
 import { PostType } from "@prisma/client";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
 import { POST_ACTIONS } from "@/utils/contants";
+import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
+import { get } from "http";
 
 interface EditorContainerProps {
 	postId: string;
@@ -42,7 +44,7 @@ function EditorContainer({
 	action = POST_ACTIONS.CREATE,
 }: EditorContainerProps) {
 	const [content, setContent] = useState<ContentType>({});
-
+	const { files } = useEditorContext();
 	const localStorageKey = `editor-${action}_${postId}`;
 	const savedData = getLocalStorage<ContentType>(localStorageKey);
 
@@ -90,6 +92,11 @@ function EditorContainer({
 		}
 	};
 
+	const getPayload = () => {
+		const thumbnailObj = files.filter((file) => file.type.startsWith("image"));
+		return { ...content, thumbnail: thumbnailObj[0]?.url };
+	};
+
 	return (
 		<Card className="relative items-center">
 			<CardContent className="flex h-full justify-center px-4 md:px-8 w-full max-w-3xl ">
@@ -101,7 +108,7 @@ function EditorContainer({
 									<Button
 										variant="outline"
 										className="justify-center items-center flex ga-2"
-										onClick={() => saveHandler(content)}
+										onClick={() => saveHandler(getPayload())}
 										disabled={actionDraftLoading || actionPublishLoading}
 									>
 										{actionDraftLoading ? (
@@ -121,7 +128,7 @@ function EditorContainer({
 					)}
 					<Button
 						disabled={actionDraftLoading || actionPublishLoading}
-						onClick={() => publishHandler(content)}
+						onClick={() => publishHandler(getPayload())}
 						className="bg-linear-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
 					>
 						{actionPublishLoading ? (

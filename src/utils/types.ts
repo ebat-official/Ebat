@@ -20,6 +20,7 @@ import {
 export interface ContentType {
 	post?: EditorContent;
 	answer?: EditorContent;
+	thumbnail?: string;
 }
 export interface ContentReturnType {
 	post?: string;
@@ -208,3 +209,9 @@ export type TableOfContent = {
 	title: string;
 	level: number;
 }[];
+
+export type EditorFileUpload = {
+	url: string;
+	alt: string;
+	type: string;
+};

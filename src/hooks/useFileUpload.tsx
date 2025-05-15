@@ -41,11 +41,7 @@ const useFileUpload = () => {
 			// Step 3: Upload the file to S3 using the signed URL
 			const filekey = signedURLResult.data.fileKey;
 			const signedUrl = signedURLResult.data.url;
-			let imageUrl = signedURLResult.data.url.split("?")[0];
-
-			if (process.env.NODE_ENV === "development") {
-				imageUrl = `${process.env.NEXT_PUBLIC_AWS_BUCKET_PUBLIC_URL}/${filekey}`;
-			}
+			const imageUrl = `${process.env.NEXT_PUBLIC_AWS_BUCKET_DOMAIN}/${filekey}`;
 
 			const response = await axios.put(signedUrl, file, {
 				headers: {
@@ -63,7 +59,7 @@ const useFileUpload = () => {
 				throw new Error("Failed to upload file");
 			}
 			setFileKey(filekey);
-			return { status: "success", data: { url: imageUrl } };
+			return { status: "success", data: { url: imageUrl, type: file.type } };
 		} catch (err) {
 			const errMsg =
 				err instanceof Error ? err.message : "An unknown error occurred";
