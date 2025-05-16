@@ -223,3 +223,9 @@ export type UploadZone = {
 	gradient: string;
 	rotate: string;
 };
+
+export enum PostSortOrder {
+	Latest = "latest",
+	Oldest = "oldest",
+	MostVotes = "mostVotes",
+}

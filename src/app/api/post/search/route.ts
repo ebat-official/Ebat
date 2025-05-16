@@ -1,4 +1,5 @@
 import { searchPosts } from "@/utils/api utils/posts";
+import { PostSortOrder } from "@/utils/types";
 import { Difficulty, PostCategory, SubCategory } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,6 +18,7 @@ export async function GET(request: NextRequest) {
 			(searchParams.get("subCategory") as SubCategory) || undefined; // Optional subcategory
 		const page = parseInt(searchParams.get("page") || "1", 10); // Default to page 1
 		const pageSize = parseInt(searchParams.get("pageSize") || "10", 10); // Default to page size 10
+		const sortOrder = searchParams.get("sortOrder") as PostSortOrder;
 
 		// Perform search using the custom search function
 		const posts = await searchPosts({
@@ -27,6 +29,7 @@ export async function GET(request: NextRequest) {
 			subCategory,
 			page,
 			pageSize,
+			sortOrder,
 		});
 
 		if (posts.length === 0) {

@@ -1,6 +1,5 @@
 import pako from "pako";
 import { validateUser } from "@/actions/user";
-import { UNAUTHENTICATED_ERROR } from "../errors";
 import prisma from "@/lib/prisma";
 import {
 	Difficulty,
@@ -9,6 +8,7 @@ import {
 	SubCategory,
 } from "@prisma/client";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
+import { PostSortOrder } from "../types";
 export async function getPostById(postId: string) {
 	const post = await prisma.post.findUnique({
 		where: { id: postId },
@@ -89,6 +89,7 @@ export async function searchPosts({
 	subCategory,
 	page,
 	pageSize,
+	sortOrder = PostSortOrder.Latest,
 }: {
 	searchQuery: string;
 	difficulty: Difficulty[];
@@ -97,12 +98,20 @@ export async function searchPosts({
 	subCategory?: SubCategory; // Optional subcategory filter
 	page: number;
 	pageSize: number;
+	sortOrder?: PostSortOrder | null;
 }) {
 	const searchQuerySanitized = sanitizeSearchQuery(searchQuery);
 	// Calculate pagination
 	console.log("searchQuerySanitized", searchQuerySanitized);
 	const skip = (page - 1) * pageSize;
 	const user = await validateUser();
+
+	let orderBy: any = { createdAt: "desc" };
+	if (sortOrder === "oldest") {
+		orderBy = { createdAt: "asc" };
+	} else if (sortOrder === "mostVotes") {
+		orderBy = { votes: { _count: "desc" } };
+	}
 
 	// Perform the search with filters
 	const posts = await prisma.post.findMany({
@@ -136,6 +145,7 @@ export async function searchPosts({
 			createdAt: true,
 			thumbnail: true,
 			difficulty: true,
+			votes: true,
 			author: {
 				select: {
 					id: true,
@@ -157,10 +167,11 @@ export async function searchPosts({
 					id: true,
 				},
 			},
+			_count: {
+				select: { votes: true },
+			},
 		},
-		orderBy: {
-			createdAt: "desc", // Fallback ordering by createdAt
-		},
+		orderBy,
 		skip,
 		take: pageSize,
 	});
