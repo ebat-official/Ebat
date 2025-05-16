@@ -215,3 +215,11 @@ export type EditorFileUpload = {
 	alt: string;
 	type: string;
 };
+
+export type UploadZone = {
+	title: string;
+	subtitle: string;
+	icon: React.ElementType;
+	gradient: string;
+	rotate: string;
+};

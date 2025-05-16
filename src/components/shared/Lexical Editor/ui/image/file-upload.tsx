@@ -27,13 +27,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 	const [uploading, setUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const { uploadFile, progress } = useFileUpload();
-	const { id: postId, addFilesToContext } = useEditorContext();
-
-	useEffect(() => {
-		if (files.length > 0) {
-			addFilesToContext(files);
-		}
-	}, [files]);
+	const { id: postId } = useEditorContext();
 
 	const handleDragEnter = (index: number) => (e: React.DragEvent) => {
 		e.preventDefault();
@@ -107,13 +101,14 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 					{zones.map((zone, index) => (
 						<div key={index} className={`relative ${zone.rotate}`}>
 							<motion.div
+								onClick={() => fileInputRef.current?.click()}
 								onDragEnter={handleDragEnter(index)}
 								onDragOver={handleDragOver}
 								onDragLeave={handleDragLeave}
 								onDrop={handleDrop}
 								whileHover={{ y: -4, scale: 1.02 }}
 								whileTap={{ scale: 0.98 }}
-								className="relative h-full group"
+								className="relative h-full group cusoror-pointer"
 							>
 								<div
 									className={`

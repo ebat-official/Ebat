@@ -16,6 +16,7 @@ export async function compressImage(
 		maxSizeMB: 0.5,
 		maxWidthOrHeight: 1024,
 		useWebWorker: true,
+		fileType: "image/webp",
 	};
 
 	const finalOptions = { ...defaultOptions, ...options };
