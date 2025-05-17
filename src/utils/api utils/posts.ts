@@ -8,7 +8,8 @@ import {
 	SubCategory,
 } from "@prisma/client";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
-import { PostSortOrder } from "../types";
+import { ContentType, PostSortOrder } from "../types";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 export async function getPostById(postId: string) {
 	const post = await prisma.post.findUnique({
 		where: { id: postId },
@@ -94,15 +95,13 @@ export async function searchPosts({
 	searchQuery: string;
 	difficulty: Difficulty[];
 	topics: string[];
-	category?: PostCategory; // Optional category filter
-	subCategory?: SubCategory; // Optional subcategory filter
+	category?: PostCategory;
+	subCategory?: SubCategory;
 	page: number;
 	pageSize: number;
 	sortOrder?: PostSortOrder | null;
 }) {
 	const searchQuerySanitized = sanitizeSearchQuery(searchQuery);
-	// Calculate pagination
-	console.log("searchQuerySanitized", searchQuerySanitized);
 	const skip = (page - 1) * pageSize;
 	const user = await validateUser();
 
@@ -113,12 +112,12 @@ export async function searchPosts({
 		orderBy = { votes: { _count: "desc" } };
 	}
 
-	// Perform the search with filters
+	// Fetch one extra post to check if there is a next page
 	const posts = await prisma.post.findMany({
 		where: {
 			...(searchQuerySanitized && {
 				title: {
-					search: searchQuerySanitized, // Prisma search functionality
+					search: searchQuerySanitized,
 				},
 			}),
 			...(difficulty.length > 0 && {
@@ -128,14 +127,14 @@ export async function searchPosts({
 			}),
 			...(topics.length > 0 && {
 				topics: {
-					hasSome: topics, // Filter posts that match any of the topics
+					hasSome: topics,
 				},
 			}),
 			...(category && {
-				category: category, // Filter by category
+				category: category,
 			}),
 			...(subCategory && {
-				subCategory: subCategory, // Filter by subcategory
+				subCategory: subCategory,
 			}),
 		},
 		select: {
@@ -145,7 +144,6 @@ export async function searchPosts({
 			createdAt: true,
 			thumbnail: true,
 			difficulty: true,
-			votes: true,
 			author: {
 				select: {
 					id: true,
@@ -168,13 +166,56 @@ export async function searchPosts({
 				},
 			},
 			_count: {
-				select: { votes: true },
+				select: {
+					votes: true,
+					comments: true,
+				},
 			},
 		},
 		orderBy,
 		skip,
-		take: pageSize,
+		take: pageSize + 1, // Fetch one extra to check for more pages
 	});
 
-	return posts;
+	const hasMore = posts.length > pageSize;
+	const resultPosts = hasMore ? posts.slice(0, pageSize) : posts;
+
+	// Calculate total pages (optional: you may want to optimize this with a count query)
+	let totalPages = page;
+	try {
+		const totalCount = await prisma.post.count({
+			where: {
+				...(searchQuerySanitized && {
+					title: {
+						search: searchQuerySanitized,
+					},
+				}),
+				...(difficulty.length > 0 && {
+					difficulty: {
+						in: difficulty,
+					},
+				}),
+				...(topics.length > 0 && {
+					topics: {
+						hasSome: topics,
+					},
+				}),
+				...(category && {
+					category: category,
+				}),
+				...(subCategory && {
+					subCategory: subCategory,
+				}),
+			},
+		});
+		totalPages = Math.ceil(totalCount / pageSize);
+	} catch (err) {
+		// fallback: just use current page
+	}
+
+	return {
+		posts: resultPosts,
+		hasMore,
+		totalPages,
+	};
 }
