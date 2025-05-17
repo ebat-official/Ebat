@@ -18,48 +18,31 @@ import {
 import { OutputData } from "@editorjs/editorjs";
 import { EditorContent } from "@/utils/types";
 import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
-import subCategory from "@/utils/subCategoryConfig";
 
-export const PostDraftValidator = z
-	.object({
-		id: z.string().regex(/^[\w-]{21}$/, { message: INVALID_POST_ID }),
-		title: z.string().optional(),
-		content: z.record(z.any()).optional(),
-		type: z.nativeEnum(PostType, {
-			errorMap: () => ({ message: INVALID_POST_TYPE }),
-		}),
-		difficulty: z
-			.nativeEnum(Difficulty, {
-				errorMap: () => ({ message: INVALID_DIFFICULTY }),
-			})
-			.nullable()
-			.optional(),
-		companies: z.array(z.string()).optional(),
-		completionDuration: z.number().int().positive().optional(),
-		topics: z.array(z.string()).optional(),
-		thumbnail: z.string().url().optional(),
-		category: z.nativeEnum(PostCategory, {
-			errorMap: () => ({ message: INVALID_CATEGORY }),
-		}),
-		subCategory: z
-			.nativeEnum(SubCategory, {
-				errorMap: () => ({ message: INVALID_SUBCATEGORY }),
-			})
-			.optional(),
-	})
-	.superRefine((data, ctx) => {
-		if (
-			data.type !== PostType.BLOGS &&
-			data.type !== PostType.SYSTEMDESIGN &&
-			!data.subCategory
-		) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: INVALID_SUBCATEGORY,
-				path: ["subCategory"],
-			});
-		}
-	});
+export const PostDraftValidator = z.object({
+	id: z.string().regex(/^[\w-]{21}$/, { message: INVALID_POST_ID }),
+	title: z.string().optional(),
+	content: z.record(z.any()).optional(),
+	type: z.nativeEnum(PostType, {
+		errorMap: () => ({ message: INVALID_POST_TYPE }),
+	}),
+	difficulty: z
+		.nativeEnum(Difficulty, {
+			errorMap: () => ({ message: INVALID_DIFFICULTY }),
+		})
+		.nullable()
+		.optional(),
+	companies: z.array(z.string()).optional(),
+	completionDuration: z.number().int().positive().optional(),
+	topics: z.array(z.string()).optional(),
+	thumbnail: z.string().url().optional().nullable(),
+	category: z.nativeEnum(PostCategory, {
+		errorMap: () => ({ message: INVALID_CATEGORY }),
+	}),
+	subCategory: z.nativeEnum(SubCategory, {
+		errorMap: () => ({ message: INVALID_SUBCATEGORY }),
+	}),
+});
 
 // Define content interface
 
@@ -84,31 +67,16 @@ const BasePostValidator = z
 		category: z.nativeEnum(PostCategory, {
 			errorMap: () => ({ message: INVALID_CATEGORY }),
 		}),
-		subCategory: z
-			.nativeEnum(SubCategory, {
-				errorMap: () => ({ message: INVALID_SUBCATEGORY }),
-			})
-			.optional(),
+		subCategory: z.nativeEnum(SubCategory, {
+			errorMap: () => ({ message: INVALID_SUBCATEGORY }),
+		}),
 		content: z.object({
 			post: z.custom<EditorContent>().optional(),
 			answer: z.custom<EditorContent>().optional(),
 		}),
-		thumbnail: z.string().url().optional(),
+		thumbnail: z.string().url().optional().nullable(),
 	})
 	.superRefine((data, ctx) => {
-		// Ensure subCategory is required if the type is not BLOGS or SYSTEMDESIGN
-		if (
-			!(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN)
-		) {
-			if (!data.subCategory) {
-				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
-					message: INVALID_SUBCATEGORY,
-					path: ["subCategory"],
-				});
-			}
-		}
-
 		// Ensure difficulty is required unless it's a BLOGS type
 		if (data.type !== PostType.BLOGS && !data.difficulty) {
 			ctx.addIssue({

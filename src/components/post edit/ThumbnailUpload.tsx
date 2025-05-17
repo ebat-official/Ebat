@@ -232,7 +232,7 @@ export const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
 						<div
 							key={img.url}
 							onClick={() => setSelectedIndex(idx)}
-							className={`cursor-pointer relative border-2 rounded-lg p-1 transition-colors ${
+							className={`cursor-pointer relative border-2 rounded-lg p-1 transition-colors group ${
 								selectedIndex === idx
 									? "border-green-500"
 									: "border-transparent hover:border-gray-300"
@@ -250,7 +250,7 @@ export const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
 									e.stopPropagation();
 									removeImage(idx);
 								}}
-								className="w-6 h-6 p-0 hover:bg-gray-200 dark:hover:bg-gray-700 absolute top-1 right-1"
+								className="w-6 h-6 rounded-full p-0 hover:bg-gray-200 dark:hover:bg-gray-700 absolute top-1 right-1 hidden group-hover:flex"
 							>
 								<X className="w-4 h-4" />
 							</Button>
