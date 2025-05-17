@@ -65,6 +65,8 @@ enum SubCategory {
   HTML
   CSS
   REACT
+  BLOGS
+  SYSTEMDESIGN
 }
 
 model User {
@@ -181,7 +183,7 @@ model Post {
   topics             String[]           @default([])
   completionStatus   CompletionStatus[]
   category           PostCategory
-  subCategory        SubCategory?
+  subCategory        SubCategory
   status             PostStatus         @default(DRAFT)
   viewCount          Int                @default(0)
   Bookmark           Bookmark[]

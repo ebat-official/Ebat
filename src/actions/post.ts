@@ -78,9 +78,9 @@ const buildBasePostData = (
 	content: pako.deflate(JSON.stringify(data.content)),
 	type: data.type,
 	difficulty: data.difficulty as Difficulty,
-	companies: data.companies || [],
+	companies: data.companies?.map((company) => company.toLowerCase()) || [],
 	completionDuration: data.completionDuration || null,
-	topics: data.topics || [],
+	topics: data.topics?.map((topic) => topic.toLowerCase()) || [],
 	category: data.category,
 	subCategory: data.subCategory,
 	thumbnail: data.thumbnail || null,
@@ -191,9 +191,9 @@ export async function createPostEdit(
 		content: data.content,
 		type: data.type,
 		difficulty: data.difficulty,
-		companies: data.companies || [],
+		companies: data.companies?.map((company) => company.toLowerCase()) || [],
 		completionDuration: data.completionDuration || null,
-		topics: data.topics || [],
+		topics: data.topics?.map((topic) => topic.toLowerCase()) || [],
 		approvalLogs: [],
 	};
 

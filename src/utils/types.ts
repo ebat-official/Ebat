@@ -229,3 +229,27 @@ export enum PostSortOrder {
 	Oldest = "oldest",
 	MostVotes = "mostVotes",
 }
+
+export interface PostSearchContext {
+	hasMorePage: boolean;
+	totalPages: number;
+	page: number;
+}
+export interface PostSearchResponse {
+	posts: Post[];
+	context: PostSearchContext;
+}
+export interface UsePostSearchOptions {
+	searchQuery?: string;
+	difficulty?: string[];
+	topics?: string[];
+	category?: string;
+	subCategory?: string;
+	companies?: string[];
+	page?: number;
+	pageSize?: number;
+	sortOrder?: string;
+	initialPosts?: any[];
+	initialContext?: PostSearchContext;
+	enabled?: boolean;
+}

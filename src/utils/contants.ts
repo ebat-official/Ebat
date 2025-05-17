@@ -52,3 +52,8 @@ export const COMMENT_SORT_OPTIONS = {
 	NEWEST: "newest",
 	OLDEST: "oldest",
 } as const;
+
+export enum EndpointMap {
+	PostSearch = "/api/post/search",
+	// Add more endpoints as needed
+}

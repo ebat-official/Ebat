@@ -104,7 +104,6 @@ function PostCreateEdit({
 		if (!postPublishError) return;
 
 		const message = handleError(postPublishError, postType);
-
 		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
 			setLoginModalMessage("Please sign in to publish your post");
 			return;
@@ -120,10 +119,7 @@ function PostCreateEdit({
 		return {
 			postId,
 			category,
-			subCategory:
-				postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN
-					? undefined
-					: subCategory,
+			subCategory,
 			postContent: content,
 			thumbnail: thumbnail || postData?.thumbnail,
 			sidebarData,
