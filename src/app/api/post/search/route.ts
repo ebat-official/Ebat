@@ -1,6 +1,11 @@
 import { searchPosts } from "@/utils/api utils/posts";
 import { PostSortOrder } from "@/utils/types";
-import { Difficulty, PostCategory, SubCategory } from "@prisma/client";
+import {
+	Difficulty,
+	PostCategory,
+	PostType,
+	SubCategory,
+} from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
 
@@ -24,9 +29,10 @@ export async function GET(request: NextRequest) {
 		const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
 		const sortOrder = searchParams.get("sortOrder") as PostSortOrder;
 		const companies = searchParams.getAll("companies") as string[];
+		const type = searchParams.get("type")?.toUpperCase() as PostType;
 
 		// Build a unique cache key for all query params
-		const cacheKey = `posts:search:${searchQuery}:difficulty:${difficulty.join(",")}:topics:${topics.join(",")}:category:${category ?? "none"}:subCategory:${subCategory ?? "none"}:companies:${companies.join(",")}:page:${page}:pageSize:${pageSize}:sortOrder:${sortOrder ?? "latest"}`;
+		const cacheKey = `posts:search:${searchQuery}:difficulty:${difficulty.join(",")}:topics:${topics.join(",")}:category:${category ?? "none"}:subCategory:${subCategory ?? "none"}:type:${type ?? "none"}:companies:${companies.join(",")}:page:${page}:pageSize:${pageSize}:sortOrder:${sortOrder ?? "latest"}`;
 
 		const CACHE_SECONDS = 60 * 60 * 1; // 1 hour
 
@@ -58,6 +64,7 @@ export async function GET(request: NextRequest) {
 			pageSize,
 			sortOrder,
 			companies,
+			type,
 		};
 		const { posts, hasMore, totalPages } = await searchPosts(searchParamsObj);
 

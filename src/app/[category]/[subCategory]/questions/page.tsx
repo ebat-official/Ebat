@@ -2,7 +2,7 @@ import { FeedProvider } from "@/components/feed/FeedContext";
 import { PostSearchResponse, PostSortOrder } from "@/utils/types";
 import { EndpointMap } from "@/utils/contants";
 import Feed from "@/components/feed/Feed";
-import { SubCategory } from "@prisma/client";
+import { PostType, SubCategory } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 
@@ -17,8 +17,9 @@ export default async function Page({ params }: { params: PageProps }) {
 	awaitedParams.subCategory = awaitedParams.subCategory || SubCategory.BLOGS;
 
 	if (
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.BLOGS &&
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.SYSTEMDESIGN
+		!Object.values(SubCategory).includes(
+			awaitedParams.subCategory.toUpperCase() as SubCategory,
+		)
 	) {
 		return notFound();
 	}
@@ -28,6 +29,7 @@ export default async function Page({ params }: { params: PageProps }) {
 		page: 1,
 		pageSize: 10,
 		sortOrder: PostSortOrder.Latest,
+		type: PostType.QUESTION,
 	};
 
 	const data = await fetchPostSearch(queryParams);

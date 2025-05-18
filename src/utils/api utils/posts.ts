@@ -5,6 +5,7 @@ import {
 	Difficulty,
 	PostApprovalStatus,
 	PostCategory,
+	PostType,
 	SubCategory,
 } from "@prisma/client";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
@@ -92,6 +93,7 @@ export async function searchPosts({
 	pageSize,
 	sortOrder = PostSortOrder.Latest,
 	companies = [],
+	type,
 }: {
 	searchQuery: string;
 	difficulty: Difficulty[];
@@ -102,6 +104,7 @@ export async function searchPosts({
 	pageSize: number;
 	sortOrder?: PostSortOrder | null;
 	companies?: string[];
+	type?: PostType;
 }) {
 	const searchQuerySanitized = sanitizeSearchQuery(searchQuery);
 	const skip = (page - 1) * pageSize;
@@ -124,6 +127,7 @@ export async function searchPosts({
 		}),
 		...(category && { category }),
 		...(subCategory && { subCategory }),
+		...(type && { type }),
 		...(companies.length > 0 && {
 			companies: {
 				hasSome: companies,
@@ -152,6 +156,7 @@ export async function searchPosts({
 				thumbnail: true,
 				difficulty: true,
 				companies: true,
+				type: true,
 				author: {
 					select: {
 						id: true,
@@ -211,8 +216,6 @@ export async function fetchPostSearch(
 ): Promise<PostSearchResponse> {
 	const queryParams = {
 		...params,
-		subCategory: params.subCategory,
-		cateogory: params.category,
 		page: params.page ?? 1,
 		pageSize: params.pageSize ?? 10,
 		sortOrder: params.sortOrder ?? PostSortOrder.Latest,
