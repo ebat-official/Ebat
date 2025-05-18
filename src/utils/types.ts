@@ -1,5 +1,6 @@
 import { OutputData } from "@editorjs/editorjs";
 import {
+	CompletionStatus,
 	Post,
 	PostCategory,
 	PostType,
@@ -16,6 +17,7 @@ import {
 	POST_ROUTE_TYPE,
 	SUCCESS,
 } from "./contants";
+import { boolean } from "zod";
 
 export interface ContentType {
 	post?: EditorContent;
@@ -235,8 +237,13 @@ export interface PostSearchContext {
 	totalPages: number;
 	page: number;
 }
+
+export type FeedPost = Post & {
+	completionStatus?: CompletionStatus[];
+	_count?: { votes: number; comments: number };
+};
 export interface PostSearchResponse {
-	posts: Post[];
+	posts: FeedPost[];
 	context: PostSearchContext;
 }
 export interface UsePostSearchOptions {
