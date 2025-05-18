@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import QueryProvider from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 export const runtime = "nodejs";
 
 const inter = Inter({
@@ -48,6 +48,7 @@ export default function RootLayout({
 					<Toaster />
 					<Sonner />
 				</SessionProvider>
+				<SpeedInsights />
 			</body>
 		</html>
 	);
