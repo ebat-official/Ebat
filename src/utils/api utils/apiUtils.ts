@@ -92,6 +92,12 @@ export async function getPostFromURL(params: {
 						},
 					},
 				},
+				views: {
+					select: {
+						count: true,
+						updatedAt: true,
+					},
+				},
 			},
 		});
 
@@ -127,6 +133,7 @@ export async function getPostFromURL(params: {
 			content: ContentHtml,
 			completionCount,
 			tableOfContent,
+			views: post.views ?? undefined,
 		};
 	} catch (error) {
 		console.error("Error fetching post:", error);

@@ -1,11 +1,12 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import {
 	PostSearchContext,
 	PostSearchResponse,
 	PostSortOrder,
 } from "@/utils/types";
 import { usePostSearch } from "@/hooks/query/usePostSearch";
+import { getCompletionStatusesForPosts } from "@/actions/completionStatus";
 
 // Types for the context value
 export interface FeedContextType {
@@ -31,6 +32,7 @@ export interface FeedContextType {
 	setPageSize: React.Dispatch<React.SetStateAction<number>>;
 	sortOrder: PostSortOrder | undefined;
 	setSortOrder: React.Dispatch<React.SetStateAction<PostSortOrder | undefined>>;
+	completionStatuses: Record<string, boolean>;
 }
 
 const FeedContext = createContext<FeedContextType | undefined>(undefined);
@@ -83,6 +85,9 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 	const [companies, setCompanies] = useState<string[] | undefined>(
 		queryParams.companies,
 	);
+	const [completionStatuses, setCompletionStatuses] = useState<
+		Record<string, boolean>
+	>({});
 	const [page, setPage] = useState<number>(queryParams.page ?? 1);
 	const [pageSize, setPageSize] = useState<number>(queryParams.pageSize ?? 10);
 	const [sortOrder, setSortOrder] = useState<PostSortOrder | undefined>(
@@ -105,6 +110,24 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 		initialPosts,
 		initialContext,
 	);
+
+	useEffect(() => {
+		const fetchStatuses = async () => {
+			if (!data?.posts?.length) {
+				setCompletionStatuses({});
+				return;
+			}
+			const postIds = data.posts.map((post) => post.id);
+			const statuses = await getCompletionStatusesForPosts(postIds);
+			// Map postId to boolean (true if completed)
+			const statusMap: Record<string, boolean> = {};
+			statuses.forEach((status) => {
+				statusMap[status.postId] = true;
+			});
+			setCompletionStatuses(statusMap);
+		};
+		fetchStatuses();
+	}, [data?.posts]);
 
 	return (
 		<FeedContext.Provider
@@ -131,6 +154,7 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 				setPageSize,
 				sortOrder,
 				setSortOrder,
+				completionStatuses,
 			}}
 		>
 			{children}

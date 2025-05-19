@@ -11,6 +11,7 @@ import {
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
 import { PostSearchResponse, PostSortOrder } from "../types";
 import { EndpointMap } from "../contants";
+import { t } from "@excalidraw/excalidraw/i18n";
 export async function getPostById(postId: string) {
 	const post = await prisma.post.findUnique({
 		where: { id: postId },
@@ -142,9 +143,6 @@ export async function searchPosts({
 		orderBy = { votes: { _count: "desc" } };
 	}
 
-	// Validate user only if needed
-	const user = await validateUser();
-
 	const [posts, totalCount] = await Promise.all([
 		prisma.post.findMany({
 			where,
@@ -157,6 +155,7 @@ export async function searchPosts({
 				difficulty: true,
 				companies: true,
 				type: true,
+				views: true,
 				author: {
 					select: {
 						id: true,
@@ -170,12 +169,6 @@ export async function searchPosts({
 						},
 					},
 				},
-				completionStatus: user
-					? {
-							where: { userId: user.id },
-							select: { id: true },
-						}
-					: false,
 				_count: {
 					select: {
 						votes: true,

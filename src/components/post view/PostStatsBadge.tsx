@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { formatNumInK } from "@/utils/formatNumInK";
 import { DifficultyBadge } from "../shared/DifficultyBadge";
+import { ViewsBadge } from "../shared/viewsBadge";
 
 // Interfaces
 interface PostStatsBadgeProps {
@@ -39,6 +40,7 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 				{post.difficulty && <DifficultyBadge difficulty={post.difficulty} />}
 				<CoinsBadge coins={post.coins || 0} />
 				<CompletionBadge completionCount={post.completionCount || 0} />
+				<ViewsBadge views={post?.views?.count || 0} />
 			</CardContent>
 		</Card>
 	);
