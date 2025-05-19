@@ -92,6 +92,10 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 			companyName: string | null;
 		} | null;
 	};
+	views?: {
+		count: number;
+		updatedAt: Date;
+	};
 };
 
 export type CommentSortOption =
@@ -239,8 +243,8 @@ export interface PostSearchContext {
 }
 
 export type FeedPost = Post & {
-	completionStatus?: CompletionStatus[];
 	_count?: { votes: number; comments: number };
+	views?: { count: number; updatedAt: Date };
 };
 export interface PostSearchResponse {
 	posts: FeedPost[];

@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 		// Build a unique cache key for all query params
 		const cacheKey = `posts:search:${searchQuery}:difficulty:${difficulty.join(",")}:topics:${topics.join(",")}:category:${category ?? "none"}:subCategory:${subCategory ?? "none"}:type:${type ?? "none"}:companies:${companies.join(",")}:page:${page}:pageSize:${pageSize}:sortOrder:${sortOrder ?? "latest"}`;
 
-		const CACHE_SECONDS = 60 * 60 * 1; // 1 hour
+		const CACHE_SECONDS = 60 * 60 * 12; // 12 hours
 
 		// Try cache for all queries
 		try {

@@ -5,16 +5,10 @@ import { CheckCircle, Circle, Flame } from "lucide-react"; // Example icons
 import { DifficultyBadge } from "../shared/DifficultyBadge";
 import { FiCheckCircle } from "react-icons/fi";
 import { cn } from "@/lib/utils";
-
-const difficultyColor = {
-	EASY: "text-green-600",
-	MEDIUM: "text-yellow-600",
-	HARD: "text-red-600",
-};
+import { ViewsBadge } from "../shared/viewsBadge";
 
 const QuestionsList: FC = () => {
-	const { posts, isLoading } = useFeedContext();
-	console.log(posts, "posts");
+	const { posts, isLoading, completionStatuses } = useFeedContext();
 	if (isLoading) return <div>Loading...</div>;
 
 	return (
@@ -27,7 +21,7 @@ const QuestionsList: FC = () => {
 							<span>
 								<FiCheckCircle
 									className={cn("text-gray-500", {
-										"text-green-500": post.completionStatus?.length,
+										"text-green-500": completionStatuses[post.id],
 									})}
 									size={18}
 									strokeWidth={2}
@@ -41,10 +35,7 @@ const QuestionsList: FC = () => {
 							{/* 3. Difficulty */}
 							<DifficultyBadge difficulty={post.difficulty || "EASY"} />
 							{/* 4. Vote count */}
-							<span className="flex items-center gap-1">
-								<Flame className="w-4 h-4 text-orange-500" />
-								{post._count?.votes ?? 0}
-							</span>
+							<ViewsBadge views={post?.views?.count || 0} />
 						</div>
 					</CardContent>
 				</Card>

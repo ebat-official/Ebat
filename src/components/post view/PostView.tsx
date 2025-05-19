@@ -9,6 +9,7 @@ import PostDetailsAccordian from "./PostDetailsAccordian";
 import CommentContainer from "@/components/comment/CommentContainer";
 import { PostContentRender } from "./PostContentRender";
 import PostLikeButton from "./PostLikeButton";
+import { recordPostView } from "@/lib/viewTracker";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -16,6 +17,7 @@ type PostViewProps = {
 };
 
 const PostView: FC<PostViewProps> = ({ post }) => {
+	recordPostView(post.id);
 	return (
 		<EditorProvider>
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
