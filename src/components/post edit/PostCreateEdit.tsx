@@ -46,7 +46,6 @@ function PostCreateEdit({
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
 	const [postPublished, setPostPublished] = useState<boolean | string>(false);
-	const [postThumbnail, setPostThumbnail] = useState<string | null>();
 	const [blockUserAccess, setBlockUserAccess] = useState<{
 		message?: string;
 		title?: string;

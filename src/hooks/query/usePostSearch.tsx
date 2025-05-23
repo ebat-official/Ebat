@@ -23,11 +23,11 @@ export function usePostSearch(
 		queryKey: [
 			"posts",
 			queryParams.searchQuery,
-			queryParams.difficulty,
-			queryParams.topics,
+			JSON.stringify(queryParams.difficulty || []),
+			JSON.stringify(queryParams.topics || []),
 			queryParams.category,
 			queryParams.subCategory,
-			queryParams.companies,
+			JSON.stringify(queryParams.companies || []),
 			queryParams.page,
 			queryParams.pageSize,
 			queryParams.sortOrder,
@@ -56,7 +56,7 @@ export function usePostSearch(
 			return res.json();
 		},
 		initialData: { posts: initialPosts, context: initialContext },
-		staleTime: 1000 * 60 * 60 * 24, // 1 day
+		// staleTime: 1000 * 60 * 60 * 24, // 1 day
 		enabled: queryParams.enabled !== false, // allow disabling if needed
 	});
 }
