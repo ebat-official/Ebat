@@ -3,9 +3,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 const TooltipAccordianTrigger = ({
 	label,
 	icon,
+	tooltipContent = label,
 }: {
 	label: string;
 	icon: React.ReactNode;
+	tooltipContent?: string;
 }) => (
 	<Tooltip>
 		<TooltipTrigger asChild>
@@ -15,7 +17,7 @@ const TooltipAccordianTrigger = ({
 			</div>
 		</TooltipTrigger>
 		<TooltipContent>
-			<p>{label} selection</p>
+			<p>{tooltipContent}</p>
 		</TooltipContent>
 	</Tooltip>
 );
