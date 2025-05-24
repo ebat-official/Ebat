@@ -64,4 +64,4 @@ const RadioGrid: React.FC<RadioGridProps> = ({
 	);
 };
 
-export default RadioGrid;
+export { RadioGrid };

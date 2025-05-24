@@ -12,7 +12,7 @@ import { getCompletionStatusesForPosts } from "@/actions/completionStatus";
 export interface FeedContextType {
 	posts: PostSearchResponse["posts"];
 	context: PostSearchContext;
-	isLoading: boolean;
+	isLoadingData: boolean;
 	refetch: () => void;
 	searchQuery: string | undefined;
 	setSearchQuery: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -30,8 +30,8 @@ export interface FeedContextType {
 	setPage: React.Dispatch<React.SetStateAction<number>>;
 	pageSize: number;
 	setPageSize: React.Dispatch<React.SetStateAction<number>>;
-	sortOrder: PostSortOrder | undefined;
-	setSortOrder: React.Dispatch<React.SetStateAction<PostSortOrder | undefined>>;
+	sortOrder: PostSortOrder;
+	setSortOrder: React.Dispatch<React.SetStateAction<PostSortOrder>>;
 	completionStatuses: Record<string, boolean>;
 }
 
@@ -90,11 +90,11 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 	>({});
 	const [page, setPage] = useState<number>(queryParams.page ?? 1);
 	const [pageSize, setPageSize] = useState<number>(queryParams.pageSize ?? 10);
-	const [sortOrder, setSortOrder] = useState<PostSortOrder | undefined>(
-		queryParams.sortOrder,
+	const [sortOrder, setSortOrder] = useState<PostSortOrder>(
+		queryParams.sortOrder || PostSortOrder.Latest,
 	);
 
-	const { data, isLoading, refetch } = usePostSearch(
+	const { data, isLoading, refetch, isFetching } = usePostSearch(
 		{
 			searchQuery,
 			difficulty,
@@ -110,7 +110,7 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 		initialPosts,
 		initialContext,
 	);
-
+	const isLoadingData = isLoading || isFetching;
 	useEffect(() => {
 		const fetchStatuses = async () => {
 			if (!data?.posts?.length) {
@@ -134,7 +134,7 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 			value={{
 				posts: data?.posts ?? [],
 				context: data?.context ?? initialContext,
-				isLoading,
+				isLoadingData,
 				refetch,
 				searchQuery,
 				setSearchQuery,

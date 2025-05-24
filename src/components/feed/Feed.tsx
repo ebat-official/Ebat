@@ -4,6 +4,7 @@ import { useFeedContext } from "./FeedContext";
 import RightPanelLayout from "../shared/RightPanelLayout";
 import { Card } from "../ui/card";
 import QuestionsList from "./QuestionsList";
+import FeedSidebar from "./FeedSidebar";
 
 interface FeedProps {}
 
@@ -16,7 +17,7 @@ const Feed: FC<FeedProps> = ({}) => {
 					<QuestionsList />
 				</RightPanelLayout.MainPanel>
 				<RightPanelLayout.SidePanel className="sticky h-1/3">
-					hello
+					<FeedSidebar />
 				</RightPanelLayout.SidePanel>
 			</RightPanelLayout>
 		</div>
