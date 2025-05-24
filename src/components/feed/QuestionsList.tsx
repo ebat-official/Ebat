@@ -13,6 +13,7 @@ import { QuestionSkeleton } from "./QuestionSkelton";
 import { Difficulty } from "@prisma/client";
 import NoSearchResults from "./NoSearchResults";
 import FeedSearch from "./FeedSearch";
+import AddPostRoundButton from "./AddPostRoundButton";
 
 const QuestionsList: FC = () => {
 	const { posts, isLoadingData, completionStatuses, context, pageSize } =
@@ -23,7 +24,10 @@ const QuestionsList: FC = () => {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<FeedSearch />
+			<div className="flex gap-2 justify-between items-center mx-4">
+				<FeedSearch />
+				<AddPostRoundButton />
+			</div>
 			{isLoadingData ? (
 				<div className="flex flex-col gap-4">
 					{Array.from({ length: pageSize }).map((_, i) => (

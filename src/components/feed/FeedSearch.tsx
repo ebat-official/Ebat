@@ -27,7 +27,7 @@ const FeedSearch: React.FC = () => {
 	}, [debouncedSetSearchQuery]);
 
 	return (
-		<div className="relative flex items-center bg-card w-[98%] rounded-4xl m-auto">
+		<div className="relative flex items-center bg-card  rounded-4xl m-auto flex-1">
 			<span className="absolute left-3 text-muted-foreground">
 				<SearchIcon className="w-6 h-6" />
 			</span>

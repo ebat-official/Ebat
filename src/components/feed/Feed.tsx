@@ -11,7 +11,7 @@ interface FeedProps {}
 const Feed: FC<FeedProps> = ({}) => {
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="analytics h-[300px] bg-red-400">analytics babe</div>
+			<div className="analytics h-[200px] ">analytics babe</div>
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel className="flex flex-col gap-2">
 					<QuestionsList />

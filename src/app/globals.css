@@ -29,7 +29,7 @@
 }
 
 @utility blue-gradient {
-  @apply bg-linear-to-tl from-blue-600 to-cyan-400;
+  @apply bg-linear-to-tl from-blue-500 to-purple-600;
 }
 @utility containerMain {
   @apply container m-2;
