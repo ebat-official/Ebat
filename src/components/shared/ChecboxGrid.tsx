@@ -30,6 +30,7 @@ interface CheckboxGridProps {
 	className?: string;
 	itemOffset?: number;
 	searchHandler?: (query: string) => void;
+	prioritizeSelected?: boolean;
 }
 
 const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
@@ -47,6 +48,7 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	className,
 	itemOffset = Number.POSITIVE_INFINITY,
 	searchHandler,
+	prioritizeSelected = true, // <-- Enable by default
 }) => {
 	const [options, setOptions] = useState<InternalOption[]>(() =>
 		normalizeOptions(initialOptions),
@@ -93,10 +95,24 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 		getSelectedOptons([{ ...option, checked: true }, ...selectedOptions]);
 	};
 
+	// Prepare mergedOptions in the original order, with checked status
+	const selectedLabels = new Set(selectedOptions.map((opt) => opt.label));
+	const mergedOptions = normalizeOptions(initialOptions).map((opt) => ({
+		...opt,
+		checked: selectedLabels.has(opt.label),
+	}));
+
+	// If prioritizeSelected, sort checked first, else keep original order
+	const displayOptions = prioritizeSelected
+		? [...mergedOptions].sort(
+				(a, b) => (b.checked ? 1 : 0) - (a.checked ? 1 : 0),
+			)
+		: mergedOptions;
+
 	return (
 		<div className="flex flex-col items-center gap-4">
 			<div className={cn("flex flex-wrap gap-x-8 gap-y-4", className)}>
-				{[...selectedOptions, ...options]
+				{displayOptions
 					.slice(0, searchHandler ? Math.min(itemOffset * 1.5, offset) : offset)
 					.map((option, index) => (
 						<div
@@ -111,7 +127,10 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 							/>
 							<div className="flex gap-1 justify-center items-center">
 								{option.icon && <div>{option.icon}</div>}
-								<label htmlFor={option.label}>{option.label}</label>
+
+								<label className="capitalize" htmlFor={option.label}>
+									{option.label.toLowerCase()}
+								</label>
 							</div>
 						</div>
 					))}
@@ -167,4 +186,4 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	);
 };
 
-export default CheckboxGrid;
+export { CheckboxGrid };

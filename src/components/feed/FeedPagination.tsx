@@ -61,11 +61,15 @@ export const FeedPagination: React.FC = () => {
 				<PaginationItem>
 					<PaginationPrevious
 						href="#"
+						aria-disabled={page === 1}
+						tabIndex={page === 1 ? -1 : undefined}
+						className={
+							page === 1 ? "pointer-events-none opacity-50" : undefined
+						}
 						onClick={(e) => {
 							e.preventDefault();
 							if (page > 1) setPage(page - 1);
 						}}
-						aria-disabled={page === 1}
 					/>
 				</PaginationItem>
 				{pages.map((p, idx) =>
@@ -89,11 +93,15 @@ export const FeedPagination: React.FC = () => {
 				<PaginationItem>
 					<PaginationNext
 						href="#"
+						aria-disabled={page === totalPages}
+						tabIndex={page === totalPages ? -1 : undefined}
+						className={
+							page === totalPages ? "pointer-events-none opacity-50" : undefined
+						}
 						onClick={(e) => {
 							e.preventDefault();
 							if (page < totalPages) setPage(page + 1);
 						}}
-						aria-disabled={page === totalPages}
 					/>
 				</PaginationItem>
 			</PaginationContent>
