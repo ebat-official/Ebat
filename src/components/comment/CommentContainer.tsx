@@ -20,7 +20,9 @@ const CommentInner = () => {
 			<div className="flex justify-between items-center">
 				<div className="flex items-center justify-center gap-2">
 					<span className="text-md font-bold">Comments</span>
-					<Badge className="bg-blue-400 rounded-4xl">{totalComments}</Badge>
+					<Badge className="blue-gradient text-white rounded-4xl">
+						{totalComments}
+					</Badge>
 				</div>
 				<CommentSortSelect onChange={setCommentSortOption} />
 			</div>
