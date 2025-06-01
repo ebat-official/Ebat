@@ -1,10 +1,10 @@
 import { FeedProvider } from "@/components/feed/FeedContext";
 import { PostSearchResponse, PostSortOrder } from "@/utils/types";
 import { EndpointMap } from "@/utils/contants";
-import Feed from "@/components/feed/Feed";
 import { SubCategory } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
+import { Feed } from "@/components/feed/Feed";
 
 type PageProps = Promise<{
 	category: string;

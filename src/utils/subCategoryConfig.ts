@@ -1,4 +1,4 @@
-const subCategory = {
+const subCategory: { [key: string]: string[] } = {
 	JAVASCRIPT: [
 		"Async",
 		"AsyncAwait",
@@ -255,17 +255,20 @@ const subCategory = {
 		"AndroidBackgroundAndroidWorkManager",
 		"AndroidBackgroundAndroidJobScheduler",
 		"AndroidBackgroundAndroidFirebaseJobDispatcher",
-		"AndroidBackgroundAndroidGcmNetworkManager",
-		"AndroidBackgroundAndroidEvernoteAndroidJob",
-		"AndroidBackgroundAndroidPriorityJobQueue",
-		"AndroidBackgroundAndroidJob",
-		"AndroidBackgroundAndroidAlarmManager",
-		"AndroidBackgroundAndroidWorkManager",
-		"AndroidBackgroundAndroidJobScheduler",
-		"AndroidBackgroundAndroidFirebaseJobDispatcher",
 	],
 	BLOGS: [],
 	SYSTEMDESIGN: [],
 };
+
+subCategory.BLOGS = [
+	...subCategory.FRONTEND,
+	...subCategory.BACKEND,
+	...subCategory.ANDROID,
+];
+subCategory.SYSTEMDESIGN = [
+	...subCategory.FRONTEND,
+	...subCategory.BACKEND,
+	...subCategory.ANDROID,
+];
 
 export default subCategory;

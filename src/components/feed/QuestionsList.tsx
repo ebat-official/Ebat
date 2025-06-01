@@ -55,7 +55,7 @@ const QuestionsList: FC = () => {
 												strokeWidth={2}
 											/>
 										</span>
-										<p className="flex-1 font-semibold overflow-hidden text-ellipsis capitalize">
+										<p className=" font-semibold overflow-hidden text-ellipsis capitalize line-clamp-2">
 											{post.title}
 										</p>
 									</div>

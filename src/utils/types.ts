@@ -245,6 +245,15 @@ export interface PostSearchContext {
 export type FeedPost = Post & {
 	_count?: { votes: number; comments: number };
 	views?: { count: number; updatedAt: Date };
+	author: {
+		id: string;
+		userName: string;
+		userProfile: {
+			name: string | null;
+			image: string | null;
+			companyName: string | null;
+		} | null;
+	};
 };
 export interface PostSearchResponse {
 	posts: FeedPost[];

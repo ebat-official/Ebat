@@ -2,11 +2,15 @@ import * as React from "react";
 import { MagnifyingGlassIcon as SearchIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
 import { useFeedContext } from "./FeedContext";
-import { BsSortDownAlt } from "react-icons/bs";
 import SortDropdown from "./SortDropDown";
 import { debounce } from "lodash-es";
+import { cn } from "@/lib/utils";
 
-const FeedSearch: React.FC = () => {
+interface FeedSearchProps {
+	className?: string;
+}
+
+const FeedSearch: React.FC<FeedSearchProps> = ({ className }) => {
 	const { setSearchQuery, sortOrder, setSortOrder } = useFeedContext();
 
 	// Debounce the search input to avoid rapid state updates
@@ -27,7 +31,12 @@ const FeedSearch: React.FC = () => {
 	}, [debouncedSetSearchQuery]);
 
 	return (
-		<div className="relative flex items-center bg-card  rounded-4xl m-auto flex-1">
+		<div
+			className={cn(
+				"relative flex items-center bg-card rounded-4xl m-auto flex-1",
+				className,
+			)}
+		>
 			<span className="absolute left-3 text-muted-foreground">
 				<SearchIcon className="w-6 h-6" />
 			</span>

@@ -4,11 +4,12 @@ import Image from "next/image";
 import { UserProfile } from "@prisma/client";
 import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
 
-const AuthorNudge = ({
-	author,
-}: {
+interface AuthorNudgeProps {
 	author: Pick<UserProfile, "name" | "companyName" | "image">;
-}) => {
+	onlyAvatar?: boolean;
+}
+
+const AuthorNudge = ({ author, onlyAvatar = false }: AuthorNudgeProps) => {
 	return (
 		<div className="flex items-center gap-2">
 			{/* Avatar Section */}
@@ -27,15 +28,17 @@ const AuthorNudge = ({
 				</AvatarFallback>
 			</Avatar>
 
-			<div className="flex flex-col justify-center flex-shrink overflow-hidden">
-				<span className="text-sm font-bold capitalize ">
-					{truncateText(author.name?.split(" ")[0] || "", 10)?.toLowerCase() ||
-						"Anonymous Author"}
-				</span>
-				<span className="hidden sm:block text-sm opacity-80 font-medium capitalize">
-					{truncateText(author.companyName || "", 30)?.toLowerCase()}
-				</span>
-			</div>
+			{/* Info Section */}
+			{!onlyAvatar && (
+				<div className="flex flex-col justify-center flex-shrink overflow-hidden w-28">
+					<span className="text-sm font-bold capitalize line-clamp-1 text-ellipsis">
+						{author.name?.toLowerCase() || "Anonymous Author"}
+					</span>
+					<span className="hidden sm:block text-sm opacity-80 font-medium capitalize text-ellipsis overflow-hidden text-nowrap">
+						{author.companyName?.toLowerCase()}
+					</span>
+				</div>
+			)}
 		</div>
 	);
 };
