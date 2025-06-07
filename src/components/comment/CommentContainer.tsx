@@ -15,7 +15,7 @@ const CommentInner = () => {
 		useCommentContext();
 
 	return (
-		<div className="flex flex-col gap-8">
+		<div className="flex flex-col gap-8" id="comments">
 			<CommentAddBox postId={postId} commentAddHandler={addComment} />
 			<div className="flex justify-between items-center">
 				<div className="flex items-center justify-center gap-2">

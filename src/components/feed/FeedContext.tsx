@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+	use,
+} from "react";
 import {
 	PostSearchContext,
 	PostSearchResponse,
@@ -33,6 +39,8 @@ export interface FeedContextType {
 	sortOrder: PostSortOrder;
 	setSortOrder: React.Dispatch<React.SetStateAction<PostSortOrder>>;
 	completionStatuses: Record<string, boolean>;
+	accumulatedPosts: PostSearchResponse["posts"];
+	isLoading: boolean;
 }
 
 const FeedContext = createContext<FeedContextType | undefined>(undefined);
@@ -94,6 +102,10 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 		queryParams.sortOrder || PostSortOrder.Latest,
 	);
 
+	// NEW: Accumulated posts state
+	const [accumulatedPosts, setAccumulatedPosts] =
+		useState<PostSearchResponse["posts"]>(initialPosts);
+
 	const { data, isLoading, refetch, isFetching } = usePostSearch(
 		{
 			searchQuery,
@@ -110,7 +122,29 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 		initialPosts,
 		initialContext,
 	);
+
 	const isLoadingData = isLoading || isFetching;
+
+	// Accumulate posts when page increases, reset when filters/search change
+
+	useEffect(() => {
+		setPage(1);
+		setAccumulatedPosts([]);
+	}, [
+		searchQuery,
+		difficulty,
+		topics,
+		category,
+		subCategory,
+		companies,
+		sortOrder,
+	]);
+
+	useEffect(() => {
+		if (!data?.posts) return;
+		setAccumulatedPosts((prev) => [...prev, ...data.posts]);
+	}, [data?.posts]);
+
 	useEffect(() => {
 		const fetchStatuses = async () => {
 			if (!data?.posts?.length) {
@@ -119,7 +153,6 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 			}
 			const postIds = data.posts.map((post) => post.id);
 			const statuses = await getCompletionStatusesForPosts(postIds);
-			// Map postId to boolean (true if completed)
 			const statusMap: Record<string, boolean> = {};
 			statuses.forEach((status) => {
 				statusMap[status.postId] = true;
@@ -132,7 +165,7 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 	return (
 		<FeedContext.Provider
 			value={{
-				posts: data?.posts ?? [],
+				posts: data?.posts ?? [], // Use accumulated posts here
 				context: data?.context ?? initialContext,
 				isLoadingData,
 				refetch,
@@ -155,6 +188,8 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 				sortOrder,
 				setSortOrder,
 				completionStatuses,
+				accumulatedPosts,
+				isLoading,
 			}}
 		>
 			{children}

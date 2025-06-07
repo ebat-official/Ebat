@@ -156,6 +156,7 @@ export async function searchPosts({
 				companies: true,
 				type: true,
 				views: true,
+				topics: true,
 				author: {
 					select: {
 						id: true,
