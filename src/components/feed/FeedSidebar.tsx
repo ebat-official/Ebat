@@ -81,7 +81,6 @@ function FeedSidebar({}: FeedSidebarProps) {
 								itemOffset={3}
 								getSelectedOptons={setSelectedDifficulties}
 								disabled={isLoadingData}
-								prioritizeSelected={false}
 							/>
 						</AccordionContent>
 					</AccordionItem>
