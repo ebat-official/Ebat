@@ -48,7 +48,7 @@ export const Feed: FC = () => {
 				<FeedSearch />
 				<AddPostRoundButton />
 			</div>
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 min-h-screen">
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 				{posts.map((post) => (
 					<FeedCard key={post.id} post={post} />
 				))}
@@ -59,7 +59,7 @@ export const Feed: FC = () => {
 			</div>
 			{hasMorePage && <div ref={observerRef} className="h-8" />}
 			{!isLoadingData && posts.length === 0 && (
-				<NoSearchResults category="Posts" />
+				<NoSearchResults category="Post" />
 			)}
 		</div>
 	);
