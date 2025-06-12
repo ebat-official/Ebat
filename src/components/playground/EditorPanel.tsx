@@ -115,7 +115,7 @@ function EditorPanel() {
 				{/* Editor  */}
 				<div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05]">
 					<Editor
-						height="600px"
+						height="100%"
 						language={LANGUAGE_CONFIG[language].monacoLanguage}
 						onChange={handleEditorChange}
 						theme={theme}

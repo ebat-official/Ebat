@@ -1,82 +1,52 @@
-// // pages/posts/[titleSlug]/page.tsx
-// import { GetStaticProps, GetStaticPaths } from "next";
-// import { useRouter } from "next/router";
-// import withSEO from "@/components/withSEO"; // Assuming you have an HOC for SEO
-// import prisma from "@/lib/prisma"; // Your database handler
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { generatePageMetadata } from "@/utils/metadata";
+import PostView from "@/components/post view/PostView";
+import { getPostFromURL } from "@/utils/api utils/apiUtils";
+import { PageParams } from "@/utils/types";
+import { getAllApprovedPosts } from "@/utils/api utils/posts";
+import { generatePostPathFromPostId } from "@/utils/generatePostPath";
+import StructuredMetaData from "@/components/shared/StructuredMetaData";
+import DraggablePanel from "@/components/playground/DraggablePanel";
 
-// export const getStaticPaths: GetStaticPaths = async () => {
-// 	// Fetch the slugs for all posts
-// 	const posts = await prisma.post.findMany({
-// 		select: { slug: true }, // Get only the slugs
-// 	});
+// incremental SSG,should be in the file
+export async function generateStaticParams() {
+	const posts = await getAllApprovedPosts();
 
-// 	const paths = posts.map((post) => ({
-// 		params: { titleSlug: post.slug },
-// 	}));
-
-// 	return {
-// 		paths,
-// 		fallback: true, // Enable fallback to show loading for new pages
-// 	};
-// };
-
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-// 	const { titleSlug } = params;
-
-// 	// Fetch the post data based on titleSlug
-// 	const post = await prisma.post.findUnique({
-// 		where: {
-// 			slug: titleSlug, // Assuming titleSlug is stored as `slug` in the database
-// 		},
-// 	});
-
-// 	// Prepare SEO data
-// 	const seoData = {
-// 		title: post.title,
-// 		metaDescription: post.content.slice(0, 150),
-// 		slug: post.slug,
-// 		postId: post.id,
-// 		image: post.image || "/default-image.jpg",
-// 		author: post.author.name,
-// 	};
-
-// 	return {
-// 		props: {
-// 			post,
-// 			seoData,
-// 		},
-// 		revalidate: 60, // Optional: Revalidate the page every 60 seconds
-// 	};
-// };
-
-// const PostPage = ({ post }) => {
-// 	const router = useRouter();
-
-// 	// Check if the page is in fallback state
-// 	if (router.isFallback) {
-// 		return (
-// 			<div className="loading-container">
-// 				{/* Your custom loading spinner or skeleton */}
-// 				<div className="spinner">Loading...</div>
-// 			</div>
-// 		);
-// 	}
-
-// 	// Render the post content once it's available
-// 	return (
-// 		<div>
-// 			<h1>{post.title}</h1>
-// 			<div>{post.content}</div>
-// 		</div>
-// 	);
-// };
-
-// // Wrap the PostPage component with withSEO (for SEO metadata)
-// export default withSEO(PostPage);
-import React from "react";
-
-function page() {
-	return <div>page</div>;
+	return posts.map((post) => ({
+		category: post.category.toLowerCase(),
+		subCategory: post.subCategory?.toLowerCase() ?? "general",
+		titleSlug: `${post.slug}-${post.id}`,
+	}));
 }
 
-export default page;
+// Metadata Next.js 15 , should be in the file
+export async function generateMetadata({
+	params,
+}: {
+	params: PageParams;
+}): Promise<Metadata> {
+	const awaitedParams = await params;
+	const post = await getPostFromURL(awaitedParams);
+	if (!post) return {};
+
+	return generatePageMetadata(post, {
+		url: generatePostPathFromPostId(post),
+	});
+}
+
+// Main page component updated for Next.js 15
+export default async function PostPage({ params }: { params: PageParams }) {
+	const awaitedParams = await params;
+	const post = await getPostFromURL(awaitedParams);
+	if (!post) return notFound();
+	return (
+		<>
+			<StructuredMetaData post={post} />
+			<DraggablePanel post={post} />
+		</>
+	);
+}
+
+// automatic ISR configuration (fallback)
+export const revalidate = 86400; // Revalidate every 1 day
