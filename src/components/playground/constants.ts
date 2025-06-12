@@ -1,12 +1,23 @@
 import { Monaco } from "@monaco-editor/react";
 import { Theme } from "./types";
+import jsLogo from "@/assets/img/language/javascript.png";
+import tsLogo from "@/assets/img/language/typescript.png";
+import pythonLogo from "@/assets/img/language/python.png";
+import javaLogo from "@/assets/img/language/java.png";
+import goLogo from "@/assets/img/language/go.png";
+import rustLogo from "@/assets/img/language/rust.png";
+import cppLogo from "@/assets/img/language/cpp.png";
+import csharpLogo from "@/assets/img/language/csharp.png";
+import rubyLogo from "@/assets/img/language/ruby.png";
+import swiftLogo from "@/assets/img/language/swift.png";
+import type { StaticImageData } from "next/image";
 
 type LanguageConfig = Record<
 	string,
 	{
 		id: string;
 		label: string;
-		logoPath: string;
+		logoPath: StaticImageData; // <-- update here
 		pistonRuntime: { language: string; version: string };
 		monacoLanguage: string;
 		defaultCode: string;
@@ -17,7 +28,7 @@ export const LANGUAGE_CONFIG: LanguageConfig = {
 	javascript: {
 		id: "javascript",
 		label: "JavaScript",
-		logoPath: "/javascript.png",
+		logoPath: jsLogo,
 		pistonRuntime: { language: "javascript", version: "18.15.0" }, // api that we're gonna be using
 		monacoLanguage: "javascript",
 		defaultCode: `// JavaScript Playground
@@ -39,7 +50,7 @@ console.log('Sum of numbers:', sum);`,
 	typescript: {
 		id: "typescript",
 		label: "TypeScript",
-		logoPath: "/typescript.png",
+		logoPath: tsLogo,
 		pistonRuntime: { language: "typescript", version: "5.0.3" },
 		monacoLanguage: "typescript",
 		defaultCode: `// TypeScript Playground
@@ -76,7 +87,7 @@ console.log('Sum of numbers:', math.sum());`,
 	python: {
 		id: "python",
 		label: "Python",
-		logoPath: "/python.png",
+		logoPath: pythonLogo,
 		pistonRuntime: { language: "python", version: "3.10.0" },
 		monacoLanguage: "python",
 		defaultCode: `# Python Playground
@@ -98,7 +109,7 @@ print(f"Sum of numbers: {numbers_sum}")`,
 	java: {
 		id: "java",
 		label: "Java",
-		logoPath: "/java.png",
+		logoPath: javaLogo,
 		pistonRuntime: { language: "java", version: "15.0.2" },
 		monacoLanguage: "java",
 		defaultCode: `public class Main {
@@ -140,7 +151,7 @@ print(f"Sum of numbers: {numbers_sum}")`,
 	go: {
 		id: "go",
 		label: "Go",
-		logoPath: "/go.png",
+		logoPath: goLogo,
 		pistonRuntime: { language: "go", version: "1.16.2" },
 		monacoLanguage: "go",
 		defaultCode: `package main
@@ -181,7 +192,7 @@ func main() {
 	rust: {
 		id: "rust",
 		label: "Rust",
-		logoPath: "/rust.png",
+		logoPath: rustLogo,
 		pistonRuntime: { language: "rust", version: "1.68.2" },
 		monacoLanguage: "rust",
 		defaultCode: `fn main() {
@@ -214,7 +225,7 @@ func main() {
 	cpp: {
 		id: "cpp",
 		label: "C++",
-		logoPath: "/cpp.png",
+		logoPath: cppLogo,
 		pistonRuntime: { language: "cpp", version: "10.2.0" },
 		monacoLanguage: "cpp",
 		defaultCode: `#include <iostream>
@@ -258,7 +269,7 @@ int main() {
 	csharp: {
 		id: "csharp",
 		label: "C#",
-		logoPath: "/csharp.png",
+		logoPath: csharpLogo,
 		pistonRuntime: { language: "csharp", version: "6.12.0" },
 		monacoLanguage: "csharp",
 		defaultCode: `using System;
@@ -289,7 +300,7 @@ class Program {
 	ruby: {
 		id: "ruby",
 		label: "Ruby",
-		logoPath: "/ruby.png",
+		logoPath: rubyLogo,
 		pistonRuntime: { language: "ruby", version: "3.0.1" },
 		monacoLanguage: "ruby",
 		defaultCode: `# Create array
@@ -313,7 +324,7 @@ puts "Sum of numbers: #{sum}"`,
 	swift: {
 		id: "swift",
 		label: "Swift",
-		logoPath: "/swift.png",
+		logoPath: swiftLogo,
 		pistonRuntime: { language: "swift", version: "5.3.3" },
 		monacoLanguage: "swift",
 		defaultCode: `// Create array

@@ -33,7 +33,7 @@ interface CompletionBadgeProps {
 export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 	return (
 		<Card className="border-none py-0 shadow-none bg-transparent">
-			<CardContent className="flex gap-1 sm:gap-4 px-0 sm:px-4 md:px-6">
+			<CardContent className="flex gap-1 sm:gap-4 px-0 sm:px-4 md:px-6 flex-wrap">
 				{post.author.userProfile && (
 					<AuthorNudge author={post.author.userProfile} />
 				)}
