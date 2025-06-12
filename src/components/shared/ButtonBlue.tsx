@@ -17,7 +17,7 @@ const ButtonBlue: FC<ButtonProps> = ({
 	return (
 		<button
 			className={cn(
-				"flex justify-center items-center w-full px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro ease-soft-in tracking-tight-soft bg-linear-to-tl from-blue-600 to-cyan-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85 disabled:pointer-events-none disabled:opacity-50",
+				"flex justify-center items-center px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro ease-soft-in tracking-tight-soft bg-linear-to-tl blue-gradient hover:scale-102 hover:shadow-soft-xs active:opacity-85 disabled:pointer-events-none disabled:opacity-50",
 				className,
 			)}
 			disabled={loading}

@@ -7,8 +7,8 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import CheckboxGrid, { InternalOption } from "./ChecboxGrid";
-import RadioGroupGrid from "./RadioGrid";
+import { CheckboxGrid, InternalOption } from "../shared/ChecboxGrid";
+import { RadioGrid as RadioGroupGrid } from "../shared/RadioGrid";
 import useCompanies from "@/hooks/useCompanyList";
 import useTopics from "@/hooks/useTopicList";
 import DurationPicker from "../shared/DurationPicker";

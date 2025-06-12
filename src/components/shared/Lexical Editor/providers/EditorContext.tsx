@@ -8,9 +8,10 @@ import React, {
 	useCallback,
 	useMemo,
 } from "react";
-import { LexicalEditor, NodeKey } from "lexical"; // Import LexicalEditor type
+import { $getRoot, LexicalEditor, NodeKey } from "lexical"; // Import LexicalEditor type
 import { PLUGIN_CONFIG, pluginConfig, PluginConfigured } from "../appSettings";
 import { PluginNames } from "../constants";
+import { EditorFileUpload } from "@/utils/types";
 
 interface EditorContextType {
 	id: string;
@@ -25,6 +26,7 @@ interface EditorContextType {
 	setEditor: (editor: LexicalEditor) => void; // Add setter for editor
 	selectedContentKey: NodeKey | null; // Add selected content key state
 	setSelectedContentKey: (key: NodeKey | null) => void; // Add setter for selected content key
+	getImageUrls: () => string[];
 }
 
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
@@ -52,22 +54,46 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({
 		}));
 	}, []);
 
-	const contextValue = useMemo(() => {
-		return {
-			id,
-			setId,
-			tableOfContent,
-			setTableOfContent,
-			pluginConfig,
-			setPlugin,
-			minHeight,
-			setMinHeight,
-			editor,
-			setEditor,
-			selectedContentKey,
-			setSelectedContentKey,
-		};
-	}, [id, tableOfContent, pluginConfig, setPlugin, minHeight, editor]);
+	function getImageUrls(): string[] {
+		const urls: string[] = [];
+		if (!editor) {
+			return urls;
+		}
+
+		editor.read(() => {
+			const root = $getRoot();
+
+			const traverse = (node: any) => {
+				if (typeof node.getChildren === "function") {
+					node.getChildren().forEach(traverse);
+				}
+
+				if (node.__type === "image" && node.__src) {
+					urls.push(node.__src);
+				}
+			};
+
+			traverse(root);
+		});
+
+		return urls;
+	}
+
+	const contextValue = {
+		id,
+		setId,
+		tableOfContent,
+		setTableOfContent,
+		pluginConfig,
+		setPlugin,
+		minHeight,
+		setMinHeight,
+		editor,
+		setEditor,
+		selectedContentKey,
+		setSelectedContentKey,
+		getImageUrls,
+	};
 
 	return (
 		<EditorContext.Provider value={contextValue}>

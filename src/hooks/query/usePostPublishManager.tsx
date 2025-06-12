@@ -18,6 +18,7 @@ type PostParams = {
 	sidebarData: Record<string, unknown>;
 	postContent: ContentType;
 	type: PostType;
+	thumbnail?: string | null;
 };
 
 export const usePostPublishManager = (
@@ -40,7 +41,6 @@ export const usePostPublishManager = (
 	const validateDraftData = (params: PostParams) => {
 		const consolidated = consolidatePostData(params);
 		const result = PostDraftValidator.safeParse(consolidated);
-
 		if (!result.success) {
 			setError(result.error);
 			return { error: result.error };

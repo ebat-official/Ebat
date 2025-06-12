@@ -149,6 +149,5 @@ export const getCurrentUser = async () => {
 
 export const validateUser = async () => {
 	const user = await getCurrentUser();
-	if (!user) return false;
 	return user;
 };

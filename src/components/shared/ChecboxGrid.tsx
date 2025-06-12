@@ -39,7 +39,7 @@ const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
 			: { ...opt, checked: opt.checked || false },
 	);
 
-const CheckboxGrid: React.FC<CheckboxGridProps> = ({
+export const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 	options: initialOptions,
 	selectedOptions,
 	getSelectedOptons,
@@ -111,7 +111,9 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 							/>
 							<div className="flex gap-1 justify-center items-center">
 								{option.icon && <div>{option.icon}</div>}
-								<label htmlFor={option.label}>{option.label}</label>
+								<label className="capitalize" htmlFor={option.label}>
+									{option.label?.toLowerCase()}
+								</label>
 							</div>
 						</div>
 					))}
@@ -166,5 +168,3 @@ const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 		</div>
 	);
 };
-
-export default CheckboxGrid;

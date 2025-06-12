@@ -1,5 +1,6 @@
 import { OutputData } from "@editorjs/editorjs";
 import {
+	CompletionStatus,
 	Post,
 	PostCategory,
 	PostType,
@@ -16,10 +17,12 @@ import {
 	POST_ROUTE_TYPE,
 	SUCCESS,
 } from "./contants";
+import { boolean } from "zod";
 
 export interface ContentType {
 	post?: EditorContent;
 	answer?: EditorContent;
+	thumbnail?: string;
 }
 export interface ContentReturnType {
 	post?: string;
@@ -88,6 +91,10 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 			image: string | null;
 			companyName: string | null;
 		} | null;
+	};
+	views?: {
+		count: number;
+		updatedAt: Date;
 	};
 };
 
@@ -208,3 +215,61 @@ export type TableOfContent = {
 	title: string;
 	level: number;
 }[];
+
+export type EditorFileUpload = {
+	url: string;
+	alt: string;
+	type: string;
+};
+
+export type UploadZone = {
+	title: string;
+	subtitle: string;
+	icon: React.ElementType;
+	gradient: string;
+	rotate: string;
+};
+
+export enum PostSortOrder {
+	Latest = "latest",
+	Oldest = "oldest",
+	MostVotes = "mostVotes",
+}
+
+export interface PostSearchContext {
+	hasMorePage: boolean;
+	totalPages: number;
+	page: number;
+}
+
+export type FeedPost = Post & {
+	_count?: { votes: number; comments: number };
+	views?: { count: number; updatedAt: Date };
+	author: {
+		id: string;
+		userName: string;
+		userProfile: {
+			name: string | null;
+			image: string | null;
+			companyName: string | null;
+		} | null;
+	};
+};
+export interface PostSearchResponse {
+	posts: FeedPost[];
+	context: PostSearchContext;
+}
+export interface UsePostSearchOptions {
+	searchQuery?: string;
+	difficulty?: string[];
+	topics?: string[];
+	category?: string;
+	subCategory?: string;
+	companies?: string[];
+	page?: number;
+	pageSize?: number;
+	sortOrder?: string;
+	initialPosts?: any[];
+	initialContext?: PostSearchContext;
+	enabled?: boolean;
+}

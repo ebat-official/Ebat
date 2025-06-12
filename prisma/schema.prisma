@@ -65,6 +65,8 @@ enum SubCategory {
   HTML
   CSS
   REACT
+  BLOGS
+  SYSTEMDESIGN
 }
 
 model User {
@@ -164,7 +166,8 @@ model ResetToken {
 model Post {
   id                 String             @id @default(nanoid())
   title              String?
-  slug               String?            
+  slug               String?
+  thumbnail          String?             
   content            Bytes?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -180,9 +183,9 @@ model Post {
   topics             String[]           @default([])
   completionStatus   CompletionStatus[]
   category           PostCategory
-  subCategory        SubCategory?
+  subCategory        SubCategory
   status             PostStatus         @default(DRAFT)
-  viewCount          Int                @default(0)
+  views              PostViews?         
   Bookmark           Bookmark[]
   Report             Report[]
   collaborators      User[]             @relation("PostCollaborators")
@@ -190,6 +193,13 @@ model Post {
   approvalLogs       Json? // Array of approval/rejection logs
 
   @@unique([id, slug], name: "PostIdSlug")
+}
+
+model PostViews {
+  postId    String   @id
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model PostEdit {

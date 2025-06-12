@@ -5,7 +5,7 @@ import { useParams, notFound } from "next/navigation";
 import isValidCategory from "@/utils/isValidCategory";
 import { POST_ACTIONS } from "@/utils/contants";
 import { PostType } from "@prisma/client";
-import PostCreateEdit from "@/components/main/PostCreateEdit";
+import PostCreateEdit from "@/components/post edit/PostCreateEdit";
 
 function Page() {
 	const {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
-import EditorContainer from "../post edit/EditorContainer";
+import EditorContainer from "./EditorContainer";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { generateNanoId } from "@/lib/generateNanoid";
@@ -103,7 +103,6 @@ function PostCreateEdit({
 		if (!postPublishError) return;
 
 		const message = handleError(postPublishError, postType);
-
 		if (message && message === UNAUTHENTICATED_ERROR.data.message) {
 			setLoginModalMessage("Please sign in to publish your post");
 			return;
@@ -115,14 +114,13 @@ function PostCreateEdit({
 	}, [postPublishError]);
 
 	const getPostData = (postContent: ContentType) => {
+		const { thumbnail, ...content } = postContent;
 		return {
 			postId,
 			category,
-			subCategory:
-				postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN
-					? undefined
-					: subCategory,
-			postContent,
+			subCategory,
+			postContent: content,
+			thumbnail: thumbnail || postData?.thumbnail,
 			sidebarData,
 			type: postType,
 		};
@@ -142,6 +140,12 @@ function PostCreateEdit({
 
 	const publishHandler = async (postContent: ContentType) => {
 		const data = getPostData(postContent);
+		if (
+			(postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) &&
+			!data.thumbnail
+		) {
+			//thumbnail is required for blogs and system design
+		}
 		const result = await publish(data);
 		if (result.data) {
 			setPostPublished(result.data.slug || true);

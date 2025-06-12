@@ -72,7 +72,7 @@ export async function GET(
 		// Cache if first page
 		if (shouldCache) {
 			try {
-				await redis.set(cacheKey, data);
+				redis.set(cacheKey, data);
 			} catch (err) {
 				console.error("Redis setex error — skipping cache:", err);
 			}

@@ -1,28 +1,44 @@
-import RightPanelLayout from "@/components/shared/RightPanelLayout";
-import React from "react";
+import { FeedProvider } from "@/components/feed/FeedContext";
+import { PostSearchResponse, PostSortOrder } from "@/utils/types";
+import { EndpointMap } from "@/utils/contants";
+import { SubCategory } from "@prisma/client";
+import { notFound } from "next/navigation";
+import { fetchPostSearch } from "@/utils/api utils/posts";
+import { Feed } from "@/components/feed/Feed";
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+type PageProps = Promise<{
+	category: string;
+	subCategory: string;
+}>;
 
-function page() {
+// SSR: fetch data on every request
+export default async function Page({ params }: { params: PageProps }) {
+	const awaitedParams = await params;
+	awaitedParams.subCategory = awaitedParams.subCategory || SubCategory.BLOGS;
+
+	if (
+		awaitedParams.subCategory.toUpperCase() !== SubCategory.BLOGS &&
+		awaitedParams.subCategory.toUpperCase() !== SubCategory.SYSTEMDESIGN
+	) {
+		return notFound();
+	}
+	const queryParams = {
+		category: awaitedParams.category,
+		subCategory: awaitedParams.subCategory,
+		page: 1,
+		pageSize: 10,
+		sortOrder: PostSortOrder.Latest,
+	};
+
+	const data = await fetchPostSearch(queryParams);
+
 	return (
-		<RightPanelLayout>
-			<RightPanelLayout.MainPanel>
-				<Card className="">
-					<CardContent className="flex justify-center">helloo</CardContent>
-				</Card>
-			</RightPanelLayout.MainPanel>
-			<RightPanelLayout.SidePanel>
-				<Card className=" h-screen" />
-			</RightPanelLayout.SidePanel>
-		</RightPanelLayout>
+		<FeedProvider
+			initialPosts={data.posts}
+			initialContext={data.context}
+			queryParams={queryParams}
+		>
+			<Feed />
+		</FeedProvider>
 	);
 }
-
-export default page;

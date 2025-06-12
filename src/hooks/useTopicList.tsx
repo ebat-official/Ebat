@@ -23,7 +23,12 @@ const useTopics = (category: TopicCategory) => {
 	);
 
 	function searchTopics(query: string) {
-		setTopics(searchedTopics(query));
+		if (!category) return { topics: [], searchTopics };
+		if (!query) {
+			setTopics(topicsData[category] || []);
+		} else {
+			setTopics(searchedTopics(query));
+		}
 	}
 
 	return { topics, searchTopics };

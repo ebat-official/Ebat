@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Upload, Loader2, X, Image, UploadCloudIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +10,8 @@ import useFileUpload from "@/hooks/useFileUpload";
 import { toast } from "sonner";
 import { zones } from "./constants";
 import { useEditorContext } from "../../providers/EditorContext";
+import { EditorFileUpload } from "@/utils/types";
+import { compressImage } from "@/utils/compressImage";
 
 interface FileUploadZoneProps {
 	InsertMedia: (files: { url: string; alt: string }[]) => void;
@@ -21,7 +23,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 	closeHandler,
 }) => {
 	const [draggedZone, setDraggedZone] = useState<number | null>(null);
-	const [files, setFiles] = useState<{ url: string; alt: string }[]>([]);
+	const [files, setFiles] = useState<EditorFileUpload[]>([]);
 	const [uploading, setUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const { uploadFile, progress } = useFileUpload();
@@ -63,14 +65,18 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 	const upload = async (newFiles: File[]) => {
 		setUploading(true);
 
-		const uploadedFiles: { url: string; alt: string }[] = [];
+		const uploadedFiles: EditorFileUpload[] = [];
 
 		for (const file of newFiles) {
+			const compressedImage = await compressImage(file);
 			try {
-				const { status, data } = await uploadFile(file, { postId });
+				const { status, data } = await uploadFile(compressedImage, { postId });
 				if (status === "error") throw new Error(data.message);
-
-				uploadedFiles.push({ url: data.url || "", alt: file.name });
+				uploadedFiles.push({
+					url: data.url || "",
+					alt: file.name,
+					type: data.type || "",
+				});
 			} catch (error) {
 				closeHandler();
 				const errMsg = `Error uploading file "${file.name}": ${
@@ -80,7 +86,6 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 				toast.error(errMsg);
 			}
 		}
-
 		setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
 		setUploading(false);
 	};
@@ -96,13 +101,14 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 					{zones.map((zone, index) => (
 						<div key={index} className={`relative ${zone.rotate}`}>
 							<motion.div
+								onClick={() => fileInputRef.current?.click()}
 								onDragEnter={handleDragEnter(index)}
 								onDragOver={handleDragOver}
 								onDragLeave={handleDragLeave}
 								onDrop={handleDrop}
 								whileHover={{ y: -4, scale: 1.02 }}
 								whileTap={{ scale: 0.98 }}
-								className="relative h-full group"
+								className="relative h-full group cusoror-pointer"
 							>
 								<div
 									className={`

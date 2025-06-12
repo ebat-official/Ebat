@@ -1,10 +1,17 @@
 import pako from "pako";
 import { validateUser } from "@/actions/user";
-import { UNAUTHENTICATED_ERROR } from "../errors";
 import prisma from "@/lib/prisma";
-import { SUCCESS } from "../contants";
-import { PostApprovalStatus } from "@prisma/client";
-
+import {
+	Difficulty,
+	PostApprovalStatus,
+	PostCategory,
+	PostType,
+	SubCategory,
+} from "@prisma/client";
+import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
+import { PostSearchResponse, PostSortOrder } from "../types";
+import { EndpointMap } from "../contants";
+import { t } from "@excalidraw/excalidraw/i18n";
 export async function getPostById(postId: string) {
 	const post = await prisma.post.findUnique({
 		where: { id: postId },
@@ -73,4 +80,148 @@ export async function getAllApprovedPosts() {
 		}
 		return post;
 	});
+}
+
+// utils/api-utils/search.ts
+
+export async function searchPosts({
+	searchQuery,
+	difficulty,
+	topics,
+	category,
+	subCategory,
+	page,
+	pageSize,
+	sortOrder = PostSortOrder.Latest,
+	companies = [],
+	type,
+}: {
+	searchQuery: string;
+	difficulty: Difficulty[];
+	topics: string[];
+	category?: PostCategory;
+	subCategory?: SubCategory;
+	page: number;
+	pageSize: number;
+	sortOrder?: PostSortOrder | null;
+	companies?: string[];
+	type?: PostType;
+}) {
+	const searchQuerySanitized = sanitizeSearchQuery(searchQuery);
+	const skip = (page - 1) * pageSize;
+
+	const where: any = {
+		...(searchQuerySanitized && {
+			title: {
+				search: searchQuerySanitized,
+			},
+		}),
+		...(difficulty.length > 0 && {
+			difficulty: {
+				in: difficulty,
+			},
+		}),
+		...(topics.length > 0 && {
+			topics: {
+				hasSome: topics,
+			},
+		}),
+		...(category && { category }),
+		...(subCategory && { subCategory }),
+		...(type && { type }),
+		...(companies.length > 0 && {
+			companies: {
+				hasSome: companies,
+			},
+		}),
+	};
+
+	let orderBy: any = { createdAt: "desc" };
+	if (sortOrder === PostSortOrder.Oldest) {
+		orderBy = { createdAt: "asc" };
+	} else if (sortOrder === "mostVotes") {
+		orderBy = { votes: { _count: "desc" } };
+	}
+
+	const [posts, totalCount] = await Promise.all([
+		prisma.post.findMany({
+			where,
+			select: {
+				id: true,
+				title: true,
+				slug: true,
+				createdAt: true,
+				thumbnail: true,
+				difficulty: true,
+				companies: true,
+				type: true,
+				views: true,
+				topics: true,
+				author: {
+					select: {
+						id: true,
+						userName: true,
+						userProfile: {
+							select: {
+								name: true,
+								image: true,
+								companyName: true,
+							},
+						},
+					},
+				},
+				_count: {
+					select: {
+						votes: true,
+						comments: true,
+					},
+				},
+			},
+			orderBy,
+			skip,
+			take: pageSize + 1, // check for next page
+		}),
+
+		prisma.post.count({ where }),
+	]);
+
+	const hasMore = posts.length > pageSize;
+	const resultPosts = hasMore ? posts.slice(0, pageSize) : posts;
+	const totalPages = Math.ceil(totalCount / pageSize);
+
+	return {
+		posts: resultPosts,
+		hasMore,
+		totalPages,
+	};
+}
+
+export interface PostSearchQueryParams {
+	category: string;
+	subCategory?: string;
+	page?: number;
+	pageSize?: number;
+	sortOrder?: PostSortOrder;
+	[key: string]: any;
+}
+
+export async function fetchPostSearch(
+	params: PostSearchQueryParams,
+): Promise<PostSearchResponse> {
+	const queryParams = {
+		...params,
+		page: params.page ?? 1,
+		pageSize: params.pageSize ?? 10,
+		sortOrder: params.sortOrder ?? PostSortOrder.Latest,
+	};
+
+	const url = new URL(`${process.env.ENV_URL}${EndpointMap.PostSearch}`);
+	Object.entries(queryParams).forEach(([key, value]) => {
+		if (value !== undefined && value !== null)
+			url.searchParams.append(key, String(value));
+	});
+
+	const res = await fetch(url.toString(), { cache: "no-store" });
+	if (!res.ok) throw new Error("Failed to fetch posts");
+	return res.json();
 }
