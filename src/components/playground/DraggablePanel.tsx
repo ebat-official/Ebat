@@ -17,22 +17,23 @@ interface DraggablePanelProps {
 const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 	return (
 		<div>
-			<Header />
+			{/* <Header /> */}
 			<ResizablePanelGroup
-				className="max-w-screen max-h-screen"
+				className="max-w-screen p-2"
+				style={{ maxHeight: "calc(100vh - 66px)" }}
 				direction="horizontal"
 			>
 				<ResizablePanel>
 					<ChallengeQuestionView post={post} />
 				</ResizablePanel>
-				<ResizableHandle />
+				<ResizableHandle withHandle className="bg-transparent" />
 				<ResizablePanel>
 					<ResizablePanelGroup direction="vertical">
-						<ResizablePanel>
+						<ResizablePanel className="flex-1">
 							<EditorPanel />
 						</ResizablePanel>
-						<ResizableHandle />
-						<ResizablePanel defaultSize={75}>
+						<ResizableHandle withHandle className="bg-transparent" />
+						<ResizablePanel defaultSize={30}>
 							<OutputPanel />
 						</ResizablePanel>
 					</ResizablePanelGroup>

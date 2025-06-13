@@ -6,10 +6,12 @@ type SidebarSettings = { disabled: boolean; isHoverOpen: boolean };
 type SidebarContextType = {
 	isOpen: boolean;
 	isHover: boolean;
+	mobileNav: boolean;
 	settings: SidebarSettings;
 	toggleOpen: () => void;
 	setIsOpen: (isOpen: boolean) => void;
 	setIsHover: (isHover: boolean) => void;
+	setMobileNav: (open: boolean) => void;
 	getOpenState: () => boolean;
 	setSettings: (settings: Partial<SidebarSettings>) => void;
 	config: SidebarConfigType;
@@ -23,6 +25,7 @@ export const SidebarProvider = ({
 }: { children: ReactNode; className?: string }) => {
 	const [isOpen, setIsOpen] = useState(true);
 	const [isHover, setIsHover] = useState(false);
+	const [mobileNav, setMobileNav] = useState(false);
 	const [settings, setSettings] = useState<SidebarSettings>({
 		disabled: false,
 		isHoverOpen: false,
@@ -48,10 +51,12 @@ export const SidebarProvider = ({
 			value={{
 				isOpen,
 				isHover,
+				mobileNav,
 				settings,
 				toggleOpen,
 				setIsOpen,
 				setIsHover,
+				setMobileNav,
 				getOpenState,
 				setSettings: updateSettings,
 				config: sideBarConfig,

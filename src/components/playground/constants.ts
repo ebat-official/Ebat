@@ -347,12 +347,24 @@ print("Sum of numbers: \\(sum)")`,
 	},
 };
 
+export enum EditorThemeId {
+	VSDark = "vs-dark",
+	VSLight = "vs-light",
+	GitHubDark = "github-dark",
+	Monokai = "monokai",
+	SolarizedDark = "solarized-dark",
+}
+
 export const THEMES: Theme[] = [
-	{ id: "vs-dark", label: "VS Dark", color: "#1e1e1e" },
-	{ id: "vs-light", label: "VS Light", color: "#ffffff" },
-	{ id: "github-dark", label: "GitHub Dark", color: "#0d1117" },
-	{ id: "monokai", label: "Monokai", color: "#272822" },
-	{ id: "solarized-dark", label: "Solarized Dark", color: "#002b36" },
+	{ id: EditorThemeId.VSDark, label: "VS Dark", color: "#1e1e1e" },
+	{ id: EditorThemeId.VSLight, label: "VS Light", color: "#ffffff" },
+	{ id: EditorThemeId.GitHubDark, label: "GitHub Dark", color: "#0d1117" },
+	{ id: EditorThemeId.Monokai, label: "Monokai", color: "#272822" },
+	{
+		id: EditorThemeId.SolarizedDark,
+		label: "Solarized Dark",
+		color: "#002b36",
+	},
 ];
 
 export const THEME_DEFINITONS = {

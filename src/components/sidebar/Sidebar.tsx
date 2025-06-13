@@ -15,19 +15,25 @@ export function Sidebar() {
 	const sidebar = useSidebar();
 	if (!sidebar) return null;
 
-	const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
+	const { isOpen, toggleOpen, getOpenState, setIsHover, settings, mobileNav } =
+		sidebar;
+
 	return (
 		<aside
 			className={cn(
 				"font-inter  fixed lg:sticky top-0 left-0 z-20 h-screen  -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
 				!getOpenState() ? "w-[90px]" : "w-72",
 				settings.disabled && "hidden",
+				{ "!-translate-x-full !fixed": mobileNav },
 			)}
 		>
 			<SidebarToggle
 				isOpen={isOpen}
 				setIsOpen={toggleOpen}
-				className="invisible lg:visible absolute top-[112px] -right-[16px] z-20"
+				className={cn(
+					"invisible lg:visible absolute top-[112px] -right-[16px] z-20",
+					{ "!invisible": mobileNav },
+				)}
 			/>
 			<div
 				onMouseEnter={() => setIsHover(true)}
