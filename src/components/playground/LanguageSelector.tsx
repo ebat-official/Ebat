@@ -44,9 +44,9 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
 				whileHover={{ scale: 1.02 }}
 				whileTap={{ scale: 0.98 }}
 				onClick={() => setIsOpen(!isOpen)}
-				className={`group relative flex items-center gap-3 px-4 py-2.5 bg-[#1e1e2e]/80 
+				className={`group relative flex items-center gap-3 p-2 bg-card 
       rounded-lg transition-all 
-       duration-200 border border-gray-800/50 hover:border-gray-700
+       duration-200
        ${!hasAccess && language !== "javascript" ? "opacity-50 cursor-not-allowed" : ""}`}
 			>
 				{/* Decoration */}
@@ -56,22 +56,22 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
 					aria-hidden="true"
 				/>
 
-				<div className="size-6 rounded-md bg-gray-800/50 p-0.5 group-hover:scale-110 transition-transform">
+				<div className=" rounded-md p-0.5 group-hover:scale-110 transition-transform">
 					<Image
 						src={currentLanguageObj.logoPath}
 						alt="programming language logo"
-						width={24}
-						height={24}
+						width={16}
+						height={16}
 						className="w-full h-full object-contain relative z-10"
 					/>
 				</div>
 
-				<span className="text-gray-200 min-w-[80px] text-left group-hover:text-white transition-colors">
+				<span className="  text-left text-sm transition-colors">
 					{currentLanguageObj.label}
 				</span>
 
 				<ChevronDownIcon
-					className={`size-4 text-gray-400 transition-all duration-300 group-hover:text-gray-300
+					className={`size-4 text-gray-400 transition-all duration-300 
             ${isOpen ? "rotate-180" : ""}`}
 				/>
 			</motion.button>
@@ -83,11 +83,11 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
 						animate={{ opacity: 1, y: 0, scale: 1 }}
 						exit={{ opacity: 0, y: 8, scale: 0.96 }}
 						transition={{ duration: 0.2 }}
-						className="absolute top-full left-0 mt-2 w-64 bg-[#1e1e2e]/95 backdrop-blur-xl
-           rounded-xl border border-[#313244] shadow-2xl py-2 z-50"
+						className="absolute top-full left-0 mt-2 w-48 bg-card backdrop-blur-xl
+           rounded-xl border shadow-2xl py-2 z-50"
 					>
-						<div className="px-3 pb-2 mb-2 border-b border-gray-800/50">
-							<p className="text-xs font-medium text-gray-400">
+						<div className="px-3 pb-2 mb-2 border-b border-gray-600/40">
+							<p className="text-xs font-medium text-gray-500 dark:text-gray-400">
 								Select Language
 							</p>
 						</div>
@@ -106,9 +106,9 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
 									>
 										<button
 											className={`
-                      relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
-                      ${language === lang.id ? "bg-blue-500/10 text-blue-400" : "text-gray-300"}
-                      ${isLocked ? "opacity-50" : "hover:bg-[#262637]"}
+                      relative w-full flex items-center gap-3 p-1.5 rounded-lg transition-all duration-200
+                      ${language === lang.id ? "bg-blue-500/10 text-blue-400" : ""}
+                      ${isLocked ? "opacity-50" : "hover:bg-red"}
                     `}
 											onClick={() => handleLanguageSelect(lang.id)}
 											disabled={isLocked}
@@ -121,8 +121,8 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
 
 											<div
 												className={`
-                         relative size-8 rounded-lg p-1.5 group-hover:scale-110 transition-transform
-                         ${language === lang.id ? "bg-blue-500/10" : "bg-gray-800/50"}
+                         relative  rounded-lg p-1.5 group-hover:scale-110 transition-transform
+                         ${language === lang.id ? "bg-blue-500/10" : ""}
                        `}
 											>
 												<div
@@ -130,15 +130,15 @@ function LanguageSelector({ hasAccess }: { hasAccess: boolean }) {
                         opacity-0 group-hover:opacity-100 transition-opacity"
 												/>
 												<Image
-													width={24}
-													height={24}
+													width={16}
+													height={16}
 													src={lang.logoPath}
 													alt={`${lang.label} logo`}
 													className="w-full h-full object-contain relative z-10"
 												/>
 											</div>
 
-											<span className="flex-1 text-left group-hover:text-white transition-colors">
+											<span className="flex-1 text-left group-hover:opacity-60 transition-colors">
 												{lang.label}
 											</span>
 

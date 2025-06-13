@@ -22,7 +22,7 @@ export default function NavBar({ session }: { session: Session | null }) {
 					},
 				)}
 			>
-				<div className="flex items-center justify-between w-full h-16 max-w-(--breakpoint-xl) mx-5">
+				<div className="flex items-center justify-between w-full h-16  mx-5">
 					<div>
 						<SheetMenu />
 					</div>
