@@ -69,6 +69,12 @@ enum SubCategory {
   SYSTEMDESIGN
 }
 
+enum ChallengeType {
+  PROBLEM      // Algorithmic/coding problem, no UI
+  UI           // Requires building a UI
+  BACKEND    // Both backend
+}
+
 model User {
   id               String             @id @default(uuid()) @db.Uuid
   email            String             @unique
@@ -191,6 +197,7 @@ model Post {
   collaborators      User[]             @relation("PostCollaborators")
   approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
+  challengeType      ChallengeType?     // Only relevant if type == CHALLENGE
 
   @@unique([id, slug], name: "PostIdSlug")
 }
