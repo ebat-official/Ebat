@@ -1,28 +1,14 @@
-"use client";
-
-import {
-	getExecutionResult,
-	useCodeEditorStore,
-} from "@/store/useCodeEditorStore";
-import { Loader2, Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import ButtonBlue from "../shared/ButtonBlue";
 
-function RunButton() {
-	const { runCode, language, isRunning } = useCodeEditorStore();
+interface RunButtonProps {
+	isRunning: boolean;
+	disabled?: boolean;
+	onClick?: () => void;
+}
 
+function RunButton({ isRunning, disabled, onClick }: RunButtonProps) {
 	const handleRun = async () => {
-		await runCode();
-		const result = getExecutionResult();
-
-		// if (user && result) {
-		// 	await saveExecution({
-		// 		language,
-		// 		code: result.code,
-		// 		output: result.output || undefined,
-		// 		error: result.error || undefined,
-		// 	});
-		// }
+		onClick?.();
 	};
 
 	return (
@@ -31,7 +17,7 @@ function RunButton() {
                from-blue-500 to-blue-600 opacity-90 hover:opacity-100 transition-opacity"
 			loadingText="Executing..."
 			onClick={handleRun}
-			disabled={isRunning}
+			disabled={disabled}
 			loading={isRunning}
 		>
 			<span>Run Code</span>
