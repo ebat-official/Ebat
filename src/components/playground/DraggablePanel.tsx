@@ -1,3 +1,4 @@
+"use client";
 import React, { FC } from "react";
 import { PostWithExtraDetails } from "@/utils/types";
 import {
@@ -9,12 +10,19 @@ import Header from "./Header";
 import EditorPanel from "./EditorPanel";
 import OutputPanel from "./OutputPanel";
 import ChallengeQuestionView from "./ChallengeQuestionView";
+import { OnlineIDE } from "./components/OnlineIde";
+import { BottomPanel } from "./components/ide/BottomPanel";
+import { PreviewPanel } from "./components/preview/PreviewPanel";
+import { useWebContainerStore } from "./store/webContainer";
+import { Card } from "@/components/ui/card";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
 }
 
 const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
+	const { selectedTemplate } = useWebContainerStore();
+
 	return (
 		<div>
 			{/* <Header /> */}
@@ -23,20 +31,34 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 				style={{ maxHeight: "calc(100vh - 66px)" }}
 				direction="horizontal"
 			>
-				<ResizablePanel>
+				<ResizablePanel defaultSize={40}>
 					<ChallengeQuestionView post={post} />
 				</ResizablePanel>
 				<ResizableHandle withHandle className="bg-transparent" />
 				<ResizablePanel>
-					<ResizablePanelGroup direction="vertical">
-						<ResizablePanel className="flex-1">
-							<EditorPanel />
-						</ResizablePanel>
-						<ResizableHandle withHandle className="bg-transparent" />
-						<ResizablePanel defaultSize={30}>
-							<OutputPanel />
-						</ResizablePanel>
-					</ResizablePanelGroup>
+					<Card className="h-full w-full pb-0">
+						<ResizablePanelGroup direction="vertical">
+							<ResizablePanel className="flex-1">
+								{selectedTemplate && selectedTemplate.hasPreview !== false ? (
+									<ResizablePanelGroup direction="horizontal">
+										<ResizablePanel>
+											<OnlineIDE />
+										</ResizablePanel>
+										<ResizableHandle withHandle className="bg-transparent" />
+										<ResizablePanel>
+											<PreviewPanel selectedTemplate={selectedTemplate} />
+										</ResizablePanel>
+									</ResizablePanelGroup>
+								) : (
+									<OnlineIDE />
+								)}
+							</ResizablePanel>
+							<ResizableHandle withHandle className="bg-transparent" />
+							<ResizablePanel defaultSize={30}>
+								<BottomPanel />
+							</ResizablePanel>
+						</ResizablePanelGroup>
+					</Card>
 				</ResizablePanel>
 			</ResizablePanelGroup>
 		</div>
