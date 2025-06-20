@@ -1,4 +1,5 @@
-import { Monaco } from "@monaco-editor/react";
+import { editor } from "monaco-editor";
+import { EditorThemeId } from "../constants";
 
 export interface ExecutionResult {
 	code: string;
@@ -7,18 +8,21 @@ export interface ExecutionResult {
 }
 export interface CodeEditorState {
 	language: string;
+	theme: string;
+	fontSize: number;
+	editor: editor.IStandaloneCodeEditor | null;
 	output: string;
 	isRunning: boolean;
 	error: string | null;
-	theme: string;
-	fontSize: number;
-	editor: Monaco | null;
-	executionResult: ExecutionResult | null;
-
-	setEditor: (editor: Monaco) => void;
+	executionResult: {
+		code: string;
+		output: string;
+		error: string | null;
+	} | null;
 	getCode: () => string;
-	setLanguage: (language: string) => void;
+	setEditor: (editor: editor.IStandaloneCodeEditor) => void;
 	setTheme: (theme: string) => void;
 	setFontSize: (fontSize: number) => void;
+	setLanguage: (language: string) => void;
 	runCode: () => Promise<void>;
 }
