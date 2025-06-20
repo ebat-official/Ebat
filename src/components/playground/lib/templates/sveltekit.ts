@@ -141,6 +141,7 @@ export default defineConfig(({ mode }) => ({
 							sourceMap: true,
 							strict: true,
 							types: ["vitest/globals"],
+							moduleResolution: "nodenext",
 						},
 					},
 					null,
