@@ -154,7 +154,7 @@ export const angularTemplate: Template = {
 							declaration: false,
 							downlevelIteration: true,
 							experimentalDecorators: true,
-							moduleResolution: "node",
+							moduleResolution: "nodenext",
 							importHelpers: true,
 							target: "ES2022",
 							module: "ES2022",

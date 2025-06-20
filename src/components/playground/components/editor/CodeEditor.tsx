@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import Editor from "@monaco-editor/react";
+import React, { useEffect } from "react";
+import Editor, { useMonaco } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { defineMonacoThemes, EditorThemeId } from "../../constants";
 
@@ -23,16 +23,28 @@ export function CodeEditor({
 	};
 
 	const { resolvedTheme } = useTheme();
+	const monaco = useMonaco();
+
+	useEffect(() => {
+		if (monaco) {
+			monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+				jsx: monaco.languages.typescript.JsxEmit.React,
+				esModuleInterop: true,
+				target: monaco.languages.typescript.ScriptTarget.ESNext,
+				allowNonTsExtensions: true,
+			});
+		}
+	}, [monaco]);
+
 	const theme =
 		resolvedTheme === "dark" ? EditorThemeId.GitHubDark : EditorThemeId.VSLight;
-	console.log(theme, "theme");
+	console.log(theme, "theme", language);
 
 	return (
 		<div className="h-full overflow-hidden">
 			<Editor
 				height="100%"
 				path={filePath}
-				defaultLanguage={language}
 				language={language}
 				theme={theme}
 				defaultValue={content}

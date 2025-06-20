@@ -220,7 +220,7 @@ export default defineConfig({
 							module: "ESNext",
 							lib: ["ES2020", "DOM", "DOM.Iterable"],
 							skipLibCheck: true,
-							moduleResolution: "bundler",
+							moduleResolution: "nodenext",
 							allowImportingTsExtensions: true,
 							resolveJsonModule: true,
 							isolatedModules: true,
