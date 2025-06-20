@@ -40,7 +40,7 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 						<ResizablePanelGroup direction="vertical">
 							<ResizablePanel className="flex-1">
 								<ResizablePanelGroup direction="horizontal">
-									<ResizablePanel>
+									<ResizablePanel defaultSize={60}>
 										<OnlineIDE />
 									</ResizablePanel>
 									{selectedTemplate &&
