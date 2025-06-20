@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { WebContainer } from "@webcontainer/api";
-import type { FileSystemTree } from "@/lib/types";
+import type { FileSystemTree } from "../lib/types";
 
 export function useFileTree(webContainer: WebContainer | null) {
 	const [files, setFiles] = useState<FileSystemTree>({});

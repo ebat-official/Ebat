@@ -59,7 +59,7 @@ function OutputPanel() {
 						</Button>
 					)}
 				</div>
-				<RunButton />
+				<RunButton isRunning={isRunning} />
 			</div>
 			{/* Output Area */}
 			<div

@@ -6,9 +6,6 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import Header from "./Header";
-import EditorPanel from "./EditorPanel";
-import OutputPanel from "./OutputPanel";
 import ChallengeQuestionView from "./ChallengeQuestionView";
 import { OnlineIDE } from "./components/OnlineIde";
 import { BottomPanel } from "./components/ide/BottomPanel";
