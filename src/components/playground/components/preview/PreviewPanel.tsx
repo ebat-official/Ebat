@@ -33,7 +33,7 @@ interface LoadingStateProps {
 // Components
 const LoadingState: React.FC<LoadingStateProps> = React.memo(
 	({ message, subMessage, showDots }) => (
-		<div className="h-full bg-background flex items-center justify-center">
+		<div className="h-full bg-background flex items-center justify-center min-h-96">
 			<div className="text-center text-muted-foreground">
 				<div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
 				<p className="text-lg font-medium">{message}</p>
@@ -128,7 +128,7 @@ export function PreviewPanel({ selectedTemplate }: PreviewPanelProps) {
 	if (!previewUrl) {
 		return (
 			<LoadingState
-				message="Starting Development Server"
+				message="Starting Development Server "
 				subMessage={`Installing dependencies and building your ${selectedTemplate.name} app...`}
 				showDots
 			/>
@@ -145,7 +145,7 @@ export function PreviewPanel({ selectedTemplate }: PreviewPanelProps) {
 					</div>
 				</div>
 			)}
-			<iframe {...iframeProps} />
+			<iframe {...iframeProps} className="min-h-96 w-full h-full" />
 			<PreviewControls onRefresh={handleRefresh} url={previewUrl} />
 		</div>
 	);

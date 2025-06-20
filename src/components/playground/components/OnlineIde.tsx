@@ -77,7 +77,7 @@ export function OnlineIDE() {
 	);
 
 	return (
-		<div className="bg-background text-foreground flex flex-col overflow-hidden h-full">
+		<div className="bg-background text-foreground flex flex-col overflow-hidden h-full min-h-96">
 			<Header
 				explorerCollapsed={explorerCollapsed}
 				onToggleExplorer={() => setExplorerCollapsed(!explorerCollapsed)}
