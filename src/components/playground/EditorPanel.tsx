@@ -10,15 +10,19 @@ import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
-import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
-import ShareSnippetDialog from "./ShareSnippetDialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSidebar } from "@/context/SidebarContext";
 import { set } from "date-fns";
 import { useTheme } from "next-themes";
 import LanguageSelector from "./LanguageSelector";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@clerk/nextjs";
+import { type Post } from "@prisma/client";
+
+type EditorPanelProps = {
+	post: Post;
+};
 
 function EditorPanel() {
 	const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -149,8 +153,6 @@ function EditorPanel() {
 							},
 						}}
 					/>
-
-					{/* {!clerk.loaded && <EditorPanelSkeleton />} */}
 				</div>
 			</CardContent>
 		</Card>
