@@ -39,19 +39,23 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 					<Card className="h-full w-full pb-0">
 						<ResizablePanelGroup direction="vertical">
 							<ResizablePanel className="flex-1">
-								{selectedTemplate && selectedTemplate.hasPreview !== false ? (
-									<ResizablePanelGroup direction="horizontal">
-										<ResizablePanel>
-											<OnlineIDE />
-										</ResizablePanel>
-										<ResizableHandle withHandle className="bg-transparent" />
-										<ResizablePanel>
-											<PreviewPanel selectedTemplate={selectedTemplate} />
-										</ResizablePanel>
-									</ResizablePanelGroup>
-								) : (
-									<OnlineIDE />
-								)}
+								<ResizablePanelGroup direction="horizontal">
+									<ResizablePanel>
+										<OnlineIDE />
+									</ResizablePanel>
+									{selectedTemplate &&
+										selectedTemplate.hasPreview !== false && (
+											<>
+												<ResizableHandle
+													withHandle
+													className="bg-transparent"
+												/>
+												<ResizablePanel>
+													<PreviewPanel selectedTemplate={selectedTemplate} />
+												</ResizablePanel>
+											</>
+										)}
+								</ResizablePanelGroup>
 							</ResizablePanel>
 							<ResizableHandle withHandle className="bg-transparent" />
 							<ResizablePanel defaultSize={30}>

@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 export function SheetMenu() {
 	const { mobileNav } = useSidebar();
-	debugger;
+
 	return (
 		<Sheet>
 			<SheetTrigger className={cn(mobileNav ? "" : "lg:hidden")} asChild>
