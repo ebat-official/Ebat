@@ -38,7 +38,6 @@ export function CodeEditor({
 
 	const theme =
 		resolvedTheme === "dark" ? EditorThemeId.GitHubDark : EditorThemeId.VSLight;
-	console.log(theme, "theme", language);
 
 	return (
 		<div className="h-full overflow-hidden">

@@ -35,16 +35,12 @@ const numbers = [1, 2, 3, 4, 5];
 
 // Map numbers to their squares
 const squares = numbers.map(n => n * n);
-console.log('Original numbers:', numbers);
-console.log('Squared numbers:', squares);
 
 // Filter for even numbers
 const evenNumbers = numbers.filter(n => n % 2 === 0);
-console.log('Even numbers:', evenNumbers);
 
 // Calculate sum using reduce
-const sum = numbers.reduce((acc, curr) => acc + curr, 0);
-console.log('Sum of numbers:', sum);`,
+const sum = numbers.reduce((acc, curr) => acc + curr, 0);`,
 	},
 	typescript: {
 		id: "typescript",
@@ -76,12 +72,7 @@ class MathOperations implements NumberArray {
   }
 }
 
-const math = new MathOperations([1, 2, 3, 4, 5]);
-
-console.log('Original numbers:', math.numbers);
-console.log('Squared numbers:', math.squares());
-console.log('Even numbers:', math.evenNumbers());
-console.log('Sum of numbers:', math.sum());`,
+const math = new MathOperations([1, 2, 3, 4, 5]);`,
 	},
 	python: {
 		id: "python",
