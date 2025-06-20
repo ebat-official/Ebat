@@ -85,8 +85,8 @@ export function Terminal({ output }: TerminalProps) {
 	}, [output]);
 
 	return (
-		<div className="h-full bg-card flex flex-col">
-			<div className="h-6 flex items-center px-4 justify-end">
+		<div className="h-full bg-transparent flex flex-col min-h-0">
+			<div className="flex items-center px-4 justify-end">
 				<div className="flex gap-1 px-4">
 					<Button
 						size="sm"
@@ -120,10 +120,10 @@ export function Terminal({ output }: TerminalProps) {
 				</div>
 			</div>
 
-			<div
+						<div
 				ref={terminalRef}
 				onScroll={handleScroll}
-				className="flex-1 overflow-y-auto p-4 font-mono text-sm bg-background"
+				className="max-h-96 overflow-y-scroll p-4 py-8 font-mono text-sm rounded-xl border"
 			>
 				{terminalContent}
 			</div>

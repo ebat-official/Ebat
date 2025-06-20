@@ -36,7 +36,7 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 				</ResizablePanel>
 				<ResizableHandle withHandle className="bg-transparent" />
 				<ResizablePanel>
-					<Card className="h-full w-full pb-0">
+					<Card className="h-full w-full py-0">
 						<ResizablePanelGroup direction="vertical">
 							<ResizablePanel className="flex-1">
 								<ResizablePanelGroup direction="horizontal">
