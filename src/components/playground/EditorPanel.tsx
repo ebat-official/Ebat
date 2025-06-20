@@ -1,5 +1,4 @@
 "use client";
-import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import { use, useEffect, useState } from "react";
 import {
 	defineMonacoThemes,
@@ -7,22 +6,14 @@ import {
 	LANGUAGE_CONFIG,
 } from "./constants";
 import { Editor } from "@monaco-editor/react";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
+import { RotateCcwIcon, TypeIcon } from "lucide-react";
 import useMounted from "@/hooks/useMounted";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSidebar } from "@/context/SidebarContext";
-import { set } from "date-fns";
 import { useTheme } from "next-themes";
 import LanguageSelector from "./LanguageSelector";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@clerk/nextjs";
-import { type Post } from "@prisma/client";
-
-type EditorPanelProps = {
-	post: Post;
-};
+import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 
 function EditorPanel() {
 	const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -63,7 +54,7 @@ function EditorPanel() {
 
 	useEffect(() => {
 		const savedFontSize = localStorage.getItem("editor-font-size");
-		if (savedFontSize) setFontSize(parseInt(savedFontSize));
+		if (savedFontSize) setFontSize(Number.parseInt(savedFontSize));
 	}, [setFontSize]);
 
 	const handleRefresh = () => {
@@ -99,7 +90,9 @@ function EditorPanel() {
 								min="12"
 								max="24"
 								value={fontSize}
-								onChange={(e) => handleFontSizeChange(parseInt(e.target.value))}
+								onChange={(e) =>
+									handleFontSizeChange(Number.parseInt(e.target.value))
+								}
 								className="w-20 h-1 bg-gray-500 rounded-lg cursor-pointer"
 							/>
 							<span className="text-sm font-medium text-gray-600 dark:text-gray-400 min-w-[2rem] text-center">

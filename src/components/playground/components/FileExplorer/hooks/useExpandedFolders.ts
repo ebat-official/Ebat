@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import type { FileSystemTree } from "@/lib/types";
+import type { FileSystemTree } from "../../../lib/types";
 
 export function useExpandedFolders(files: FileSystemTree, basePath: string) {
 	const expandedRef = useRef<Set<string>>(new Set());
@@ -15,12 +15,12 @@ export function useExpandedFolders(files: FileSystemTree, basePath: string) {
 		if (!hasAutoExpanded.current && Object.keys(files).length > 0) {
 			const autoExpandPaths = ["src"];
 			const newExpanded = new Set<string>();
-			autoExpandPaths.forEach((folderName) => {
+			for (const folderName of autoExpandPaths) {
 				const folderPath = basePath ? `${basePath}/${folderName}` : folderName;
 				if (files[folderName] && "directory" in files[folderName]) {
 					newExpanded.add(folderPath);
 				}
-			});
+			}
 			if (newExpanded.size > 0) {
 				setExpandedFolders(newExpanded);
 				hasAutoExpanded.current = true;

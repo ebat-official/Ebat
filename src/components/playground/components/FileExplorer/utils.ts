@@ -1,22 +1,24 @@
 import { DIRECTORY, FILE, SRC_FOLDER } from "./constants";
-import type { FileSystemTree } from "@/lib/types";
+import type { FileSystemTree } from "../../lib/types";
 import type { TreeElement } from "./types";
 
 export function convertAndSortTree(
 	files: FileSystemTree,
-	basePath: string = "",
-	searchQuery: string = "",
+	basePath = "",
+	searchQuery = "",
 ): TreeElement[] {
 	const elements: TreeElement[] = [];
 
-	Object.entries(files).forEach(([name, node]) => {
+	for (const [name, node] of Object.entries(files)) {
 		const path = basePath ? `${basePath}/${name}` : name;
 		const isDirectory = DIRECTORY in node && node[DIRECTORY];
 		const shouldShow =
 			!searchQuery || name.toLowerCase().includes(searchQuery.toLowerCase());
 
 		// Only show 'src' at the top level (basePath is empty)
-		if (basePath === "" && name !== SRC_FOLDER) return;
+		if (basePath === "" && name !== SRC_FOLDER) {
+			continue;
+		}
 
 		if (shouldShow) {
 			const element: TreeElement = {
@@ -35,7 +37,7 @@ export function convertAndSortTree(
 			};
 			elements.push(element);
 		}
-	});
+	}
 
 	// Sort: directories first, then files, alphabetically within each group
 	return elements.sort((a, b) => {

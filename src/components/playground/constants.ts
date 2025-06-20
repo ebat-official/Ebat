@@ -1,5 +1,4 @@
-import { Monaco } from "@monaco-editor/react";
-import { Theme } from "./types";
+import type { Monaco } from "@monaco-editor/react";
 import jsLogo from "@/assets/img/language/javascript.png";
 import tsLogo from "@/assets/img/language/typescript.png";
 import pythonLogo from "@/assets/img/language/python.png";
@@ -355,19 +354,15 @@ export enum EditorThemeId {
 	SolarizedDark = "solarized-dark",
 }
 
-export const THEMES: Theme[] = [
-	{ id: EditorThemeId.VSDark, label: "VS Dark", color: "#1e1e1e" },
-	{ id: EditorThemeId.VSLight, label: "VS Light", color: "#ffffff" },
-	{ id: EditorThemeId.GitHubDark, label: "GitHub Dark", color: "#0d1117" },
-	{ id: EditorThemeId.Monokai, label: "Monokai", color: "#272822" },
+export const THEME_DEFINITONS: Record<
+	string,
 	{
-		id: EditorThemeId.SolarizedDark,
-		label: "Solarized Dark",
-		color: "#002b36",
-	},
-];
-
-export const THEME_DEFINITONS = {
+		base: "vs-dark" | "vs" | "hc-black" | "hc-light";
+		inherit: boolean;
+		rules: Array<{ token: string; foreground: string }>;
+		colors: Record<string, string>;
+	}
+> = {
 	"github-dark": {
 		base: "vs-dark",
 		inherit: true,
@@ -390,6 +385,7 @@ export const THEME_DEFINITONS = {
 			"editorIndentGuide.background": "#21262d",
 			"editor.selectionBackground": "#264f78",
 			"editor.inactiveSelectionBackground": "#264f7855",
+			"editor.selectionHighlightBackground": "#073642",
 		},
 	},
 	monokai: {
@@ -444,15 +440,12 @@ export const THEME_DEFINITONS = {
 
 // Helper function to define themes in Monaco
 export const defineMonacoThemes = (monaco: Monaco) => {
-	Object.entries(THEME_DEFINITONS).forEach(([themeName, themeData]) => {
+	for (const [themeName, themeData] of Object.entries(THEME_DEFINITONS)) {
 		monaco.editor.defineTheme(themeName, {
 			base: themeData.base,
 			inherit: themeData.inherit,
-			rules: themeData.rules.map((rule) => ({
-				...rule,
-				foreground: rule.foreground,
-			})),
+			rules: themeData.rules,
 			colors: themeData.colors,
 		});
-	});
+	}
 };

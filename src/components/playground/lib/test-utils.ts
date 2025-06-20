@@ -1,4 +1,4 @@
-import { TestResult } from "@/types/test";
+import { TestResult } from "../types/test";
 
 // Function to clean ANSI escape codes and control characters
 export function cleanOutput(str: string): string {
