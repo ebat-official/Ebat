@@ -136,7 +136,7 @@ export function PreviewPanel({ selectedTemplate }: PreviewPanelProps) {
 	}
 
 	return (
-		<div className="h-full bg-white relative">
+		<div className="h-full relative">
 			{isLoading && (
 				<div className="absolute inset-0 bg-background/75 flex items-center justify-center z-10">
 					<div className="text-center text-foreground">
