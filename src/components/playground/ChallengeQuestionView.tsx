@@ -15,7 +15,7 @@ type ChallengeQuestionViewProps = {
 const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 	post,
 }) => (
-	<Card className="relative items-center overflow-y-auto h-screen">
+	<Card className="relative items-center overflow-y-auto">
 		<div className="flex w-full justify-center ">
 			<PostLikeButton postId={post.id} />
 			<CardContent className="flex flex-col h-full justify-center px-4 md:px-8 w-full max-w-3xl gap-4">

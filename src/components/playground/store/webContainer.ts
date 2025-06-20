@@ -296,7 +296,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 					addTerminalOutput(`🗑️ Deleted file: ${path}`);
 					handleCloseFile(path);
 					break;
-				case "rename":
+				case "rename": {
 					if (!newPath) {
 						addTerminalOutput("❌ New path is required for rename operation");
 						return;
@@ -306,6 +306,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 					await webContainer.fs.rm(path);
 					addTerminalOutput(`📝 Renamed ${path} to ${newPath}`);
 					break;
+				}
 			}
 
 			// Refresh file tree after operation
