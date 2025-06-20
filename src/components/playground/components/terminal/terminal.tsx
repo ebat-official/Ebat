@@ -120,7 +120,7 @@ export function Terminal({ output }: TerminalProps) {
 				</div>
 			</div>
 
-						<div
+			<div
 				ref={terminalRef}
 				onScroll={handleScroll}
 				className="max-h-96 overflow-y-scroll p-4 py-8 font-mono text-sm rounded-xl border"
