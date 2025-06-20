@@ -16,7 +16,6 @@ export const PreviewControls: React.FC<PreviewControlsProps> = React.memo(
 				size="sm"
 				variant="secondary"
 				onClick={onRefresh}
-				className="shadow-lg"
 			>
 				<RefreshCw className="w-4 h-4" />
 			</Button>
@@ -24,7 +23,6 @@ export const PreviewControls: React.FC<PreviewControlsProps> = React.memo(
 				size="sm"
 				variant="secondary"
 				onClick={() => window.open(url, "_blank")}
-				className="shadow-lg"
 			>
 				<ExternalLink className="w-4 h-4" />
 			</Button>
