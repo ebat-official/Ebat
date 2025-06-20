@@ -93,7 +93,6 @@ export default defineComponent({
 
 <template>
   <div class="min-h-screen flex flex-col items-center justify-center gap-4 p-4 bg-gray-900">
-    <h1 class="text-4xl font-bold">Vue Counter App</h1>
     <div>
       <button
         type="button"

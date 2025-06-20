@@ -100,7 +100,7 @@ describe('Counter', () => {
 import { setupCounter } from './counter'
 
 document.querySelector('#app').innerHTML = \`
-  <div class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
+  <div class="min-h-screen flex flex-col items-center justify-center gap-4 p-4 bg-gray-900">
     <h1 class="text-4xl font-bold">Vanilla JavaScript</h1>
     <button id="counter"></button>
   </div>
@@ -133,7 +133,6 @@ setupCounter(document.querySelector('#counter'))`,
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vanilla JavaScript App</title>
   </head>
   <body>
     <div id="app"></div>

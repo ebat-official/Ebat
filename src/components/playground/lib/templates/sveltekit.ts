@@ -104,6 +104,9 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     conditions: mode === 'test' ? ['browser'] : [],
   },
+  server: {
+    port: 5175,
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -121,7 +124,8 @@ export default defineConfig(({ mode }) => ({
           include: ['@sveltejs/kit', 'svelte']
         }
       }
-    }
+    },
+    port: 51004,
   }
 }));`,
 			},
