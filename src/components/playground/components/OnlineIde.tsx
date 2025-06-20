@@ -31,7 +31,7 @@ export function OnlineIDE() {
 	// Initialize WebContainer on mount
 	useEffect(() => {
 		initializeContainer();
-	}, [initializeContainer]);
+	}, []);
 
 	const handleFileCreate = useCallback(
 		async (filePath: string, content = "", isDirectory = false) => {
