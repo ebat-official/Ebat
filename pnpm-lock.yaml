@@ -285,6 +285,9 @@ importers:
       lucide-react:
         specifier: ^0.485.0
         version: 0.485.0(react@19.0.0)
+      monaco-editor:
+        specifier: 0.52.2
+        version: 0.52.2
       nanoid:
         specifier: ^5.0.9
         version: 5.0.9
