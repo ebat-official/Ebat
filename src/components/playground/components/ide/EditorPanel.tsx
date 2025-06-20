@@ -1,5 +1,4 @@
 import { useWebContainerStore } from "../../store/webContainer";
-import { EditorHeader } from "./EditorHeader";
 import { CodeEditor } from "../editor/CodeEditor";
 import { FileTabs } from "./FileTabs";
 

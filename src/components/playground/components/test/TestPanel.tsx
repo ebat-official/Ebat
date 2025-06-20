@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { Play, Loader2, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { Clock } from "lucide-react";
 import { Accordion } from "@/components/ui/accordion";
 import { TestResultItem } from "./TestResultAccordian";
 import { TestResult } from "../../types/test";
-import { parseTestResults } from "../../lib/test-utils";
 
 interface TestPanelProps {
 	results: TestResult[];

@@ -4,8 +4,6 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Header } from "./layout/Headers";
 import { FileExplorer } from "./FileExplorer/FileExplorer";
 import { EditorPanel } from "./ide/EditorPanel";
-import { PreviewPanel } from "./preview/PreviewPanel";
-import { BottomPanel } from "./ide/BottomPanel";
 import { useWebContainerStore } from "../store/webContainer";
 import { useSidebar } from "@/context/SidebarContext";
 
