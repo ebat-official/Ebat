@@ -67,7 +67,7 @@ export function BottomPanel() {
 	return (
 		<div className="flex flex-col  w-full border-t border-border relative rounded-xl p-4 gap-2 bg-gray-100 dark:bg-[#181825] h-full rounded-b-none">
 			<Tabs defaultValue="test" className="flex-1 w-full ">
-				<TabsList className="w-full justify-between rounded-none py-8 px-2 bg-transparent">
+				<TabsList className="w-full justify-between rounded-none px-2 bg-transparent">
 					<div className="flex gap-2">
 						<TabsTrigger className="flex-0 px-4 opacity-80" value="test">
 							<FlaskConical className="w-4 h-4 text-muted-foreground" />
