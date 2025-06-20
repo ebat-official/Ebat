@@ -12,16 +12,20 @@ import {
 } from "@/components/ui/sheet";
 import { CategorySwitcher } from "./CategorySwitcher";
 import { Navigation } from "./Navigation";
+import { useSidebar } from "@/context/SidebarContext";
+import { cn } from "@/lib/utils";
 
 export function SheetMenu() {
+	const { mobileNav } = useSidebar();
+
 	return (
 		<Sheet>
-			<SheetTrigger className="lg:hidden" asChild>
+			<SheetTrigger className={cn(mobileNav ? "" : "lg:hidden")} asChild>
 				<Button className="h-8" variant="outline" size="icon">
 					<MenuIcon size={20} />
 				</Button>
 			</SheetTrigger>
-			<SheetContent className="sm:w-72 px-3 h-full flex flex-col" side="left">
+			<SheetContent className="sm:w-72  px-3 h-full flex flex-col" side="left">
 				<SheetHeader className="mt-4">
 					<CategorySwitcher />
 				</SheetHeader>
