@@ -82,7 +82,7 @@ export default function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <button
         onClick={() => setCount(count + 1)}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"

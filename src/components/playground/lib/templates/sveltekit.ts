@@ -161,7 +161,7 @@ export default defineConfig(({ mode }) => ({
   }
 </script>
 
-<div class="min-h-screen flex items-center justify-center">
+<div class="min-h-screen flex items-center justify-center bg-gray-900">
   <button
     on:click={increment}
     class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"

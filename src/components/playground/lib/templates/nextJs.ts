@@ -62,7 +62,7 @@ export default function Page() {
   const [count, setCount] = useState(0)
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
+    <main className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 bg-gray-900">
       <h1 className="text-4xl font-bold">Next.js App</h1>
       <button
         onClick={() => setCount(count + 1)}
