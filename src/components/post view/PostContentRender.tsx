@@ -2,6 +2,7 @@ import { ContentReturnType } from "@/utils/types";
 import React from "react";
 // src/components/shared/Lexical Editor/themes/theme.css
 import "../shared/Lexical Editor/themes/theme.css";
+import { cn } from "@/lib/utils";
 interface PostContentRenderProps {
 	content: ContentReturnType;
 	className?: string;
@@ -17,14 +18,14 @@ export const PostContentRender: React.FC<PostContentRenderProps> = ({
 
 		return (
 			<div
-				className={`post-content editor ${className}`}
+				className="post-content editor"
 				dangerouslySetInnerHTML={{ __html: html }}
 			/>
 		);
 	};
 
 	return (
-		<div className="post-content-container">
+		<div className={cn("post-content-container", className)}>
 			{content.post && (
 				<div className="post-section ">{renderHtml(content.post)}</div>
 			)}
