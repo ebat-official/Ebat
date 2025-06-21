@@ -1,5 +1,6 @@
 import { ContentReturnType } from "@/utils/types";
 import React from "react";
+import DOMPurify from "isomorphic-dompurify";
 // src/components/shared/Lexical Editor/themes/theme.css
 import "../shared/Lexical Editor/themes/theme.css";
 import { cn } from "@/lib/utils";
@@ -12,14 +13,17 @@ export const PostContentRender: React.FC<PostContentRenderProps> = ({
 	content,
 	className = "",
 }) => {
-	// Safely render HTML content using dangerouslySetInnerHTML
+	// Safely render HTML content by sanitizing it first
 	const renderHtml = (html?: string) => {
 		if (!html) return null;
+
+		const sanitizedHtml = DOMPurify.sanitize(html);
 
 		return (
 			<div
 				className="post-content editor"
-				dangerouslySetInnerHTML={{ __html: html }}
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+				dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
 			/>
 		);
 	};

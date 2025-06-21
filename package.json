@@ -98,6 +98,7 @@
 		"framer-motion": "^12.5.0",
 		"headless": "link:@/editor/headless",
 		"input-otp": "^1.4.2",
+		"isomorphic-dompurify": "2.25.0",
 		"katex": "^0.16.21",
 		"lexical": "^0.29.0",
 		"lexical-beautiful-mentions": "0.1.47",
