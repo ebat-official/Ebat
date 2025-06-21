@@ -24,10 +24,13 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 		<div>
 			{/* <Header /> */}
 			<ResizablePanelGroup
-				className="max-w-screen p-2 !flex-col md:!flex-row lg:max-h-[calc(100vh-66px)]"
+				className="max-w-screen p-2 !flex-col md:!flex-row"
 				direction="horizontal"
 			>
-				<ResizablePanel defaultSize={40} className="!basis-auto md:!basis-0">
+				<ResizablePanel
+					defaultSize={40}
+					className="!basis-auto md:!basis-0 md:max-h-[calc(100vh-66px)]"
+				>
 					<ChallengeQuestionView post={post} />
 				</ResizablePanel>
 				<ResizableHandle withHandle className="hidden md:flex bg-transparent" />
