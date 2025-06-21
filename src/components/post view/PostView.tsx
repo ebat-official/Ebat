@@ -23,19 +23,22 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel className="flex flex-col gap-2">
 					<Card className="relative items-center">
-						<div className="flex w-full justify-center">
-							<PostLikeButton postId={post.id} />
-							<CardContent className="flex flex-col h-full justify-center px-4 md:px-8 w-full max-w-3xl gap-4">
-								<h1 className="opacity-90 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none leading-relaxed">
-									{post.title}
-								</h1>
-								<PostStatsBadge post={post} />
-								<Separator />
-								<PostContentRender
-									content={post.content as ContentReturnType}
-								/>
-							</CardContent>
-						</div>
+						<CardContent className="flex flex-col h-full items-center px-4 md:px-8 w-full  gap-4">
+							<div className="flex gap-6 -ml-12">
+								<PostLikeButton className="mt-2" postId={post.id} />
+								<div className="flex flex-col justify-center">
+									<h1 className="opacity-90 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none leading-relaxed">
+										{post.title}
+									</h1>
+									<PostStatsBadge post={post} />
+								</div>
+							</div>
+							<Separator />
+							<PostContentRender
+								className="max-w-3xl w-full"
+								content={post.content as ContentReturnType}
+							/>
+						</CardContent>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
 							<Separator className=" my-6 " />
 							<div className="md:hidden">

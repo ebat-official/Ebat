@@ -20,7 +20,10 @@ import { useVotes } from "@/hooks/query/useVotes";
 import { formatNumInK } from "@/utils/formatNumInK";
 import { ERROR } from "@/utils/contants";
 
-function PostLikeButton({ postId }: { postId: string }) {
+function PostLikeButton({
+	postId,
+	className,
+}: { postId: string; className?: string }) {
 	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
 	const [voteCount, setVoteCount] = useState(0);
 	const [createVoteAction, isLoading] = useServerAction(voteAction);
@@ -83,7 +86,7 @@ function PostLikeButton({ postId }: { postId: string }) {
 					message={loginModalMessage}
 				/>
 			)}
-			<div className="flex flex-col items-center gap-1 pl-4">
+			<div className={cn("flex flex-col items-center gap-1 pl-4", className)}>
 				<Button
 					variant="outline"
 					className="p-0.5 text-xs w-7 h-7 "
