@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const javascriptTemplate: Template = {
-	id: "javascript",
+	id: "JAVASCRIPT",
 	name: "JavaScript",
 	description: "Simple JavaScript environment with Jest for testing functions",
 	icon: "javascript",

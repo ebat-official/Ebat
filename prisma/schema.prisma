@@ -67,6 +67,11 @@ enum SubCategory {
   REACT
   BLOGS
   SYSTEMDESIGN
+  VUE
+  ANGULAR
+  SVELTEKIT
+  VANILLAJS
+  NEXTJS
 }
 
 enum ChallengeType {

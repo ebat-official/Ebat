@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const sveltekitTemplate: Template = {
-	id: "sveltekit",
+	id: "SVELTEKIT",
 	name: "SvelteKit",
 	description: "Modern SvelteKit with TypeScript and Vitest",
 	icon: "svelte",

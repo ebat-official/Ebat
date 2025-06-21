@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Select,
@@ -12,6 +12,7 @@ import {
 import { templates } from "../../lib/templates";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useWebContainerStore } from "../../store/webContainer";
+import { useParams } from "next/navigation";
 
 interface HeaderProps {
 	explorerCollapsed: boolean;
@@ -19,8 +20,20 @@ interface HeaderProps {
 }
 
 export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
-	const { selectedTemplate, isLoading, selectTemplate } =
+	const { subCategory: subCategoryRoute } = useParams();
+	const TemplateIdFromUrl = (
+		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
+	)?.toUpperCase();
+
+	const { selectedTemplate, isLoading, selectTemplate, isContainerReady } =
 		useWebContainerStore();
+
+	// Check if WebContainer is ready and template ID is available, then select template
+	useEffect(() => {
+		if (TemplateIdFromUrl && isContainerReady) {
+			handleTemplateSelect(TemplateIdFromUrl);
+		}
+	}, [TemplateIdFromUrl, isContainerReady]);
 
 	const handleTemplateSelect = async (templateId: string) => {
 		const template = templates.find((t) => t.id === templateId);
