@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const nextjsTemplate: Template = {
-	id: "nextjs",
+	id: "NEXTJS",
 	name: "Next.js",
 	description: "Next.js with TypeScript and Jest",
 	icon: "nextjs",

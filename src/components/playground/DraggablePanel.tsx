@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { PostWithExtraDetails } from "@/utils/types";
 import {
 	ResizableHandle,
@@ -18,7 +18,12 @@ interface DraggablePanelProps {
 }
 
 const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
-	const { selectedTemplate } = useWebContainerStore();
+	const { selectedTemplate, setPost } = useWebContainerStore();
+
+	// Set the post in the store when component mounts or post changes
+	useEffect(() => {
+		setPost(post);
+	}, [post]);
 
 	return (
 		<div>

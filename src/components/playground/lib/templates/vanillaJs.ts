@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const vanillaJsTemplate: Template = {
-	id: "vanilla-js",
+	id: "VANILLAJS",
 	name: "Vanilla JS",
 	description: "Vanilla JavaScript with Vite and Jest",
 	icon: "vanilla",

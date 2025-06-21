@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { Template } from "../lib/types";
 import type { FileSystemTree } from "@webcontainer/api";
 import { getLanguageFromPath } from "../lib/utils";
+import { PostWithExtraDetails } from "@/utils/types";
 
 interface OpenFile {
 	path: string;
@@ -25,6 +26,7 @@ interface WebContainerState {
 	files: FileSystemTree | null;
 	openFiles: OpenFile[];
 	activeFile: string | null;
+	post: PostWithExtraDetails | null;
 	addTerminalOutput: (output: string) => void;
 	clearTerminalOutput: () => void;
 	runCommand: (
@@ -47,6 +49,7 @@ interface WebContainerState {
 	handleFileContentChange: (content: string) => Promise<void>;
 	handleCloseFile: (path: string) => void;
 	clearOpenFiles: () => void;
+	setPost: (post: PostWithExtraDetails) => void;
 }
 
 // Maximum number of lines to keep in terminal
@@ -77,6 +80,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	files: null,
 	openFiles: [],
 	activeFile: null,
+	post: null,
 
 	addTerminalOutput: (output: string) => {
 		const cleaned = cleanTerminalOutput(output);
@@ -202,6 +206,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			selectedTemplate: template,
 			isTemplateReady: false,
 		});
+
 		setFiles(template.files as FileSystemTree);
 		clearOpenFiles();
 
@@ -436,5 +441,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 
 	clearOpenFiles: () => {
 		set({ openFiles: [], activeFile: null });
+	},
+
+	setPost: (post: PostWithExtraDetails) => {
+		set({ post });
 	},
 }));
