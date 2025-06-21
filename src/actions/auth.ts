@@ -32,8 +32,13 @@ type dataType = {
 	token?: string;
 	message?: string;
 };
+
+type ErrorDataType = {
+	message: string;
+};
+
 type AuthReturnType = {
-	data: dataType | User;
+	data: User | ErrorDataType;
 	cause?: string;
 	status: string;
 };
@@ -96,7 +101,7 @@ export async function logIn(data: authFormSchemaType): Promise<AuthReturnType> {
 	try {
 		await signIn("credentials", { email, password });
 
-		return { status: SUCCESS, data: {} };
+		return { status: SUCCESS, data: { message: "Login successful" } };
 	} catch (error) {
 		if (isRedirectError(error)) {
 			throw error;

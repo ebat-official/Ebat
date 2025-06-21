@@ -16,38 +16,47 @@ import { Button } from "@/components/ui/button";
 import { MoonLoader } from "react-spinners";
 import FormError from "@/components/shared/FormError";
 import FormSuccess from "@/components/shared/FormSuccess";
-import {
-	ERROR,
-	LOADING,
-	SUCCESS,
-	TOKEN,
-	TOKEN_NOT_FOUND,
-	VERIFICATION_SUCCESSFULL,
-} from "@/utils/contants";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-	deleteVerificationToken,
-	validateVerificationToken,
-} from "@/actions/auth";
-import { setEmailVerifiedUsingToken } from "@/actions/user";
-import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 
 const UserVerification: FC = () => {
-	const [VerificationStatus, setVerificationStatus] = useState<{
-		status: string;
-		data: any;
+	const [verificationStatus, setVerificationStatus] = useState<{
+		status: "loading" | "success" | "error";
+		message: string;
 	}>({
-		status: LOADING,
-		data: "",
+		status: "loading",
+		message: "",
 	});
 	const [timer, setTimer] = useState(3);
 	const intrvl = useRef<NodeJS.Timeout | null>(null);
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const verificationToken = searchParams.get(TOKEN);
+	const token = searchParams.get("token");
+	const error = searchParams.get("error");
 
 	useEffect(() => {
-		if (VerificationStatus.status !== LOADING) {
+		// Check if there's an error parameter
+		if (error) {
+			setVerificationStatus({
+				status: "error",
+				message: decodeURIComponent(error),
+			});
+		} else if (token) {
+			// If token exists, assume verification was successful
+			setVerificationStatus({
+				status: "success",
+				message: "Email verified successfully!",
+			});
+		} else {
+			// No token or error, show generic error
+			setVerificationStatus({
+				status: "error",
+				message: "Invalid verification link",
+			});
+		}
+	}, [token, error]);
+
+	useEffect(() => {
+		if (verificationStatus.status !== "loading") {
 			intrvl.current = setInterval(() => {
 				setTimer((prev) => prev - 1);
 			}, 1000);
@@ -55,44 +64,18 @@ const UserVerification: FC = () => {
 		return () => {
 			if (intrvl.current) clearInterval(intrvl.current);
 		};
-	}, [VerificationStatus]);
-
-	async function verifyToken() {
-		if (!verificationToken) {
-			setVerificationStatus({ status: ERROR, data: TOKEN_NOT_FOUND });
-			return;
-		}
-		const data = await validateVerificationToken(verificationToken);
-		if (data.status === ERROR) {
-			return setVerificationStatus(data);
-		}
-
-		if (!(typeof data.data === "object")) {
-			return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
-		}
-		const setVerifyEmail = await setEmailVerifiedUsingToken(verificationToken);
-		if (!setVerifyEmail) {
-			return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
-		}
-		setVerificationStatus({ status: SUCCESS, data: VERIFICATION_SUCCESSFULL });
-		// @ts-ignore
-		deleteVerificationToken(data.data.email);
-	}
+	}, [verificationStatus]);
 
 	if (timer === 0) {
 		if (intrvl.current) clearInterval(intrvl.current);
 		router.push("/");
 	}
 
-	useEffect(() => {
-		verifyToken();
-	}, []);
-
 	return (
-		<div className="flex justify-center items-center w-screen h-screen backdrop-blur-3xl ">
-			<Card className=" min-w-[20rem] relative z-10 flex flex-col justify-center items-center px-12 lg:px-16 mx-2">
+		<div className="flex justify-center items-center w-screen h-screen backdrop-blur-3xl">
+			<Card className="min-w-[20rem] relative z-10 flex flex-col justify-center items-center px-12 lg:px-16 mx-2">
 				<CardHeader>
-					<div className="flex  items-center justify-center">
+					<div className="flex items-center justify-center">
 						<Image
 							className="w-20 h-20"
 							src={verificationIcon}
@@ -101,27 +84,33 @@ const UserVerification: FC = () => {
 						<CardTitle className="section__subtitle">Authentication</CardTitle>
 					</div>
 					<CardDescription className="text-center -mt-4">
-						Confirming your verification
+						{verificationStatus.status === "loading" &&
+							"Processing verification..."}
+						{verificationStatus.status === "success" &&
+							"Verification completed"}
+						{verificationStatus.status === "error" && "Verification failed"}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					{VerificationStatus?.status === LOADING && (
+					{verificationStatus.status === "loading" && (
 						<MoonLoader className="text-blue-500" />
 					)}
-					{VerificationStatus?.status === ERROR && (
-						<FormError message={VerificationStatus.data} />
+					{verificationStatus.status === "error" && (
+						<FormError message={verificationStatus.message} />
 					)}
-					{VerificationStatus?.status === SUCCESS && (
-						<FormSuccess message={VerificationStatus.data} />
+					{verificationStatus.status === "success" && (
+						<FormSuccess message={verificationStatus.message} />
 					)}
 				</CardContent>
 				<CardFooter className="grid items-center">
-					{VerificationStatus?.status !== LOADING && (
+					{verificationStatus.status !== "loading" && (
 						<p className="text-sm text-slate-400 text-center">
 							You will be redirected to login in {timer} seconds
 						</p>
 					)}
-					<Button variant="link">Back to login</Button>
+					<Button variant="link" onClick={() => router.push("/")}>
+						Back to login
+					</Button>
 				</CardFooter>
 			</Card>
 			<Image
