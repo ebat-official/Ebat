@@ -292,8 +292,8 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 					addTerminalOutput(`📄 Created file: ${path}`);
 					break;
 				case "delete":
-					await webContainer.fs.rm(path);
-					addTerminalOutput(`🗑️ Deleted file: ${path}`);
+					await webContainer.fs.rm(path, { recursive: true });
+					addTerminalOutput(`🗑️ Deleted: ${path}`);
 					handleCloseFile(path);
 					break;
 				case "rename": {
@@ -413,10 +413,25 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	handleCloseFile: (path: string) => {
-		set((state) => ({
-			openFiles: state.openFiles.filter((file) => file.path !== path),
-			activeFile: state.activeFile === path ? null : state.activeFile,
-		}));
+		set((state) => {
+			const newOpenFiles = state.openFiles.filter(
+				(file) => file.path !== path && !file.path.startsWith(`${path}/`),
+			);
+
+			let newActiveFile = state.activeFile;
+			const activeFileWasClosed =
+				state.activeFile &&
+				!newOpenFiles.some((file) => file.path === state.activeFile);
+
+			if (activeFileWasClosed) {
+				newActiveFile = newOpenFiles.length > 0 ? newOpenFiles[0].path : null;
+			}
+
+			return {
+				openFiles: newOpenFiles,
+				activeFile: newActiveFile,
+			};
+		});
 	},
 
 	clearOpenFiles: () => {
