@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { parseTestResults } from "../../lib/test-utils";
 import { TestResult } from "../../types/test";
 import RunButton from "../../RunButton";
+import { useAuthAction } from "@/hooks/useAuthAction";
 
 export function BottomPanel() {
 	const { terminalOutput, webContainer, addTerminalOutput, isTemplateReady } =
@@ -20,6 +21,17 @@ export function BottomPanel() {
 
 	const [results, setResults] = useState<TestResult[]>([]);
 	const [isRunning, setIsRunning] = useState(false);
+
+	const { executeAction, renderLoginModal } = useAuthAction({
+		requireAuth: true,
+		authMessage: "Please sign in to run tests",
+		onSuccess: () => {
+			// Action completed successfully
+		},
+		onError: (error) => {
+			console.error("Test execution failed:", error);
+		},
+	});
 
 	const handleRunTests = async () => {
 		if (!webContainer) return;
@@ -64,33 +76,41 @@ export function BottomPanel() {
 		}
 	};
 
+	const handleRunTestsWithAuth = () => {
+		executeAction(handleRunTests);
+	};
+
 	return (
-		<div className="flex flex-col  w-full border-t border-border relative rounded-xl p-4 gap-2 bg-gray-100 dark:bg-[#181825] h-full rounded-b-none">
-			<Tabs defaultValue="test" className="flex-1 w-full ">
-				<TabsList className="w-full justify-between rounded-none px-2 bg-transparent">
-					<div className="flex gap-2">
-						<TabsTrigger className="flex-0 px-4 opacity-80" value="test">
-							<FlaskConical className="w-4 h-4 text-muted-foreground" />
-							<span className="text-sm font-medium">Test</span>
-						</TabsTrigger>
-						<TabsTrigger className="flex-0 opacity-80 px-4" value="terminal">
-							<TerminalIcon className="w-4 h-4 text-muted-foreground" />
-							<span className="text-sm font-medium">Terminal</span>
-						</TabsTrigger>
-					</div>
-					<RunButton
-						onClick={handleRunTests}
-						isRunning={isRunning}
-						disabled={isRunning || !isTemplateReady}
-					/>
-				</TabsList>
-				<TabsContent value="test" className="h-full w-full">
-					<TestPanel results={results} isRunning={isRunning} />
-				</TabsContent>
-				<TabsContent value="terminal" className="h-full w-full">
-					<Terminal output={terminalOutput} />
-				</TabsContent>
-			</Tabs>
-		</div>
+		<>
+			<div className="flex flex-col  w-full border-t border-border relative rounded-xl p-4 gap-2 bg-gray-100 dark:bg-[#181825] h-full rounded-b-none">
+				<Tabs defaultValue="test" className="flex-1 w-full ">
+					<TabsList className="w-full justify-between rounded-none px-2 bg-transparent">
+						<div className="flex gap-2">
+							<TabsTrigger className="flex-0 px-4 opacity-80" value="test">
+								<FlaskConical className="w-4 h-4 text-muted-foreground" />
+								<span className="text-sm font-medium">Test</span>
+							</TabsTrigger>
+							<TabsTrigger className="flex-0 opacity-80 px-4" value="terminal">
+								<TerminalIcon className="w-4 h-4 text-muted-foreground" />
+								<span className="text-sm font-medium">Terminal</span>
+							</TabsTrigger>
+						</div>
+						<RunButton
+							onClick={handleRunTestsWithAuth}
+							isRunning={isRunning}
+							disabled={isRunning || !isTemplateReady}
+						/>
+					</TabsList>
+					<TabsContent value="test" className="h-full w-full">
+						<TestPanel results={results} isRunning={isRunning} />
+					</TabsContent>
+					<TabsContent value="terminal" className="h-full w-full">
+						<Terminal output={terminalOutput} />
+					</TabsContent>
+				</Tabs>
+			</div>
+
+			{renderLoginModal()}
+		</>
 	);
 }
