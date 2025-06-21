@@ -38,10 +38,10 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 				</TabsTrigger>
 			</TabsList>
 
-			<div className="w-full h-full overflow-y-auto overflow-x-hidden">
+			<div className="w-full h-full overflow-y-auto overflow-x-hidden px-4 md:px-8 max-w-3xl">
 				<TabsContent value="description" className="flex">
 					<PostLikeButton postId={post.id} />
-					<CardContent className="flex flex-col h-full justify-center px-4 md:px-8 w-full max-w-3xl gap-4">
+					<CardContent className="flex flex-col h-full justify-center gap-4 w-full">
 						<h1 className="opacity-90 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none leading-relaxed">
 							{post.title}
 						</h1>
