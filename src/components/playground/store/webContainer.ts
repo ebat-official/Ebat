@@ -5,6 +5,7 @@ import type { Template } from "../lib/types";
 import type { FileSystemTree } from "@webcontainer/api";
 import { getLanguageFromPath } from "../lib/utils";
 import { PostWithExtraDetails } from "@/utils/types";
+import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 
 interface OpenFile {
 	path: string;
@@ -50,21 +51,35 @@ interface WebContainerState {
 	handleCloseFile: (path: string) => void;
 	clearOpenFiles: () => void;
 	setPost: (post: PostWithExtraDetails) => void;
+	saveFileToLocalStorage: (filePath: string, content: string) => void;
+	loadFileFromLocalStorage: (filePath: string) => string | null;
+	clearFileFromLocalStorage: (filePath: string) => void;
+	clearAllFilesFromLocalStorage: (template: Template) => void;
+	resetToOriginalTemplate: () => Promise<void>;
 }
 
 // Maximum number of lines to keep in terminal
 const MAX_TERMINAL_LINES = 30;
 
+// Helper function to generate localStorage key for individual file
+const generateFileKey = (
+	postId: string,
+	templateId: string,
+	filePath: string,
+): string => {
+	return `file_${postId}_${templateId}_${filePath.replace(/\//g, "_")}`;
+};
+
 // Filter out ANSI escape sequences and empty lines
 function cleanTerminalOutput(output: string): string | null {
-	// Remove ANSI escape sequences and control characters
+	// Remove ANSI escape sequences
 	const cleaned = output
 		.replace(/\u001b\[[0-9;]*[a-zA-Z]/g, "") // Remove ANSI escape sequences
 		.replace(/\[[\d;]*[a-zA-Z]/g, "") // Remove terminal control sequences
 		.replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove control characters
 		.trim();
 
-	// Return null for empty lines or lines with just control characters
+	// Return null for empty lines
 	return cleaned === "" ? null : cleaned;
 }
 
@@ -207,14 +222,17 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			isTemplateReady: false,
 		});
 
-		setFiles(template.files as FileSystemTree);
+		// Use original template files
+		const filesToMount = template.files as FileSystemTree;
+
+		setFiles(filesToMount);
 		clearOpenFiles();
 
 		try {
 			addTerminalOutput(`📦 Loading ${template.name} template...`);
 
 			// Mount files to container
-			await webContainer.mount(template.files as FileSystemTree);
+			await webContainer.mount(filesToMount);
 			addTerminalOutput(`✅ ${template.name} files mounted`);
 
 			// Load default file if specified
@@ -361,15 +379,26 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	handleFileSelect: async (path: string) => {
-		const { webContainer, openFiles } = get();
+		const { webContainer, openFiles, loadFileFromLocalStorage } = get();
 		if (!webContainer) return;
 
 		try {
-			const content = await webContainer.fs.readFile(path);
-			const fileContent =
-				typeof content === "string"
-					? content
-					: new TextDecoder().decode(content);
+			// Check if there's saved content in localStorage
+			const savedContent = loadFileFromLocalStorage(path);
+			let fileContent: string;
+
+			if (savedContent) {
+				// Use saved content from localStorage
+				fileContent = savedContent;
+			} else {
+				// Load from webContainer file system
+				const content = await webContainer.fs.readFile(path);
+				fileContent =
+					typeof content === "string"
+						? content
+						: new TextDecoder().decode(content);
+			}
+
 			const fileName = path.split("/").pop() || path;
 			const language = getLanguageFromPath(path);
 
@@ -411,6 +440,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 						: file,
 				),
 			}));
+
+			// Save individual file to localStorage after content change
+			get().saveFileToLocalStorage(activeFile, content);
 		} catch (error) {
 			console.error("Failed to save file:", error);
 			toast.error("Failed to save file");
@@ -445,5 +477,146 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 
 	setPost: (post: PostWithExtraDetails) => {
 		set({ post });
+	},
+
+	saveFileToLocalStorage: (filePath: string, content: string) => {
+		const { post, selectedTemplate } = get();
+		if (!post || !selectedTemplate) return;
+
+		const localStorageKey = generateFileKey(
+			post.id,
+			selectedTemplate.id,
+			filePath,
+		);
+		setLocalStorage(localStorageKey, content);
+	},
+
+	loadFileFromLocalStorage: (filePath: string) => {
+		const { post, selectedTemplate } = get();
+		if (!post || !selectedTemplate) return null;
+
+		const localStorageKey = generateFileKey(
+			post.id,
+			selectedTemplate.id,
+			filePath,
+		);
+		const content = getLocalStorage<string>(localStorageKey);
+		return content || null;
+	},
+
+	clearFileFromLocalStorage: (filePath: string) => {
+		const { post, selectedTemplate } = get();
+		if (!post || !selectedTemplate) return;
+
+		const localStorageKey = generateFileKey(
+			post.id,
+			selectedTemplate.id,
+			filePath,
+		);
+		setLocalStorage(localStorageKey, null);
+	},
+
+	clearAllFilesFromLocalStorage: (template: Template) => {
+		const { post } = get();
+		if (!post) return;
+
+		// Clear all localStorage keys for this post/template combination
+		const prefix = `file_${post.id}_${template.id}_`;
+		for (let i = 0; i < localStorage.length; i++) {
+			const key = localStorage.key(i);
+			if (key?.startsWith(prefix)) {
+				localStorage.removeItem(key);
+			}
+		}
+	},
+
+	resetToOriginalTemplate: async () => {
+		const {
+			webContainer,
+			selectedTemplate,
+			addTerminalOutput,
+			runCommand,
+			setFiles,
+			clearOpenFiles,
+			handleFileSelect,
+			clearAllFilesFromLocalStorage,
+		} = get();
+		if (!webContainer || !selectedTemplate) return;
+
+		set({
+			isLoading: true,
+			isTemplateReady: false,
+		});
+
+		// Clear localStorage data and use original template files
+		clearAllFilesFromLocalStorage(selectedTemplate);
+		const filesToMount = selectedTemplate.files as FileSystemTree;
+
+		setFiles(filesToMount);
+		clearOpenFiles();
+
+		try {
+			addTerminalOutput(
+				`📦 Loading original ${selectedTemplate.name} template...`,
+			);
+
+			// Mount files to container
+			await webContainer.mount(filesToMount);
+			addTerminalOutput(`✅ ${selectedTemplate.name} files mounted`);
+
+			// Load default file if specified
+			if (selectedTemplate.defaultFile) {
+				await handleFileSelect(selectedTemplate.defaultFile);
+			}
+			// Start installation and server in the background
+			(async () => {
+				try {
+					if (selectedTemplate.installCommand) {
+						// Stop any existing server before installing dependencies
+						await get().stopServer();
+						addTerminalOutput("📥 Installing dependencies...");
+						const installProcess = await runCommand("pnpm", ["install"]);
+						if (!installProcess) {
+							set({ isLoading: false });
+							return;
+						}
+
+						const exitCode = await installProcess.exit;
+						if (exitCode === 0) {
+							addTerminalOutput("✅ Dependencies installed successfully");
+						} else {
+							addTerminalOutput("❌ Failed to install dependencies");
+							set({ isLoading: false });
+							return;
+						}
+					}
+
+					// Start development server
+					if (selectedTemplate.startCommand) {
+						addTerminalOutput("🔥 Starting development server...");
+						const [command, ...args] = selectedTemplate.startCommand.split(" ");
+						const process = await runCommand(command, args);
+						if (process) {
+							set({ serverProcess: process, isTemplateReady: true });
+						}
+					} else {
+						set({ isTemplateReady: true });
+					}
+
+					toast.success(`${selectedTemplate.name} is ready to use!`);
+				} catch (error) {
+					addTerminalOutput(`❌ Error: ${error}`);
+					toast.error(
+						`Failed to load original ${selectedTemplate.name} template`,
+					);
+				} finally {
+					set({ isLoading: false });
+				}
+			})();
+		} catch (error) {
+			addTerminalOutput(`❌ Error: ${error}`);
+			toast.error(`Failed to load original ${selectedTemplate.name} template`);
+			set({ isLoading: false });
+		}
 	},
 }));

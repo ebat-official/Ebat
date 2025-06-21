@@ -10,7 +10,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { templates } from "../../lib/templates";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, RotateCcw } from "lucide-react";
 import { useWebContainerStore } from "../../store/webContainer";
 import { useParams } from "next/navigation";
 
@@ -25,8 +25,13 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
 	)?.toUpperCase();
 
-	const { selectedTemplate, isLoading, selectTemplate, isContainerReady } =
-		useWebContainerStore();
+	const {
+		selectedTemplate,
+		isLoading,
+		selectTemplate,
+		isContainerReady,
+		resetToOriginalTemplate,
+	} = useWebContainerStore();
 
 	// Check if WebContainer is ready and template ID is available, then select template
 	useEffect(() => {
@@ -39,6 +44,12 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 		const template = templates.find((t) => t.id === templateId);
 		if (template) {
 			await selectTemplate(template);
+		}
+	};
+
+	const handleResetToOriginal = async () => {
+		if (selectedTemplate) {
+			await resetToOriginalTemplate();
 		}
 	};
 
@@ -58,22 +69,37 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 					)}
 				</Button>
 
-				<Select
-					value={selectedTemplate?.id}
-					onValueChange={handleTemplateSelect}
-					disabled={isLoading}
-				>
-					<SelectTrigger className="w-[200px]">
-						<SelectValue placeholder="Select a template" />
-					</SelectTrigger>
-					<SelectContent>
-						{templates.map((template) => (
-							<SelectItem key={template.id} value={template.id}>
-								{template.name}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
+				<div className="flex items-center gap-2">
+					<Select
+						value={selectedTemplate?.id}
+						onValueChange={handleTemplateSelect}
+						disabled={isLoading}
+					>
+						<SelectTrigger className="w-[200px]">
+							<SelectValue placeholder="Select a template" />
+						</SelectTrigger>
+						<SelectContent>
+							{templates.map((template) => (
+								<SelectItem key={template.id} value={template.id}>
+									{template.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+
+					{selectedTemplate && (
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={handleResetToOriginal}
+							disabled={isLoading}
+							title="Reset to original template files"
+							className="h-8 px-2"
+						>
+							<RotateCcw className="h-4 w-4" />
+						</Button>
+					)}
+				</div>
 			</div>
 		</header>
 	);
