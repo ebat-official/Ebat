@@ -142,7 +142,10 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	initializeContainer: async () => {
-		const { addTerminalOutput } = get();
+		const { addTerminalOutput, isContainerReady } = get();
+		if (isContainerReady) {
+			return;
+		}
 		try {
 			addTerminalOutput("🚀 Initializing Environment...");
 			const container = await WebContainer.boot();
