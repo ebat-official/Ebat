@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -11,6 +11,7 @@ import { PreviewPanel } from "../playground/components/preview/PreviewPanel";
 import { useWebContainerStore } from "../playground/store/webContainer";
 import { Card } from "@/components/ui/card";
 import { TemplateFramework } from "@prisma/client";
+import { handleTemplateSelect } from "../playground/utils/templateUtils";
 
 interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;
@@ -19,7 +20,14 @@ interface TemplateCreationInterfaceProps {
 const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	selectedFramework,
 }) => {
-	const { selectedTemplate } = useWebContainerStore();
+	const { selectedTemplate, isContainerReady } = useWebContainerStore();
+
+	// Automatically select the template when the component mounts
+	useEffect(() => {
+		if (isContainerReady && selectedFramework) {
+			handleTemplateSelect(selectedFramework);
+		}
+	}, [selectedFramework, isContainerReady]);
 
 	return (
 		<div className="h-full">

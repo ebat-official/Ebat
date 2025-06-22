@@ -19,6 +19,7 @@ interface WebContainerState {
 	webContainer: WebContainer | null;
 	isContainerReady: boolean;
 	isTemplateReady: boolean;
+	isInitializing: boolean;
 	previewUrl: string;
 	terminalOutput: string[];
 	selectedTemplate: Template | null;
@@ -87,6 +88,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	webContainer: null,
 	isContainerReady: false,
 	isTemplateReady: false,
+	isInitializing: false,
 	previewUrl: "",
 	terminalOutput: [],
 	selectedTemplate: null,
@@ -142,15 +144,20 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	initializeContainer: async () => {
-		const { addTerminalOutput, isContainerReady } = get();
-		if (isContainerReady) {
+		const { addTerminalOutput, isContainerReady, isInitializing } = get();
+		if (isContainerReady || isInitializing) {
 			return;
 		}
 		try {
+			set({ isInitializing: true });
 			addTerminalOutput("🚀 Initializing Environment...");
 			const container = await WebContainer.boot();
 
-			set({ webContainer: container, isContainerReady: true });
+			set({
+				webContainer: container,
+				isContainerReady: true,
+				isInitializing: false,
+			});
 			addTerminalOutput("✅ Environment is ready!");
 
 			container.on("server-ready", (port, url) => {
@@ -160,6 +167,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		} catch (error) {
 			console.error("Failed to initialize Environment:", error);
 			addTerminalOutput("❌ Failed to initialize Environment");
+			set({ isInitializing: false });
 			toast.error("Failed to initialize Environment");
 		}
 	},
