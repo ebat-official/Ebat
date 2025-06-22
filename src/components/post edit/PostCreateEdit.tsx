@@ -114,13 +114,14 @@ function PostCreateEdit({
 	}, [postPublishError]);
 
 	const getPostData = (postContent: ContentType) => {
-		const { thumbnail, ...content } = postContent;
+		const { thumbnail, challengeTemplates, ...content } = postContent;
 		return {
 			postId,
 			category,
 			subCategory,
 			postContent: content,
 			thumbnail: thumbnail || postData?.thumbnail,
+			challengeTemplates,
 			sidebarData,
 			type: postType,
 		};
