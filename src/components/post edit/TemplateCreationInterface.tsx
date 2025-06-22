@@ -56,6 +56,22 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		}
 	};
 
+	const handleBack = async () => {
+		if (currentStep === "answer") {
+			// Save current answer template state if needed
+			const currentAnswerTemplate = await getFileTree(".");
+			if (currentAnswerTemplate) {
+				// You could store this temporarily if you want to preserve answer template edits
+			}
+			setCurrentStep("question");
+			// Restore question template files
+			if (questionTemplate) {
+				// Reset to the saved question template
+				handleTemplateSelect(selectedFramework);
+			}
+		}
+	};
+
 	const handleSave = async () => {
 		// Get current file tree with user edits for answer template
 		const currentAnswerTemplate = await getFileTree(".");
@@ -88,7 +104,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	};
 
 	return (
-		<div className="h-full flex flex-col">
+		<div className="h-full flex flex-col justify-between">
 			<ResizablePanelGroup
 				className="max-w-screen p-2 !flex-col md:!flex-row flex-1"
 				direction="horizontal"
@@ -167,49 +183,64 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 			</ResizablePanelGroup>
 
 			{/* Bottom Panel with Next/Save buttons */}
-			<Card className="mt-4">
-				<CardContent className="flex justify-between items-center p-4">
-					<div className="flex items-center gap-4">
-						<div className="flex items-center gap-2">
-							<div
-								className={`w-4 h-4 rounded-full ${
-									questionTemplate ? "bg-green-500" : "bg-gray-300"
-								}`}
-							/>
-							<span className="text-sm">Question Template</span>
-						</div>
-						<div className="flex items-center gap-2">
-							<div
-								className={`w-4 h-4 rounded-full ${
-									currentStep === "answer" && files
-										? "bg-green-500"
-										: "bg-gray-300"
-								}`}
-							/>
-							<span className="text-sm">Answer Template</span>
-						</div>
+			<div className="flex justify-between items-center p-4 border-t-2">
+				{/* Left side - Back button */}
+				<div className="flex-1">
+					{currentStep === "answer" && (
+						<Button
+							onClick={handleBack}
+							variant="outline"
+							className="px-8 py-2"
+						>
+							Back
+						</Button>
+					)}
+				</div>
+
+				{/* Center - Progress indicators */}
+				<div className="flex items-center gap-4">
+					<div className="flex items-center gap-2">
+						<div
+							className={`w-4 h-4 rounded-full ${
+								questionTemplate ? "bg-green-500" : "bg-gray-300"
+							}`}
+						/>
+						<span className="text-sm">Question Template</span>
 					</div>
-					<div className="flex gap-2">
-						{currentStep === "question" ? (
-							<Button
-								onClick={handleNext}
-								disabled={!canProceed()}
-								className="bg-blue-600 hover:bg-blue-700"
-							>
-								Next
-							</Button>
-						) : (
-							<Button
-								onClick={handleSave}
-								disabled={!canSave()}
-								className="bg-green-600 hover:bg-green-700"
-							>
-								Save Templates
-							</Button>
-						)}
+					<div className="flex items-center gap-2">
+						<div
+							className={`w-4 h-4 rounded-full ${
+								currentStep === "answer" && files
+									? "bg-green-500"
+									: "bg-gray-300"
+							}`}
+						/>
+						<span className="text-sm">Answer Template</span>
 					</div>
-				</CardContent>
-			</Card>
+				</div>
+
+				{/* Right side - Next/Save button */}
+				<div className="flex-1 flex justify-end">
+					{currentStep === "question" ? (
+						<Button
+							onClick={handleNext}
+							disabled={!canProceed()}
+							variant="outline"
+							className="px-8 py-2"
+						>
+							Next
+						</Button>
+					) : (
+						<Button
+							onClick={handleSave}
+							disabled={!canSave()}
+							className="bg-green-600 hover:bg-green-700"
+						>
+							Save Templates
+						</Button>
+					)}
+				</div>
+			</div>
 		</div>
 	);
 };

@@ -75,20 +75,13 @@ function TemplateCreatorComponent({ onTemplatesSave }: TemplateCreatorProps) {
 			</Select>
 
 			<Dialog open={showModal} onOpenChange={setShowModal}>
-				<DialogContent className="w-[100vw] h-[100vh] !max-w-none !max-h-none">
-					<DialogHeader>
-						<DialogTitle>
-							Create {value ? formatFrameworkName(value) : ""} Template
-						</DialogTitle>
-					</DialogHeader>
-					<div className="flex-1 h-[calc(100vh-120px)]">
-						{value && (
-							<TemplateCreationInterface
-								selectedFramework={value as TemplateFramework}
-								onSave={handleTemplatesSave}
-							/>
-						)}
-					</div>
+				<DialogContent className="w-[100vw] h-[100vh] !max-w-none !max-h-none p-0 pt-10 border-none">
+					{value && (
+						<TemplateCreationInterface
+							selectedFramework={value as TemplateFramework}
+							onSave={handleTemplatesSave}
+						/>
+					)}
 				</DialogContent>
 			</Dialog>
 		</>
