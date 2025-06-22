@@ -19,12 +19,24 @@ import {
 } from "@/components/ui/dialog";
 import TemplateCreationInterface from "./TemplateCreationInterface";
 import { handleTemplateSelect } from "../playground/utils/templateUtils";
+import type { FileSystemTree } from "../playground/lib/types";
 
 const frameworks = Object.values(TemplateFramework);
 
-export function TemplateCreator() {
+interface TemplateCreatorProps {
+	onTemplatesSave?: (templates: {
+		framework: TemplateFramework;
+		questionTemplate: FileSystemTree;
+		answerTemplate: FileSystemTree;
+	}) => void;
+}
+
+function TemplateCreatorComponent({ onTemplatesSave }: TemplateCreatorProps) {
 	const [value, setValue] = React.useState("");
 	const [showModal, setShowModal] = React.useState(false);
+
+	// Generate a unique ID for this instance
+	const instanceId = React.useRef(Math.random().toString(36).substr(2, 9));
 
 	const handleFrameworkSelect = async (selectedValue: string) => {
 		setValue(selectedValue);
@@ -32,6 +44,15 @@ export function TemplateCreator() {
 			await handleTemplateSelect(selectedValue.toUpperCase());
 			setShowModal(true);
 		}
+	};
+
+	const handleTemplatesSave = (templates: {
+		framework: TemplateFramework;
+		questionTemplate: FileSystemTree;
+		answerTemplate: FileSystemTree;
+	}) => {
+		onTemplatesSave?.(templates);
+		setShowModal(false);
 	};
 
 	const formatFrameworkName = (framework: string) => {
@@ -64,6 +85,7 @@ export function TemplateCreator() {
 						{value && (
 							<TemplateCreationInterface
 								selectedFramework={value as TemplateFramework}
+								onSave={handleTemplatesSave}
 							/>
 						)}
 					</div>
@@ -72,3 +94,6 @@ export function TemplateCreator() {
 		</>
 	);
 }
+
+// Memoize the component to prevent unnecessary re-renders
+export const TemplateCreator = React.memo(TemplateCreatorComponent);
