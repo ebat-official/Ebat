@@ -13,12 +13,13 @@ import { Button } from "@/components/ui/button";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
 import { ContentType, EditorContent, PostActions } from "@/utils/types";
-import { Loader2 } from "lucide-react";
+import { Loader2, Code, FileCode2 } from "lucide-react";
 import { PostType } from "@prisma/client";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
 import { POST_ACTIONS } from "@/utils/contants";
 import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
 import { ThumbnailUpload } from "./ThumbnailUpload";
+import { TemplateCreator } from "./TemplateCreator";
 
 interface EditorContainerProps {
 	postId: string;
@@ -117,78 +118,91 @@ function EditorContainer({
 	};
 
 	return (
-		<Card className="relative items-center">
-			<CardContent className="flex h-full justify-center px-4 md:px-8 w-full max-w-3xl ">
-				{/* Show ThumbnailUpload modal/dialog if needed */}
-				{showThumbnailUpload && (
-					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-						<div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 max-w-lg w-full">
-							<ThumbnailUpload
-								images={getImageUrls()}
-								insertMedia={handleInsertMedia}
-								closeHandler={() => setShowThumbnailUpload(false)}
-							/>
+		<div className="flex flex-col gap-4">
+			<Card className="relative items-center">
+				<CardContent className="flex h-full justify-center px-4 md:px-8 w-full max-w-3xl ">
+					{/* Show ThumbnailUpload modal/dialog if needed */}
+					{showThumbnailUpload && (
+						<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+							<div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 max-w-lg w-full">
+								<ThumbnailUpload
+									images={getImageUrls()}
+									insertMedia={handleInsertMedia}
+									closeHandler={() => setShowThumbnailUpload(false)}
+								/>
+							</div>
 						</div>
-					</div>
-				)}
-
-				<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 z-50 right-0 -translate-y-full ">
-					{action !== POST_ACTIONS.EDIT && (
-						<TooltipProvider>
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<Button
-										variant="outline"
-										className="justify-center items-center flex ga-2"
-										onClick={() => saveHandler(content)}
-										disabled={actionDraftLoading || actionPublishLoading}
-									>
-										{actionDraftLoading ? (
-											<Loader2 className="animate-spin" />
-										) : (
-											<CiSaveDown2 />
-										)}
-										<span className="invisible md:visible">Save</span>
-									</Button>
-								</TooltipTrigger>
-								<TooltipContent>
-									<p>Save as draft</p>
-								</TooltipContent>
-							</Tooltip>
-						</TooltipProvider>
 					)}
-					<Button
-						disabled={actionDraftLoading || actionPublishLoading}
-						onClick={handlePublish}
-						className="bg-linear-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
-					>
-						{actionPublishLoading ? (
-							<Loader2 className="animate-spin" />
-						) : (
-							<MdOutlinePublish />
+
+					<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 z-50 right-0 -translate-y-full ">
+						{action !== POST_ACTIONS.EDIT && (
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											variant="outline"
+											className="justify-center items-center flex ga-2"
+											onClick={() => saveHandler(content)}
+											disabled={actionDraftLoading || actionPublishLoading}
+										>
+											{actionDraftLoading ? (
+												<Loader2 className="animate-spin" />
+											) : (
+												<CiSaveDown2 />
+											)}
+											<span className="invisible md:visible">Save</span>
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Save as draft</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						)}
-						<span className="hidden md:block">Publish</span>
-					</Button>
-				</div>
-				<LexicalEditorWrapper
-					key={postId}
-					postId={postId}
-					onChange={(data: EditorContent) =>
-						updateContent({ post: { ...content.post, ...data } })
-					}
-					titlePlaceHolder={getTitlePlaceHolder()}
-					contentPlaceHolder={getContentPlaceHolder()}
-					defaultContent={savedData || defaultContent}
-					dataLoading={dataLoading}
-					answerHandler={
-						postType === PostType.QUESTION
-							? (data: EditorContent) => updateContent({ answer: data })
-							: undefined
-					}
-					answerPlaceHolder="Provide a clear and helpful answer (required)..."
-				/>
-			</CardContent>
-		</Card>
+						<Button
+							disabled={actionDraftLoading || actionPublishLoading}
+							onClick={handlePublish}
+							className="bg-linear-to-tl from-blue-600 to-cyan-400 text-white flex gap-2 justify-center items-center disabled:from-gray-400 disabled:to-gray-300 disabled:cursor-not-allowed"
+						>
+							{actionPublishLoading ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								<MdOutlinePublish />
+							)}
+							<span className="hidden md:block">Publish</span>
+						</Button>
+					</div>
+					<LexicalEditorWrapper
+						key={postId}
+						postId={postId}
+						onChange={(data: EditorContent) =>
+							updateContent({ post: { ...content.post, ...data } })
+						}
+						titlePlaceHolder={getTitlePlaceHolder()}
+						contentPlaceHolder={getContentPlaceHolder()}
+						defaultContent={savedData || defaultContent}
+						dataLoading={dataLoading}
+						answerHandler={
+							postType === PostType.QUESTION || postType === PostType.CHALLENGE
+								? (data: EditorContent) => updateContent({ answer: data })
+								: undefined
+						}
+						answerPlaceHolder="Provide a clear and helpful answer (required)..."
+					/>
+				</CardContent>
+			</Card>
+			{postType === PostType.CHALLENGE && (
+				<Card>
+					<CardContent className="flex flex-col h-full justify-center gap-4 w-full">
+						<h4 className="font-medium opacity-90 flex items-center gap-2">
+							<FileCode2 className="w-5 h-5" />
+							Add your solution
+						</h4>
+						<TemplateCreator />
+					</CardContent>
+				</Card>
+			)}
+		</div>
 	);
 }
 
