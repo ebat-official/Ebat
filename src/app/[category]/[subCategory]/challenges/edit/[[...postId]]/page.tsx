@@ -40,7 +40,7 @@ function Page() {
 			subCategory={subCategory}
 			postId={postId}
 			action={POST_ACTIONS.EDIT}
-			postType={PostType.QUESTION}
+			postType={PostType.CHALLENGE}
 		/>
 	);
 }
