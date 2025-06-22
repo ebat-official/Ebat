@@ -370,9 +370,15 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 					};
 				} else {
 					const content = await webContainer.fs.readFile(fullPath);
+					// Convert Uint8Array to string if needed
+					const fileContent =
+						typeof content === "string"
+							? content
+							: new TextDecoder().decode(content);
+
 					tree[entry.name] = {
 						file: {
-							contents: content,
+							contents: fileContent,
 						},
 					};
 				}
