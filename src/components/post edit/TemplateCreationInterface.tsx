@@ -31,16 +31,36 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	selectedFramework,
 	onSave,
 }) => {
-	const { selectedTemplate, isContainerReady, files, getFileTree } =
-		useWebContainerStore();
+	const {
+		selectedTemplate,
+		isContainerReady,
+		files,
+		getFileTree,
+		webContainer,
+		setFiles,
+		clearOpenFiles,
+		handleFileSelect,
+	} = useWebContainerStore();
 	const [currentStep, setCurrentStep] = useState<TemplateStep>("answer");
-	const [questionTemplate, setQuestionTemplate] =
-		useState<FileSystemTree | null>(null);
 	const [answerTemplate, setAnswerTemplate] = useState<FileSystemTree | null>(
 		null,
 	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
+
+	const mountFileSystemTree = async (tree: FileSystemTree) => {
+		if (!webContainer || !selectedTemplate) return;
+		try {
+			await webContainer.mount(tree);
+			setFiles(tree);
+			clearOpenFiles();
+			if (selectedTemplate.defaultFile) {
+				await handleFileSelect(selectedTemplate.defaultFile);
+			}
+		} catch (e) {
+			console.error("Error mounting file system tree", e);
+		}
+	};
 
 	// Automatically select the template when the component mounts
 	useEffect(() => {
@@ -53,14 +73,15 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		if (currentStep === "answer") {
 			setIsLoading(true);
 			try {
-				// Get current file tree with user edits
+				// Get current file tree and save it as the answer template
 				const currentFiles = await getFileTree(".");
 				if (currentFiles) {
-					setAnswerTemplate(currentFiles);
+					// Deep copy to prevent reference issues
+					setAnswerTemplate(JSON.parse(JSON.stringify(currentFiles)));
 				}
+				// The user will now work on the question template, which starts
+				// from the state of the answer template.
 				setCurrentStep("question");
-				// Reset files for question template
-				await handleTemplateSelect(selectedFramework);
 			} catch (error) {
 				console.error("Error during template transition:", error);
 			} finally {
@@ -73,16 +94,10 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		if (currentStep === "question") {
 			setIsLoading(true);
 			try {
-				// Save current question template state if needed
-				const currentQuestionTemplate = await getFileTree(".");
-				if (currentQuestionTemplate) {
-					// You could store this temporarily if you want to preserve question template edits
-				}
+				// Discard any changes to the question template and restore the answer template.
 				setCurrentStep("answer");
-				// Restore answer template files
 				if (answerTemplate) {
-					// Reset to the saved answer template
-					await handleTemplateSelect(selectedFramework);
+					await mountFileSystemTree(answerTemplate);
 				}
 			} catch (error) {
 				console.error("Error during template transition:", error);
