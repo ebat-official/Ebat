@@ -33,9 +33,12 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 }) => {
 	const { selectedTemplate, isContainerReady, files, getFileTree } =
 		useWebContainerStore();
-	const [currentStep, setCurrentStep] = useState<TemplateStep>("question");
+	const [currentStep, setCurrentStep] = useState<TemplateStep>("answer");
 	const [questionTemplate, setQuestionTemplate] =
 		useState<FileSystemTree | null>(null);
+	const [answerTemplate, setAnswerTemplate] = useState<FileSystemTree | null>(
+		null,
+	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -47,16 +50,16 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	}, [selectedFramework, isContainerReady]);
 
 	const handleNext = async () => {
-		if (currentStep === "question") {
+		if (currentStep === "answer") {
 			setIsLoading(true);
 			try {
 				// Get current file tree with user edits
 				const currentFiles = await getFileTree(".");
 				if (currentFiles) {
-					setQuestionTemplate(currentFiles);
+					setAnswerTemplate(currentFiles);
 				}
-				setCurrentStep("answer");
-				// Reset files for answer template
+				setCurrentStep("question");
+				// Reset files for question template
 				await handleTemplateSelect(selectedFramework);
 			} catch (error) {
 				console.error("Error during template transition:", error);
@@ -67,18 +70,18 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	};
 
 	const handleBack = async () => {
-		if (currentStep === "answer") {
+		if (currentStep === "question") {
 			setIsLoading(true);
 			try {
-				// Save current answer template state if needed
-				const currentAnswerTemplate = await getFileTree(".");
-				if (currentAnswerTemplate) {
-					// You could store this temporarily if you want to preserve answer template edits
+				// Save current question template state if needed
+				const currentQuestionTemplate = await getFileTree(".");
+				if (currentQuestionTemplate) {
+					// You could store this temporarily if you want to preserve question template edits
 				}
-				setCurrentStep("question");
-				// Restore question template files
-				if (questionTemplate) {
-					// Reset to the saved question template
+				setCurrentStep("answer");
+				// Restore answer template files
+				if (answerTemplate) {
+					// Reset to the saved answer template
 					await handleTemplateSelect(selectedFramework);
 				}
 			} catch (error) {
@@ -92,14 +95,14 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	const handleSave = async () => {
 		setIsSaving(true);
 		try {
-			// Get current file tree with user edits for answer template
-			const currentAnswerTemplate = await getFileTree(".");
+			// Get current file tree with user edits for question template
+			const currentQuestionTemplate = await getFileTree(".");
 
-			if (questionTemplate && currentAnswerTemplate) {
+			if (answerTemplate && currentQuestionTemplate) {
 				onSave({
 					framework: selectedFramework,
-					questionTemplate,
-					answerTemplate: currentAnswerTemplate,
+					questionTemplate: currentQuestionTemplate,
+					answerTemplate,
 				});
 			}
 		} catch (error) {
@@ -114,7 +117,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	};
 
 	const canSave = () => {
-		return questionTemplate && files;
+		return answerTemplate && files;
 	};
 
 	const getStepTitle = () => {
@@ -154,11 +157,11 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 									<div
 										className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
 											currentStep === "question"
-												? "bg-blue-500 text-white"
-												: "bg-green-500 text-white"
+												? "bg-green-500 text-white"
+												: "bg-blue-500 text-white"
 										}`}
 									>
-										{currentStep === "question" ? "1" : "2"}
+										{currentStep === "question" ? "2" : "1"}
 									</div>
 									<h3 className="text-lg font-semibold">{getStepTitle()}</h3>
 								</div>
@@ -220,7 +223,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 			<div className="flex justify-between items-center p-4 border-t-2">
 				{/* Left side - Back button */}
 				<div className="flex-1">
-					{currentStep === "answer" && (
+					{currentStep === "question" && (
 						<Button
 							onClick={handleBack}
 							disabled={isLoading}
@@ -244,26 +247,26 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 					<div className="flex items-center gap-2">
 						<div
 							className={`w-4 h-4 rounded-full ${
-								questionTemplate ? "bg-green-500" : "bg-gray-300"
+								answerTemplate ? "bg-green-500" : "bg-gray-300"
 							}`}
 						/>
-						<span className="text-sm">Question Template</span>
+						<span className="text-sm">Answer Template</span>
 					</div>
 					<div className="flex items-center gap-2">
 						<div
 							className={`w-4 h-4 rounded-full ${
-								currentStep === "answer" && files
+								currentStep === "question" && files
 									? "bg-green-500"
 									: "bg-gray-300"
 							}`}
 						/>
-						<span className="text-sm">Answer Template</span>
+						<span className="text-sm">Question Template</span>
 					</div>
 				</div>
 
 				{/* Right side - Next/Save button */}
 				<div className="flex-1 flex justify-end">
-					{currentStep === "question" ? (
+					{currentStep === "answer" ? (
 						<Button
 							onClick={handleNext}
 							disabled={!canProceed() || isLoading}
