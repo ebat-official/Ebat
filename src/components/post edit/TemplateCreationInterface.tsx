@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { TemplateFramework } from "@prisma/client";
 import { handleTemplateSelect } from "../playground/utils/templateUtils";
 import type { FileSystemTree } from "../playground/lib/types";
+import { Loader2 } from "lucide-react";
 
 interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;
@@ -35,6 +36,8 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	const [currentStep, setCurrentStep] = useState<TemplateStep>("question");
 	const [questionTemplate, setQuestionTemplate] =
 		useState<FileSystemTree | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
 
 	// Automatically select the template when the component mounts
 	useEffect(() => {
@@ -45,43 +48,64 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 
 	const handleNext = async () => {
 		if (currentStep === "question") {
-			// Get current file tree with user edits
-			const currentFiles = await getFileTree(".");
-			if (currentFiles) {
-				setQuestionTemplate(currentFiles);
+			setIsLoading(true);
+			try {
+				// Get current file tree with user edits
+				const currentFiles = await getFileTree(".");
+				if (currentFiles) {
+					setQuestionTemplate(currentFiles);
+				}
+				setCurrentStep("answer");
+				// Reset files for answer template
+				await handleTemplateSelect(selectedFramework);
+			} catch (error) {
+				console.error("Error during template transition:", error);
+			} finally {
+				setIsLoading(false);
 			}
-			setCurrentStep("answer");
-			// Reset files for answer template
-			handleTemplateSelect(selectedFramework);
 		}
 	};
 
 	const handleBack = async () => {
 		if (currentStep === "answer") {
-			// Save current answer template state if needed
-			const currentAnswerTemplate = await getFileTree(".");
-			if (currentAnswerTemplate) {
-				// You could store this temporarily if you want to preserve answer template edits
-			}
-			setCurrentStep("question");
-			// Restore question template files
-			if (questionTemplate) {
-				// Reset to the saved question template
-				handleTemplateSelect(selectedFramework);
+			setIsLoading(true);
+			try {
+				// Save current answer template state if needed
+				const currentAnswerTemplate = await getFileTree(".");
+				if (currentAnswerTemplate) {
+					// You could store this temporarily if you want to preserve answer template edits
+				}
+				setCurrentStep("question");
+				// Restore question template files
+				if (questionTemplate) {
+					// Reset to the saved question template
+					await handleTemplateSelect(selectedFramework);
+				}
+			} catch (error) {
+				console.error("Error during template transition:", error);
+			} finally {
+				setIsLoading(false);
 			}
 		}
 	};
 
 	const handleSave = async () => {
-		// Get current file tree with user edits for answer template
-		const currentAnswerTemplate = await getFileTree(".");
+		setIsSaving(true);
+		try {
+			// Get current file tree with user edits for answer template
+			const currentAnswerTemplate = await getFileTree(".");
 
-		if (questionTemplate && currentAnswerTemplate) {
-			onSave({
-				framework: selectedFramework,
-				questionTemplate,
-				answerTemplate: currentAnswerTemplate,
-			});
+			if (questionTemplate && currentAnswerTemplate) {
+				onSave({
+					framework: selectedFramework,
+					questionTemplate,
+					answerTemplate: currentAnswerTemplate,
+				});
+			}
+		} catch (error) {
+			console.error("Error saving templates:", error);
+		} finally {
+			setIsSaving(false);
 		}
 	};
 
@@ -104,7 +128,17 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	};
 
 	return (
-		<div className="h-full flex flex-col justify-between">
+		<div className="h-full flex flex-col justify-between relative">
+			{(isLoading || isSaving) && (
+				<div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+					<div className="flex flex-col items-center gap-4">
+						<Loader2 className="h-16 w-16 animate-spin" />
+						<p className="text-lg">
+							{isSaving ? "Saving templates..." : "Loading template..."}
+						</p>
+					</div>
+				</div>
+			)}
 			<ResizablePanelGroup
 				className="max-w-screen p-2 !flex-col md:!flex-row flex-1"
 				direction="horizontal"
@@ -189,10 +223,18 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 					{currentStep === "answer" && (
 						<Button
 							onClick={handleBack}
+							disabled={isLoading}
 							variant="outline"
 							className="px-8 py-2"
 						>
-							Back
+							{isLoading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Loading...
+								</>
+							) : (
+								"Back"
+							)}
 						</Button>
 					)}
 				</div>
@@ -224,19 +266,33 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 					{currentStep === "question" ? (
 						<Button
 							onClick={handleNext}
-							disabled={!canProceed()}
+							disabled={!canProceed() || isLoading}
 							variant="outline"
 							className="px-8 py-2"
 						>
-							Next
+							{isLoading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Loading...
+								</>
+							) : (
+								"Next"
+							)}
 						</Button>
 					) : (
 						<Button
 							onClick={handleSave}
-							disabled={!canSave()}
+							disabled={!canSave() || isSaving}
 							className="bg-green-600 hover:bg-green-700"
 						>
-							Save Templates
+							{isSaving ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Saving...
+								</>
+							) : (
+								"Save Templates"
+							)}
 						</Button>
 					)}
 				</div>
