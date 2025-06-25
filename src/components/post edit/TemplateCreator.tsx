@@ -29,14 +29,32 @@ interface TemplateCreatorProps {
 		questionTemplate: FileSystemTree;
 		answerTemplate: FileSystemTree;
 	}) => void;
+	editingTemplate?: {
+		framework: TemplateFramework;
+		questionTemplate: FileSystemTree;
+		answerTemplate: FileSystemTree;
+	} | null;
+	onCancelEdit?: () => void;
 }
 
-function TemplateCreatorComponent({ onTemplatesSave }: TemplateCreatorProps) {
+function TemplateCreatorComponent({
+	onTemplatesSave,
+	editingTemplate,
+	onCancelEdit,
+}: TemplateCreatorProps) {
 	const [value, setValue] = React.useState("");
 	const [showModal, setShowModal] = React.useState(false);
 
 	// Generate a unique ID for this instance
 	const instanceId = React.useRef(Math.random().toString(36).substr(2, 9));
+
+	// Set initial value when editing
+	React.useEffect(() => {
+		if (editingTemplate) {
+			setValue(editingTemplate.framework);
+			setShowModal(true);
+		}
+	}, [editingTemplate]);
 
 	const handleFrameworkSelect = async (selectedValue: string) => {
 		setValue(selectedValue);
@@ -53,6 +71,15 @@ function TemplateCreatorComponent({ onTemplatesSave }: TemplateCreatorProps) {
 	}) => {
 		onTemplatesSave?.(templates);
 		setShowModal(false);
+		setValue(""); // Reset selection
+	};
+
+	const handleModalClose = () => {
+		setShowModal(false);
+		setValue(""); // Reset selection
+		if (editingTemplate && onCancelEdit) {
+			onCancelEdit();
+		}
 	};
 
 	const formatFrameworkName = (framework: string) => {
@@ -61,25 +88,28 @@ function TemplateCreatorComponent({ onTemplatesSave }: TemplateCreatorProps) {
 
 	return (
 		<>
-			<Select value={value} onValueChange={handleFrameworkSelect}>
-				<SelectTrigger className="max-w-[400px] w-full mx-auto p-6">
-					<SelectValue placeholder="Select framework..." />
-				</SelectTrigger>
-				<SelectContent>
-					{frameworks.map((framework) => (
-						<SelectItem key={framework} value={framework}>
-							{formatFrameworkName(framework)}
-						</SelectItem>
-					))}
-				</SelectContent>
-			</Select>
+			{!editingTemplate && (
+				<Select value={value} onValueChange={handleFrameworkSelect}>
+					<SelectTrigger className="max-w-[400px] w-full mx-auto p-6">
+						<SelectValue placeholder="Select framework..." />
+					</SelectTrigger>
+					<SelectContent>
+						{frameworks.map((framework) => (
+							<SelectItem key={framework} value={framework}>
+								{formatFrameworkName(framework)}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			)}
 
-			<Dialog open={showModal} onOpenChange={setShowModal}>
+			<Dialog open={showModal} onOpenChange={handleModalClose}>
 				<DialogContent className="w-[100vw] h-[100vh] !max-w-none !max-h-none p-0 pt-10 border-none">
 					{value && (
 						<TemplateCreationInterface
 							selectedFramework={value as TemplateFramework}
 							onSave={handleTemplatesSave}
+							editingTemplate={editingTemplate}
 						/>
 					)}
 				</DialogContent>
