@@ -28,6 +28,7 @@ import { ThumbnailUpload } from "./ThumbnailUpload";
 import { TemplateCreator } from "./challenge/TemplateCreator";
 import type { FileSystemTree } from "../playground/lib/types";
 import { FRAMEWORK_ICONS } from "@/components/post edit/constants";
+import SavedTemplatesSkeleton from "./challenge/SavedTemplatesSkeleton";
 
 interface EditorContainerProps {
 	postId: string;
@@ -307,8 +308,10 @@ function EditorContainer({
 							onTemplatesSave={handleTemplatesSave}
 							editingTemplate={editingTemplate}
 							onCancelEdit={handleCancelEdit}
+							dataLoading={dataLoading}
+							challengeTemplates={challengeTemplates}
 						/>
-						{challengeTemplates.length > 0 && (
+						{challengeTemplates.length > 0 && !dataLoading && (
 							<div className="mt-4">
 								<div className="flex items-center gap-2 mb-3">
 									<h5 className="text-sm font-medium">Saved Templates</h5>
@@ -388,6 +391,7 @@ function EditorContainer({
 								</div>
 							</div>
 						)}
+						{dataLoading && <SavedTemplatesSkeleton />}
 					</CardContent>
 				</Card>
 			)}

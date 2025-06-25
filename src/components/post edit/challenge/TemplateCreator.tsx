@@ -29,18 +29,34 @@ interface TemplateCreatorProps {
 		answerTemplate: FileSystemTree;
 	} | null;
 	onCancelEdit?: () => void;
+	dataLoading?: boolean;
+	challengeTemplates?: {
+		framework: TemplateFramework;
+		questionTemplate: FileSystemTree;
+		answerTemplate: FileSystemTree;
+	}[];
 }
 
 function TemplateCreatorComponent({
 	onTemplatesSave,
 	editingTemplate,
 	onCancelEdit,
+	dataLoading = false,
+	challengeTemplates = [],
 }: TemplateCreatorProps) {
 	const [value, setValue] = React.useState("");
 	const [showModal, setShowModal] = React.useState(false);
 
 	// Generate a unique ID for this instance
 	const instanceId = React.useRef(Math.random().toString(36).substr(2, 9));
+
+	// Filter out already created frameworks
+	const availableFrameworks = React.useMemo(() => {
+		const createdFrameworks = new Set(
+			challengeTemplates.map((t) => t.framework),
+		);
+		return frameworks.filter((framework) => !createdFrameworks.has(framework));
+	}, [challengeTemplates]);
 
 	// Set initial value when editing
 	React.useEffect(() => {
@@ -78,13 +94,19 @@ function TemplateCreatorComponent({
 
 	return (
 		<>
-			{!editingTemplate && (
-				<Select value={value} onValueChange={handleFrameworkSelect}>
+			{!editingTemplate && availableFrameworks.length > 0 && (
+				<Select
+					value={value}
+					onValueChange={handleFrameworkSelect}
+					disabled={dataLoading}
+				>
 					<SelectTrigger className="max-w-[400px] w-full mx-auto p-6">
-						<SelectValue placeholder="Select framework..." />
+						<SelectValue
+							placeholder={dataLoading ? "Loading..." : "Select framework..."}
+						/>
 					</SelectTrigger>
 					<SelectContent>
-						{frameworks.map((framework) => (
+						{availableFrameworks.map((framework) => (
 							<SelectItem
 								key={framework}
 								value={framework}
@@ -96,6 +118,14 @@ function TemplateCreatorComponent({
 					</SelectContent>
 				</Select>
 			)}
+
+			{!editingTemplate &&
+				availableFrameworks.length === 0 &&
+				challengeTemplates.length > 0 && (
+					<div className="text-center py-4 text-gray-500 dark:text-gray-400">
+						<p>All frameworks have been configured for this challenge.</p>
+					</div>
+				)}
 
 			<Dialog open={showModal} onOpenChange={handleModalClose}>
 				<DialogContent className="w-[100vw] h-[100vh] !max-w-none !max-h-none p-0 pt-10 border-none">
