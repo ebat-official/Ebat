@@ -189,7 +189,12 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 				</div>
 
 				<div className="text-center ">
-					<ButtonBlue type="submit" title="sign in" loading={isLoading} />
+					<ButtonBlue
+						type="submit"
+						title="sign in"
+						loading={isLoading}
+						className="w-full"
+					/>
 				</div>
 			</form>
 			{openResetDialog && (

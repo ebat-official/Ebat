@@ -5,21 +5,21 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { OnlineIDE } from "../playground/components/OnlineIde";
-import { BottomPanel } from "../playground/components/ide/BottomPanel";
-import { PreviewPanel } from "../playground/components/preview/PreviewPanel";
-import { useWebContainerStore } from "../playground/store/webContainer";
+import { OnlineIDE } from "../../playground/components/OnlineIde";
+import { BottomPanel } from "../../playground/components/ide/BottomPanel";
+import { PreviewPanel } from "../../playground/components/preview/PreviewPanel";
+import { useWebContainerStore } from "../../playground/store/webContainer";
 import { Card } from "@/components/ui/card";
 import { TemplateFramework } from "@prisma/client";
-import { handleTemplateSelect } from "../playground/utils/templateUtils";
-import type { FileSystemTree } from "../playground/lib/types";
+import { handleTemplateSelect } from "../../playground/utils/templateUtils";
+import type { FileSystemTree } from "../../playground/lib/types";
 import {
 	StepIndicator,
 	StepDescription,
 	LoadingOverlay,
 	ActionButtons,
 	type TemplateStep,
-} from "./challenge";
+} from "./index";
 
 interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;

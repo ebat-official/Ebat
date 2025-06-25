@@ -3,7 +3,6 @@
 import * as React from "react";
 import { TemplateFramework } from "@prisma/client";
 
-import { Button } from "@/components/ui/button";
 import {
 	Select,
 	SelectContent,
@@ -11,15 +10,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import TemplateCreationInterface from "./TemplateCreationInterface";
-import { handleTemplateSelect } from "../playground/utils/templateUtils";
-import type { FileSystemTree } from "../playground/lib/types";
+import { handleTemplateSelect } from "../../playground/utils/templateUtils";
+import type { FileSystemTree } from "../../playground/lib/types";
 
 const frameworks = Object.values(TemplateFramework);
 
@@ -82,10 +76,6 @@ function TemplateCreatorComponent({
 		}
 	};
 
-	const formatFrameworkName = (framework: string) => {
-		return framework.toLowerCase().replace(/(^|\s)\S/g, (L) => L.toUpperCase());
-	};
-
 	return (
 		<>
 			{!editingTemplate && (
@@ -95,8 +85,12 @@ function TemplateCreatorComponent({
 					</SelectTrigger>
 					<SelectContent>
 						{frameworks.map((framework) => (
-							<SelectItem key={framework} value={framework}>
-								{formatFrameworkName(framework)}
+							<SelectItem
+								key={framework}
+								value={framework}
+								className="capitalize"
+							>
+								{framework?.toLowerCase()}
 							</SelectItem>
 						))}
 					</SelectContent>
