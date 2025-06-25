@@ -4,6 +4,7 @@ import {
 	Difficulty,
 	PostCategory,
 	SubCategory,
+	TemplateFramework,
 } from "@prisma/client";
 import {
 	ANSWER_REQUIRED,
@@ -18,6 +19,14 @@ import {
 import { OutputData } from "@editorjs/editorjs";
 import { EditorContent } from "@/utils/types";
 import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
+import type { FileSystemTree } from "@/components/playground/lib/types";
+
+// Challenge template schema
+const ChallengeTemplateSchema = z.object({
+	framework: z.nativeEnum(TemplateFramework),
+	questionTemplate: z.any(), // FileSystemTree
+	answerTemplate: z.any(), // FileSystemTree
+});
 
 export const PostDraftValidator = z.object({
 	id: z.string().regex(/^[\w-]{21}$/, { message: INVALID_POST_ID }),
@@ -42,6 +51,8 @@ export const PostDraftValidator = z.object({
 	subCategory: z.nativeEnum(SubCategory, {
 		errorMap: () => ({ message: INVALID_SUBCATEGORY }),
 	}),
+	// Challenge templates are optional for drafts
+	challengeTemplates: z.array(ChallengeTemplateSchema).optional(),
 });
 
 // Define content interface
@@ -75,6 +86,8 @@ const BasePostValidator = z
 			answer: z.custom<EditorContent>().optional(),
 		}),
 		thumbnail: z.string().url().optional().nullable(),
+		// Challenge templates are optional in base validator, will be validated conditionally
+		challengeTemplates: z.array(ChallengeTemplateSchema).optional(),
 	})
 	.superRefine((data, ctx) => {
 		// Ensure difficulty is required unless it's a BLOGS type
@@ -86,17 +99,53 @@ const BasePostValidator = z
 			});
 		}
 
+		// Ensure challenge templates are provided for CHALLENGE type
+		if (data.type === PostType.CHALLENGE) {
+			if (!data.challengeTemplates || data.challengeTemplates.length === 0) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message: "Question and Solution templates are required",
+					path: ["challengeTemplates"],
+				});
+			} else {
+				// Validate each template has all required fields
+				data.challengeTemplates.forEach((template, index) => {
+					if (!template.framework) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: "Framework is missing in challenge template",
+							path: ["challengeTemplates", index, "framework"],
+						});
+					}
+					if (!template.questionTemplate) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: `Question boilerplate is required for ${template.framework || "challenge"} template`,
+							path: ["challengeTemplates", index, "questionTemplate"],
+						});
+					}
+					if (!template.answerTemplate) {
+						ctx.addIssue({
+							code: z.ZodIssueCode.custom,
+							message: `Code Solution is required for ${template.framework || "challenge"} template`,
+							path: ["challengeTemplates", index, "answerTemplate"],
+						});
+					}
+				});
+			}
+		}
+
 		// Ensure thumbnail is required for BLOGS and SYSTEMDESIGN
-		// if (
-		// 	(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN) &&
-		// 	!data.thumbnail
-		// ) {
-		// 	ctx.addIssue({
-		// 		code: z.ZodIssueCode.custom,
-		// 		message: "Thumbnail is required for blogs and system design posts.",
-		// 		path: ["thumbnail"],
-		// 	});
-		// }
+		if (
+			(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN) &&
+			!data.thumbnail
+		) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Thumbnail is required for post",
+				path: ["thumbnail"],
+			});
+		}
 	});
 
 // Create the main validator with conditional content rules

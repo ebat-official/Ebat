@@ -7,6 +7,7 @@ import {
 	SubCategory,
 	User,
 	VoteType,
+	TemplateFramework,
 } from "@prisma/client";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
@@ -18,11 +19,20 @@ import {
 	SUCCESS,
 } from "./contants";
 import { boolean } from "zod";
+import type { FileSystemTree } from "@/components/playground/lib/types";
+
+// Challenge template type
+export interface ChallengeTemplate {
+	framework: TemplateFramework;
+	questionTemplate: FileSystemTree;
+	answerTemplate: FileSystemTree;
+}
 
 export interface ContentType {
 	post?: EditorContent;
 	answer?: EditorContent;
 	thumbnail?: string;
+	challengeTemplates?: ChallengeTemplate[]; // Array of challenge templates
 }
 export interface ContentReturnType {
 	post?: string;
@@ -59,7 +69,10 @@ export interface EditorReturnContent {
 	title?: string;
 	blocks?: string;
 }
-export type PostWithContent = Post & { content: ContentType };
+export type PostWithContent = Post & {
+	content: ContentType;
+	challengeTemplates?: ChallengeTemplate[];
+};
 export type postCreateOptions = Partial<
 	UseQueryOptions<PostWithContent, Error>
 > & {
@@ -269,7 +282,7 @@ export interface UsePostSearchOptions {
 	page?: number;
 	pageSize?: number;
 	sortOrder?: string;
-	initialPosts?: any[];
+	initialPosts?: FeedPost[];
 	initialContext?: PostSearchContext;
 	enabled?: boolean;
 }

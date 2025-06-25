@@ -5,6 +5,8 @@ import {
 	PostApprovalStatus,
 	PostStatus,
 	PostType,
+	Prisma,
+	TemplateFramework,
 } from "@prisma/client";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
@@ -26,6 +28,8 @@ import { revalidatePath } from "next/cache";
 import pako from "pako";
 import { validateUser } from "./user";
 import { ERROR, SUCCESS } from "@/utils/contants";
+import type { FileSystemTree } from "@/components/playground/lib/types";
+import { createChallengeTemplatesForPost } from "@/utils/api utils/challengeTemplateHelpers";
 
 // Shared utility functions
 const currentUser = async () => {
@@ -87,7 +91,6 @@ const buildBasePostData = (
 });
 
 // Draft Post Creation
-
 export async function createDraftPost(
 	data: z.infer<typeof PostDraftValidator>,
 ): Promise<GenerateActionReturnType<string>> {
@@ -107,12 +110,68 @@ export async function createDraftPost(
 		approvalLogs: [],
 	};
 
-	const post = await prisma.post.upsert({
-		where: { id: data.id || undefined },
-		create: postData,
-		update: postData,
-	});
-	return { status: SUCCESS, data: post.id };
+	// Handle challenge templates for drafts (optional)
+	if (
+		data.type === PostType.CHALLENGE &&
+		data.challengeTemplates &&
+		data.challengeTemplates.length > 0
+	) {
+		try {
+			const result = await prisma.$transaction(async (tx) => {
+				// Create the post
+				const post = await tx.post.upsert({
+					where: { id: data.id || undefined },
+					create: postData,
+					update: postData,
+				});
+
+				// Create challenge templates using helper function
+				if (data.challengeTemplates) {
+					for (const template of data.challengeTemplates) {
+						await tx.challengeTemplate.upsert({
+							where: {
+								postId_framework: {
+									postId: post.id,
+									framework: template.framework,
+								},
+							},
+							create: {
+								postId: post.id,
+								framework: template.framework,
+								questionTemplate:
+									template.questionTemplate as unknown as Prisma.InputJsonValue,
+								answerTemplate:
+									template.answerTemplate as unknown as Prisma.InputJsonValue,
+							},
+							update: {
+								questionTemplate:
+									template.questionTemplate as unknown as Prisma.InputJsonValue,
+								answerTemplate:
+									template.answerTemplate as unknown as Prisma.InputJsonValue,
+							},
+						});
+					}
+				}
+
+				return post;
+			});
+
+			return { status: SUCCESS, data: result.id };
+		} catch (e) {
+			return {
+				status: ERROR,
+				data: { message: "Failed to create challenge draft with templates" },
+			};
+		}
+	} else {
+		// Regular draft creation without challenge templates
+		const post = await prisma.post.upsert({
+			where: { id: data.id || undefined },
+			create: postData,
+			update: postData,
+		});
+		return { status: SUCCESS, data: post.id };
+	}
 }
 
 type CreatePostReturnType = { id: string; slug: string | null };
@@ -151,15 +210,73 @@ export async function createPost(
 		slug: generateTitleSlug(data.title),
 	};
 
-	const post = await prisma.post.upsert({
-		where: { id: data.id || undefined },
-		create: postData,
-		update: postData,
-	});
+	// Handle challenge templates in transaction
+	if (
+		data.type === PostType.CHALLENGE &&
+		data.challengeTemplates &&
+		data.challengeTemplates.length > 0
+	) {
+		try {
+			const result = await prisma.$transaction(async (tx) => {
+				// Create the post
+				const post = await tx.post.upsert({
+					where: { id: data.id || undefined },
+					create: postData,
+					update: postData,
+				});
 
-	// Trigger revalidation for the post's path
-	revalidatePostPath(post);
-	return { status: SUCCESS, data: { id: post.id, slug: post.slug } };
+				// Create challenge templates using helper function
+				if (data.challengeTemplates) {
+					for (const template of data.challengeTemplates) {
+						await tx.challengeTemplate.upsert({
+							where: {
+								postId_framework: {
+									postId: post.id,
+									framework: template.framework,
+								},
+							},
+							create: {
+								postId: post.id,
+								framework: template.framework,
+								questionTemplate:
+									template.questionTemplate as unknown as Prisma.InputJsonValue,
+								answerTemplate:
+									template.answerTemplate as unknown as Prisma.InputJsonValue,
+							},
+							update: {
+								questionTemplate:
+									template.questionTemplate as unknown as Prisma.InputJsonValue,
+								answerTemplate:
+									template.answerTemplate as unknown as Prisma.InputJsonValue,
+							},
+						});
+					}
+				}
+
+				return post;
+			});
+
+			// Trigger revalidation for the post's path
+			revalidatePostPath(result);
+			return { status: SUCCESS, data: { id: result.id, slug: result.slug } };
+		} catch (e) {
+			return {
+				status: ERROR,
+				data: { message: "Failed to create challenge post with templates" },
+			};
+		}
+	} else {
+		// Regular post creation without challenge templates
+		const post = await prisma.post.upsert({
+			where: { id: data.id || undefined },
+			create: postData,
+			update: postData,
+		});
+
+		// Trigger revalidation for the post's path
+		revalidatePostPath(post);
+		return { status: SUCCESS, data: { id: post.id, slug: post.slug } };
+	}
 }
 
 export async function createPostEdit(

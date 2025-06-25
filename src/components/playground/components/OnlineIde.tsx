@@ -85,7 +85,7 @@ export function OnlineIDE() {
 
 			<div className="flex-1 flex overflow-hidden">
 				{selectedTemplate && !explorerCollapsed && (
-					<div className="w-80 border-r border-border flex-shrink-0">
+					<div className="w-64 border-r border-border flex-shrink-0">
 						<FileExplorer
 							files={files || {}}
 							onFileCreate={handleFileCreate}

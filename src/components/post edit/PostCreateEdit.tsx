@@ -13,6 +13,8 @@ import {
 	ContentType,
 	PostActions,
 	SubCategoryType,
+	PostWithContent,
+	ChallengeTemplate,
 } from "@/utils/types";
 import { handleError } from "@/utils/handleError";
 import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
@@ -114,13 +116,14 @@ function PostCreateEdit({
 	}, [postPublishError]);
 
 	const getPostData = (postContent: ContentType) => {
-		const { thumbnail, ...content } = postContent;
+		const { thumbnail, challengeTemplates, ...content } = postContent;
 		return {
 			postId,
 			category,
 			subCategory,
 			postContent: content,
 			thumbnail: thumbnail || postData?.thumbnail,
+			challengeTemplates,
 			sidebarData,
 			type: postType,
 		};
@@ -210,6 +213,7 @@ function PostCreateEdit({
 							actionPublishLoading={isPublishing}
 							defaultContent={postData?.content}
 							action={action}
+							challengeTemplates={postData?.challengeTemplates}
 						/>
 					</RightPanelLayout.MainPanel>
 					<RightPanelLayout.SidePanel className="sticky">

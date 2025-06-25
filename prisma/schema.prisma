@@ -74,10 +74,14 @@ enum SubCategory {
   NEXTJS
 }
 
-enum ChallengeType {
-  PROBLEM      // Algorithmic/coding problem, no UI
-  UI           // Requires building a UI
-  BACKEND    // Both backend
+enum TemplateFramework {
+  REACT
+  NEXTJS
+  ANGULAR
+  VUE
+  SVELTEKIT
+  VANILLAJS
+  JAVASCRIPT
 }
 
 model User {
@@ -202,7 +206,7 @@ model Post {
   collaborators      User[]             @relation("PostCollaborators")
   approvalStatus     PostApprovalStatus @default(PENDING)
   approvalLogs       Json? // Array of approval/rejection logs
-  challengeType      ChallengeType?     // Only relevant if type == CHALLENGE
+  challengeTemplates ChallengeTemplate[] // Templates for this challenge
 
   @@unique([id, slug], name: "PostIdSlug")
 }
@@ -336,4 +340,19 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead]) // Index for fetching unread notifications quickly
+}
+
+model ChallengeTemplate {
+  id                String            @id @default(uuid()) @db.Uuid
+  postId            String            // Reference to the challenge post
+  framework         TemplateFramework
+  questionTemplate  Json              // Question template (FileSystemTree structure)
+  answerTemplate    Json              // Answer template (FileSystemTree structure)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  post              Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, framework]) // Ensure one template per framework per challenge
+  @@index([postId])
 }

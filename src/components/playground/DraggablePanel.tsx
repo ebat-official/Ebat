@@ -12,18 +12,33 @@ import { BottomPanel } from "./components/ide/BottomPanel";
 import { PreviewPanel } from "./components/preview/PreviewPanel";
 import { useWebContainerStore } from "./store/webContainer";
 import { Card } from "@/components/ui/card";
+import { useParams } from "next/navigation";
+import { handleTemplateSelect } from "./utils/templateUtils";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
 }
 
 const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
-	const { selectedTemplate, setPost } = useWebContainerStore();
+	const { subCategory: subCategoryRoute } = useParams();
+	const TemplateIdFromUrl = (
+		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
+	)?.toUpperCase();
+
+	const { selectedTemplate, setPost, isContainerReady } =
+		useWebContainerStore();
 
 	// Set the post in the store when component mounts or post changes
 	useEffect(() => {
 		setPost(post);
 	}, [post]);
+
+	// Handle URL-based template selection
+	useEffect(() => {
+		if (TemplateIdFromUrl && isContainerReady) {
+			handleTemplateSelect(TemplateIdFromUrl);
+		}
+	}, [TemplateIdFromUrl, isContainerReady]);
 
 	return (
 		<div>

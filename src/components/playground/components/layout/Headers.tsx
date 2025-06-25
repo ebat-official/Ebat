@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Select,
@@ -12,7 +12,7 @@ import {
 import { templates } from "../../lib/templates";
 import { PanelLeftClose, PanelLeftOpen, RotateCcw } from "lucide-react";
 import { useWebContainerStore } from "../../store/webContainer";
-import { useParams } from "next/navigation";
+import { handleTemplateSelect } from "../../utils/templateUtils";
 
 interface HeaderProps {
 	explorerCollapsed: boolean;
@@ -20,32 +20,12 @@ interface HeaderProps {
 }
 
 export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
-	const { subCategory: subCategoryRoute } = useParams();
-	const TemplateIdFromUrl = (
-		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
-	)?.toUpperCase();
-
 	const {
 		selectedTemplate,
 		isLoading,
-		selectTemplate,
-		isContainerReady,
 		resetToOriginalTemplate,
+		isLanguageDropdownDisabled,
 	} = useWebContainerStore();
-
-	// Check if WebContainer is ready and template ID is available, then select template
-	useEffect(() => {
-		if (TemplateIdFromUrl && isContainerReady) {
-			handleTemplateSelect(TemplateIdFromUrl);
-		}
-	}, [TemplateIdFromUrl, isContainerReady]);
-
-	const handleTemplateSelect = async (templateId: string) => {
-		const template = templates.find((t) => t.id === templateId);
-		if (template) {
-			await selectTemplate(template);
-		}
-	};
 
 	const handleResetToOriginal = async () => {
 		if (selectedTemplate) {
@@ -73,7 +53,7 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 					<Select
 						value={selectedTemplate?.id}
 						onValueChange={handleTemplateSelect}
-						disabled={isLoading}
+						disabled={isLoading || isLanguageDropdownDisabled}
 					>
 						<SelectTrigger className="w-[200px]">
 							<SelectValue placeholder="Select a template" />
