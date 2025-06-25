@@ -57,6 +57,7 @@ interface WebContainerState {
 	clearFileFromLocalStorage: (filePath: string) => void;
 	clearAllFilesFromLocalStorage: (template: Template) => void;
 	resetToOriginalTemplate: () => Promise<void>;
+	teardownContainer: () => Promise<void>;
 }
 
 // Maximum number of lines to keep in terminal
@@ -143,6 +144,34 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		}
 	},
 
+	teardownContainer: async () => {
+		const { webContainer, addTerminalOutput, stopServer } = get();
+		if (!webContainer) return;
+
+		try {
+			addTerminalOutput("🛑 Teardown container...");
+			await stopServer();
+
+			// Use the instance.teardown() method
+			await webContainer.teardown();
+
+			set({
+				webContainer: null,
+				isContainerReady: false,
+				isTemplateReady: false,
+				previewUrl: "",
+				serverProcess: null,
+				files: null,
+				openFiles: [],
+				activeFile: null,
+			});
+			addTerminalOutput("✅ Container teardown complete");
+		} catch (error) {
+			console.error("Failed to teardown container:", error);
+			addTerminalOutput("❌ Failed to teardown container");
+		}
+	},
+
 	initializeContainer: async () => {
 		const { addTerminalOutput, isContainerReady, isInitializing } = get();
 		if (isContainerReady || isInitializing) {
@@ -224,8 +253,14 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			setFiles,
 			clearOpenFiles,
 			handleFileSelect,
+			teardownContainer,
+			selectedTemplate,
 		} = get();
 		if (!webContainer || get().isLoading) return null;
+
+		// Check if we're switching to a different template (and not initializing for the first time)
+		const isDifferentTemplate =
+			selectedTemplate && selectedTemplate.id !== template.id;
 
 		set({
 			isLoading: true,
@@ -240,6 +275,28 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		clearOpenFiles();
 
 		try {
+			// Only teardown and boot fresh if switching to different template (not first time)
+			if (isDifferentTemplate) {
+				addTerminalOutput(`🔄 Switching to ${template.name} template...`);
+				await teardownContainer();
+
+				// Boot fresh container
+				addTerminalOutput("🚀 Booting fresh container...");
+				const container = await WebContainer.boot();
+
+				set({
+					webContainer: container,
+					isContainerReady: true,
+				});
+
+				container.on("server-ready", (port, url) => {
+					set({ previewUrl: url });
+					addTerminalOutput(`🌐 Server ready at ${url}`);
+				});
+
+				addTerminalOutput("✅ Fresh container ready");
+			}
+
 			addTerminalOutput(`📦 Loading ${template.name} template...`);
 
 			// Mount files to container
@@ -250,6 +307,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			if (template.defaultFile) {
 				await handleFileSelect(template.defaultFile);
 			}
+
 			// Start installation and server in the background
 			(async () => {
 				try {
@@ -288,7 +346,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 					toast.success(`${template.name} is ready to use!`);
 				} catch (error) {
 					addTerminalOutput(`❌ Error: ${error}`);
-					toast.error(`Failed to load ${template.name} template`);
 				} finally {
 					set({ isLoading: false });
 				}
@@ -298,7 +355,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			return template;
 		} catch (error) {
 			addTerminalOutput(`❌ Error: ${error}`);
-			toast.error(`Failed to load ${template.name} template`);
 			set({ isLoading: false });
 			return null;
 		}
