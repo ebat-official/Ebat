@@ -80,19 +80,10 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 
 	// Load editing template data when available
 	useEffect(() => {
-		if (editingTemplate && isContainerReady) {
-			setAnswerTemplate(editingTemplate.answerTemplate);
-			mountFileSystemTree(editingTemplate.answerTemplate);
-		}
-	}, [editingTemplate, isContainerReady]);
-
-	// Handle editing template: directly mount the editing data
-	useEffect(() => {
-		if (editingTemplate?.framework && isContainerReady) {
-			// Directly mount the editing template files
+		if (editingTemplate && isContainerReady && webContainer) {
 			const mountEditingTemplate = async () => {
 				try {
-					await webContainer?.mount(editingTemplate.answerTemplate);
+					await webContainer.mount(editingTemplate.answerTemplate);
 					setAnswerTemplate(editingTemplate.answerTemplate);
 					setFiles(editingTemplate.answerTemplate);
 					clearOpenFiles();
