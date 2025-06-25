@@ -39,6 +39,7 @@ interface EditorContainerProps {
 	actionDraftLoading?: boolean;
 	actionPublishLoading?: boolean;
 	action?: PostActions;
+	challengeTemplates?: ChallengeTemplate[];
 }
 
 interface ChallengeTemplate {
@@ -57,6 +58,7 @@ function EditorContainer({
 	actionDraftLoading,
 	actionPublishLoading,
 	action = POST_ACTIONS.CREATE,
+	challengeTemplates: propChallengeTemplates,
 }: EditorContainerProps) {
 	const [content, setContent] = useState<ContentType>({});
 	const [thumbnail, setThumbnail] = useState<string | undefined>();
@@ -156,7 +158,41 @@ function EditorContainer({
 			content.answer = initialData.answer || { blocks: emptyEditorState };
 		setContent(content);
 		setThumbnail(initialData.thumbnail);
-	}, [defaultContent, savedData]);
+
+		// Load challenge templates with priority: localStorage > prop > defaultContent
+		if (postType === PostType.CHALLENGE) {
+			// First check localStorage
+			if (savedData?.challengeTemplates) {
+				setChallengeTemplates(savedData.challengeTemplates);
+			}
+			// Then check prop
+			else if (propChallengeTemplates) {
+				setChallengeTemplates(propChallengeTemplates);
+			}
+			// Finally check defaultContent
+			else if (initialData.challengeTemplates) {
+				setChallengeTemplates(initialData.challengeTemplates);
+			}
+		}
+	}, [
+		defaultContent,
+		savedData,
+		postType,
+		dataLoading,
+		propChallengeTemplates,
+	]);
+
+	// Save challenge templates to localStorage whenever they change
+	useEffect(() => {
+		if (postType === PostType.CHALLENGE && challengeTemplates.length > 0) {
+			const currentContent =
+				getLocalStorage<ContentType>(localStorageKey) || {};
+			setLocalStorage(localStorageKey, {
+				...currentContent,
+				challengeTemplates,
+			});
+		}
+	}, [challengeTemplates, postType, localStorageKey]);
 
 	const getTitlePlaceHolder = () => {
 		switch (postType) {
