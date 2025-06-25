@@ -25,7 +25,7 @@ import { emptyEditorState } from "../shared/Lexical Editor/constants";
 import { POST_ACTIONS } from "@/utils/contants";
 import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
 import { ThumbnailUpload } from "./ThumbnailUpload";
-import { TemplateCreator } from "./TemplateCreator";
+import { TemplateCreator } from "./challenge/TemplateCreator";
 import type { FileSystemTree } from "../playground/lib/types";
 import { FRAMEWORK_ICONS } from "@/components/post edit/constants";
 

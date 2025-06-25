@@ -27,7 +27,7 @@ export const usePostFetchManager = (params: PostFetchParams) => {
 	}
 	if (action === POST_ACTIONS.CREATE) {
 		// Call usePostDraft for creating
-		return usePostDraft(postId || "");
+		return usePostDraft(postId || "", {});
 	}
 	return defaultReturnValue;
 };
