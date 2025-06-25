@@ -29,6 +29,7 @@ interface WebContainerState {
 	openFiles: OpenFile[];
 	activeFile: string | null;
 	post: PostWithExtraDetails | null;
+	isLanguageDropdownDisabled: boolean;
 	addTerminalOutput: (output: string) => void;
 	clearTerminalOutput: () => void;
 	runCommand: (
@@ -58,6 +59,7 @@ interface WebContainerState {
 	clearAllFilesFromLocalStorage: (template: Template) => void;
 	resetToOriginalTemplate: () => Promise<void>;
 	teardownContainer: () => Promise<void>;
+	setLanguageDropdownDisabled: (disabled: boolean) => void;
 }
 
 // Maximum number of lines to keep in terminal
@@ -99,6 +101,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	openFiles: [],
 	activeFile: null,
 	post: null,
+	isLanguageDropdownDisabled: true,
 
 	addTerminalOutput: (output: string) => {
 		const cleaned = cleanTerminalOutput(output);
@@ -691,5 +694,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			toast.error(`Failed to load original ${selectedTemplate.name} template`);
 			set({ isLoading: false });
 		}
+	},
+
+	setLanguageDropdownDisabled: (disabled: boolean) => {
+		set({ isLanguageDropdownDisabled: disabled });
 	},
 }));

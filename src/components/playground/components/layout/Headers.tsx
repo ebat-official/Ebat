@@ -20,8 +20,12 @@ interface HeaderProps {
 }
 
 export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
-	const { selectedTemplate, isLoading, resetToOriginalTemplate } =
-		useWebContainerStore();
+	const {
+		selectedTemplate,
+		isLoading,
+		resetToOriginalTemplate,
+		isLanguageDropdownDisabled,
+	} = useWebContainerStore();
 
 	const handleResetToOriginal = async () => {
 		if (selectedTemplate) {
@@ -49,7 +53,7 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 					<Select
 						value={selectedTemplate?.id}
 						onValueChange={handleTemplateSelect}
-						disabled={isLoading}
+						disabled={isLoading || isLanguageDropdownDisabled}
 					>
 						<SelectTrigger className="w-[200px]">
 							<SelectValue placeholder="Select a template" />
