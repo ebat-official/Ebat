@@ -88,7 +88,6 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	// Cleanup effect to teardown container when modal closes
 	useEffect(() => {
 		return () => {
-			debugger;
 			// Cleanup function to teardown container when component unmounts (modal closes)
 			const { webContainer, teardownContainer } =
 				useWebContainerStore.getState();
