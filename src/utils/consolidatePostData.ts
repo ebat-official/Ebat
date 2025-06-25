@@ -24,6 +24,7 @@ const consolidatePostData = ({
 	sidebarData,
 	subCategory,
 	thumbnail,
+	...rest
 }: ConsolidatePostDataProps) => {
 	return {
 		id: postId,
@@ -34,6 +35,7 @@ const consolidatePostData = ({
 		subCategory,
 		thumbnail,
 		...sidebarData,
+		...rest,
 	};
 };
 

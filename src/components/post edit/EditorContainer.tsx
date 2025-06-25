@@ -76,14 +76,14 @@ function EditorContainer({
 	const { getImageUrls } = useEditorContext();
 
 	// Memoize the payload getter
-	const getPayload = useMemo(() => {
+	const getPayload = () => {
 		const thumbnailsArr = getImageUrls();
 		return {
 			...content,
 			thumbnail: thumbnail || thumbnailsArr[0],
 			challengeTemplates,
 		};
-	}, [content, thumbnail, getImageUrls]);
+	};
 
 	// Memoize callback functions to prevent child re-renders
 	const updateContent = useCallback(
@@ -97,33 +97,31 @@ function EditorContainer({
 		[localStorageKey],
 	);
 
-	const handleInsertMedia = useCallback(
-		(file: { url: string; alt: string }) => {
-			const payload = getPayload;
-			publishHandler({ ...payload, thumbnail: file.url || payload.thumbnail });
-			setShowThumbnailUpload(false);
-		},
-		[publishHandler, getPayload],
-	);
+	const handleInsertMedia = (file: { url: string; alt: string }) => {
+		const payload = getPayload();
+		publishHandler({ ...payload, thumbnail: file.url || payload.thumbnail });
+		setShowThumbnailUpload(false);
+	};
 
-	const handlePublish = useCallback(() => {
-		const payload = getPayload;
+	const handlePublish = () => {
+		const payload = getPayload();
 		// If thumbnail is required and not set, show the thumbnail upload
 		if (postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) {
 			setShowThumbnailUpload(true);
 			return;
 		}
 		publishHandler(payload);
-	}, [postType, publishHandler, getPayload]);
+	};
 
 	const closeThumbnailUpload = useCallback(() => {
 		setShowThumbnailUpload(false);
 	}, []);
 
-	const handleSave = useCallback(() => {
-		const payload = getPayload;
+	const handleSave = () => {
+		const payload = getPayload();
+		console.log(payload, "pranavvalidatediiiiii");
 		saveHandler(payload);
-	}, [saveHandler]);
+	};
 
 	const handleTemplatesSave = useCallback((templates: ChallengeTemplate) => {
 		setChallengeTemplates((prev) => {
