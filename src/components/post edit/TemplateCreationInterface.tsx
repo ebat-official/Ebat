@@ -23,6 +23,11 @@ interface TemplateCreationInterfaceProps {
 		questionTemplate: FileSystemTree;
 		answerTemplate: FileSystemTree;
 	}) => void;
+	editingTemplate?: {
+		framework: TemplateFramework;
+		questionTemplate: FileSystemTree;
+		answerTemplate: FileSystemTree;
+	} | null;
 }
 
 type TemplateStep = "question" | "answer";
@@ -30,6 +35,7 @@ type TemplateStep = "question" | "answer";
 const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	selectedFramework,
 	onSave,
+	editingTemplate,
 }) => {
 	const {
 		selectedTemplate,
@@ -43,7 +49,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	} = useWebContainerStore();
 	const [currentStep, setCurrentStep] = useState<TemplateStep>("answer");
 	const [answerTemplate, setAnswerTemplate] = useState<FileSystemTree | null>(
-		null,
+		editingTemplate?.answerTemplate || null,
 	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
@@ -69,6 +75,16 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		}
 	}, [selectedFramework, isContainerReady]);
 
+	// Load editing template data when available
+	useEffect(() => {
+		if (editingTemplate && isContainerReady) {
+			// Load the answer template for editing
+			setAnswerTemplate(editingTemplate.answerTemplate);
+			// Mount the answer template to start editing
+			mountFileSystemTree(editingTemplate.answerTemplate);
+		}
+	}, [editingTemplate, isContainerReady]);
+
 	const handleNext = async () => {
 		if (currentStep === "answer") {
 			setIsLoading(true);
@@ -76,8 +92,14 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				// Get current file tree and save it as the answer template
 				const currentFiles = await getFileTree(".");
 				if (currentFiles) {
-					// Deep copy to prevent reference issues
-					setAnswerTemplate(JSON.parse(JSON.stringify(currentFiles)));
+					// Use structuredClone for better performance with large objects
+					// Fallback to shallow copy if structuredClone is not available
+					try {
+						setAnswerTemplate(structuredClone(currentFiles));
+					} catch (error) {
+						// Fallback: use shallow copy and avoid the JSON.stringify issue
+						setAnswerTemplate({ ...currentFiles });
+					}
 				}
 				// The user will now work on the question template, which starts
 				// from the state of the answer template.
