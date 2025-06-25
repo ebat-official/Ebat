@@ -8,7 +8,6 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 
 	try {
 		// Try to create subscriber first, if it fails, try to update
-		console.log("Creating subscriber:", toEmail);
 		let subscriber: unknown;
 		try {
 			subscriber = await novu.subscribers.create({
@@ -16,12 +15,10 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 				email: toEmail,
 				firstName: nameFromEmail,
 			});
-			console.log("Subscriber created:", subscriber);
 		} catch (createError: unknown) {
 			const error = createError as { statusCode?: number };
 			if (error.statusCode === 409) {
 				// Subscriber already exists, try to update
-				console.log("Subscriber exists, updating:", toEmail);
 				subscriber = await novu.subscribers.upsert(
 					{
 						email: toEmail,
@@ -29,7 +26,6 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 					},
 					toEmail,
 				);
-				console.log("Subscriber updated:", subscriber);
 			} else {
 				throw createError;
 			}
@@ -38,7 +34,6 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 		switch (type) {
 			case EMAIL_VALIDATION:
 				redirectLink = `${process.env.ENV_URL}/api/auth/verify?token=${token}`;
-				console.log("Sending email verification to:", toEmail);
 				await novu.trigger({
 					workflowId: "account-activation",
 					to: {
@@ -49,12 +44,10 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 						confirmationLink: redirectLink,
 					},
 				});
-				console.log("Email verification sent successfully");
 				break;
 
 			case RESET_PASSWORD:
 				redirectLink = `${process.env.ENV_URL}/resetPassword?token=${token}`;
-				console.log("Sending password reset to:", toEmail);
 				await novu.trigger({
 					workflowId: "password-reset",
 					to: {
@@ -65,7 +58,6 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 						resetLink: redirectLink,
 					},
 				});
-				console.log("Password reset email sent successfully");
 				break;
 		}
 	} catch (error) {
