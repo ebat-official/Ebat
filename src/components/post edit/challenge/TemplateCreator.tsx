@@ -14,6 +14,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import TemplateCreationInterface from "./TemplateCreationInterface";
 import { handleTemplateSelect } from "../../playground/utils/templateUtils";
 import type { FileSystemTree } from "../../playground/lib/types";
+import { useWebContainerStore } from "../../playground/store/webContainer";
 
 const frameworks = Object.values(TemplateFramework);
 
@@ -46,6 +47,7 @@ function TemplateCreatorComponent({
 }: TemplateCreatorProps) {
 	const [value, setValue] = React.useState("");
 	const [showModal, setShowModal] = React.useState(false);
+	const { setLanguageDropdownDisabled } = useWebContainerStore();
 
 	// Generate a unique ID for this instance
 	const instanceId = React.useRef(Math.random().toString(36).substr(2, 9));
@@ -58,13 +60,15 @@ function TemplateCreatorComponent({
 		return frameworks.filter((framework) => !createdFrameworks.has(framework));
 	}, [challengeTemplates]);
 
-	// Set initial value when editing
+	// Set initial value when editing and disable language dropdown
 	React.useEffect(() => {
 		if (editingTemplate) {
 			setValue(editingTemplate.framework);
 			setShowModal(true);
 		}
-	}, [editingTemplate]);
+		// Always disable language dropdown
+		setLanguageDropdownDisabled(true);
+	}, [editingTemplate, setLanguageDropdownDisabled]);
 
 	const handleFrameworkSelect = async (selectedValue: string) => {
 		setValue(selectedValue);
