@@ -86,6 +86,31 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		}
 	}, [editingTemplate, isContainerReady]);
 
+	// Handle editing template: directly mount the editing data
+	useEffect(() => {
+		if (editingTemplate?.framework && isContainerReady) {
+			// Directly mount the editing template files
+			const mountEditingTemplate = async () => {
+				try {
+					await webContainer?.mount(editingTemplate.answerTemplate);
+					setAnswerTemplate(editingTemplate.answerTemplate);
+					setFiles(editingTemplate.answerTemplate);
+					clearOpenFiles();
+				} catch (error) {
+					console.error("Error mounting editing template:", error);
+				}
+			};
+
+			mountEditingTemplate();
+		}
+	}, [
+		editingTemplate,
+		isContainerReady,
+		webContainer,
+		setFiles,
+		clearOpenFiles,
+	]);
+
 	// Cleanup effect to teardown container when modal closes
 	useEffect(() => {
 		return () => {
