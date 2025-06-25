@@ -69,7 +69,10 @@ export interface EditorReturnContent {
 	title?: string;
 	blocks?: string;
 }
-export type PostWithContent = Post & { content: ContentType };
+export type PostWithContent = Post & {
+	content: ContentType;
+	challengeTemplates?: ChallengeTemplate[];
+};
 export type postCreateOptions = Partial<
 	UseQueryOptions<PostWithContent, Error>
 > & {

@@ -15,6 +15,9 @@ import { t } from "@excalidraw/excalidraw/i18n";
 export async function getPostById(postId: string) {
 	const post = await prisma.post.findUnique({
 		where: { id: postId },
+		include: {
+			challengeTemplates: true,
+		},
 	});
 
 	if (post?.content) {
