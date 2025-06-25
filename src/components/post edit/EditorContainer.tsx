@@ -78,7 +78,11 @@ function EditorContainer({
 	// Memoize the payload getter
 	const getPayload = useMemo(() => {
 		const thumbnailsArr = getImageUrls();
-		return { ...content, thumbnail: thumbnail || thumbnailsArr[0] };
+		return {
+			...content,
+			thumbnail: thumbnail || thumbnailsArr[0],
+			challengeTemplates,
+		};
 	}, [content, thumbnail, getImageUrls]);
 
 	// Memoize callback functions to prevent child re-renders
@@ -117,8 +121,9 @@ function EditorContainer({
 	}, []);
 
 	const handleSave = useCallback(() => {
-		saveHandler(content);
-	}, [saveHandler, content]);
+		const payload = getPayload;
+		saveHandler(payload);
+	}, [saveHandler]);
 
 	const handleTemplatesSave = useCallback((templates: ChallengeTemplate) => {
 		setChallengeTemplates((prev) => {
