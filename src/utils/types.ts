@@ -29,7 +29,6 @@ export interface ChallengeTemplate {
 	framework: TemplateFramework;
 	questionTemplate: Template;
 	answerTemplate: Template;
-	defaultFile?: string;
 }
 
 export interface ContentType {

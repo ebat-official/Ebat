@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -11,19 +11,18 @@ import { PreviewPanel } from "../../playground/components/preview/PreviewPanel";
 import { useWebContainerStore } from "../../playground/store/webContainer";
 import { Card } from "@/components/ui/card";
 import { TemplateFramework } from "@prisma/client";
-import {
-	handleTemplateSelect,
-	extractSrcFromTemplate,
-} from "../../playground/utils/templateUtils";
-import type { FileSystemTree, Template } from "../../playground/lib/types";
+import { extractSrcFromTemplate } from "../../playground/utils/templateUtils";
+import type { Template } from "../../playground/lib/types";
 import {
 	StepIndicator,
 	StepDescription,
 	LoadingOverlay,
 	ActionButtons,
-	type TemplateStep,
 } from "./index";
 import DefaultFileSelector from "./DefaultFileSelector";
+import { useTemplateManagement } from "../../playground/hooks";
+
+type TemplateStep = "answer" | "question";
 
 interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;
@@ -31,13 +30,11 @@ interface TemplateCreationInterfaceProps {
 		framework: TemplateFramework;
 		questionTemplate: Template;
 		answerTemplate: Template;
-		defaultFile?: string;
 	}) => void;
 	editingTemplate?: {
 		framework: TemplateFramework;
 		questionTemplate: Template;
 		answerTemplate: Template;
-		defaultFile?: string;
 	} | null;
 }
 
@@ -48,108 +45,143 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 }) => {
 	const {
 		selectedTemplate,
-		isContainerReady,
-		files,
-		getFileTree,
-		selectTemplate,
-	} = useWebContainerStore();
+		answerTemplate,
+		questionTemplate,
+		setAnswerTemplate,
+		setQuestionTemplate,
+		updateDefaultFile,
+		createTemplateWithDefaultFile,
+	} = useTemplateManagement(editingTemplate, selectedFramework);
+
+	// Simple state management
 	const [currentStep, setCurrentStep] = useState<TemplateStep>("answer");
-	const [answerTemplate, setAnswerTemplate] = useState<Template | null>(
-		editingTemplate?.answerTemplate || null,
-	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
-	const [selectedDefaultFile, setSelectedDefaultFile] = useState<string>("");
 
-	// Automatically select the template when the component mounts
-	useEffect(() => {
-		if (isContainerReady && selectedFramework) {
-			if (editingTemplate) {
-				// If editing, load the editing template
-				setAnswerTemplate(editingTemplate.answerTemplate);
-				selectTemplate(editingTemplate.answerTemplate);
-			} else {
-				// If not editing, load the default template
-				handleTemplateSelect(selectedFramework);
-			}
-		}
-	}, [selectedFramework, isContainerReady, editingTemplate, selectTemplate]);
+	const { files, getFileTree } = useWebContainerStore();
 
-	const handleNext = async () => {
-		if (currentStep === "answer") {
-			setIsLoading(true);
-			try {
-				const currentFiles = await getFileTree(".");
-				if (currentFiles && selectedTemplate) {
-					const cleanTemplate = extractSrcFromTemplate(
-						currentFiles,
-						selectedTemplate,
-					);
-					try {
-						setAnswerTemplate(structuredClone(cleanTemplate));
-					} catch (error) {
-						setAnswerTemplate({ ...cleanTemplate });
-					}
-				}
-				setCurrentStep("question");
-			} catch (error) {
-				console.error("Error during template transition:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-	};
+	// Memoized computed values
+	const canProceed = useMemo(
+		() => !!(files && Object.keys(files).length > 0),
+		[files],
+	);
 
-	const handleBack = async () => {
-		if (currentStep === "question") {
-			setIsLoading(true);
-			try {
-				setCurrentStep("answer");
-				if (answerTemplate) {
-					await selectTemplate(answerTemplate);
-				}
-			} catch (error) {
-				console.error("Error during template transition:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-	};
+	const canSave = useMemo(
+		() => !!(answerTemplate && files),
+		[answerTemplate, files],
+	);
 
-	const handleSave = async () => {
-		setIsSaving(true);
+	// Template transition handlers
+	const handleNext = useCallback(async () => {
+		if (currentStep !== "answer") return;
+
+		setIsLoading(true);
 		try {
-			const currentQuestionTemplate = await getFileTree(".");
-			if (answerTemplate && currentQuestionTemplate && selectedTemplate) {
-				const cleanQuestionTemplate = extractSrcFromTemplate(
-					currentQuestionTemplate,
+			const currentFiles = await getFileTree(".");
+			if (currentFiles && selectedTemplate) {
+				const cleanTemplate = extractSrcFromTemplate(
+					currentFiles,
 					selectedTemplate,
 				);
 
-				// Create the saved template with the selected default file
-				const savedTemplate = {
-					framework: selectedFramework,
-					questionTemplate: cleanQuestionTemplate,
-					answerTemplate,
-					defaultFile: selectedDefaultFile || selectedTemplate.defaultFile,
-				};
+				const templateWithDefaultFile = createTemplateWithDefaultFile(
+					cleanTemplate,
+					selectedTemplate.defaultFile,
+				);
 
-				onSave(savedTemplate);
+				// Set both templates with the same defaultFile
+				setAnswerTemplate(templateWithDefaultFile);
+				setQuestionTemplate(templateWithDefaultFile);
 			}
+			setCurrentStep("question");
+		} catch (error) {
+			console.error("Error during template transition:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [
+		currentStep,
+		selectedTemplate,
+		getFileTree,
+		createTemplateWithDefaultFile,
+		setAnswerTemplate,
+		setQuestionTemplate,
+		setCurrentStep,
+	]);
+
+	const handleBack = useCallback(async () => {
+		if (currentStep !== "question") return;
+
+		setIsLoading(true);
+		try {
+			setCurrentStep("answer");
+			if (answerTemplate) {
+				const { selectTemplate } = useWebContainerStore.getState();
+				await selectTemplate(answerTemplate);
+			}
+		} catch (error) {
+			console.error("Error during template transition:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [currentStep, answerTemplate, setCurrentStep]);
+
+	// Save handler
+	const handleSave = useCallback(async () => {
+		setIsSaving(true);
+		try {
+			const currentQuestionTemplate = await getFileTree(".");
+			if (!answerTemplate || !currentQuestionTemplate || !selectedTemplate) {
+				throw new Error("Missing required data for saving");
+			}
+
+			const cleanQuestionTemplate = extractSrcFromTemplate(
+				currentQuestionTemplate,
+				selectedTemplate,
+			);
+
+			// Use existing question template or create new one
+			const finalQuestionTemplate = questionTemplate || cleanQuestionTemplate;
+			const defaultFile =
+				finalQuestionTemplate.defaultFile || selectedTemplate.defaultFile;
+
+			// Ensure both templates have the same defaultFile
+			const finalAnswerTemplate = createTemplateWithDefaultFile(
+				answerTemplate,
+				defaultFile,
+			);
+			const finalQuestionTemplateWithDefaultFile =
+				createTemplateWithDefaultFile(finalQuestionTemplate, defaultFile);
+
+			const savedTemplate = {
+				framework: selectedFramework,
+				questionTemplate: finalQuestionTemplateWithDefaultFile,
+				answerTemplate: finalAnswerTemplate,
+			};
+
+			onSave(savedTemplate);
 		} catch (error) {
 			console.error("Error saving templates:", error);
 		} finally {
 			setIsSaving(false);
 		}
-	};
+	}, [
+		answerTemplate,
+		questionTemplate,
+		selectedTemplate,
+		selectedFramework,
+		getFileTree,
+		createTemplateWithDefaultFile,
+		onSave,
+	]);
 
-	const canProceed = (): boolean => {
-		return !!(files && Object.keys(files).length > 0);
-	};
-
-	const canSave = (): boolean => {
-		return !!(answerTemplate && files);
-	};
+	// Default file change handler
+	const handleDefaultFileChange = useCallback(
+		(defaultFile: string) => {
+			updateDefaultFile(defaultFile);
+		},
+		[updateDefaultFile],
+	);
 
 	return (
 		<div className="h-full flex flex-col justify-between relative">
@@ -176,8 +208,8 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 							{currentStep === "question" && (
 								<DefaultFileSelector
 									files={files}
-									selectedTemplate={selectedTemplate}
-									onDefaultFileChange={setSelectedDefaultFile}
+									selectedTemplate={questionTemplate || selectedTemplate}
+									onDefaultFileChange={handleDefaultFileChange}
 								/>
 							)}
 						</div>
@@ -233,8 +265,8 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				currentStep={currentStep}
 				isLoading={isLoading}
 				isSaving={isSaving}
-				canProceed={canProceed()}
-				canSave={canSave()}
+				canProceed={canProceed}
+				canSave={canSave}
 				onNext={handleNext}
 				onBack={handleBack}
 				onSave={handleSave}

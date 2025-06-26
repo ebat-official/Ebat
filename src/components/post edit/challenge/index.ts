@@ -5,4 +5,3 @@ export { default as LoadingOverlay } from "./LoadingOverlay";
 export { default as ActionButtons } from "./ActionButtons";
 export { default as TemplateCreationInterface } from "./TemplateCreationInterface";
 export { TemplateCreator } from "./TemplateCreator";
-export type { TemplateStep } from "./StepIndicator";
