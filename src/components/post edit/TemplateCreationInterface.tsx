@@ -68,17 +68,16 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	// Automatically select the template when the component mounts
 	useEffect(() => {
 		if (isContainerReady && selectedFramework) {
+			if (editingTemplate) {
+				// If editing, load the editing template
+				setAnswerTemplate(editingTemplate.answerTemplate);
+				selectTemplate(editingTemplate.answerTemplate);
+			} else {
+				// If not editing, load the default template
 			handleTemplateSelect(selectedFramework);
 		}
-	}, [selectedFramework, isContainerReady]);
-
-	// Load editing template data when available
-	useEffect(() => {
-		if (editingTemplate && isContainerReady) {
-			setAnswerTemplate(editingTemplate.answerTemplate);
-			selectTemplate(editingTemplate.answerTemplate);
 		}
-	}, [editingTemplate, isContainerReady, selectTemplate]);
+	}, [selectedFramework, isContainerReady, editingTemplate, selectTemplate]);
 
 	const handleNext = async () => {
 		if (currentStep === "answer") {
