@@ -3,7 +3,7 @@ import ButtonBlue from "@/components/shared/ButtonBlue";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import type { TemplateStep } from "./StepIndicator";
-import type { FileSystemTree } from "../../playground/lib/types";
+import type { FileSystemTree, Template } from "../../playground/lib/types";
 import ProgressIndicators from "./ProgressIndicators";
 
 interface ActionButtonsProps {
@@ -15,7 +15,7 @@ interface ActionButtonsProps {
 	onNext: () => void;
 	onBack: () => void;
 	onSave: () => void;
-	answerTemplate: FileSystemTree | null;
+	answerTemplate: Template | null;
 	files: FileSystemTree | null;
 }
 

@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import type { TemplateStep } from "./StepIndicator";
-import type { FileSystemTree } from "../../playground/lib/types";
+import type { FileSystemTree, Template } from "../../playground/lib/types";
 
 interface ProgressIndicatorsProps {
-	answerTemplate: FileSystemTree | null;
+	answerTemplate: Template | null;
 	currentStep: TemplateStep;
 	files: FileSystemTree | null;
 }

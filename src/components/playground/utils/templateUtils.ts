@@ -18,8 +18,11 @@ export const handleTemplateSelect = async (templateId: string) => {
 export const extractSrcFromTemplate = (
 	currentFiles: FileSystemTree,
 	originalTemplate: Template,
-): FileSystemTree => {
-	// Start with the original template files
+): Template => {
+	// Start with the original template
+	const updatedTemplate = { ...originalTemplate };
+
+	// Get the original template files
 	const templateFiles = originalTemplate.files as FileSystemTree;
 
 	// Extract only the src folder from current files
@@ -27,12 +30,12 @@ export const extractSrcFromTemplate = (
 
 	// If there's a src folder in current files, replace the template's src with it
 	if (currentSrc && "directory" in currentSrc) {
-		return {
+		updatedTemplate.files = {
 			...templateFiles,
 			src: currentSrc,
-		};
+		} as FileSystemTree;
 	}
 
-	// If no src folder found, return original template files
-	return templateFiles;
+	// Return the updated template with all original properties preserved
+	return updatedTemplate;
 };
