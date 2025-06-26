@@ -98,6 +98,7 @@ export async function getPostFromURL(params: {
 						updatedAt: true,
 					},
 				},
+				challengeTemplates: true,
 			},
 		});
 

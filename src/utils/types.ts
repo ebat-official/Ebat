@@ -96,6 +96,7 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	content: Uint8Array | ContentReturnType;
 	completionCount?: number;
 	tableOfContent?: TableOfContent;
+	challengeTemplates?: ChallengeTemplate[];
 	collaborators: Array<
 		Pick<User, "id" | "userName"> & {
 			userProfile: { name: string | null; image: string | null } | null;
