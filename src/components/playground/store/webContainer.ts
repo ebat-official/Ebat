@@ -60,6 +60,7 @@ interface WebContainerState {
 	resetToOriginalTemplate: () => Promise<void>;
 	teardownContainer: () => Promise<void>;
 	setLanguageDropdownDisabled: (disabled: boolean) => void;
+	cleanupNodeModules: () => Promise<void>;
 }
 
 // Maximum number of lines to keep in terminal
@@ -223,6 +224,32 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		}
 	},
 
+	cleanupNodeModules: async () => {
+		const { webContainer, addTerminalOutput } = get();
+		if (!webContainer) return;
+
+		// Check if node_modules exists and remove it
+		try {
+			await webContainer.fs.rm("node_modules", { recursive: true });
+			addTerminalOutput("🗑️ Cleaned up node_modules");
+		} catch (error) {
+			// node_modules doesn't exist, which is fine
+		}
+
+		// Also clean up package-lock.json and pnpm-lock.yaml if they exist
+		try {
+			await webContainer.fs.rm("package-lock.json");
+		} catch (error) {
+			// File doesn't exist, which is fine
+		}
+
+		try {
+			await webContainer.fs.rm("pnpm-lock.yaml");
+		} catch (error) {
+			// File doesn't exist, which is fine
+		}
+	},
+
 	restartServer: async () => {
 		const { stopServer, selectedTemplate, addTerminalOutput } = get();
 		if (!selectedTemplate) return;
@@ -256,14 +283,18 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			setFiles,
 			clearOpenFiles,
 			handleFileSelect,
-			teardownContainer,
+			stopServer,
+			cleanupNodeModules,
 			selectedTemplate,
 		} = get();
-		if (get().isLoading) return null;
 
-		// Check if we're switching to a different template (and not initializing for the first time)
+		// Check if we're switching to a different template
 		const isDifferentTemplate =
 			selectedTemplate && selectedTemplate.id !== template.id;
+
+		// If switching to a different template, allow it even if loading
+		// If it's the same template and loading, don't allow
+		if (get().isLoading && !isDifferentTemplate) return null;
 
 		set({
 			isLoading: true,
@@ -280,17 +311,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		try {
 			let currentContainer = webContainer;
 
-			// If container is null (after teardown) or switching to different template, boot fresh container
-			if (!currentContainer || isDifferentTemplate) {
-				if (isDifferentTemplate) {
-					addTerminalOutput(`🔄 Switching to ${template.name} template...`);
-					await teardownContainer();
-				} else {
-					addTerminalOutput(`🔄 Reopening ${template.name} template...`);
-				}
-
-				// Boot fresh container
-				addTerminalOutput("🚀 Booting fresh container...");
+			// If container is null, boot fresh container
+			if (!currentContainer) {
+				addTerminalOutput(`🚀 Booting container for ${template.name}...`);
 				currentContainer = await WebContainer.boot();
 
 				set({
@@ -303,7 +326,12 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 					addTerminalOutput(`🌐 Server ready at ${url}`);
 				});
 
-				addTerminalOutput("✅ Fresh container ready");
+				addTerminalOutput("✅ Container ready");
+			} else if (isDifferentTemplate) {
+				// If switching templates, stop server and cleanup
+				addTerminalOutput(`🔄 Switching to ${template.name} template...`);
+				await stopServer();
+				await cleanupNodeModules();
 			}
 
 			addTerminalOutput(`📦 Loading ${template.name} template...`);
@@ -321,8 +349,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			(async () => {
 				try {
 					if (template.installCommand) {
-						// Stop any existing server before installing dependencies
-						await get().stopServer();
 						addTerminalOutput("📥 Installing dependencies...");
 						const installProcess = await runCommand("pnpm", ["install"]);
 						if (!installProcess) {
@@ -622,6 +648,8 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			clearOpenFiles,
 			handleFileSelect,
 			clearAllFilesFromLocalStorage,
+			stopServer,
+			cleanupNodeModules,
 		} = get();
 		if (!webContainer || !selectedTemplate) return;
 
@@ -629,6 +657,10 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			isLoading: true,
 			isTemplateReady: false,
 		});
+
+		// Stop server and cleanup node_modules
+		await stopServer();
+		await cleanupNodeModules();
 
 		// Clear localStorage data and use original template files
 		clearAllFilesFromLocalStorage(selectedTemplate);
@@ -654,8 +686,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			(async () => {
 				try {
 					if (selectedTemplate.installCommand) {
-						// Stop any existing server before installing dependencies
-						await get().stopServer();
 						addTerminalOutput("📥 Installing dependencies...");
 						const installProcess = await runCommand("pnpm", ["install"]);
 						if (!installProcess) {

@@ -49,9 +49,6 @@ function TemplateCreatorComponent({
 	const [showModal, setShowModal] = React.useState(false);
 	const { setLanguageDropdownDisabled } = useWebContainerStore();
 
-	// Generate a unique ID for this instance
-	const instanceId = React.useRef(Math.random().toString(36).substr(2, 9));
-
 	// Filter out already created frameworks
 	const availableFrameworks = React.useMemo(() => {
 		const createdFrameworks = new Set(
