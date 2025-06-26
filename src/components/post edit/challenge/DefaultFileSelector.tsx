@@ -81,7 +81,7 @@ const DefaultFileSelector: FC<DefaultFileSelectorProps> = ({
 
 					if (defaultFile) {
 						setSelectedDefaultFile(defaultFile);
-						onDefaultFileChange(defaultFile);
+						// Don't call onDefaultFileChange here - only set local state
 					}
 				}
 			} catch (error) {
@@ -90,11 +90,21 @@ const DefaultFileSelector: FC<DefaultFileSelectorProps> = ({
 		};
 
 		loadSrcFiles();
-	}, [getFileTree, selectedTemplate, onDefaultFileChange]);
+	}, [getFileTree, selectedTemplate]);
+
+	// Sync with template's defaultFile when it changes externally
+	useEffect(() => {
+		if (
+			selectedTemplate?.defaultFile &&
+			availableFiles.includes(selectedTemplate.defaultFile)
+		) {
+			setSelectedDefaultFile(selectedTemplate.defaultFile);
+		}
+	}, [selectedTemplate?.defaultFile, availableFiles]);
 
 	const handleFileSelect = (filePath: string) => {
 		setSelectedDefaultFile(filePath);
-		onDefaultFileChange(filePath);
+		onDefaultFileChange(filePath); // Only call onDefaultFileChange when user selects
 	};
 
 	if (!files || availableFiles.length === 0) {
