@@ -102,24 +102,6 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		clearOpenFiles,
 	]);
 
-	// Cleanup effect to teardown container when modal closes
-	useEffect(() => {
-		return () => {
-			const { webContainer, teardownContainer } =
-				useWebContainerStore.getState();
-			if (webContainer) {
-				try {
-					teardownContainer();
-				} catch (error) {
-					console.warn(
-						"Error during container teardown on modal close:",
-						error,
-					);
-				}
-			}
-		};
-	}, []);
-
 	const handleNext = async () => {
 		if (currentStep === "answer") {
 			setIsLoading(true);
