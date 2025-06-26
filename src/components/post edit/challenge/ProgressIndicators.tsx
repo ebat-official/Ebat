@@ -20,7 +20,7 @@ const ProgressIndicators: FC<ProgressIndicatorsProps> = ({
 					answerTemplate ? "bg-green-500" : "bg-gray-300"
 				}`}
 			/>
-			<span className="text-sm">Answer Template</span>
+			<span className="text-sm">Solution</span>
 		</div>
 		<div className="flex items-center gap-2">
 			<div

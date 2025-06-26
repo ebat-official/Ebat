@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import ButtonBlue from "@/components/shared/ButtonBlue";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import type { TemplateStep } from "./StepIndicator";
@@ -78,20 +79,14 @@ const ActionButtons: FC<ActionButtonsProps> = ({
 					)}
 				</Button>
 			) : (
-				<Button
+				<ButtonBlue
 					onClick={onSave}
 					disabled={!canSave || isSaving}
-					className="bg-green-600 hover:bg-green-700"
+					loading={isSaving}
+					loadingText="Saving..."
 				>
-					{isSaving ? (
-						<>
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-							Saving...
-						</>
-					) : (
-						"Save Templates"
-					)}
-				</Button>
+					Save Templates
+				</ButtonBlue>
 			)}
 		</div>
 	</div>
