@@ -214,7 +214,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			// Wait for the process to exit
 			await serverProcess.exit;
 			set({ serverProcess: null, previewUrl: "" });
-			addTerminalOutput("🛑 Server stopped");
+			addTerminalOutput(" Server stopped");
 		} catch (error) {
 			console.error("Failed to stop server:", error);
 			addTerminalOutput("❌ Failed to stop server");
@@ -259,7 +259,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			teardownContainer,
 			selectedTemplate,
 		} = get();
-		if (!webContainer || get().isLoading) return null;
+		if (get().isLoading) return null;
 
 		// Check if we're switching to a different template (and not initializing for the first time)
 		const isDifferentTemplate =
@@ -280,10 +280,14 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		try {
 			let currentContainer = webContainer;
 
-			// Only teardown and boot fresh if switching to different template (not first time)
-			if (isDifferentTemplate) {
-				addTerminalOutput(`🔄 Switching to ${template.name} template...`);
-				await teardownContainer();
+			// If container is null (after teardown) or switching to different template, boot fresh container
+			if (!currentContainer || isDifferentTemplate) {
+				if (isDifferentTemplate) {
+					addTerminalOutput(`🔄 Switching to ${template.name} template...`);
+					await teardownContainer();
+				} else {
+					addTerminalOutput(`🔄 Reopening ${template.name} template...`);
+				}
 
 				// Boot fresh container
 				addTerminalOutput("🚀 Booting fresh container...");
