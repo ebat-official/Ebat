@@ -18,7 +18,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
-import { ContentType, EditorContent, PostActions } from "@/utils/types";
+import {
+	ContentType,
+	EditorContent,
+	PostActions,
+	ChallengeTemplate,
+} from "@/utils/types";
 import { Loader2, Code, FileCode2, Edit, Trash2, Info } from "lucide-react";
 import { PostType, TemplateFramework } from "@prisma/client";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
@@ -27,6 +32,7 @@ import { useEditorContext } from "../shared/Lexical Editor/providers/EditorConte
 import { ThumbnailUpload } from "./ThumbnailUpload";
 import { TemplateCreator } from "./challenge/TemplateCreator";
 import type { FileSystemTree } from "../playground/lib/types";
+import type { Template } from "../playground/lib/types";
 import { FRAMEWORK_ICONS } from "@/components/post edit/constants";
 import SavedTemplatesSkeleton from "./challenge/SavedTemplatesSkeleton";
 
@@ -41,13 +47,6 @@ interface EditorContainerProps {
 	actionPublishLoading?: boolean;
 	action?: PostActions;
 	challengeTemplates?: ChallengeTemplate[];
-}
-
-interface ChallengeTemplate {
-	framework: TemplateFramework;
-	questionTemplate: FileSystemTree;
-	answerTemplate: FileSystemTree;
-	defaultFile?: string;
 }
 
 function EditorContainer({

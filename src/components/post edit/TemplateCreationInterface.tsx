@@ -15,7 +15,7 @@ import {
 	handleTemplateSelect,
 	extractSrcFromTemplate,
 } from "../playground/utils/templateUtils";
-import type { FileSystemTree } from "../playground/lib/types";
+import type { FileSystemTree, Template } from "../playground/lib/types";
 import {
 	StepIndicator,
 	StepDescription,
@@ -29,14 +29,14 @@ interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;
 	onSave: (templates: {
 		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
+		questionTemplate: Template;
+		answerTemplate: Template;
 		defaultFile?: string;
 	}) => void;
 	editingTemplate?: {
 		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
+		questionTemplate: Template;
+		answerTemplate: Template;
 		defaultFile?: string;
 	} | null;
 }
@@ -55,28 +55,15 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		setFiles,
 		clearOpenFiles,
 		handleFileSelect,
+		selectTemplate,
 	} = useWebContainerStore();
 	const [currentStep, setCurrentStep] = useState<TemplateStep>("answer");
-	const [answerTemplate, setAnswerTemplate] = useState<FileSystemTree | null>(
+	const [answerTemplate, setAnswerTemplate] = useState<Template | null>(
 		editingTemplate?.answerTemplate || null,
 	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [selectedDefaultFile, setSelectedDefaultFile] = useState<string>("");
-
-	const mountFileSystemTree = async (tree: FileSystemTree) => {
-		if (!webContainer || !selectedTemplate) return;
-		try {
-			await webContainer.mount(tree);
-			setFiles(tree);
-			clearOpenFiles();
-			if (selectedTemplate.defaultFile) {
-				await handleFileSelect(selectedTemplate.defaultFile);
-			}
-		} catch (e) {
-			console.error("Error mounting file system tree", e);
-		}
-	};
 
 	// Automatically select the template when the component mounts
 	useEffect(() => {
@@ -89,9 +76,9 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	useEffect(() => {
 		if (editingTemplate && isContainerReady) {
 			setAnswerTemplate(editingTemplate.answerTemplate);
-			mountFileSystemTree(editingTemplate.answerTemplate);
+			selectTemplate(editingTemplate.answerTemplate);
 		}
-	}, [editingTemplate, isContainerReady]);
+	}, [editingTemplate, isContainerReady, selectTemplate]);
 
 	const handleNext = async () => {
 		if (currentStep === "answer") {
@@ -99,14 +86,14 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 			try {
 				const currentFiles = await getFileTree(".");
 				if (currentFiles && selectedTemplate) {
-					const cleanFiles = extractSrcFromTemplate(
+					const cleanTemplate = extractSrcFromTemplate(
 						currentFiles,
 						selectedTemplate,
 					);
 					try {
-						setAnswerTemplate(structuredClone(cleanFiles));
+						setAnswerTemplate(structuredClone(cleanTemplate));
 					} catch (error) {
-						setAnswerTemplate({ ...cleanFiles });
+						setAnswerTemplate({ ...cleanTemplate });
 					}
 				}
 				setCurrentStep("question");
@@ -124,7 +111,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 			try {
 				setCurrentStep("answer");
 				if (answerTemplate) {
-					await mountFileSystemTree(answerTemplate);
+					await selectTemplate(answerTemplate);
 				}
 			} catch (error) {
 				console.error("Error during template transition:", error);

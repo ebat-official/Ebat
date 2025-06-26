@@ -15,27 +15,16 @@ import TemplateCreationInterface from "./TemplateCreationInterface";
 import { handleTemplateSelect } from "../../playground/utils/templateUtils";
 import type { FileSystemTree } from "../../playground/lib/types";
 import { useWebContainerStore } from "../../playground/store/webContainer";
+import { ChallengeTemplate } from "@/utils/types";
 
 const frameworks = Object.values(TemplateFramework);
 
 interface TemplateCreatorProps {
-	onTemplatesSave?: (templates: {
-		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
-	}) => void;
-	editingTemplate?: {
-		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
-	} | null;
+	onTemplatesSave?: (templates: ChallengeTemplate) => void;
+	editingTemplate?: ChallengeTemplate | null;
 	onCancelEdit?: () => void;
 	dataLoading?: boolean;
-	challengeTemplates?: {
-		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
-	}[];
+	challengeTemplates?: ChallengeTemplate[];
 }
 
 function TemplateCreatorComponent({
@@ -75,11 +64,7 @@ function TemplateCreatorComponent({
 		}
 	};
 
-	const handleTemplatesSave = (templates: {
-		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
-	}) => {
+	const handleTemplatesSave = (templates: ChallengeTemplate) => {
 		onTemplatesSave?.(templates);
 		setShowModal(false);
 		setValue(""); // Reset selection

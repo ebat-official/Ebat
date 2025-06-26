@@ -19,13 +19,17 @@ import {
 	SUCCESS,
 } from "./contants";
 import { boolean } from "zod";
-import type { FileSystemTree } from "@/components/playground/lib/types";
+import type {
+	FileSystemTree,
+	Template,
+} from "@/components/playground/lib/types";
 
 // Challenge template type
 export interface ChallengeTemplate {
 	framework: TemplateFramework;
-	questionTemplate: FileSystemTree;
-	answerTemplate: FileSystemTree;
+	questionTemplate: Template;
+	answerTemplate: Template;
+	defaultFile?: string;
 }
 
 export interface ContentType {
