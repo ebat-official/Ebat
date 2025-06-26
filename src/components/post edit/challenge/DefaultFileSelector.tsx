@@ -59,13 +59,15 @@ const DefaultFileSelector: FC<DefaultFileSelectorProps> = ({
 					const srcFiles = getAllFilesFromTree(srcTree, "src");
 					setAvailableFiles(srcFiles);
 
-					// Set initial default file
+					// Set initial default file from template or find a good default
+					let defaultFile = "";
+
 					if (
 						selectedTemplate?.defaultFile &&
 						srcFiles.includes(selectedTemplate.defaultFile)
 					) {
-						setSelectedDefaultFile(selectedTemplate.defaultFile);
-						onDefaultFileChange(selectedTemplate.defaultFile);
+						// Use the template's defaultFile if it exists and is valid
+						defaultFile = selectedTemplate.defaultFile;
 					} else if (srcFiles.length > 0) {
 						// Find a good default file
 						const preferredFiles = srcFiles.filter(
@@ -74,7 +76,10 @@ const DefaultFileSelector: FC<DefaultFileSelectorProps> = ({
 								file.includes("main.") ||
 								file.includes("index."),
 						);
-						const defaultFile = preferredFiles[0] || srcFiles[0];
+						defaultFile = preferredFiles[0] || srcFiles[0];
+					}
+
+					if (defaultFile) {
 						setSelectedDefaultFile(defaultFile);
 						onDefaultFileChange(defaultFile);
 					}
