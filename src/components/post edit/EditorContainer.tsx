@@ -47,6 +47,7 @@ interface ChallengeTemplate {
 	framework: TemplateFramework;
 	questionTemplate: FileSystemTree;
 	answerTemplate: FileSystemTree;
+	defaultFile?: string;
 }
 
 function EditorContainer({
@@ -223,6 +224,8 @@ function EditorContainer({
 	const formatFrameworkName = (framework: string) => {
 		return framework.toLowerCase().replace(/(^|\s)\S/g, (L) => L.toUpperCase());
 	};
+
+	console.log(challengeTemplates, "pranavchallengeTemplates");
 	return (
 		<div className="flex flex-col gap-4">
 			<Card className="relative items-center">

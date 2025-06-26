@@ -23,6 +23,7 @@ import {
 	ActionButtons,
 	type TemplateStep,
 } from "./index";
+import DefaultFileSelector from "./DefaultFileSelector";
 
 interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;
@@ -30,11 +31,13 @@ interface TemplateCreationInterfaceProps {
 		framework: TemplateFramework;
 		questionTemplate: FileSystemTree;
 		answerTemplate: FileSystemTree;
+		defaultFile?: string;
 	}) => void;
 	editingTemplate?: {
 		framework: TemplateFramework;
 		questionTemplate: FileSystemTree;
 		answerTemplate: FileSystemTree;
+		defaultFile?: string;
 	} | null;
 }
 
@@ -59,6 +62,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
+	const [selectedDefaultFile, setSelectedDefaultFile] = useState<string>("");
 
 	const mountFileSystemTree = async (tree: FileSystemTree) => {
 		if (!webContainer || !selectedTemplate) return;
@@ -104,23 +108,6 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		setFiles,
 		clearOpenFiles,
 	]);
-
-	useEffect(() => {
-		return () => {
-			const { webContainer, teardownContainer } =
-				useWebContainerStore.getState();
-			if (webContainer) {
-				try {
-					teardownContainer();
-				} catch (error) {
-					console.warn(
-						"Error during container teardown on modal close:",
-						error,
-					);
-				}
-			}
-		};
-	}, []);
 
 	const handleNext = async () => {
 		if (currentStep === "answer") {
@@ -172,11 +159,16 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 					currentQuestionTemplate,
 					selectedTemplate,
 				);
-				onSave({
+
+				// Create the saved template with the selected default file
+				const savedTemplate = {
 					framework: selectedFramework,
 					questionTemplate: cleanQuestionTemplate,
 					answerTemplate,
-				});
+					defaultFile: selectedDefaultFile || selectedTemplate.defaultFile,
+				};
+
+				onSave(savedTemplate);
 			}
 		} catch (error) {
 			console.error("Error saving templates:", error);
@@ -215,6 +207,13 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 								currentStep={currentStep}
 								framework={selectedFramework}
 							/>
+							{currentStep === "question" && (
+								<DefaultFileSelector
+									files={files}
+									selectedTemplate={selectedTemplate}
+									onDefaultFileChange={setSelectedDefaultFile}
+								/>
+							)}
 						</div>
 					</Card>
 				</ResizablePanel>
