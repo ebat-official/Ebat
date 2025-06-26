@@ -20,7 +20,7 @@ const StepIndicator: FC<StepIndicatorProps> = ({ currentStep, framework }) => (
 				{currentStep === "question" ? "2" : "1"}
 			</div>
 			<h3 className="text-lg font-semibold">
-				{currentStep === "question" ? "Question Template" : "Answer Template"}
+				{currentStep === "question" ? "Question Template" : "Solution"}
 			</h3>
 		</div>
 	</div>
