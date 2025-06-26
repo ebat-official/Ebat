@@ -21,9 +21,10 @@ import {
 	StepDescription,
 	LoadingOverlay,
 	ActionButtons,
-	type TemplateStep,
 } from "./challenge/index";
 import DefaultFileSelector from "./challenge/DefaultFileSelector";
+
+type TemplateStep = "answer" | "question";
 
 interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;
