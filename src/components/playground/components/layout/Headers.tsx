@@ -38,7 +38,7 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 		if (!post?.challengeTemplates) return;
 
 		const challengeTemplate = post.challengeTemplates.find(
-			(template: ChallengeTemplate) => template.framework === framework
+			(template: ChallengeTemplate) => template.framework === framework,
 		);
 
 		if (challengeTemplate?.questionTemplate) {
@@ -69,20 +69,27 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 					<Select
 						value={selectedTemplate?.id}
 						onValueChange={handleTemplateChange}
-						disabled={isLoading || isLanguageDropdownDisabled || availableTemplates.length === 0}
+						disabled={
+							isLoading ||
+							isLanguageDropdownDisabled ||
+							availableTemplates.length === 0
+						}
 					>
 						<SelectTrigger className="w-[200px]">
 							<SelectValue placeholder="Select a template" />
 						</SelectTrigger>
 						<SelectContent>
-							{availableTemplates.map((challengeTemplate: ChallengeTemplate) => (
-								<SelectItem 
-									key={challengeTemplate.framework} 
-									value={challengeTemplate.framework}
-								>
-									{challengeTemplate.questionTemplate?.name || challengeTemplate.framework}
-								</SelectItem>
-							))}
+							{availableTemplates.map(
+								(challengeTemplate: ChallengeTemplate) => (
+									<SelectItem
+										key={challengeTemplate.framework}
+										value={challengeTemplate.framework}
+									>
+										{challengeTemplate.questionTemplate?.name ||
+											challengeTemplate.framework}
+									</SelectItem>
+								),
+							)}
 						</SelectContent>
 					</Select>
 
