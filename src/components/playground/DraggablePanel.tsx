@@ -1,6 +1,6 @@
 "use client";
 import React, { FC, useEffect } from "react";
-import { PostWithExtraDetails } from "@/utils/types";
+import { PostWithExtraDetails, ChallengeTemplate } from "@/utils/types";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -13,7 +13,6 @@ import { PreviewPanel } from "./components/preview/PreviewPanel";
 import { useWebContainerStore } from "./store/webContainer";
 import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
-import { handleTemplateSelect } from "./utils/templateUtils";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
@@ -25,20 +24,43 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
 	)?.toUpperCase();
 
-	const { selectedTemplate, setPost, isContainerReady } =
+	const { selectedTemplate, isContainerReady, selectTemplate, setPost } =
 		useWebContainerStore();
 
-	// Set the post in the store when component mounts or post changes
+	// Set post in store when component mounts
 	useEffect(() => {
 		setPost(post);
-	}, [post]);
+	}, [post, setPost]);
 
-	// Handle URL-based template selection
+	// Handle template selection from post.challengeTemplates
 	useEffect(() => {
-		if (TemplateIdFromUrl && isContainerReady) {
-			handleTemplateSelect(TemplateIdFromUrl);
+		if (
+			post.challengeTemplates &&
+			post.challengeTemplates.length > 0 &&
+			isContainerReady
+		) {
+			// Find template that matches TemplateIdFromUrl
+			let templateToLoad = post.challengeTemplates.find(
+				(template: ChallengeTemplate) =>
+					template.framework === TemplateIdFromUrl,
+			);
+
+			// If no match found, use the first template
+			if (!templateToLoad) {
+				templateToLoad = post.challengeTemplates[0];
+			}
+
+			// Load the question template (or answer template if needed)
+			if (templateToLoad.questionTemplate) {
+				selectTemplate(templateToLoad.questionTemplate);
+			}
 		}
-	}, [TemplateIdFromUrl, isContainerReady]);
+	}, [
+		post.challengeTemplates,
+		TemplateIdFromUrl,
+		isContainerReady,
+		selectTemplate,
+	]);
 
 	return (
 		<div>

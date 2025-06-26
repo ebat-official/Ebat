@@ -52,7 +52,6 @@ interface WebContainerState {
 	handleFileContentChange: (content: string) => Promise<void>;
 	handleCloseFile: (path: string) => void;
 	clearOpenFiles: () => void;
-	setPost: (post: PostWithExtraDetails) => void;
 	saveFileToLocalStorage: (filePath: string, content: string) => void;
 	loadFileFromLocalStorage: (filePath: string) => string | null;
 	clearFileFromLocalStorage: (filePath: string) => void;
@@ -61,6 +60,7 @@ interface WebContainerState {
 	teardownContainer: () => Promise<void>;
 	setLanguageDropdownDisabled: (disabled: boolean) => void;
 	cleanupNodeModules: () => Promise<void>;
+	setPost: (post: PostWithExtraDetails) => void;
 }
 
 // Maximum number of lines to keep in terminal
@@ -583,10 +583,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		set({ openFiles: [], activeFile: null });
 	},
 
-	setPost: (post: PostWithExtraDetails) => {
-		set({ post });
-	},
-
 	saveFileToLocalStorage: (filePath: string, content: string) => {
 		const { post, selectedTemplate } = get();
 		if (!post || !selectedTemplate) return;
@@ -734,5 +730,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 
 	setLanguageDropdownDisabled: (disabled: boolean) => {
 		set({ isLanguageDropdownDisabled: disabled });
+	},
+
+	setPost: (post: PostWithExtraDetails) => {
+		set({ post });
 	},
 }));
