@@ -70,8 +70,8 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				selectTemplate(editingTemplate.answerTemplate);
 			} else {
 				// If not editing, load the default template
-			handleTemplateSelect(selectedFramework);
-		}
+				handleTemplateSelect(selectedFramework);
+			}
 		}
 	}, [selectedFramework, isContainerReady, editingTemplate, selectTemplate]);
 
