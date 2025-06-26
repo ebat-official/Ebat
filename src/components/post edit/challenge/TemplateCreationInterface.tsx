@@ -11,7 +11,10 @@ import { PreviewPanel } from "../../playground/components/preview/PreviewPanel";
 import { useWebContainerStore } from "../../playground/store/webContainer";
 import { Card } from "@/components/ui/card";
 import { TemplateFramework } from "@prisma/client";
-import { handleTemplateSelect } from "../../playground/utils/templateUtils";
+import {
+	handleTemplateSelect,
+	extractSrcFromTemplate,
+} from "../../playground/utils/templateUtils";
 import type { FileSystemTree } from "../../playground/lib/types";
 import {
 	StepIndicator,
@@ -107,11 +110,15 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 			setIsLoading(true);
 			try {
 				const currentFiles = await getFileTree(".");
-				if (currentFiles) {
+				if (currentFiles && selectedTemplate) {
+					const cleanFiles = extractSrcFromTemplate(
+						currentFiles,
+						selectedTemplate,
+					);
 					try {
-						setAnswerTemplate(structuredClone(currentFiles));
+						setAnswerTemplate(structuredClone(cleanFiles));
 					} catch (error) {
-						setAnswerTemplate({ ...currentFiles });
+						setAnswerTemplate({ ...cleanFiles });
 					}
 				}
 				setCurrentStep("question");
@@ -143,10 +150,14 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		setIsSaving(true);
 		try {
 			const currentQuestionTemplate = await getFileTree(".");
-			if (answerTemplate && currentQuestionTemplate) {
+			if (answerTemplate && currentQuestionTemplate && selectedTemplate) {
+				const cleanQuestionTemplate = extractSrcFromTemplate(
+					currentQuestionTemplate,
+					selectedTemplate,
+				);
 				onSave({
 					framework: selectedFramework,
-					questionTemplate: currentQuestionTemplate,
+					questionTemplate: cleanQuestionTemplate,
 					answerTemplate,
 				});
 			}

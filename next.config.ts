@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
 	experimental: {
 		reactCompiler: true,
 		ppr: "incremental",
+		serverActions: {
+			bodySizeLimit: "5mb",
+		},
 	},
 	async headers() {
 		return [
