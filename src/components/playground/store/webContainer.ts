@@ -278,6 +278,8 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		clearOpenFiles();
 
 		try {
+			let currentContainer = webContainer;
+
 			// Only teardown and boot fresh if switching to different template (not first time)
 			if (isDifferentTemplate) {
 				addTerminalOutput(`🔄 Switching to ${template.name} template...`);
@@ -285,14 +287,14 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 
 				// Boot fresh container
 				addTerminalOutput("🚀 Booting fresh container...");
-				const container = await WebContainer.boot();
+				currentContainer = await WebContainer.boot();
 
 				set({
-					webContainer: container,
+					webContainer: currentContainer,
 					isContainerReady: true,
 				});
 
-				container.on("server-ready", (port, url) => {
+				currentContainer.on("server-ready", (port, url) => {
 					set({ previewUrl: url });
 					addTerminalOutput(`🌐 Server ready at ${url}`);
 				});
@@ -303,7 +305,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			addTerminalOutput(`📦 Loading ${template.name} template...`);
 
 			// Mount files to container
-			await webContainer.mount(filesToMount);
+			await currentContainer.mount(filesToMount);
 			addTerminalOutput(`✅ ${template.name} files mounted`);
 
 			// Load default file if specified
