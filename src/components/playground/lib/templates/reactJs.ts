@@ -31,6 +31,7 @@ export const reactViteTemplate: Template = {
 						},
 						devDependencies: {
 							"@testing-library/react": "^16.3.0",
+							"@testing-library/jest-dom": "^6.1.0",
 							"@vitejs/plugin-react": "^4.6.0",
 							vite: "^7.0.0",
 							vitest: "^3.2.4",
@@ -52,6 +53,7 @@ export const reactViteTemplate: Template = {
 							file: {
 								contents: `import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
+import '@testing-library/jest-dom';
 import App from '../App';
 
 describe('App', () => {
@@ -85,7 +87,6 @@ describe('App', () => {
 				"App.jsx": {
 					file: {
 						contents: `import React, { useState } from 'react';
-import './index.css';
 
 export default function App() {
   const [count, setCount] = useState(0);
@@ -108,6 +109,7 @@ export default function App() {
 						contents: `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -153,15 +155,7 @@ export default defineConfig({
   },
   server: {
     port: 5002,
-    host: true,
-    open: false
-  },
-  optimizeDeps: {
-    noDiscovery: true,
-    include: []
-  },
-  build: {
-    target: 'esnext'
+    host: true
   }
 });`,
 			},
