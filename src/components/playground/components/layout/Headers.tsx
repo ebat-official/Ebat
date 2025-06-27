@@ -70,9 +70,7 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 						value={selectedTemplate?.id}
 						onValueChange={handleTemplateChange}
 						disabled={
-							isLoading ||
-							isLanguageDropdownDisabled ||
-							availableTemplates.length === 0
+							isLanguageDropdownDisabled || availableTemplates.length === 0
 						}
 					>
 						<SelectTrigger className="w-[200px]">
