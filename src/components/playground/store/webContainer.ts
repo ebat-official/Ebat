@@ -104,7 +104,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	openFiles: [],
 	activeFile: null,
 	post: null,
-	isLanguageDropdownDisabled: true,
+	isLanguageDropdownDisabled: false,
 
 	addTerminalOutput: (output: string) => {
 		const cleaned = cleanTerminalOutput(output);

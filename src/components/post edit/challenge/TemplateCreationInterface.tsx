@@ -182,7 +182,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	);
 
 	return (
-		<div className="h-full flex flex-col justify-between relative">
+		<div className="h-full flex flex-col justify-between relative overflow-auto-y ">
 			<LoadingOverlay isLoading={isLoading} isSaving={isSaving} />
 
 			<ResizablePanelGroup
