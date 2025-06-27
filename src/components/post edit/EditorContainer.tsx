@@ -103,20 +103,33 @@ function EditorContainer({
 		[localStorageKey],
 	);
 
-	const handleInsertMedia = (file: { url: string; alt: string }) => {
+	const handleInsertMedia = async (file: { url: string; alt: string }) => {
 		const payload = getPayload();
-		publishHandler({ ...payload, thumbnail: file.url || payload.thumbnail });
+		await publishHandler({
+			...payload,
+			thumbnail: file.url || payload.thumbnail,
+		});
+		// Clear localStorage after successful publish
+		setLocalStorage(localStorageKey, undefined);
+		if (postType === PostType.CHALLENGE) {
+			setLocalStorage(challengeTemplatesKey, undefined);
+		}
 		setShowThumbnailUpload(false);
 	};
 
-	const handlePublish = () => {
+	const handlePublish = async () => {
 		const payload = getPayload();
 		// If thumbnail is required and not set, show the thumbnail upload
 		if (postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) {
 			setShowThumbnailUpload(true);
 			return;
 		}
-		publishHandler(payload);
+		await publishHandler(payload);
+		// Clear localStorage after successful publish
+		setLocalStorage(localStorageKey, undefined);
+		if (postType === PostType.CHALLENGE) {
+			setLocalStorage(challengeTemplatesKey, undefined);
+		}
 	};
 
 	const closeThumbnailUpload = useCallback(() => {
