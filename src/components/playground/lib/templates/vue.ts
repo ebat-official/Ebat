@@ -23,7 +23,7 @@ export const vueTemplate: Template = {
 							dev: "vite",
 							build: "vite build",
 							preview: "vite preview",
-							test: "vitest run --reporter=verbose",
+							test: "vitest run --reporter=json",
 						},
 
 						dependencies: {
@@ -37,9 +37,7 @@ export const vueTemplate: Template = {
 							jsdom: "^26.1.0",
 							vite: "^7.0.0",
 							tailwindcss: "^4.1.11",
-							"@tailwindcss/postcss": "^4.1.11",
-							postcss: "^8.4.32",
-							autoprefixer: "^10.4.16",
+							"@tailwindcss/vite": "^4.1.11",
 						},
 					},
 					null,
@@ -159,23 +157,14 @@ describe('App.vue', () => {
 				},
 			},
 		},
-		"postcss.config.js": {
-			file: {
-				contents: `export default {
-  plugins: {
-    '@tailwindcss/postcss': {},
-    autoprefixer: {},
-  },
-}`,
-			},
-		},
 		"vite.config.js": {
 			file: {
 				contents: `import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), tailwindcss()],
   test: {
     globals: true,
     environment: 'jsdom'

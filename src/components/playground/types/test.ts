@@ -1,14 +1,29 @@
 import type { WebContainer } from "@webcontainer/api";
 
+export interface AssertionResult {
+	title: string;
+	status: "passed" | "failed";
+	failureMessages?: string[];
+	duration?: number;
+	ancestorTitles?: string[];
+	fullName?: string;
+	meta?: Record<string, unknown>;
+}
+
 export interface TestResult {
 	name: string;
-	status: "pass" | "fail";
+	status: "passed" | "failed";
+	assertionResults: AssertionResult[];
+	startTime?: number;
+	endTime?: number;
 	message?: string;
-	duration?: number;
-	error?: {
-		message: string;
-		stack?: string;
-	};
+}
+
+export interface VitestJsonResult {
+	numTotalTests: number;
+	numPassedTests: number;
+	numFailedTests: number;
+	testResults: TestResult[];
 }
 
 export interface TestPanelProps {

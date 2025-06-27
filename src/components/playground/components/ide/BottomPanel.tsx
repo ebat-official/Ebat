@@ -2,24 +2,19 @@ import React, { useState } from "react";
 import { useWebContainerStore } from "../../store/webContainer";
 import { Terminal } from "../terminal/terminal";
 import { TestPanel } from "../test/TestPanel";
-import {
-	FlaskConical,
-	Terminal as TerminalIcon,
-	Play,
-	Loader2,
-} from "lucide-react";
+import { FlaskConical, TerminalIcon, Play, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { parseTestResults } from "../../lib/test-utils";
-import { TestResult } from "../../types/test";
+import { TestResult, VitestJsonResult } from "../../types/test";
 import RunButton from "../../RunButton";
 import { useAuthAction } from "@/hooks/useAuthAction";
+import { isJSON } from "@/utils/isJSON";
 
 export function BottomPanel() {
 	const { terminalOutput, webContainer, addTerminalOutput, isTemplateReady } =
 		useWebContainerStore();
 
-	const [results, setResults] = useState<TestResult[]>([]);
+	const [results, setResults] = useState<TestResult | null>(null);
 	const [isRunning, setIsRunning] = useState(false);
 
 	const { executeAction, renderLoginModal } = useAuthAction({
@@ -38,37 +33,45 @@ export function BottomPanel() {
 
 		try {
 			setIsRunning(true);
-			setResults([]);
+			setResults(null);
 
 			addTerminalOutput("🧪 Running tests...");
 
 			// Run tests using the template's test command
 			const testProcess = await webContainer.spawn("npm", ["run", "test"]);
 
-			let testOutput = "";
+			const outputChunks: string[] = [];
 			testProcess.output.pipeTo(
 				new WritableStream({
 					write(data) {
-						testOutput += data;
+						outputChunks.push(data);
 						addTerminalOutput(data);
 					},
 				}),
 			);
 
 			const exitCode = await testProcess.exit;
-			// Parse test results from the output
-			const parsedResults = parseTestResults(testOutput);
-			setResults(parsedResults);
 
-			// Add summary
-			const passedTests = parsedResults.filter(
-				(r) => r.status === "pass",
-			).length;
-			const failedTests = parsedResults.filter(
-				(r) => r.status === "fail",
-			).length;
-			const summary = `Tests: ${passedTests} passed, ${failedTests} failed, ${parsedResults.length} total`;
-			addTerminalOutput(exitCode === 0 ? `✅ ${summary}` : `❌ ${summary}`);
+			// Find the JSON object in the output chunks
+			let jsonResult: VitestJsonResult | null = null;
+			for (const chunk of outputChunks) {
+				if (isJSON(chunk)) {
+					const parsed = JSON.parse(chunk);
+					if (parsed.testResults) {
+						jsonResult = parsed;
+						break;
+					}
+				}
+			}
+
+			if (jsonResult && jsonResult.testResults.length > 0) {
+				setResults(jsonResult.testResults[0]); // Take the first test result
+				const summary = `Tests: ${jsonResult.numPassedTests} passed, ${jsonResult.numFailedTests} failed, ${jsonResult.numTotalTests} total`;
+				addTerminalOutput(exitCode === 0 ? `✅ ${summary}` : `❌ ${summary}`);
+			} else {
+				// Fallback if no JSON found - just show a message
+				addTerminalOutput("⚠️ No test results found in output");
+			}
 		} catch (error) {
 			addTerminalOutput(`❌ Error running tests: ${error}`);
 		} finally {
