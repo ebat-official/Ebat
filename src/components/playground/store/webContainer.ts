@@ -227,9 +227,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	cleanupContainer: async () => {
-		const { webContainer, addTerminalOutput } = get();
+		const { webContainer, addTerminalOutput, stopServer } = get();
 		if (!webContainer) return;
-
+		await stopServer();
 		try {
 			// Read all files and directories in the root
 			const entries = await webContainer.fs.readdir(".", {
