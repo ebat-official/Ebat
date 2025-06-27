@@ -67,11 +67,17 @@ function EditorContainer({
 	const [editingTemplate, setEditingTemplate] =
 		useState<ChallengeTemplate | null>(null);
 	const localStorageKey = `editor-${action}_${postId}`;
+	const challengeTemplatesKey = `challenge-templates-${action}_${postId}`;
 
 	// Memoize savedData to prevent unnecessary re-renders
 	const savedData = useMemo(() => {
 		return getLocalStorage<ContentType>(localStorageKey);
 	}, [localStorageKey]);
+
+	// Memoize saved challenge templates separately
+	const savedChallengeTemplates = useMemo(() => {
+		return getLocalStorage<ChallengeTemplate[]>(challengeTemplatesKey);
+	}, [challengeTemplatesKey]);
 
 	const { getImageUrls } = useEditorContext();
 
@@ -158,22 +164,26 @@ function EditorContainer({
 
 		// Load challenge templates with priority: localStorage > prop > defaultContent
 		if (postType === PostType.CHALLENGE) {
-			// First check localStorage
-			if (savedData?.challengeTemplates) {
-				setChallengeTemplates(savedData.challengeTemplates);
+			// First check localStorage (separate key)
+			if (savedChallengeTemplates && savedChallengeTemplates.length > 0) {
+				setChallengeTemplates(savedChallengeTemplates);
 			}
 			// Then check prop
-			else if (propChallengeTemplates) {
+			else if (propChallengeTemplates && propChallengeTemplates.length > 0) {
 				setChallengeTemplates(propChallengeTemplates);
 			}
 			// Finally check defaultContent
-			else if (initialData.challengeTemplates) {
+			else if (
+				initialData.challengeTemplates &&
+				initialData.challengeTemplates.length > 0
+			) {
 				setChallengeTemplates(initialData.challengeTemplates);
 			}
 		}
 	}, [
 		defaultContent,
 		savedData,
+		savedChallengeTemplates,
 		postType,
 		dataLoading,
 		propChallengeTemplates,
@@ -182,14 +192,9 @@ function EditorContainer({
 	// Save challenge templates to localStorage whenever they change
 	useEffect(() => {
 		if (postType === PostType.CHALLENGE && challengeTemplates.length > 0) {
-			const currentContent =
-				getLocalStorage<ContentType>(localStorageKey) || {};
-			setLocalStorage(localStorageKey, {
-				...currentContent,
-				challengeTemplates,
-			});
+			setLocalStorage(challengeTemplatesKey, challengeTemplates);
 		}
-	}, [challengeTemplates, postType, localStorageKey]);
+	}, [challengeTemplates, postType, challengeTemplatesKey]);
 
 	const getTitlePlaceHolder = () => {
 		switch (postType) {
