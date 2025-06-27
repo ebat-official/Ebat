@@ -235,8 +235,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			const entries = await webContainer.fs.readdir(".", {
 				withFileTypes: true,
 			});
-			console.log("entries", entries);
-			debugger;
 
 			// Remove all files and directories
 			for (const entry of entries) {
@@ -254,7 +252,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			const entries2 = await webContainer.fs.readdir(".", {
 				withFileTypes: true,
 			});
-			debugger;
 
 			addTerminalOutput("🗑️ Cleaned up all files in container");
 		} catch (error) {
