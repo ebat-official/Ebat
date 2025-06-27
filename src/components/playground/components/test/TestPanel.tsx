@@ -13,8 +13,8 @@ interface TestPanelProps {
 
 export function TestPanel({ results, isRunning }: TestPanelProps) {
 	return (
-		<div className="flex flex-col h-full">
-			<div className="flex-1 overflow-auto p-4">
+		<div className="h-full bg-transparent flex flex-col min-h-0">
+			<div className="max-h-48 overflow-y-scroll p-4 py-8">
 				<div className="space-y-2">
 					<Accordion type="single" collapsible className="w-full">
 						{results.map((result, index) => (

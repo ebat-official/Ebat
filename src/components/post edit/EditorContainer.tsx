@@ -119,7 +119,6 @@ function EditorContainer({
 
 	const handleSave = () => {
 		const payload = getPayload();
-		console.log(payload, "pranavvalidatediiiiii");
 		saveHandler(payload);
 	};
 
@@ -216,8 +215,6 @@ function EditorContainer({
 				return "Type your content here...";
 		}
 	};
-
-	console.log(challengeTemplates, "pranavchallengeTemplates");
 	return (
 		<div className="flex flex-col gap-4">
 			<Card className="relative items-center">
