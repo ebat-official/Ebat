@@ -2,7 +2,7 @@ import type { Template } from "../types";
 
 export const vueTemplate: Template = {
 	id: "VUE",
-	name: "Vue.js Toggle Demo",
+	name: "Vue.js",
 	description: "Vue 3 with JavaScript, Vite, and Toggle Component",
 	icon: "vue",
 	installCommand: "pnpm install",
