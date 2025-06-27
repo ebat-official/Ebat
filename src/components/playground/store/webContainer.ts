@@ -1,11 +1,11 @@
-import { create } from "zustand";
-import { WebContainer } from "@webcontainer/api";
-import { toast } from "sonner";
-import type { Template } from "../lib/types";
-import type { FileSystemTree } from "@webcontainer/api";
-import { getLanguageFromPath } from "../lib/utils";
-import { PostWithExtraDetails } from "@/utils/types";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
+import { PostWithExtraDetails } from "@/utils/types";
+import { WebContainer } from "@webcontainer/api";
+import type { FileSystemTree } from "@webcontainer/api";
+import { toast } from "sonner";
+import { create } from "zustand";
+import type { Template } from "../lib/types";
+import { getLanguageFromPath } from "../lib/utils";
 
 interface OpenFile {
 	path: string;
@@ -59,7 +59,7 @@ interface WebContainerState {
 	resetToOriginalTemplate: () => Promise<void>;
 	teardownContainer: () => Promise<void>;
 	setLanguageDropdownDisabled: (disabled: boolean) => void;
-	cleanupNodeModules: () => Promise<void>;
+	cleanupContainer: () => Promise<void>;
 	setPost: (post: PostWithExtraDetails) => void;
 }
 
@@ -79,8 +79,10 @@ const generateFileKey = (
 function cleanTerminalOutput(output: string): string | null {
 	// Remove ANSI escape sequences
 	const cleaned = output
+		// biome-ignore lint/suspicious/noControlCharactersInRegex: Legitimate use for terminal output cleaning
 		.replace(/\u001b\[[0-9;]*[a-zA-Z]/g, "") // Remove ANSI escape sequences
 		.replace(/\[[\d;]*[a-zA-Z]/g, "") // Remove terminal control sequences
+		// biome-ignore lint/suspicious/noControlCharactersInRegex: Legitimate use for terminal output cleaning
 		.replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove control characters
 		.trim();
 
@@ -224,29 +226,40 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		}
 	},
 
-	cleanupNodeModules: async () => {
+	cleanupContainer: async () => {
 		const { webContainer, addTerminalOutput } = get();
 		if (!webContainer) return;
 
-		// Check if node_modules exists and remove it
 		try {
-			await webContainer.fs.rm("node_modules", { recursive: true });
-			addTerminalOutput("🗑️ Cleaned up node_modules");
-		} catch (error) {
-			// node_modules doesn't exist, which is fine
-		}
+			// Read all files and directories in the root
+			const entries = await webContainer.fs.readdir(".", {
+				withFileTypes: true,
+			});
+			console.log("entries", entries);
+			debugger;
 
-		// Also clean up package-lock.json and pnpm-lock.yaml if they exist
-		try {
-			await webContainer.fs.rm("package-lock.json");
-		} catch (error) {
-			// File doesn't exist, which is fine
-		}
+			// Remove all files and directories
+			for (const entry of entries) {
+				try {
+					if (entry.isDirectory()) {
+						await webContainer.fs.rm(entry.name, { recursive: true });
+					} else {
+						await webContainer.fs.rm(entry.name);
+					}
+				} catch (error) {
+					// Some files might not exist or be locked, which is fine
+					console.warn(`Could not remove ${entry.name}:`, error);
+				}
+			}
+			const entries2 = await webContainer.fs.readdir(".", {
+				withFileTypes: true,
+			});
+			debugger;
 
-		try {
-			await webContainer.fs.rm("pnpm-lock.yaml");
+			addTerminalOutput("🗑️ Cleaned up all files in container");
 		} catch (error) {
-			// File doesn't exist, which is fine
+			console.error("Failed to cleanup container:", error);
+			addTerminalOutput("❌ Failed to cleanup container");
 		}
 	},
 
@@ -284,7 +297,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			clearOpenFiles,
 			handleFileSelect,
 			stopServer,
-			cleanupNodeModules,
+			cleanupContainer,
 			selectedTemplate,
 		} = get();
 
@@ -331,7 +344,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 				// If switching templates, stop server and cleanup
 				addTerminalOutput(`🔄 Switching to ${template.name} template...`);
 				await stopServer();
-				await cleanupNodeModules();
+				await cleanupContainer();
 			}
 
 			addTerminalOutput(`📦 Loading ${template.name} template...`);
@@ -645,7 +658,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			handleFileSelect,
 			clearAllFilesFromLocalStorage,
 			stopServer,
-			cleanupNodeModules,
+			cleanupContainer,
 		} = get();
 		if (!webContainer || !selectedTemplate) return;
 
@@ -656,7 +669,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 
 		// Stop server and cleanup node_modules
 		await stopServer();
-		await cleanupNodeModules();
+		await cleanupContainer();
 
 		// Clear localStorage data and use original template files
 		clearAllFilesFromLocalStorage(selectedTemplate);
