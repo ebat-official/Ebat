@@ -140,10 +140,8 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				selectedTemplate,
 			);
 
-			// Use existing question template or create new one
-			const finalQuestionTemplate = questionTemplate || cleanQuestionTemplate;
 			const defaultFile =
-				finalQuestionTemplate.defaultFile || selectedTemplate.defaultFile;
+				cleanQuestionTemplate.defaultFile || selectedTemplate.defaultFile;
 
 			// Ensure both templates have the same defaultFile
 			const finalAnswerTemplate = createTemplateWithDefaultFile(
@@ -151,7 +149,7 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				defaultFile,
 			);
 			const finalQuestionTemplateWithDefaultFile =
-				createTemplateWithDefaultFile(finalQuestionTemplate, defaultFile);
+				createTemplateWithDefaultFile(cleanQuestionTemplate, defaultFile);
 
 			const savedTemplate = {
 				framework: selectedFramework,
