@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -11,27 +11,30 @@ import { PreviewPanel } from "../../playground/components/preview/PreviewPanel";
 import { useWebContainerStore } from "../../playground/store/webContainer";
 import { Card } from "@/components/ui/card";
 import { TemplateFramework } from "@prisma/client";
-import { handleTemplateSelect } from "../../playground/utils/templateUtils";
-import type { FileSystemTree } from "../../playground/lib/types";
+import { extractSrcFromTemplate } from "../../playground/utils/templateUtils";
+import type { Template } from "../../playground/lib/types";
 import {
 	StepIndicator,
 	StepDescription,
 	LoadingOverlay,
 	ActionButtons,
-	type TemplateStep,
 } from "./index";
+import DefaultFileSelector from "./DefaultFileSelector";
+import { useTemplateManagement } from "../../playground/hooks";
+
+type TemplateStep = "answer" | "question";
 
 interface TemplateCreationInterfaceProps {
 	selectedFramework: TemplateFramework;
 	onSave: (templates: {
 		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
+		questionTemplate: Template;
+		answerTemplate: Template;
 	}) => void;
 	editingTemplate?: {
 		framework: TemplateFramework;
-		questionTemplate: FileSystemTree;
-		answerTemplate: FileSystemTree;
+		questionTemplate: Template;
+		answerTemplate: Template;
 	} | null;
 }
 
@@ -42,149 +45,144 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 }) => {
 	const {
 		selectedTemplate,
-		isContainerReady,
-		files,
-		getFileTree,
-		webContainer,
-		setFiles,
-		clearOpenFiles,
-		handleFileSelect,
-	} = useWebContainerStore();
+		answerTemplate,
+		questionTemplate,
+		setAnswerTemplate,
+		setQuestionTemplate,
+		updateDefaultFile,
+		createTemplateWithDefaultFile,
+	} = useTemplateManagement(editingTemplate, selectedFramework);
+
+	// Simple state management
 	const [currentStep, setCurrentStep] = useState<TemplateStep>("answer");
-	const [answerTemplate, setAnswerTemplate] = useState<FileSystemTree | null>(
-		editingTemplate?.answerTemplate || null,
-	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 
-	const mountFileSystemTree = async (tree: FileSystemTree) => {
-		if (!webContainer || !selectedTemplate) return;
+	const { files, getFileTree } = useWebContainerStore();
+
+	// Memoized computed values
+	const canProceed = useMemo(
+		() => !!(files && Object.keys(files).length > 0),
+		[files],
+	);
+
+	const canSave = useMemo(
+		() => !!(answerTemplate && files),
+		[answerTemplate, files],
+	);
+
+	// Template transition handlers
+	const handleNext = useCallback(async () => {
+		if (currentStep !== "answer") return;
+
+		setIsLoading(true);
 		try {
-			await webContainer.mount(tree);
-			setFiles(tree);
-			clearOpenFiles();
-			if (selectedTemplate.defaultFile) {
-				await handleFileSelect(selectedTemplate.defaultFile);
+			const currentFiles = await getFileTree(".");
+			if (currentFiles && selectedTemplate) {
+				const cleanTemplate = extractSrcFromTemplate(
+					currentFiles,
+					selectedTemplate,
+				);
+
+				const templateWithDefaultFile = createTemplateWithDefaultFile(
+					cleanTemplate,
+					selectedTemplate.defaultFile,
+				);
+
+				// Set both templates with the same defaultFile
+				setAnswerTemplate(templateWithDefaultFile);
+				setQuestionTemplate(templateWithDefaultFile);
 			}
-		} catch (e) {
-			console.error("Error mounting file system tree", e);
-		}
-	};
-
-	// Automatically select the template when the component mounts
-	useEffect(() => {
-		if (isContainerReady && selectedFramework) {
-			handleTemplateSelect(selectedFramework);
-		}
-	}, [selectedFramework, isContainerReady]);
-
-	// Load editing template data when available
-	useEffect(() => {
-		if (editingTemplate && isContainerReady && webContainer) {
-			const mountEditingTemplate = async () => {
-				try {
-					await webContainer.mount(editingTemplate.answerTemplate);
-					setAnswerTemplate(editingTemplate.answerTemplate);
-					setFiles(editingTemplate.answerTemplate);
-					clearOpenFiles();
-				} catch (error) {
-					console.error("Error mounting editing template:", error);
-				}
-			};
-
-			mountEditingTemplate();
+			setCurrentStep("question");
+		} catch (error) {
+			console.error("Error during template transition:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	}, [
-		editingTemplate,
-		isContainerReady,
-		webContainer,
-		setFiles,
-		clearOpenFiles,
+		currentStep,
+		selectedTemplate,
+		getFileTree,
+		createTemplateWithDefaultFile,
+		setAnswerTemplate,
+		setQuestionTemplate,
+		setCurrentStep,
 	]);
 
-	// Cleanup effect to teardown container when modal closes
-	useEffect(() => {
-		return () => {
-			const { webContainer, teardownContainer } =
-				useWebContainerStore.getState();
-			if (webContainer) {
-				try {
-					teardownContainer();
-				} catch (error) {
-					console.warn(
-						"Error during container teardown on modal close:",
-						error,
-					);
-				}
-			}
-		};
-	}, []);
+	const handleBack = useCallback(async () => {
+		if (currentStep !== "question") return;
 
-	const handleNext = async () => {
-		if (currentStep === "answer") {
-			setIsLoading(true);
-			try {
-				const currentFiles = await getFileTree(".");
-				if (currentFiles) {
-					try {
-						setAnswerTemplate(structuredClone(currentFiles));
-					} catch (error) {
-						setAnswerTemplate({ ...currentFiles });
-					}
-				}
-				setCurrentStep("question");
-			} catch (error) {
-				console.error("Error during template transition:", error);
-			} finally {
-				setIsLoading(false);
+		setIsLoading(true);
+		try {
+			setCurrentStep("answer");
+			if (answerTemplate) {
+				const { selectTemplate } = useWebContainerStore.getState();
+				await selectTemplate(answerTemplate);
 			}
+		} catch (error) {
+			console.error("Error during template transition:", error);
+		} finally {
+			setIsLoading(false);
 		}
-	};
+	}, [currentStep, answerTemplate, setCurrentStep]);
 
-	const handleBack = async () => {
-		if (currentStep === "question") {
-			setIsLoading(true);
-			try {
-				setCurrentStep("answer");
-				if (answerTemplate) {
-					await mountFileSystemTree(answerTemplate);
-				}
-			} catch (error) {
-				console.error("Error during template transition:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-	};
-
-	const handleSave = async () => {
+	// Save handler
+	const handleSave = useCallback(async () => {
 		setIsSaving(true);
 		try {
 			const currentQuestionTemplate = await getFileTree(".");
-			if (answerTemplate && currentQuestionTemplate) {
-				onSave({
-					framework: selectedFramework,
-					questionTemplate: currentQuestionTemplate,
-					answerTemplate,
-				});
+			if (!answerTemplate || !currentQuestionTemplate || !selectedTemplate) {
+				throw new Error("Missing required data for saving");
 			}
+
+			const cleanQuestionTemplate = extractSrcFromTemplate(
+				currentQuestionTemplate,
+				selectedTemplate,
+			);
+
+			const defaultFile =
+				cleanQuestionTemplate.defaultFile || selectedTemplate.defaultFile;
+
+			// Ensure both templates have the same defaultFile
+			const finalAnswerTemplate = createTemplateWithDefaultFile(
+				answerTemplate,
+				defaultFile,
+			);
+			const finalQuestionTemplateWithDefaultFile =
+				createTemplateWithDefaultFile(cleanQuestionTemplate, defaultFile);
+
+			const savedTemplate = {
+				framework: selectedFramework,
+				questionTemplate: finalQuestionTemplateWithDefaultFile,
+				answerTemplate: finalAnswerTemplate,
+			};
+
+			onSave(savedTemplate);
 		} catch (error) {
 			console.error("Error saving templates:", error);
 		} finally {
 			setIsSaving(false);
 		}
-	};
+	}, [
+		answerTemplate,
+		questionTemplate,
+		selectedTemplate,
+		selectedFramework,
+		getFileTree,
+		createTemplateWithDefaultFile,
+		onSave,
+	]);
 
-	const canProceed = (): boolean => {
-		return !!(files && Object.keys(files).length > 0);
-	};
-
-	const canSave = (): boolean => {
-		return !!(answerTemplate && files);
-	};
+	// Default file change handler
+	const handleDefaultFileChange = useCallback(
+		(defaultFile: string) => {
+			updateDefaultFile(defaultFile);
+		},
+		[updateDefaultFile],
+	);
 
 	return (
-		<div className="h-full flex flex-col justify-between relative">
+		<div className="h-full flex flex-col justify-between relative overflow-auto-y ">
 			<LoadingOverlay isLoading={isLoading} isSaving={isSaving} />
 
 			<ResizablePanelGroup
@@ -205,6 +203,13 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 								currentStep={currentStep}
 								framework={selectedFramework}
 							/>
+							{currentStep === "question" && (
+								<DefaultFileSelector
+									files={files}
+									selectedTemplate={questionTemplate || selectedTemplate}
+									onDefaultFileChange={handleDefaultFileChange}
+								/>
+							)}
 						</div>
 					</Card>
 				</ResizablePanel>
@@ -258,8 +263,8 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				currentStep={currentStep}
 				isLoading={isLoading}
 				isSaving={isSaving}
-				canProceed={canProceed()}
-				canSave={canSave()}
+				canProceed={canProceed}
+				canSave={canSave}
 				onNext={handleNext}
 				onBack={handleBack}
 				onSave={handleSave}

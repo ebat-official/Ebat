@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import type { TemplateStep } from "./StepIndicator";
-import type { FileSystemTree } from "../../playground/lib/types";
+import type { FileSystemTree, Template } from "../../playground/lib/types";
 
 interface ProgressIndicatorsProps {
-	answerTemplate: FileSystemTree | null;
+	answerTemplate: Template | null;
 	currentStep: TemplateStep;
 	files: FileSystemTree | null;
 }
@@ -20,7 +20,7 @@ const ProgressIndicators: FC<ProgressIndicatorsProps> = ({
 					answerTemplate ? "bg-green-500" : "bg-gray-300"
 				}`}
 			/>
-			<span className="text-sm">Answer Template</span>
+			<span className="text-sm">Solution</span>
 		</div>
 		<div className="flex items-center gap-2">
 			<div

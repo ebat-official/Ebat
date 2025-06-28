@@ -1,6 +1,4 @@
-import { OutputData } from "@editorjs/editorjs";
 import {
-	CompletionStatus,
 	Post,
 	PostCategory,
 	PostType,
@@ -19,13 +17,16 @@ import {
 	SUCCESS,
 } from "./contants";
 import { boolean } from "zod";
-import type { FileSystemTree } from "@/components/playground/lib/types";
+import type {
+	FileSystemTree,
+	Template,
+} from "@/components/playground/lib/types";
 
 // Challenge template type
 export interface ChallengeTemplate {
 	framework: TemplateFramework;
-	questionTemplate: FileSystemTree;
-	answerTemplate: FileSystemTree;
+	questionTemplate: Template;
+	answerTemplate: Template;
 }
 
 export interface ContentType {
@@ -93,6 +94,7 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	content: Uint8Array | ContentReturnType;
 	completionCount?: number;
 	tableOfContent?: TableOfContent;
+	challengeTemplates?: ChallengeTemplate[];
 	collaborators: Array<
 		Pick<User, "id" | "userName"> & {
 			userProfile: { name: string | null; image: string | null } | null;

@@ -1,11 +1,11 @@
-import { create } from "zustand";
-import { WebContainer } from "@webcontainer/api";
-import { toast } from "sonner";
-import type { Template } from "../lib/types";
-import type { FileSystemTree } from "@webcontainer/api";
-import { getLanguageFromPath } from "../lib/utils";
-import { PostWithExtraDetails } from "@/utils/types";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
+import { PostWithExtraDetails } from "@/utils/types";
+import { WebContainer } from "@webcontainer/api";
+import type { FileSystemTree } from "@webcontainer/api";
+import { toast } from "sonner";
+import { create } from "zustand";
+import type { Template } from "../lib/types";
+import { getLanguageFromPath } from "../lib/utils";
 
 interface OpenFile {
 	path: string;
@@ -52,7 +52,6 @@ interface WebContainerState {
 	handleFileContentChange: (content: string) => Promise<void>;
 	handleCloseFile: (path: string) => void;
 	clearOpenFiles: () => void;
-	setPost: (post: PostWithExtraDetails) => void;
 	saveFileToLocalStorage: (filePath: string, content: string) => void;
 	loadFileFromLocalStorage: (filePath: string) => string | null;
 	clearFileFromLocalStorage: (filePath: string) => void;
@@ -60,6 +59,8 @@ interface WebContainerState {
 	resetToOriginalTemplate: () => Promise<void>;
 	teardownContainer: () => Promise<void>;
 	setLanguageDropdownDisabled: (disabled: boolean) => void;
+	cleanupContainer: () => Promise<void>;
+	setPost: (post: PostWithExtraDetails) => void;
 }
 
 // Maximum number of lines to keep in terminal
@@ -78,8 +79,10 @@ const generateFileKey = (
 function cleanTerminalOutput(output: string): string | null {
 	// Remove ANSI escape sequences
 	const cleaned = output
+		// biome-ignore lint/suspicious/noControlCharactersInRegex: Legitimate use for terminal output cleaning
 		.replace(/\u001b\[[0-9;]*[a-zA-Z]/g, "") // Remove ANSI escape sequences
 		.replace(/\[[\d;]*[a-zA-Z]/g, "") // Remove terminal control sequences
+		// biome-ignore lint/suspicious/noControlCharactersInRegex: Legitimate use for terminal output cleaning
 		.replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove control characters
 		.trim();
 
@@ -101,7 +104,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	openFiles: [],
 	activeFile: null,
 	post: null,
-	isLanguageDropdownDisabled: true,
+	isLanguageDropdownDisabled: false,
 
 	addTerminalOutput: (output: string) => {
 		const cleaned = cleanTerminalOutput(output);
@@ -214,12 +217,46 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			// Wait for the process to exit
 			await serverProcess.exit;
 			set({ serverProcess: null, previewUrl: "" });
-			addTerminalOutput("🛑 Server stopped");
+			addTerminalOutput(" Server stopped");
 		} catch (error) {
 			console.error("Failed to stop server:", error);
 			addTerminalOutput("❌ Failed to stop server");
 			// Even if there's an error, clear the server process
 			set({ serverProcess: null, previewUrl: "" });
+		}
+	},
+
+	cleanupContainer: async () => {
+		const { webContainer, addTerminalOutput, stopServer } = get();
+		if (!webContainer) return;
+		await stopServer();
+		try {
+			// Read all files and directories in the root
+			const entries = await webContainer.fs.readdir(".", {
+				withFileTypes: true,
+			});
+
+			// Remove all files and directories
+			for (const entry of entries) {
+				try {
+					if (entry.isDirectory()) {
+						await webContainer.fs.rm(entry.name, { recursive: true });
+					} else {
+						await webContainer.fs.rm(entry.name);
+					}
+				} catch (error) {
+					// Some files might not exist or be locked, which is fine
+					console.warn(`Could not remove ${entry.name}:`, error);
+				}
+			}
+			const entries2 = await webContainer.fs.readdir(".", {
+				withFileTypes: true,
+			});
+
+			addTerminalOutput("🗑️ Cleaned up all files in container");
+		} catch (error) {
+			console.error("Failed to cleanup container:", error);
+			addTerminalOutput("❌ Failed to cleanup container");
 		}
 	},
 
@@ -256,14 +293,18 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			setFiles,
 			clearOpenFiles,
 			handleFileSelect,
-			teardownContainer,
+			stopServer,
+			cleanupContainer,
 			selectedTemplate,
 		} = get();
-		if (!webContainer || get().isLoading) return null;
 
-		// Check if we're switching to a different template (and not initializing for the first time)
+		// Check if we're switching to a different template
 		const isDifferentTemplate =
 			selectedTemplate && selectedTemplate.id !== template.id;
+
+		// If switching to a different template, allow it even if loading
+		// If it's the same template and loading, don't allow
+		if (get().isLoading && !isDifferentTemplate) return null;
 
 		set({
 			isLoading: true,
@@ -278,32 +319,35 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		clearOpenFiles();
 
 		try {
-			// Only teardown and boot fresh if switching to different template (not first time)
-			if (isDifferentTemplate) {
-				addTerminalOutput(`🔄 Switching to ${template.name} template...`);
-				await teardownContainer();
+			let currentContainer = webContainer;
 
-				// Boot fresh container
-				addTerminalOutput("🚀 Booting fresh container...");
-				const container = await WebContainer.boot();
+			// If container is null, boot fresh container
+			if (!currentContainer) {
+				addTerminalOutput(`🚀 Booting container for ${template.name}...`);
+				currentContainer = await WebContainer.boot();
 
 				set({
-					webContainer: container,
+					webContainer: currentContainer,
 					isContainerReady: true,
 				});
 
-				container.on("server-ready", (port, url) => {
+				currentContainer.on("server-ready", (port, url) => {
 					set({ previewUrl: url });
 					addTerminalOutput(`🌐 Server ready at ${url}`);
 				});
 
-				addTerminalOutput("✅ Fresh container ready");
+				addTerminalOutput("✅ Container ready");
+			} else if (isDifferentTemplate) {
+				// If switching templates, stop server and cleanup
+				addTerminalOutput(`🔄 Switching to ${template.name} template...`);
+				await stopServer();
+				await cleanupContainer();
 			}
 
 			addTerminalOutput(`📦 Loading ${template.name} template...`);
 
 			// Mount files to container
-			await webContainer.mount(filesToMount);
+			await currentContainer.mount(filesToMount);
 			addTerminalOutput(`✅ ${template.name} files mounted`);
 
 			// Load default file if specified
@@ -315,10 +359,11 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			(async () => {
 				try {
 					if (template.installCommand) {
-						// Stop any existing server before installing dependencies
-						await get().stopServer();
 						addTerminalOutput("📥 Installing dependencies...");
-						const installProcess = await runCommand("pnpm", ["install"]);
+						const installProcess = await runCommand("pnpm", [
+							"install",
+							"--no-lockfile",
+						]);
 						if (!installProcess) {
 							set({ isLoading: false });
 							return;
@@ -551,10 +596,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		set({ openFiles: [], activeFile: null });
 	},
 
-	setPost: (post: PostWithExtraDetails) => {
-		set({ post });
-	},
-
 	saveFileToLocalStorage: (filePath: string, content: string) => {
 		const { post, selectedTemplate } = get();
 		if (!post || !selectedTemplate) return;
@@ -616,6 +657,8 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			clearOpenFiles,
 			handleFileSelect,
 			clearAllFilesFromLocalStorage,
+			stopServer,
+			cleanupContainer,
 		} = get();
 		if (!webContainer || !selectedTemplate) return;
 
@@ -623,6 +666,10 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			isLoading: true,
 			isTemplateReady: false,
 		});
+
+		// Stop server and cleanup node_modules
+		await stopServer();
+		await cleanupContainer();
 
 		// Clear localStorage data and use original template files
 		clearAllFilesFromLocalStorage(selectedTemplate);
@@ -648,8 +695,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			(async () => {
 				try {
 					if (selectedTemplate.installCommand) {
-						// Stop any existing server before installing dependencies
-						await get().stopServer();
 						addTerminalOutput("📥 Installing dependencies...");
 						const installProcess = await runCommand("pnpm", ["install"]);
 						if (!installProcess) {
@@ -698,5 +743,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 
 	setLanguageDropdownDisabled: (disabled: boolean) => {
 		set({ isLanguageDropdownDisabled: disabled });
+	},
+
+	setPost: (post: PostWithExtraDetails) => {
+		set({ post });
 	},
 }));

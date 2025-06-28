@@ -1,8 +1,9 @@
 import React, { FC } from "react";
+import ButtonBlue from "@/components/shared/ButtonBlue";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import type { TemplateStep } from "./StepIndicator";
-import type { FileSystemTree } from "../../playground/lib/types";
+import type { FileSystemTree, Template } from "../../playground/lib/types";
 import ProgressIndicators from "./ProgressIndicators";
 
 interface ActionButtonsProps {
@@ -14,7 +15,7 @@ interface ActionButtonsProps {
 	onNext: () => void;
 	onBack: () => void;
 	onSave: () => void;
-	answerTemplate: FileSystemTree | null;
+	answerTemplate: Template | null;
 	files: FileSystemTree | null;
 }
 
@@ -78,20 +79,14 @@ const ActionButtons: FC<ActionButtonsProps> = ({
 					)}
 				</Button>
 			) : (
-				<Button
+				<ButtonBlue
 					onClick={onSave}
 					disabled={!canSave || isSaving}
-					className="bg-green-600 hover:bg-green-700"
+					loading={isSaving}
+					loadingText="Saving..."
 				>
-					{isSaving ? (
-						<>
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-							Saving...
-						</>
-					) : (
-						"Save Templates"
-					)}
-				</Button>
+					Save Templates
+				</ButtonBlue>
 			)}
 		</div>
 	</div>

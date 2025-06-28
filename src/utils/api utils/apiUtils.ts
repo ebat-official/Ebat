@@ -11,6 +11,7 @@ import {
 	UserSearchResult,
 	ContentReturnType,
 	TableOfContent,
+	ChallengeTemplate,
 } from "../types";
 import { PostCategory, SubCategory } from "@prisma/client";
 import prisma from "@/lib/prisma";
@@ -98,6 +99,7 @@ export async function getPostFromURL(params: {
 						updatedAt: true,
 					},
 				},
+				challengeTemplates: true,
 			},
 		});
 
@@ -134,6 +136,8 @@ export async function getPostFromURL(params: {
 			completionCount,
 			tableOfContent,
 			views: post.views ?? undefined,
+			challengeTemplates:
+				post.challengeTemplates as unknown as ChallengeTemplate[],
 		};
 	} catch (error) {
 		console.error("Error fetching post:", error);
