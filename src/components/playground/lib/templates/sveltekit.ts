@@ -3,7 +3,8 @@ import type { Template } from "../types";
 export const sveltekitTemplate: Template = {
 	id: "SVELTEKIT",
 	name: "SvelteKit",
-	description: "Modern SvelteKit with TypeScript and Vitest",
+	description:
+		"Modern SvelteKit 5 with TypeScript, Tailwind CSS 4.0 and Vitest",
 	icon: "svelte",
 	installCommand: "npm install",
 	startCommand: "npm run dev",
@@ -26,7 +27,7 @@ export const sveltekitTemplate: Template = {
 								"svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 							"check:watch":
 								"svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-							test: "vitest run --reporter=verbose",
+							test: "vitest run --reporter=json",
 						},
 						devDependencies: {
 							"@sveltejs/adapter-auto": "^3.0.0",
@@ -39,39 +40,16 @@ export const sveltekitTemplate: Template = {
 							"svelte-check": "^3.6.0",
 							tslib: "^2.4.1",
 							typescript: "^5.0.0",
-							vite: "^5.0.3",
-							vitest: "^1.2.0",
-							tailwindcss: "^3.4.0",
-							postcss: "^8.4.32",
-							autoprefixer: "^10.4.16",
+							vite: "^5.0.0",
+							vitest: "^3.2.4",
+							tailwindcss: "^4.1.0",
+							"@tailwindcss/vite": "^4.1.0",
 						},
 						type: "module",
 					},
 					null,
 					2,
 				),
-			},
-		},
-		"postcss.config.js": {
-			file: {
-				contents: `export default {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}`,
-			},
-		},
-		"tailwind.config.js": {
-			file: {
-				contents: `/** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./src/**/*.{html,js,svelte,ts}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}`,
 			},
 		},
 		"svelte.config.js": {
@@ -85,9 +63,7 @@ const config = {
     adapter: adapter()
   },
   preprocess: [
-    vitePreprocess({
-      postcss: true
-    })
+    vitePreprocess()
   ]
 };
 
@@ -98,9 +74,13 @@ export default config;`,
 			file: {
 				contents: `import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(({ mode }) => ({
-  plugins: [sveltekit()],
+  plugins: [
+    tailwindcss(),
+    sveltekit(),
+  ],
   resolve: {
     conditions: mode === 'test' ? ['browser'] : [],
   },
@@ -166,13 +146,16 @@ export default defineConfig(({ mode }) => ({
   }
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-gray-900">
-  <button
-    on:click={increment}
-    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-  >
-    Count: {count}
-  </button>
+<div class="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+  <div class="text-center">
+    <h1 class="text-4xl font-bold mb-4">Hello SvelteKit!</h1>
+    <button
+      on:click={increment}
+      class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+    >
+      Count: {count}
+    </button>
+  </div>
 </div>
 
 <style>
@@ -195,9 +178,7 @@ export default defineConfig(({ mode }) => ({
 				},
 				"app.css": {
 					file: {
-						contents: `@tailwind base;
-@tailwind components;
-@tailwind utilities;`,
+						contents: `@import "tailwindcss";`,
 					},
 				},
 				"app.html": {
