@@ -18,6 +18,7 @@ import {
 	StepDescription,
 	LoadingOverlay,
 	ActionButtons,
+	TestValidationModal,
 } from "./index";
 import DefaultFileSelector from "./DefaultFileSelector";
 import { useTemplateManagement } from "../../playground/hooks";
@@ -57,8 +58,18 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	const [currentStep, setCurrentStep] = useState<TemplateStep>("answer");
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
+	const [showTestValidationModal, setShowTestValidationModal] = useState(false);
+	const [validationMessage, setValidationMessage] = useState("");
 
-	const { files, getFileTree, stopServer } = useWebContainerStore();
+	const {
+		files,
+		getFileTree,
+		stopServer,
+		testResults,
+		isRunningTests,
+		runTestsForValidation,
+		clearTestResults,
+	} = useWebContainerStore();
 
 	// Cleanup container on component unmount
 	useEffect(() => {
@@ -78,10 +89,39 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		[answerTemplate, files],
 	);
 
+	// Test validation handler
+	const handleTestValidation = useCallback(async () => {
+		// Clear validation message while tests are running
+		setValidationMessage("");
+
+		const result = await runTestsForValidation();
+
+		// Only set validation message after tests complete
+		setValidationMessage(result.message);
+
+		if (result.success && result.hasTests) {
+			// All tests passed, proceed to next step
+			return true;
+		}
+
+		// Tests failed or no tests found
+		return false;
+	}, [runTestsForValidation]);
+
 	// Template transition handlers
 	const handleNext = useCallback(async () => {
 		if (currentStep !== "answer") return;
 
+		// Show test validation modal and clear all previous state
+		setShowTestValidationModal(true);
+		setValidationMessage(""); // Clear previous validation message
+		clearTestResults();
+
+		// Run tests but don't auto-proceed, let user click "Proceed" button
+		await handleTestValidation();
+	}, [currentStep, handleTestValidation, clearTestResults]);
+
+	const proceedToQuestionStep = useCallback(async () => {
 		setIsLoading(true);
 		try {
 			const currentFiles = await getFileTree(".");
@@ -107,7 +147,6 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 			setIsLoading(false);
 		}
 	}, [
-		currentStep,
 		selectedTemplate,
 		getFileTree,
 		createTemplateWithDefaultFile,
@@ -115,6 +154,13 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 		setQuestionTemplate,
 		setCurrentStep,
 	]);
+
+	const handleProceedClick = useCallback(async () => {
+		// Close modal immediately for better UX
+		setShowTestValidationModal(false);
+		// Then proceed with template creation
+		await proceedToQuestionStep();
+	}, [proceedToQuestionStep]);
 
 	const handleBack = useCallback(async () => {
 		if (currentStep !== "question") return;
@@ -278,6 +324,18 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				answerTemplate={answerTemplate}
 				files={files}
 			/>
+
+			{showTestValidationModal && (
+				<TestValidationModal
+					isOpen={showTestValidationModal}
+					onClose={() => setShowTestValidationModal(false)}
+					onProceed={handleProceedClick}
+					isRunningTests={isRunningTests}
+					testResults={testResults}
+					validationMessage={validationMessage}
+					canProceed={testResults?.allTestsPassed || false}
+				/>
+			)}
 		</div>
 	);
 };

@@ -26,6 +26,18 @@ export interface VitestJsonResult {
 	testResults: TestResult[];
 }
 
+export interface TestExecutionResult {
+	success: boolean;
+	testResults: {
+		numTotalTests: number;
+		numPassedTests: number;
+		numFailedTests: number;
+		allTestsPassed: boolean;
+	} | null;
+	jsonResult: VitestJsonResult | null;
+	exitCode: number;
+}
+
 export interface TestPanelProps {
 	webContainer: WebContainer | null;
 	addTerminalOutput: (output: string) => void;
