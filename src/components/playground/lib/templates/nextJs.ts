@@ -20,8 +20,6 @@ export const nextjsTemplate: Template = {
 						type: "module",
 						scripts: {
 							dev: "next dev",
-							build: "next build",
-							start: "next start",
 							test: "vitest run --reporter=json",
 						},
 						dependencies: {
