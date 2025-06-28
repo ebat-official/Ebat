@@ -57,7 +57,6 @@ interface WebContainerState {
 	clearFileFromLocalStorage: (filePath: string) => void;
 	clearAllFilesFromLocalStorage: (template: Template) => void;
 	resetToOriginalTemplate: () => Promise<void>;
-	teardownContainer: () => Promise<void>;
 	setLanguageDropdownDisabled: (disabled: boolean) => void;
 	cleanupContainer: () => Promise<void>;
 	setPost: (post: PostWithExtraDetails) => void;
@@ -147,34 +146,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			console.error(`Failed to run command ${command}:`, error);
 			addTerminalOutput(`❌ Failed to run command ${command}`);
 			return null;
-		}
-	},
-
-	teardownContainer: async () => {
-		const { webContainer, addTerminalOutput, stopServer } = get();
-		if (!webContainer) return;
-
-		try {
-			addTerminalOutput("🛑 Teardown container...");
-			await stopServer();
-
-			// Use the instance.teardown() method
-			await webContainer.teardown();
-
-			set({
-				webContainer: null,
-				isContainerReady: false,
-				isTemplateReady: false,
-				previewUrl: "",
-				serverProcess: null,
-				files: null,
-				openFiles: [],
-				activeFile: null,
-			});
-			addTerminalOutput("✅ Container teardown complete");
-		} catch (error) {
-			console.error("Failed to teardown container:", error);
-			addTerminalOutput("❌ Failed to teardown container");
 		}
 	},
 
