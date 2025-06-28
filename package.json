@@ -95,6 +95,7 @@
 		"cmdk": "1.1.1",
 		"date-fns": "^4.1.0",
 		"embla-carousel-react": "^8.5.2",
+		"fast-xml-parser": "5.2.5",
 		"framer-motion": "^12.5.0",
 		"headless": "link:@/editor/headless",
 		"input-otp": "^1.4.2",

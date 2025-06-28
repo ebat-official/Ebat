@@ -52,7 +52,6 @@ export function TestPanel({ results, isRunning }: TestPanelProps) {
 		(assertion) => assertion.status === "passed",
 	).length;
 	const totalTests = results.assertionResults.length;
-	const failedTests = totalTests - passedTests;
 
 	// Calculate total duration from all assertions
 	const totalDuration = results.assertionResults.reduce(
