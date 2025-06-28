@@ -1,6 +1,4 @@
-import { OutputData } from "@editorjs/editorjs";
 import {
-	CompletionStatus,
 	Post,
 	PostCategory,
 	PostType,
