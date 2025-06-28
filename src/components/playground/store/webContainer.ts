@@ -360,7 +360,10 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 				try {
 					if (template.installCommand) {
 						addTerminalOutput("📥 Installing dependencies...");
-						const installProcess = await runCommand("pnpm", ["install"]);
+						const installProcess = await runCommand("pnpm", [
+							"install",
+							"--no-lockfile",
+						]);
 						if (!installProcess) {
 							set({ isLoading: false });
 							return;
