@@ -18,11 +18,8 @@ export const angularTemplate: Template = {
 						name: "angular-app",
 						version: "0.0.0",
 						scripts: {
-							ng: "ng",
 							start: "ng serve",
-							build: "ng build",
-							watch: "ng build --watch --configuration development",
-							test: "jest",
+							test: "jest --json",
 						},
 						dependencies: {
 							"@angular/animations": "^17.0.0",

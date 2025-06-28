@@ -21,8 +21,6 @@ export const reactViteTemplate: Template = {
 						type: "module",
 						scripts: {
 							dev: "vite",
-							build: "vite build",
-							preview: "vite preview",
 							test: "vitest run --reporter=json",
 						},
 						dependencies: {
