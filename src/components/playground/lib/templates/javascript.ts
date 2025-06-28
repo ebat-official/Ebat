@@ -18,7 +18,7 @@ export const javascriptTemplate: Template = {
 						private: true,
 						type: "module",
 						scripts: {
-							test: "node --test",
+							test: "node --test --test-reporter=junit",
 						},
 					},
 					null,

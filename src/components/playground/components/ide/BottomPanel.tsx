@@ -9,6 +9,7 @@ import { TestResult, VitestJsonResult } from "../../types/test";
 import RunButton from "../../RunButton";
 import { useAuthAction } from "@/hooks/useAuthAction";
 import { isJSON } from "@/utils/isJSON";
+import { junitParser } from "../../utils/junitParser";
 
 export function BottomPanel() {
 	const { terminalOutput, webContainer, addTerminalOutput, isTemplateReady } =
@@ -52,7 +53,6 @@ export function BottomPanel() {
 
 			const exitCode = await testProcess.exit;
 
-			// Find the JSON object in the output chunks
 			let jsonResult: VitestJsonResult | null = null;
 			for (const chunk of outputChunks) {
 				if (isJSON(chunk)) {
@@ -62,6 +62,11 @@ export function BottomPanel() {
 						break;
 					}
 				}
+			}
+
+			// if no json result, try to parse with tap parser for javascript
+			if (!jsonResult) {
+				jsonResult = junitParser(outputChunks);
 			}
 
 			if (jsonResult && jsonResult.testResults.length > 0) {
