@@ -127,23 +127,17 @@ export async function createDraftPost(
 
 				// Create challenge templates using helper function
 				if (data.challengeTemplates) {
+					// Delete all existing templates for this post
+					await tx.challengeTemplate.deleteMany({
+						where: { postId: post.id },
+					});
+
+					// Create all new templates
 					for (const template of data.challengeTemplates) {
-						await tx.challengeTemplate.upsert({
-							where: {
-								postId_framework: {
-									postId: post.id,
-									framework: template.framework,
-								},
-							},
-							create: {
+						await tx.challengeTemplate.create({
+							data: {
 								postId: post.id,
 								framework: template.framework,
-								questionTemplate:
-									template.questionTemplate as unknown as Prisma.InputJsonValue,
-								answerTemplate:
-									template.answerTemplate as unknown as Prisma.InputJsonValue,
-							},
-							update: {
 								questionTemplate:
 									template.questionTemplate as unknown as Prisma.InputJsonValue,
 								answerTemplate:
@@ -227,23 +221,17 @@ export async function createPost(
 
 				// Create challenge templates using helper function
 				if (data.challengeTemplates) {
+					// Delete all existing templates for this post
+					await tx.challengeTemplate.deleteMany({
+						where: { postId: post.id },
+					});
+
+					// Create all new templates
 					for (const template of data.challengeTemplates) {
-						await tx.challengeTemplate.upsert({
-							where: {
-								postId_framework: {
-									postId: post.id,
-									framework: template.framework,
-								},
-							},
-							create: {
+						await tx.challengeTemplate.create({
+							data: {
 								postId: post.id,
 								framework: template.framework,
-								questionTemplate:
-									template.questionTemplate as unknown as Prisma.InputJsonValue,
-								answerTemplate:
-									template.answerTemplate as unknown as Prisma.InputJsonValue,
-							},
-							update: {
 								questionTemplate:
 									template.questionTemplate as unknown as Prisma.InputJsonValue,
 								answerTemplate:

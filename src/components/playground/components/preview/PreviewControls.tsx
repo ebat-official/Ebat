@@ -15,13 +15,13 @@ export const PreviewControls: React.FC<PreviewControlsProps> = React.memo(
 			<Button size="sm" variant="secondary" onClick={onRefresh}>
 				<RefreshCw className="w-4 h-4" />
 			</Button>
-			<Button
+			{/* <Button
 				size="sm"
 				variant="secondary"
 				onClick={() => window.open(url, "_blank")}
 			>
 				<ExternalLink className="w-4 h-4" />
-			</Button>
+			</Button> */}
 		</div>
 	),
 );

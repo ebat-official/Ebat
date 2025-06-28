@@ -51,7 +51,6 @@ export const reactViteTemplate: Template = {
 							file: {
 								contents: `import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import '@testing-library/jest-dom';
 import App from '../App';
 
 describe('App', () => {
@@ -121,6 +120,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 						contents: `@import "tailwindcss";`,
 					},
 				},
+				"setupTests.js": {
+					file: {
+						contents: `import '@testing-library/jest-dom';`,
+					},
+				},
 			},
 		},
 		"index.html": {
@@ -149,7 +153,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
     globals: true,
-    environment: 'jsdom'
+    environment: 'jsdom',
+    setupFiles: ['./src/setupTests.js']
   },
   server: {
     port: 5002,

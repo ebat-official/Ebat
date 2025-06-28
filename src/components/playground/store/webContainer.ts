@@ -6,6 +6,10 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import type { Template } from "../lib/types";
 import { getLanguageFromPath } from "../lib/utils";
+import type { VitestJsonResult } from "../types/test";
+import { isJSON } from "@/utils/isJSON";
+import { junitParser } from "../utils/junitParser";
+import type { TestExecutionResult } from "../types/test";
 
 interface OpenFile {
 	path: string;
@@ -30,6 +34,14 @@ interface WebContainerState {
 	activeFile: string | null;
 	post: PostWithExtraDetails | null;
 	isLanguageDropdownDisabled: boolean;
+	// Test state
+	testResults: {
+		numTotalTests: number;
+		numPassedTests: number;
+		numFailedTests: number;
+		allTestsPassed: boolean;
+	} | null;
+	isRunningTests: boolean;
 	addTerminalOutput: (output: string) => void;
 	clearTerminalOutput: () => void;
 	runCommand: (
@@ -57,10 +69,17 @@ interface WebContainerState {
 	clearFileFromLocalStorage: (filePath: string) => void;
 	clearAllFilesFromLocalStorage: (template: Template) => void;
 	resetToOriginalTemplate: () => Promise<void>;
-	teardownContainer: () => Promise<void>;
 	setLanguageDropdownDisabled: (disabled: boolean) => void;
 	cleanupContainer: () => Promise<void>;
 	setPost: (post: PostWithExtraDetails) => void;
+	// Test functions
+	executeTests: () => Promise<TestExecutionResult>;
+	runTestsForValidation: () => Promise<{
+		success: boolean;
+		hasTests: boolean;
+		message: string;
+	}>;
+	clearTestResults: () => void;
 }
 
 // Maximum number of lines to keep in terminal
@@ -105,6 +124,9 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	activeFile: null,
 	post: null,
 	isLanguageDropdownDisabled: false,
+	// Test state
+	testResults: null,
+	isRunningTests: false,
 
 	addTerminalOutput: (output: string) => {
 		const cleaned = cleanTerminalOutput(output);
@@ -147,34 +169,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			console.error(`Failed to run command ${command}:`, error);
 			addTerminalOutput(`❌ Failed to run command ${command}`);
 			return null;
-		}
-	},
-
-	teardownContainer: async () => {
-		const { webContainer, addTerminalOutput, stopServer } = get();
-		if (!webContainer) return;
-
-		try {
-			addTerminalOutput("🛑 Teardown container...");
-			await stopServer();
-
-			// Use the instance.teardown() method
-			await webContainer.teardown();
-
-			set({
-				webContainer: null,
-				isContainerReady: false,
-				isTemplateReady: false,
-				previewUrl: "",
-				serverProcess: null,
-				files: null,
-				openFiles: [],
-				activeFile: null,
-			});
-			addTerminalOutput("✅ Container teardown complete");
-		} catch (error) {
-			console.error("Failed to teardown container:", error);
-			addTerminalOutput("❌ Failed to teardown container");
 		}
 	},
 
@@ -747,5 +741,133 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 
 	setPost: (post: PostWithExtraDetails) => {
 		set({ post });
+	},
+
+	// Test functions
+	executeTests: async (): Promise<TestExecutionResult> => {
+		const { webContainer, addTerminalOutput } = get();
+		if (!webContainer) throw new Error("WebContainer not available");
+
+		addTerminalOutput("🧪 Running tests...");
+
+		// Run tests using the template's test command
+		const testProcess = await webContainer.spawn("npm", ["run", "test"]);
+
+		const outputChunks: string[] = [];
+		testProcess.output.pipeTo(
+			new WritableStream({
+				write(data) {
+					outputChunks.push(data);
+					addTerminalOutput(data);
+				},
+			}),
+		);
+
+		const exitCode = await testProcess.exit;
+
+		let jsonResult: VitestJsonResult | null = null;
+		for (const chunk of outputChunks) {
+			if (isJSON(chunk)) {
+				const parsed = JSON.parse(chunk);
+				if (parsed.testResults) {
+					jsonResult = parsed;
+					break;
+				}
+			}
+		}
+
+		// if no json result, try to parse with tap parser for javascript
+		if (!jsonResult) {
+			jsonResult = junitParser(outputChunks);
+		}
+
+		if (jsonResult && jsonResult.testResults.length > 0) {
+			const numTotalTests = jsonResult.numTotalTests;
+			const numPassedTests = jsonResult.numPassedTests;
+			const numFailedTests = jsonResult.numFailedTests;
+			const allTestsPassed = numFailedTests === 0 && numTotalTests > 0;
+
+			const testResults = {
+				numTotalTests,
+				numPassedTests,
+				numFailedTests,
+				allTestsPassed,
+			};
+
+			set({ testResults });
+
+			const summary = `Tests: ${numPassedTests} passed, ${numFailedTests} failed, ${numTotalTests} total`;
+			addTerminalOutput(exitCode === 0 ? `✅ ${summary}` : `❌ ${summary}`);
+
+			return {
+				success: true,
+				testResults,
+				jsonResult,
+				exitCode,
+			};
+		}
+
+		// Fallback if no JSON found
+		addTerminalOutput("⚠️ No test results found in output");
+		return {
+			success: false,
+			testResults: null,
+			jsonResult: null,
+			exitCode,
+		};
+	},
+
+	runTestsForValidation: async () => {
+		try {
+			set({ isRunningTests: true, testResults: null });
+
+			const result = await get().executeTests();
+
+			if (!result.success || !result.testResults) {
+				return {
+					success: false,
+					hasTests: false,
+					message: "No test cases found. Please add at least one test case.",
+				};
+			}
+
+			const { testResults } = result;
+
+			if (testResults.numTotalTests === 0) {
+				return {
+					success: false,
+					hasTests: false,
+					message: "No test cases found. Please add at least one test case.",
+				};
+			}
+
+			if (!testResults.allTestsPassed) {
+				return {
+					success: false,
+					hasTests: true,
+					message: `${testResults.numFailedTests} test(s) failed. All tests must pass to proceed.`,
+				};
+			}
+
+			return {
+				success: true,
+				hasTests: true,
+				message: `All ${testResults.numTotalTests} test(s) passed successfully!`,
+			};
+		} catch (error) {
+			const { addTerminalOutput } = get();
+			addTerminalOutput(`❌ Error running tests: ${error}`);
+			return {
+				success: false,
+				hasTests: false,
+				message: `Error running tests: ${error}`,
+			};
+		} finally {
+			set({ isRunningTests: false });
+		}
+	},
+
+	clearTestResults: () => {
+		set({ testResults: null });
 	},
 }));

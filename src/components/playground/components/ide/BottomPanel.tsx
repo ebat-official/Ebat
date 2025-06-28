@@ -5,15 +5,18 @@ import { TestPanel } from "../test/TestPanel";
 import { FlaskConical, TerminalIcon, Play, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { TestResult, VitestJsonResult } from "../../types/test";
+import { TestResult } from "../../types/test";
 import RunButton from "../../RunButton";
 import { useAuthAction } from "@/hooks/useAuthAction";
-import { isJSON } from "@/utils/isJSON";
-import { junitParser } from "../../utils/junitParser";
 
 export function BottomPanel() {
-	const { terminalOutput, webContainer, addTerminalOutput, isTemplateReady } =
-		useWebContainerStore();
+	const {
+		terminalOutput,
+		webContainer,
+		addTerminalOutput,
+		isTemplateReady,
+		executeTests,
+	} = useWebContainerStore();
 
 	const [results, setResults] = useState<TestResult | null>(null);
 	const [isRunning, setIsRunning] = useState(false);
@@ -36,45 +39,12 @@ export function BottomPanel() {
 			setIsRunning(true);
 			setResults(null);
 
-			addTerminalOutput("🧪 Running tests...");
+			const result = await executeTests();
 
-			// Run tests using the template's test command
-			const testProcess = await webContainer.spawn("npm", ["run", "test"]);
-
-			const outputChunks: string[] = [];
-			testProcess.output.pipeTo(
-				new WritableStream({
-					write(data) {
-						outputChunks.push(data);
-						addTerminalOutput(data);
-					},
-				}),
-			);
-
-			const exitCode = await testProcess.exit;
-
-			let jsonResult: VitestJsonResult | null = null;
-			for (const chunk of outputChunks) {
-				if (isJSON(chunk)) {
-					const parsed = JSON.parse(chunk);
-					if (parsed.testResults) {
-						jsonResult = parsed;
-						break;
-					}
-				}
-			}
-
-			// if no json result, try to parse with tap parser for javascript
-			if (!jsonResult) {
-				jsonResult = junitParser(outputChunks);
-			}
-
-			if (jsonResult && jsonResult.testResults.length > 0) {
-				setResults(jsonResult.testResults[0]); // Take the first test result
-				const summary = `Tests: ${jsonResult.numPassedTests} passed, ${jsonResult.numFailedTests} failed, ${jsonResult.numTotalTests} total`;
-				addTerminalOutput(exitCode === 0 ? `✅ ${summary}` : `❌ ${summary}`);
+			if (result.success && result.jsonResult && result.testResults) {
+				setResults(result.jsonResult.testResults[0]); // Take the first test result
 			} else {
-				// Fallback if no JSON found - just show a message
+				// Fallback if no results found
 				addTerminalOutput("⚠️ No test results found in output");
 			}
 		} catch (error) {
