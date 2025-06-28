@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useCallback, useMemo, useState } from "react";
+import React, { FC, useCallback, useMemo, useState, useEffect } from "react";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -58,7 +58,14 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 
-	const { files, getFileTree } = useWebContainerStore();
+	const { files, getFileTree, stopServer } = useWebContainerStore();
+
+	// Cleanup container on component unmount
+	useEffect(() => {
+		return () => {
+			stopServer();
+		};
+	}, []);
 
 	// Memoized computed values
 	const canProceed = useMemo(
