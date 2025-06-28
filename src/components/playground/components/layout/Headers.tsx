@@ -12,6 +12,7 @@ import {
 import { PanelLeftClose, PanelLeftOpen, RotateCcw } from "lucide-react";
 import { useWebContainerStore } from "../../store/webContainer";
 import { ChallengeTemplate } from "@/utils/types";
+import { TemplateFramework } from "@prisma/client";
 
 interface HeaderProps {
 	explorerCollapsed: boolean;
@@ -49,6 +50,20 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 	// Get available templates from post data
 	const availableTemplates = post?.challengeTemplates || [];
 
+	// If no available templates but we have a selected template, show it
+	const templatesToShow =
+		availableTemplates.length > 0
+			? availableTemplates
+			: selectedTemplate
+				? [
+						{
+							framework: selectedTemplate.id as TemplateFramework,
+							questionTemplate: selectedTemplate,
+							answerTemplate: selectedTemplate, // Using the same template for both since we don't have separate answer template
+						},
+					]
+				: [];
+
 	return (
 		<header className="h-14 border-b border-border flex items-center justify-between px-4">
 			<div className="flex items-center gap-2 justify-between w-full">
@@ -70,24 +85,22 @@ export function Header({ explorerCollapsed, onToggleExplorer }: HeaderProps) {
 						value={selectedTemplate?.id}
 						onValueChange={handleTemplateChange}
 						disabled={
-							isLanguageDropdownDisabled || availableTemplates.length === 0
+							isLanguageDropdownDisabled || templatesToShow.length === 0
 						}
 					>
 						<SelectTrigger className="w-[200px]">
 							<SelectValue placeholder="Select a template" />
 						</SelectTrigger>
 						<SelectContent>
-							{availableTemplates.map(
-								(challengeTemplate: ChallengeTemplate) => (
-									<SelectItem
-										key={challengeTemplate.framework}
-										value={challengeTemplate.framework}
-									>
-										{challengeTemplate.questionTemplate?.name ||
-											challengeTemplate.framework}
-									</SelectItem>
-								),
-							)}
+							{templatesToShow.map((challengeTemplate: ChallengeTemplate) => (
+								<SelectItem
+									key={challengeTemplate.framework}
+									value={challengeTemplate.framework}
+								>
+									{challengeTemplate.questionTemplate?.name ||
+										challengeTemplate.framework}
+								</SelectItem>
+							))}
 						</SelectContent>
 					</Select>
 
