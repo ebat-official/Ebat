@@ -31,7 +31,7 @@ const ActionButtons: FC<ActionButtonsProps> = ({
 	answerTemplate,
 	files,
 }) => (
-	<div className="flex justify-between items-center p-4 border-t-2">
+	<div className="flex justify-between items-center p-4 border-t-2 absolute bottom-0 left-0 right-0 bg-card">
 		{/* Left side - Back button */}
 		<div className="flex-1">
 			{currentStep === "question" && (
