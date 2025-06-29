@@ -7,7 +7,7 @@ import { UNAUTHENTICATED_ERROR, ValidationErr } from "@/utils/errors";
 import { z } from "zod";
 import { GenerateActionReturnType } from "@/utils/types";
 import { validateUser, getCurrentUser } from "./user";
-import { ERROR, SUCCESS } from "@/utils/contants";
+import { ERROR, SUCCESS, POST_ID_REQUIRED } from "@/utils/contants";
 import {
 	FAILED_TO_SUBMIT_CHALLENGE_ERROR,
 	FAILED_TO_DELETE_SUBMISSION_ERROR,
@@ -27,17 +27,20 @@ export async function submitChallengeSolution(
 	const user = await validateUser();
 	if (!user) return UNAUTHENTICATED_ERROR;
 
-	if (!data.postId) return ValidationErr("Post ID is required");
+	const validatedData = validation.data;
+	if (!validatedData.postId) return ValidationErr(POST_ID_REQUIRED);
 
 	try {
 		// Create the submission - database will handle foreign key constraints
 		const submission = await prisma.challengeSubmission.create({
 			data: {
 				userId: user.id,
-				postId: data.postId,
-				framework: data.framework,
-				answerTemplate: data.answerTemplate as unknown as Prisma.InputJsonValue,
-				runTime: data.runTime,
+				postId: validatedData.postId,
+				framework: validatedData.framework,
+				answerTemplate:
+					validatedData.answerTemplate as unknown as Prisma.InputJsonValue,
+				runTime: validatedData.runTime,
+				status: validatedData.status, // Use validated status from request
 			},
 		});
 

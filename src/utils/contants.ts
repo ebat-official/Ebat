@@ -20,6 +20,7 @@ export const INVALID_CATEGORY = "Invalid category";
 export const INVALID_SUBCATEGORY = "Invalid subCategory";
 export const QUESTION_TYPE = "QUESTION";
 export const INVALID_POST_ID = "Invalid post ID format";
+export const POST_ID_REQUIRED = "Post ID is required";
 export const TITLE_MIN_LENGTH = "Title must be at least 3 characters";
 export const ANSWER_REQUIRED = "Answer content is required for questions";
 export const POST_REQUIRED = "Post content is required";

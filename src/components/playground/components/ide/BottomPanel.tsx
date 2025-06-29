@@ -19,7 +19,7 @@ import { useServerAction } from "@/hooks/useServerAction";
 import { extractSolutionTemplate } from "../../utils/submissionUtils";
 import { submitChallengeSolution } from "@/actions/submission";
 import { toast } from "sonner";
-import { PostType } from "@prisma/client";
+import { PostType, SubmissionStatus } from "@prisma/client";
 import { ERROR } from "@/utils/contants";
 
 export function BottomPanel() {
@@ -112,6 +112,7 @@ export function BottomPanel() {
 				framework,
 				answerTemplate: template,
 				runTime: 0, // TODO: Calculate actual runtime later
+				status: SubmissionStatus.REJECTED, // Hardcoded as REJECTED as requested
 			});
 
 			if (result.status === ERROR) {

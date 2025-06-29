@@ -84,6 +84,11 @@ enum TemplateFramework {
   JAVASCRIPT
 }
 
+enum SubmissionStatus {
+  ACCEPTED
+  REJECTED
+}
+
 model User {
   id                  String                @id @default(uuid()) @db.Uuid
   email               String                @unique
@@ -360,13 +365,14 @@ model ChallengeTemplate {
 }
 
 model ChallengeSubmission {
-  id             String            @id @default(uuid()) @db.Uuid
-  userId         String            @db.Uuid
+  id             String           @id @default(uuid()) @db.Uuid
+  userId         String           @db.Uuid
   postId         String // Reference to the challenge post
   framework      TemplateFramework
   answerTemplate Json // User's complete solution template (same structure as ChallengeTemplate)
-  runTime        Int               @default(0) // Runtime in milliseconds
-  submittedAt    DateTime          @default(now())
+  runTime        Int              @default(0) // Runtime in milliseconds
+  status         SubmissionStatus @default(REJECTED) // Status of the submission
+  submittedAt    DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)

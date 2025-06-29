@@ -18,9 +18,12 @@ import { deleteSubmission } from "@/actions/submission";
 import { formatDistanceToNow } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-
-type SortField = "submittedAt" | "framework" | "runTime";
-type SortOrder = "asc" | "desc";
+import { SubmissionStatus } from "@prisma/client";
+import {
+	SubmissionWithStatus,
+	SubmissionSortField,
+	SubmissionSortOrder,
+} from "@/utils/types";
 
 interface SubmissionsTableProps {
 	postId: string;
@@ -40,11 +43,12 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 	} = useSubmissions(postId);
 	const [deleteSubmissionAction, isDeletingSubmission] =
 		useServerAction(deleteSubmission);
-	const [sortField, setSortField] = useState<SortField>("submittedAt");
-	const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+	const [sortField, setSortField] =
+		useState<SubmissionSortField>("submittedAt");
+	const [sortOrder, setSortOrder] = useState<SubmissionSortOrder>("desc");
 	const queryClient = useQueryClient();
 
-	const handleSort = (field: SortField) => {
+	const handleSort = (field: SubmissionSortField) => {
 		if (sortField === field) {
 			setSortOrder(sortOrder === "asc" ? "desc" : "asc");
 		} else {
@@ -92,6 +96,18 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 					aValue = a.runTime;
 					bValue = b.runTime;
 					break;
+				case "status": {
+					// For status sorting, we want ACCEPTED to come before REJECTED
+					// Convert enum to numeric value for proper sorting
+					const statusOrder = { ACCEPTED: 1, REJECTED: 2 };
+					aValue =
+						statusOrder[(a as SubmissionWithStatus).status] ||
+						statusOrder.REJECTED;
+					bValue =
+						statusOrder[(b as SubmissionWithStatus).status] ||
+						statusOrder.REJECTED;
+					break;
+				}
 				default:
 					return 0;
 			}
@@ -171,6 +187,15 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 						<TableRow>
 							<TableHead
 								className="cursor-pointer hover:bg-muted/50"
+								onClick={() => handleSort("status")}
+							>
+								<div className="flex items-center gap-1">
+									Status
+									<ArrowUpDown className="w-3 h-3" />
+								</div>
+							</TableHead>
+							<TableHead
+								className="cursor-pointer hover:bg-muted/50"
 								onClick={() => handleSort("framework")}
 							>
 								<div className="flex items-center gap-1">
@@ -202,6 +227,19 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 					<TableBody>
 						{sortedSubmissions.map((submission) => (
 							<TableRow key={submission.id}>
+								<TableCell>
+									<Badge
+										variant={
+											(submission as SubmissionWithStatus).status ===
+											SubmissionStatus.ACCEPTED
+												? "default"
+												: "destructive"
+										}
+									>
+										{(submission as SubmissionWithStatus).status ||
+											SubmissionStatus.REJECTED}
+									</Badge>
+								</TableCell>
 								<TableCell>
 									<Badge variant="secondary">{submission.framework}</Badge>
 								</TableCell>
