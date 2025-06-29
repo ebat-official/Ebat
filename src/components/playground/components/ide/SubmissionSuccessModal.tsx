@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Trophy, Clock, Target } from "lucide-react";
+import { useReward } from "react-rewards";
 
 interface SubmissionSuccessModalProps {
 	isOpen: boolean;
@@ -23,6 +24,16 @@ export function SubmissionSuccessModal({
 	numTestsPassed,
 	numTotalTests,
 }: SubmissionSuccessModalProps) {
+	const { reward: confettiReward } = useReward("successRewardId", "confetti");
+
+	useEffect(() => {
+		if (isOpen) {
+			setTimeout(() => {
+				confettiReward();
+			}, 300); // Small delay to ensure modal is fully rendered
+		}
+	}, [isOpen, confettiReward]);
+
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent className="sm:max-w-md">
@@ -34,7 +45,9 @@ export function SubmissionSuccessModal({
 				</DialogHeader>
 				<div className="space-y-6 py-4">
 					<div className="text-center">
-						<CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+						<div id="successRewardId" className="relative">
+							<CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+						</div>
 						<h3 className="text-lg font-semibold mb-2">
 							Challenge Completed Successfully!
 						</h3>
