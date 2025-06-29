@@ -85,32 +85,33 @@ enum TemplateFramework {
 }
 
 model User {
-  id               String             @id @default(uuid()) @db.Uuid
-  email            String             @unique
-  userName         String?            @unique
-  password         String?
-  emailVerified    DateTime?
-  accounts         Account[]
-  role             UserRole           @default(USER)
-  accountStatus    AccountStatus      @default(ACTIVE)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  karmaPoints      Int                @default(0)
-  coins            Int                @default(0)
-  userProfile      UserProfile?       @relation("UserToProfile")
-  lastLoginAt      DateTime?
-  Post             Post[]
-  collaborators    Post[]             @relation("PostCollaborators")
-  Comment          Comment[]
-  Vote             Vote[]
-  CommentVote      CommentVote[]
-  CommentMention   CommentMention[]
-  CompletionStatus CompletionStatus[]
-  following        Follow[]           @relation("Following") // Users the user follows
-  followers        Follow[]           @relation("Followers") // Users who follow this user
-  Bookmark         Bookmark[]
-  Report           Report[]
-  Notification     Notification[]
+  id                  String                @id @default(uuid()) @db.Uuid
+  email               String                @unique
+  userName            String?               @unique
+  password            String?
+  emailVerified       DateTime?
+  accounts            Account[]
+  role                UserRole              @default(USER)
+  accountStatus       AccountStatus         @default(ACTIVE)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  karmaPoints         Int                   @default(0)
+  coins               Int                   @default(0)
+  userProfile         UserProfile?          @relation("UserToProfile")
+  lastLoginAt         DateTime?
+  Post                Post[]
+  collaborators       Post[]                @relation("PostCollaborators")
+  Comment             Comment[]
+  Vote                Vote[]
+  CommentVote         CommentVote[]
+  CommentMention      CommentMention[]
+  CompletionStatus    CompletionStatus[]
+  following           Follow[]              @relation("Following") // Users the user follows
+  followers           Follow[]              @relation("Followers") // Users who follow this user
+  Bookmark            Bookmark[]
+  Report              Report[]
+  Notification        Notification[]
+  ChallengeSubmission ChallengeSubmission[]
 }
 
 model UserProfile {
@@ -179,34 +180,35 @@ model ResetToken {
 }
 
 model Post {
-  id                 String             @id @default(nanoid())
-  title              String?
-  slug               String?
-  thumbnail          String?             
-  content            Bytes?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  author             User               @relation(fields: [authorId], references: [id])
-  authorId           String             @db.Uuid
-  comments           Comment[]
-  votes              Vote[]
-  type               PostType
-  difficulty         Difficulty?
-  companies          String[]           @default([])
-  completionDuration Int?
-  coins              Int?               @default(0)
-  topics             String[]           @default([])
-  completionStatus   CompletionStatus[]
-  category           PostCategory
-  subCategory        SubCategory
-  status             PostStatus         @default(DRAFT)
-  views              PostViews?         
-  Bookmark           Bookmark[]
-  Report             Report[]
-  collaborators      User[]             @relation("PostCollaborators")
-  approvalStatus     PostApprovalStatus @default(PENDING)
-  approvalLogs       Json? // Array of approval/rejection logs
-  challengeTemplates ChallengeTemplate[] // Templates for this challenge
+  id                   String                @id @default(nanoid())
+  title                String?
+  slug                 String?
+  thumbnail            String?
+  content              Bytes?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  author               User                  @relation(fields: [authorId], references: [id])
+  authorId             String                @db.Uuid
+  comments             Comment[]
+  votes                Vote[]
+  type                 PostType
+  difficulty           Difficulty?
+  companies            String[]              @default([])
+  completionDuration   Int?
+  coins                Int?                  @default(0)
+  topics               String[]              @default([])
+  completionStatus     CompletionStatus[]
+  category             PostCategory
+  subCategory          SubCategory
+  status               PostStatus            @default(DRAFT)
+  views                PostViews?
+  Bookmark             Bookmark[]
+  Report               Report[]
+  collaborators        User[]                @relation("PostCollaborators")
+  approvalStatus       PostApprovalStatus    @default(PENDING)
+  approvalLogs         Json? // Array of approval/rejection logs
+  challengeTemplates   ChallengeTemplate[] // Templates for this challenge
+  challengeSubmissions ChallengeSubmission[] // User submissions for this challenge
 
   @@unique([id, slug], name: "PostIdSlug")
 }
@@ -343,16 +345,32 @@ model Notification {
 }
 
 model ChallengeTemplate {
-  id                String            @id @default(uuid()) @db.Uuid
-  postId            String            // Reference to the challenge post
-  framework         TemplateFramework
-  questionTemplate  Json              // Question template (FileSystemTree structure)
-  answerTemplate    Json              // Answer template (FileSystemTree structure)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  
-  post              Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id               String            @id @default(uuid()) @db.Uuid
+  postId           String // Reference to the challenge post
+  framework        TemplateFramework
+  questionTemplate Json // Question template (FileSystemTree structure)
+  answerTemplate   Json // Answer template (FileSystemTree structure)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, framework]) // Ensure one template per framework per challenge
   @@index([postId])
+}
+
+model ChallengeSubmission {
+  id             String            @id @default(uuid()) @db.Uuid
+  userId         String            @db.Uuid
+  postId         String // Reference to the challenge post
+  framework      TemplateFramework
+  answerTemplate Json // User's complete solution template (same structure as ChallengeTemplate)
+  submittedAt    DateTime          @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, userId]) // Primary query pattern: fetch submissions by post and user
+  @@index([userId]) // Secondary: fetch all submissions by user
+  @@index([postId]) // Secondary: fetch all submissions for a post
 }
