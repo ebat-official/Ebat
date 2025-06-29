@@ -352,7 +352,7 @@ model ChallengeTemplate {
   answerTemplate   Json // Answer template (FileSystemTree structure)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-
+  
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, framework]) // Ensure one template per framework per challenge
@@ -365,6 +365,7 @@ model ChallengeSubmission {
   postId         String // Reference to the challenge post
   framework      TemplateFramework
   answerTemplate Json // User's complete solution template (same structure as ChallengeTemplate)
+  runTime        Int               @default(0) // Runtime in milliseconds
   submittedAt    DateTime          @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

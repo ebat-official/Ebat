@@ -37,6 +37,7 @@ export async function submitChallengeSolution(
 				postId: data.postId,
 				framework: data.framework,
 				answerTemplate: data.answerTemplate as unknown as Prisma.InputJsonValue,
+				runTime: data.runTime,
 			},
 		});
 
