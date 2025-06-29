@@ -9,7 +9,7 @@ import PostLikeButton from "../post view/PostLikeButton";
 import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Lightbulb, MessageCircle, Upload } from "lucide-react";
-import { SubmissionsTable } from "./components/SubmissionsTable";
+import { SubmissionsTable } from "../post edit/challenge/SubmissionsTable";
 import { useSession } from "next-auth/react";
 
 type ChallengeQuestionViewProps = {

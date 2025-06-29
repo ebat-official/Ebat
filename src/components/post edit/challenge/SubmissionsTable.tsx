@@ -21,7 +21,13 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import { Trash2, RefreshCw, ArrowUpDown } from "lucide-react";
+import {
+	Trash2,
+	RefreshCw,
+	ArrowUpDown,
+	MoreHorizontal,
+	Copy,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useServerAction } from "@/hooks/useServerAction";
 import { deleteSubmission } from "@/actions/submission";
@@ -34,6 +40,14 @@ import {
 	SubmissionSortField,
 	SubmissionSortOrder,
 } from "@/utils/types";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { Template } from "../../playground/lib/types";
+import { useWebContainerStore } from "../../playground/store/webContainer";
 
 interface SubmissionsTableProps {
 	postId: string;
@@ -95,6 +109,28 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 		} catch (error) {
 			toast.error("An error occurred while deleting the submission");
 			// Keep dialog open on error so user can try again or cancel
+		}
+	};
+
+	const selectTemplate = useWebContainerStore((state) => state.selectTemplate);
+
+	const handleCopyToEditor = async (submission: SubmissionWithStatus) => {
+		try {
+			if (!submission.answerTemplate) {
+				toast.error("No answer template found in this submission");
+				return;
+			}
+
+			// Convert the answerTemplate JSON to a Template object
+			const answerTemplate = submission.answerTemplate as unknown as Template;
+
+			// Use the webContainer store to select the template
+			await selectTemplate(answerTemplate);
+
+			toast.success("Template copied to editor successfully!");
+		} catch (error) {
+			console.error("Failed to copy template to editor:", error);
+			toast.error("Failed to copy template to editor");
 		}
 	};
 
@@ -275,15 +311,34 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 								</TableCell>
 								<TableCell>
 									{currentUserId === submission.userId && (
-										<Button
-											variant="ghost"
-											size="sm"
-											onClick={() => openDeleteDialog(submission.id)}
-											disabled={isDeletingSubmission}
-											className="text-destructive hover:text-destructive"
-										>
-											<Trash2 className="w-4 h-4" />
-										</Button>
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button
+													variant="ghost"
+													size="sm"
+													disabled={isDeletingSubmission}
+													className="h-8 w-8 p-0"
+												>
+													<MoreHorizontal className="h-4 w-4" />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuItem
+													onClick={() => handleCopyToEditor(submission)}
+													className="cursor-pointer"
+												>
+													<Copy className="mr-2 h-4 w-4" />
+													Copy to Editor
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													onClick={() => openDeleteDialog(submission.id)}
+													className="cursor-pointer text-destructive focus:text-destructive"
+												>
+													<Trash2 className="mr-2 h-4 w-4" />
+													Delete
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
 									)}
 								</TableCell>
 							</TableRow>
