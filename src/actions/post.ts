@@ -27,7 +27,7 @@ import { generatePostPath } from "@/utils/generatePostPath";
 import { revalidatePath } from "next/cache";
 import pako from "pako";
 import { validateUser } from "./user";
-import { ERROR, SUCCESS } from "@/utils/contants";
+import { ERROR, SUCCESS, POST_ID_REQUIRED } from "@/utils/contants";
 import type { FileSystemTree } from "@/components/playground/lib/types";
 import { createChallengeTemplatesForPost } from "@/utils/api utils/challengeTemplateHelpers";
 
@@ -100,7 +100,7 @@ export async function createDraftPost(
 	const user = await validateUser();
 
 	if (!user) return UNAUTHENTICATED_ERROR;
-	if (!data.id) return ValidationErr("Post ID is required");
+	if (!data.id) return ValidationErr(POST_ID_REQUIRED);
 	const isOwner = await checkPostOwnership(data.id, user.id);
 	if (!isOwner) return UNAUTHORIZED_ERROR;
 
@@ -179,7 +179,7 @@ export async function createPost(
 	const user = await validateUser();
 
 	if (!user) return UNAUTHENTICATED_ERROR;
-	if (!data.id) return ValidationErr("Post ID is required");
+	if (!data.id) return ValidationErr(POST_ID_REQUIRED);
 	//return true if post not exists or owner is current user
 	const isOwner = await checkPostOwnership(data.id, user.id);
 	if (!isOwner) {

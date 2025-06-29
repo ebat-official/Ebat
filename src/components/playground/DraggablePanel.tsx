@@ -71,7 +71,7 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 			>
 				<ResizablePanel
 					defaultSize={40}
-					className="!basis-auto md:!basis-0 md:max-h-[calc(100vh-80px)]"
+					className="!basis-auto md:!basis-0 md:h-[calc(100vh-80px)]"
 				>
 					<ChallengeQuestionView post={post} />
 				</ResizablePanel>

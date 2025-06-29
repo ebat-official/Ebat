@@ -15,6 +15,11 @@ import {
 	FAILED_TO_EDIT_POST,
 	CANNOT_EDIT_PUBLISHED_POST,
 	FAILED_TO_ADD_COMMENT,
+	FAILED_TO_SUBMIT_CHALLENGE,
+	FAILED_TO_DELETE_SUBMISSION,
+	FAILED_TO_FETCH_SUBMISSIONS,
+	CHALLENGE_NOT_FOUND,
+	SUBMISSION_NOT_FOUND,
 } from "@/utils/contants";
 import { ErrorType } from "./types";
 
@@ -130,6 +135,36 @@ export const COMMENT_ADDITION_ERROR = {
 	status: ERROR as ErrorType,
 	cause: FAILED_TO_ADD_COMMENT,
 	data: { message: "failed to add comment" },
+};
+
+export const FAILED_TO_SUBMIT_CHALLENGE_ERROR = {
+	status: ERROR as ErrorType,
+	cause: FAILED_TO_SUBMIT_CHALLENGE,
+	data: { message: "Failed to submit challenge solution" },
+};
+
+export const FAILED_TO_DELETE_SUBMISSION_ERROR = {
+	status: ERROR as ErrorType,
+	cause: FAILED_TO_DELETE_SUBMISSION,
+	data: { message: "Failed to delete submission" },
+};
+
+export const FAILED_TO_FETCH_SUBMISSIONS_ERROR = {
+	status: ERROR as ErrorType,
+	cause: FAILED_TO_FETCH_SUBMISSIONS,
+	data: { message: "Failed to fetch submissions" },
+};
+
+export const CHALLENGE_NOT_FOUND_ERROR = {
+	status: ERROR as ErrorType,
+	cause: CHALLENGE_NOT_FOUND,
+	data: { message: "Challenge not found" },
+};
+
+export const SUBMISSION_NOT_FOUND_ERROR = {
+	status: ERROR as ErrorType,
+	cause: SUBMISSION_NOT_FOUND,
+	data: { message: "Submission not found" },
 };
 
 export function ValidationErr(message: string) {
