@@ -21,6 +21,7 @@ import { submitChallengeSolution } from "@/actions/submission";
 import { toast } from "sonner";
 import { PostType, SubmissionStatus } from "@prisma/client";
 import { ERROR } from "@/utils/contants";
+import { SubmissionSuccessModal } from "./SubmissionSuccessModal";
 
 export function BottomPanel() {
 	const {
@@ -34,6 +35,12 @@ export function BottomPanel() {
 
 	const [results, setResults] = useState<TestResult | null>(null);
 	const [isRunning, setIsRunning] = useState(false);
+	const [showSuccessModal, setShowSuccessModal] = useState(false);
+	const [submissionResults, setSubmissionResults] = useState<{
+		runtime: number;
+		numTestsPassed: number;
+		numTotalTests: number;
+	} | null>(null);
 
 	// Use useServerAction for submission with built-in loading state
 	const [submitSolution, isSubmitting] = useServerAction(
@@ -98,6 +105,48 @@ export function BottomPanel() {
 		}
 
 		try {
+			// First, run the tests to get runtime and status
+			addTerminalOutput("🧪 Running tests for submission...");
+			const testResult = await executeTests();
+
+			if (
+				!testResult.success ||
+				!testResult.testResults ||
+				!testResult.jsonResult
+			) {
+				toast.error(
+					"Failed to run tests. Please ensure your solution is valid.",
+				);
+				return;
+			}
+
+			// Calculate runtime from test results
+			let totalRuntime = 0;
+			if (
+				testResult.jsonResult.testResults &&
+				testResult.jsonResult.testResults.length > 0
+			) {
+				// Calculate total runtime from all test results
+				for (const test of testResult.jsonResult.testResults) {
+					if (test.startTime && test.endTime) {
+						totalRuntime += test.endTime - test.startTime;
+					} else if (test.assertionResults) {
+						// Fallback: sum up individual assertion durations
+						for (const assertion of test.assertionResults) {
+							if (assertion.duration) {
+								totalRuntime += assertion.duration;
+							}
+						}
+					}
+				}
+			}
+
+			// Determine status based on test results
+			const submissionStatus = testResult.testResults.allTestsPassed
+				? SubmissionStatus.ACCEPTED
+				: SubmissionStatus.REJECTED;
+
+			// Extract solution template
 			const { template, framework } = await extractSolutionTemplate();
 
 			if (!template || !framework || !post?.id) {
@@ -107,18 +156,31 @@ export function BottomPanel() {
 				return;
 			}
 
+			// Submit the solution with calculated runtime and status
 			const result = await submitSolution({
 				postId: post.id,
 				framework,
 				answerTemplate: template,
-				runTime: 0, // TODO: Calculate actual runtime later
-				status: SubmissionStatus.REJECTED, // Hardcoded as REJECTED as requested
+				runTime: Math.round(totalRuntime), // Ensure runtime is an integer
+				status: submissionStatus,
 			});
 
 			if (result.status === ERROR) {
 				toast.error(result.data?.message || "Failed to submit solution");
 			} else {
-				toast.success("Solution submitted successfully!");
+				// Show success modal if all tests passed
+				if (submissionStatus === SubmissionStatus.ACCEPTED) {
+					setSubmissionResults({
+						runtime: Math.round(totalRuntime), // Ensure runtime is an integer
+						numTestsPassed: testResult.testResults.numPassedTests,
+						numTotalTests: testResult.testResults.numTotalTests,
+					});
+					setShowSuccessModal(true);
+				} else {
+					toast.error(
+						`Submission failed: ${testResult.testResults.numFailedTests} test(s) failed. Please fix your solution and try again.`,
+					);
+				}
 			}
 		} catch (error) {
 			console.error("Submission error:", error);
@@ -156,7 +218,7 @@ export function BottomPanel() {
 									onClick={handleSubmitSolutionWithAuth}
 									disabled={isSubmitting || !isTemplateReady}
 									loading={isSubmitting}
-									loadingText="Submitting..."
+									loadingText="Judging..."
 								>
 									Submit
 									<Upload className="w-4 h-4 ml-2" />
@@ -175,6 +237,16 @@ export function BottomPanel() {
 
 			{renderLoginModal()}
 			{renderSubmissionLoginModal()}
+
+			{showSuccessModal && submissionResults && (
+				<SubmissionSuccessModal
+					isOpen={showSuccessModal}
+					onClose={() => setShowSuccessModal(false)}
+					runtime={submissionResults.runtime}
+					numTestsPassed={submissionResults.numTestsPassed}
+					numTotalTests={submissionResults.numTotalTests}
+				/>
+			)}
 		</>
 	);
 }
