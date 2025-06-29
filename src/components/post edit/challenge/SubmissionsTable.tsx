@@ -48,6 +48,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Template } from "../../playground/lib/types";
 import { useWebContainerStore } from "../../playground/store/webContainer";
+import LoginModal from "@/components/auth/LoginModal";
+import { LogIn } from "lucide-react";
 
 interface SubmissionsTableProps {
 	postId: string;
@@ -74,6 +76,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 	const [submissionToDelete, setSubmissionToDelete] = useState<string | null>(
 		null,
 	);
+	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 	const queryClient = useQueryClient();
 
 	const handleSort = (field: SubmissionSortField) => {
@@ -176,6 +179,43 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 		});
 	}, [submissions, sortField, sortOrder]);
 
+	// Show login prompt if user is not authenticated
+	if (!currentUserId) {
+		return (
+			<div className="space-y-4">
+				<div className="flex justify-between items-center">
+					<h3 className="text-lg font-semibold">My Submissions</h3>
+				</div>
+				<div className="border rounded-lg p-8">
+					<div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
+						<LogIn className="w-12 h-12 mb-4 text-muted-foreground/50" />
+						<div className="text-center">
+							<p className="text-lg font-medium mb-2">
+								Sign in to view submissions
+							</p>
+							<p className="text-sm mb-4">
+								You need to be signed in to view and manage your submissions
+							</p>
+							<Button
+								onClick={() => setIsLoginModalOpen(true)}
+								className="gap-2"
+							>
+								<LogIn className="w-4 h-4" />
+								Sign In
+							</Button>
+						</div>
+					</div>
+				</div>
+				{isLoginModalOpen && (
+					<LoginModal
+						dialogTrigger={false}
+						closeHandler={() => setIsLoginModalOpen(false)}
+					/>
+				)}
+			</div>
+		);
+	}
+
 	if (isLoading) {
 		return (
 			<div className="space-y-4">
@@ -212,19 +252,11 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 		);
 	}
 
-	if (!submissions || submissions.length === 0) {
-		return (
-			<div className="flex items-center justify-center h-32 text-muted-foreground">
-				<p>No submissions yet</p>
-			</div>
-		);
-	}
-
 	return (
 		<div className="space-y-4">
 			<div className="flex justify-between items-center">
 				<h3 className="text-lg font-semibold">
-					Submissions ({submissions.length})
+					My Submissions ({submissions?.length || 0})
 				</h3>
 				<Button
 					variant="outline"
@@ -239,78 +271,89 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 				</Button>
 			</div>
 
-			<div className="border rounded-lg">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead
-								className="cursor-pointer hover:bg-muted/50"
-								onClick={() => handleSort("status")}
-							>
-								<div className="flex items-center gap-1">
-									Status
-									<ArrowUpDown className="w-3 h-3" />
-								</div>
-							</TableHead>
-							<TableHead
-								className="cursor-pointer hover:bg-muted/50"
-								onClick={() => handleSort("framework")}
-							>
-								<div className="flex items-center gap-1">
-									Language
-									<ArrowUpDown className="w-3 h-3" />
-								</div>
-							</TableHead>
-							<TableHead
-								className="cursor-pointer hover:bg-muted/50"
-								onClick={() => handleSort("runTime")}
-							>
-								<div className="flex items-center gap-1">
-									Runtime
-									<ArrowUpDown className="w-3 h-3" />
-								</div>
-							</TableHead>
-							<TableHead
-								className="cursor-pointer hover:bg-muted/50"
-								onClick={() => handleSort("submittedAt")}
-							>
-								<div className="flex items-center gap-1">
-									Submitted
-									<ArrowUpDown className="w-3 h-3" />
-								</div>
-							</TableHead>
-							<TableHead className="w-20">Actions</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{sortedSubmissions.map((submission) => (
-							<TableRow key={submission.id}>
-								<TableCell>
-									<Badge
-										variant={
-											(submission as SubmissionWithStatus).status ===
-											SubmissionStatus.ACCEPTED
-												? "default"
-												: "destructive"
-										}
-									>
-										{(submission as SubmissionWithStatus).status ||
-											SubmissionStatus.REJECTED}
-									</Badge>
-								</TableCell>
-								<TableCell>
-									<Badge variant="secondary">{submission.framework}</Badge>
-								</TableCell>
-								<TableCell>
-									{submission.runTime > 0 ? `${submission.runTime}ms` : "N/A"}
-								</TableCell>
-								<TableCell className="text-muted-foreground">
-									{formatDistanceToNow(new Date(submission.submittedAt), {
-										addSuffix: true,
-									})}
-								</TableCell>
-								<TableCell>
-									{currentUserId === submission.userId && (
+			{!submissions || submissions.length === 0 ? (
+				<div className="border rounded-lg p-8">
+					<div className="flex items-center justify-center h-32 text-muted-foreground">
+						<div className="text-center">
+							<p className="text-lg font-medium">No submissions yet</p>
+							<p className="text-sm mt-2">
+								Submit your solution and your submissions will appear here
+							</p>
+						</div>
+					</div>
+				</div>
+			) : (
+				<div className="border rounded-lg">
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead
+									className="cursor-pointer hover:bg-muted/50"
+									onClick={() => handleSort("status")}
+								>
+									<div className="flex items-center gap-1">
+										Status
+										<ArrowUpDown className="w-3 h-3" />
+									</div>
+								</TableHead>
+								<TableHead
+									className="cursor-pointer hover:bg-muted/50"
+									onClick={() => handleSort("framework")}
+								>
+									<div className="flex items-center gap-1">
+										Language
+										<ArrowUpDown className="w-3 h-3" />
+									</div>
+								</TableHead>
+								<TableHead
+									className="cursor-pointer hover:bg-muted/50"
+									onClick={() => handleSort("runTime")}
+								>
+									<div className="flex items-center gap-1">
+										Runtime
+										<ArrowUpDown className="w-3 h-3" />
+									</div>
+								</TableHead>
+								<TableHead
+									className="cursor-pointer hover:bg-muted/50"
+									onClick={() => handleSort("submittedAt")}
+								>
+									<div className="flex items-center gap-1">
+										Submitted
+										<ArrowUpDown className="w-3 h-3" />
+									</div>
+								</TableHead>
+								<TableHead className="w-20">Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{sortedSubmissions.map((submission) => (
+								<TableRow key={submission.id}>
+									<TableCell>
+										<Badge
+											variant={
+												(submission as SubmissionWithStatus).status ===
+												SubmissionStatus.ACCEPTED
+													? "default"
+													: "destructive"
+											}
+										>
+											{(submission as SubmissionWithStatus).status ||
+												SubmissionStatus.REJECTED}
+										</Badge>
+									</TableCell>
+									<TableCell>
+										<Badge variant="secondary">{submission.framework}</Badge>
+									</TableCell>
+									<TableCell>
+										{submission.runTime > 0 ? `${submission.runTime}ms` : "N/A"}
+									</TableCell>
+									<TableCell className="text-muted-foreground">
+										{formatDistanceToNow(new Date(submission.submittedAt), {
+											addSuffix: true,
+										})}
+									</TableCell>
+									<TableCell>
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
 												<Button
@@ -339,13 +382,13 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 												</DropdownMenuItem>
 											</DropdownMenuContent>
 										</DropdownMenu>
-									)}
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</div>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</div>
+			)}
 
 			<AlertDialog
 				open={isDeleteDialogOpen}
