@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { PostType, SubmissionStatus } from "@prisma/client";
 import { ERROR } from "@/utils/contants";
 import { SubmissionSuccessModal } from "./SubmissionSuccessModal";
+import { SubmissionFailureModal } from "./SubmissionFailureModal";
 
 export function BottomPanel() {
 	const {
@@ -36,11 +37,13 @@ export function BottomPanel() {
 	const [results, setResults] = useState<TestResult | null>(null);
 	const [isRunning, setIsRunning] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
+	const [showFailureModal, setShowFailureModal] = useState(false);
 	const [isJudging, setIsJudging] = useState(false);
 	const [submissionResults, setSubmissionResults] = useState<{
 		runtime: number;
 		numTestsPassed: number;
 		numTotalTests: number;
+		numTestsFailed?: number;
 	} | null>(null);
 
 	// Use useServerAction for submission with built-in loading state
@@ -170,18 +173,20 @@ export function BottomPanel() {
 			if (result.status === ERROR) {
 				toast.error(result.data?.message || "Failed to submit solution");
 			} else {
-				// Show success modal if all tests passed
+				// Prepare results for modal
+				const results = {
+					runtime: Math.round(totalRuntime),
+					numTestsPassed: testResult.testResults.numPassedTests,
+					numTotalTests: testResult.testResults.numTotalTests,
+					numTestsFailed: testResult.testResults.numFailedTests,
+				};
+				setSubmissionResults(results);
+
+				// Show appropriate modal based on test results
 				if (submissionStatus === SubmissionStatus.ACCEPTED) {
-					setSubmissionResults({
-						runtime: Math.round(totalRuntime), // Ensure runtime is an integer
-						numTestsPassed: testResult.testResults.numPassedTests,
-						numTotalTests: testResult.testResults.numTotalTests,
-					});
 					setShowSuccessModal(true);
 				} else {
-					toast.error(
-						`Submission failed: ${testResult.testResults.numFailedTests} test(s) failed. Please fix your solution and try again.`,
-					);
+					setShowFailureModal(true);
 				}
 			}
 		} catch (error) {
@@ -249,6 +254,17 @@ export function BottomPanel() {
 					runtime={submissionResults.runtime}
 					numTestsPassed={submissionResults.numTestsPassed}
 					numTotalTests={submissionResults.numTotalTests}
+				/>
+			)}
+
+			{showFailureModal && submissionResults && (
+				<SubmissionFailureModal
+					isOpen={showFailureModal}
+					onClose={() => setShowFailureModal(false)}
+					runtime={submissionResults.runtime}
+					numTestsPassed={submissionResults.numTestsPassed}
+					numTotalTests={submissionResults.numTotalTests}
+					numTestsFailed={submissionResults.numTestsFailed || 0}
 				/>
 			)}
 		</>
