@@ -111,6 +111,7 @@ export function BottomPanel() {
 				postId: post.id,
 				framework,
 				answerTemplate: template,
+				runTime: 0, // TODO: Calculate actual runtime later
 			});
 
 			if (result.status === ERROR) {

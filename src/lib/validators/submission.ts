@@ -8,6 +8,7 @@ export const ChallengeSubmissionValidator = z.object({
 	postId: z.string().regex(/^[\w-]{21}$/, { message: INVALID_POST_ID }),
 	framework: z.nativeEnum(TemplateFramework),
 	answerTemplate: z.any(), // Complete Template object (same structure as ChallengeTemplate)
+	runTime: z.number().int().min(0).default(0), // Runtime in milliseconds
 });
 
 export type ChallengeSubmissionType = z.infer<
