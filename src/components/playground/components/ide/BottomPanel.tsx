@@ -36,6 +36,7 @@ export function BottomPanel() {
 	const [results, setResults] = useState<TestResult | null>(null);
 	const [isRunning, setIsRunning] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
+	const [isJudging, setIsJudging] = useState(false);
 	const [submissionResults, setSubmissionResults] = useState<{
 		runtime: number;
 		numTestsPassed: number;
@@ -104,6 +105,7 @@ export function BottomPanel() {
 			return;
 		}
 
+		setIsJudging(true);
 		try {
 			// First, run the tests to get runtime and status
 			addTerminalOutput("🧪 Running tests for submission...");
@@ -185,6 +187,8 @@ export function BottomPanel() {
 		} catch (error) {
 			console.error("Submission error:", error);
 			toast.error("An error occurred while submitting your solution");
+		} finally {
+			setIsJudging(false);
 		}
 	};
 
@@ -216,8 +220,8 @@ export function BottomPanel() {
 							{post?.type === PostType.CHALLENGE && (
 								<ButtonBlue
 									onClick={handleSubmitSolutionWithAuth}
-									disabled={isSubmitting || !isTemplateReady}
-									loading={isSubmitting}
+									disabled={isJudging || isSubmitting || !isTemplateReady}
+									loading={isJudging || isSubmitting}
 									loadingText="Judging..."
 								>
 									Submit
