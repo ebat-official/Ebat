@@ -9,6 +9,7 @@ import type { VitestJsonResult } from "../types/test";
 import { isJSON } from "@/utils/isJSON";
 import { junitParser } from "../utils/junitParser";
 import type { TestExecutionResult } from "../types/test";
+import { TemplateStorage } from "../utils/templateStorage";
 
 interface OpenFile {
 	path: string;
@@ -291,7 +292,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			isTemplateReady: false,
 		});
 
-		// Use original template files
+		// Use template files (could be original or merged with saved changes)
 		const filesToMount = template.files as FileSystemTree;
 
 		setFiles(filesToMount);
@@ -519,7 +520,8 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	handleFileContentChange: async (content: string) => {
-		const { webContainer, activeFile } = get();
+		const { webContainer, activeFile, selectedTemplate, post, getFileTree } =
+			get();
 		if (!webContainer || !activeFile) return;
 
 		try {
@@ -531,6 +533,24 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 						: file,
 				),
 			}));
+
+			// Trigger non-blocking save to localStorage
+			if (selectedTemplate && post) {
+				// Fire and forget - don't await to avoid blocking
+				getFileTree(".")
+					.then((currentFiles) => {
+						TemplateStorage.saveTemplate(
+							post.id,
+							selectedTemplate.id,
+							selectedTemplate.name,
+							currentFiles,
+							selectedTemplate,
+						);
+					})
+					.catch((error) => {
+						console.warn("Failed to save template:", error);
+					});
+			}
 		} catch (error) {
 			console.error("Failed to save file:", error);
 			toast.error("Failed to save file");
@@ -574,6 +594,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			handleFileSelect,
 			stopServer,
 			cleanupContainer,
+			post,
 		} = get();
 		if (!webContainer || !selectedTemplate) return;
 
@@ -585,6 +606,11 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		// Stop server and cleanup node_modules
 		await stopServer();
 		await cleanupContainer();
+
+		// Clear saved template from localStorage
+		if (post) {
+			TemplateStorage.clearTemplate(post.id, selectedTemplate.id);
+		}
 
 		// Use original template files
 		const filesToMount = selectedTemplate.files as FileSystemTree;
