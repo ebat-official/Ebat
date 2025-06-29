@@ -12,14 +12,37 @@ const StepDescription: FC<StepDescriptionProps> = ({
 }) => {
 	const getTestingFramework = () => {
 		const frameworkLower = framework.toLowerCase();
+
 		if (frameworkLower === "javascript") {
-			return "node:test";
+			return "Node.js built-in test runner (node:test)";
 		}
+
+		if (["react", "nextjs", "vue"].includes(frameworkLower)) {
+			return "Vitest";
+		}
+
+		if (frameworkLower === "angular") {
+			return "Jest";
+		}
+
+		// Default for vanillajs, sveltekit, and others
 		return "Jest";
+	};
+
+	const getTestDirectory = () => {
+		const frameworkLower = framework.toLowerCase();
+
+		switch (frameworkLower) {
+			case "nextjs":
+				return "src/app/__tests__";
+			default:
+				return "src/__tests__";
+		}
 	};
 
 	const getDescription = () => {
 		const testingFramework = getTestingFramework();
+		const testDirectory = getTestDirectory();
 
 		if (currentStep === "question") {
 			return (
@@ -79,7 +102,7 @@ const StepDescription: FC<StepDescriptionProps> = ({
 						<li>
 							• Create test cases under{" "}
 							<code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">
-								src/__tests__
+								{testDirectory}
 							</code>
 						</li>
 						<li>
