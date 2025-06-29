@@ -1,4 +1,3 @@
-import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import { PostWithExtraDetails } from "@/utils/types";
 import { WebContainer } from "@webcontainer/api";
 import type { FileSystemTree } from "@webcontainer/api";
@@ -64,10 +63,6 @@ interface WebContainerState {
 	handleFileContentChange: (content: string) => Promise<void>;
 	handleCloseFile: (path: string) => void;
 	clearOpenFiles: () => void;
-	saveFileToLocalStorage: (filePath: string, content: string) => void;
-	loadFileFromLocalStorage: (filePath: string) => string | null;
-	clearFileFromLocalStorage: (filePath: string) => void;
-	clearAllFilesFromLocalStorage: (template: Template) => void;
 	resetToOriginalTemplate: () => Promise<void>;
 	setLanguageDropdownDisabled: (disabled: boolean) => void;
 	cleanupContainer: () => Promise<void>;
@@ -84,15 +79,6 @@ interface WebContainerState {
 
 // Maximum number of lines to keep in terminal
 const MAX_TERMINAL_LINES = 30;
-
-// Helper function to generate localStorage key for individual file
-const generateFileKey = (
-	postId: string,
-	templateId: string,
-	filePath: string,
-): string => {
-	return `file_${postId}_${templateId}_${filePath.replace(/\//g, "_")}`;
-};
 
 // Filter out ANSI escape sequences and empty lines
 function cleanTerminalOutput(output: string): string | null {
@@ -493,37 +479,16 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	handleFileSelect: async (path: string) => {
-		const {
-			webContainer,
-			openFiles,
-			loadFileFromLocalStorage,
-			restartServer,
-			isLoading,
-		} = get();
+		const { webContainer, openFiles } = get();
 		if (!webContainer) return;
 
 		try {
-			// Check if there's saved content in localStorage
-			const savedContent = loadFileFromLocalStorage(path);
-			let fileContent: string;
-			let shouldRestartServer = false;
-
-			if (savedContent) {
-				// Use saved content from localStorage
-				fileContent = savedContent;
-				// Write to webContainer immediately
-				await webContainer.fs.writeFile(path, fileContent);
-				//if server is loading, restart server with file from localStorage on initial load
-				//this is to ensure the file is written to the container before the server is restarted
-				if (isLoading) shouldRestartServer = true;
-			} else {
-				// Load from webContainer file system
-				const content = await webContainer.fs.readFile(path);
-				fileContent =
-					typeof content === "string"
-						? content
-						: new TextDecoder().decode(content);
-			}
+			// Load from webContainer file system
+			const content = await webContainer.fs.readFile(path);
+			const fileContent =
+				typeof content === "string"
+					? content
+					: new TextDecoder().decode(content);
 
 			const fileName = path.split("/").pop() || path;
 			const language = getLanguageFromPath(path);
@@ -547,11 +512,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			} else {
 				set({ activeFile: path });
 			}
-
-			// Restart server if we loaded localStorage content
-			if (shouldRestartServer) {
-				restartServer();
-			}
 		} catch (error) {
 			console.error("Failed to open file:", error);
 			toast.error("Failed to open file");
@@ -571,9 +531,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 						: file,
 				),
 			}));
-
-			// Save individual file to localStorage after content change
-			get().saveFileToLocalStorage(activeFile, content);
 		} catch (error) {
 			console.error("Failed to save file:", error);
 			toast.error("Failed to save file");
@@ -606,57 +563,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		set({ openFiles: [], activeFile: null });
 	},
 
-	saveFileToLocalStorage: (filePath: string, content: string) => {
-		const { post, selectedTemplate } = get();
-		if (!post || !selectedTemplate) return;
-
-		const localStorageKey = generateFileKey(
-			post.id,
-			selectedTemplate.id,
-			filePath,
-		);
-		setLocalStorage(localStorageKey, content);
-	},
-
-	loadFileFromLocalStorage: (filePath: string) => {
-		const { post, selectedTemplate } = get();
-		if (!post || !selectedTemplate) return null;
-
-		const localStorageKey = generateFileKey(
-			post.id,
-			selectedTemplate.id,
-			filePath,
-		);
-		const content = getLocalStorage<string>(localStorageKey);
-		return content || null;
-	},
-
-	clearFileFromLocalStorage: (filePath: string) => {
-		const { post, selectedTemplate } = get();
-		if (!post || !selectedTemplate) return;
-
-		const localStorageKey = generateFileKey(
-			post.id,
-			selectedTemplate.id,
-			filePath,
-		);
-		setLocalStorage(localStorageKey, null);
-	},
-
-	clearAllFilesFromLocalStorage: (template: Template) => {
-		const { post } = get();
-		if (!post) return;
-
-		// Clear all localStorage keys for this post/template combination
-		const prefix = `file_${post.id}_${template.id}_`;
-		for (let i = 0; i < localStorage.length; i++) {
-			const key = localStorage.key(i);
-			if (key?.startsWith(prefix)) {
-				localStorage.removeItem(key);
-			}
-		}
-	},
-
 	resetToOriginalTemplate: async () => {
 		const {
 			webContainer,
@@ -666,7 +572,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			setFiles,
 			clearOpenFiles,
 			handleFileSelect,
-			clearAllFilesFromLocalStorage,
 			stopServer,
 			cleanupContainer,
 		} = get();
@@ -681,8 +586,7 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 		await stopServer();
 		await cleanupContainer();
 
-		// Clear localStorage data and use original template files
-		clearAllFilesFromLocalStorage(selectedTemplate);
+		// Use original template files
 		const filesToMount = selectedTemplate.files as FileSystemTree;
 
 		setFiles(filesToMount);
