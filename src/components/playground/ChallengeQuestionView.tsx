@@ -24,7 +24,7 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 	return (
 		<Tabs defaultValue="description" className="h-full">
 			<Card className="h-full pt-0">
-				<TabsList className="w-full rounded-b-none  py-6">
+				<TabsList className="w-full rounded-b-none">
 					<TabsTrigger value="description">
 						<FileText className="h-4 w-4" />
 						Description
