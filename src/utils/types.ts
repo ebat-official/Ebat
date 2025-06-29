@@ -6,6 +6,8 @@ import {
 	User,
 	VoteType,
 	TemplateFramework,
+	ChallengeSubmission,
+	SubmissionStatus,
 } from "@prisma/client";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
@@ -288,3 +290,15 @@ export interface UsePostSearchOptions {
 	initialContext?: PostSearchContext;
 	enabled?: boolean;
 }
+
+// Submission Table Types
+export type SubmissionWithStatus = ChallengeSubmission & {
+	status: SubmissionStatus;
+};
+
+export type SubmissionSortField =
+	| "submittedAt"
+	| "framework"
+	| "runTime"
+	| "status";
+export type SubmissionSortOrder = "asc" | "desc";
