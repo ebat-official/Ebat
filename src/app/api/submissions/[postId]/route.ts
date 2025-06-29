@@ -16,10 +16,11 @@ export async function GET(
 
 		const { postId } = await params;
 
-		// Get all submissions for this challenge
+		// Get only current user's submissions for this challenge
 		const submissions = await prisma.challengeSubmission.findMany({
 			where: {
 				postId,
+				userId: user.id, // Only fetch current user's submissions
 			},
 			orderBy: {
 				submittedAt: "desc",

@@ -13,6 +13,7 @@ import { PreviewPanel } from "./components/preview/PreviewPanel";
 import { useWebContainerStore } from "./store/webContainer";
 import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
+import { TemplateStorage, SavedTemplate } from "./utils/templateStorage";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
@@ -34,10 +35,12 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 
 	// Handle template selection from post.challengeTemplates
 	useEffect(() => {
+		// Only run if container is ready and no template is currently selected
 		if (
 			post.challengeTemplates &&
 			post.challengeTemplates.length > 0 &&
-			isContainerReady
+			isContainerReady &&
+			!selectedTemplate // Prevent re-running when template is already selected
 		) {
 			// Find template that matches TemplateIdFromUrl
 			let templateToLoad = post.challengeTemplates.find(
@@ -50,15 +53,39 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 				templateToLoad = post.challengeTemplates[0];
 			}
 
-			// Load the question template (or answer template if needed)
+			// Check if saved template exists first
 			if (templateToLoad.questionTemplate) {
-				selectTemplate(templateToLoad.questionTemplate);
+				const originalTemplate = templateToLoad.questionTemplate;
+				const templateId = originalTemplate.id;
+
+				// Try to load saved template first
+				const savedTemplate = TemplateStorage.loadTemplate(post.id, templateId);
+
+				if (savedTemplate) {
+					// Properly merge saved files into src directory
+					const template = {
+						...originalTemplate, // Keep all original properties
+						files: {
+							...originalTemplate.files, // Keep root files (package.json, etc.)
+							src: {
+								directory: savedTemplate.srcFiles, // Replace src directory with saved files
+							},
+						},
+					};
+
+					selectTemplate(template);
+				} else {
+					// Load original template
+					selectTemplate(originalTemplate);
+				}
 			}
 		}
 	}, [
 		post.challengeTemplates,
 		TemplateIdFromUrl,
 		isContainerReady,
+		selectedTemplate,
+		post.id,
 		selectTemplate,
 	]);
 
