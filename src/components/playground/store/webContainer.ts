@@ -269,7 +269,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 				const process = await get().runCommand(command, args);
 				if (process) {
 					set({ serverProcess: process });
-					toast.success("Server restarted successfully!");
 				}
 			}
 		} catch (error) {
@@ -494,17 +493,29 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 	},
 
 	handleFileSelect: async (path: string) => {
-		const { webContainer, openFiles, loadFileFromLocalStorage } = get();
+		const {
+			webContainer,
+			openFiles,
+			loadFileFromLocalStorage,
+			restartServer,
+			isLoading,
+		} = get();
 		if (!webContainer) return;
 
 		try {
 			// Check if there's saved content in localStorage
 			const savedContent = loadFileFromLocalStorage(path);
 			let fileContent: string;
+			let shouldRestartServer = false;
 
 			if (savedContent) {
 				// Use saved content from localStorage
 				fileContent = savedContent;
+				// Write to webContainer immediately
+				await webContainer.fs.writeFile(path, fileContent);
+				//if server is loading, restart server with file from localStorage on initial load
+				//this is to ensure the file is written to the container before the server is restarted
+				if (isLoading) shouldRestartServer = true;
 			} else {
 				// Load from webContainer file system
 				const content = await webContainer.fs.readFile(path);
@@ -535,6 +546,11 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 				}));
 			} else {
 				set({ activeFile: path });
+			}
+
+			// Restart server if we loaded localStorage content
+			if (shouldRestartServer) {
+				restartServer();
 			}
 		} catch (error) {
 			console.error("Failed to open file:", error);
