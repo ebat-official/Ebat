@@ -10,6 +10,16 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { Trash2, RefreshCw, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
@@ -46,6 +56,10 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 	const [sortField, setSortField] =
 		useState<SubmissionSortField>("submittedAt");
 	const [sortOrder, setSortOrder] = useState<SubmissionSortOrder>("desc");
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+	const [submissionToDelete, setSubmissionToDelete] = useState<string | null>(
+		null,
+	);
 	const queryClient = useQueryClient();
 
 	const handleSort = (field: SubmissionSortField) => {
@@ -57,22 +71,30 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 		}
 	};
 
-	const handleDelete = async (submissionId: string) => {
-		if (!confirm("Are you sure you want to delete this submission?")) {
-			return;
-		}
+	const openDeleteDialog = (submissionId: string) => {
+		setSubmissionToDelete(submissionId);
+		setIsDeleteDialogOpen(true);
+	};
+
+	const handleDelete = async () => {
+		if (!submissionToDelete) return;
 
 		try {
-			const result = await deleteSubmissionAction(submissionId);
+			const result = await deleteSubmissionAction(submissionToDelete);
 			if (result.status === "success") {
 				toast.success("Submission deleted successfully");
 				// Invalidate and refetch submissions
 				queryClient.invalidateQueries({ queryKey: ["submissions", postId] });
+				// Close dialog only on success
+				setIsDeleteDialogOpen(false);
+				setSubmissionToDelete(null);
 			} else {
 				toast.error(result.data?.message || "Failed to delete submission");
+				// Keep dialog open on error so user can try again or cancel
 			}
 		} catch (error) {
 			toast.error("An error occurred while deleting the submission");
+			// Keep dialog open on error so user can try again or cancel
 		}
 	};
 
@@ -256,7 +278,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 										<Button
 											variant="ghost"
 											size="sm"
-											onClick={() => handleDelete(submission.id)}
+											onClick={() => openDeleteDialog(submission.id)}
 											disabled={isDeletingSubmission}
 											className="text-destructive hover:text-destructive"
 										>
@@ -269,6 +291,33 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 					</TableBody>
 				</Table>
 			</div>
+
+			<AlertDialog
+				open={isDeleteDialogOpen}
+				onOpenChange={setIsDeleteDialogOpen}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action cannot be undone. This will permanently delete your
+							submission and remove it from our servers.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleDelete}
+							disabled={isDeletingSubmission}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+						>
+							{isDeletingSubmission ? "Deleting..." : "Delete"}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 };

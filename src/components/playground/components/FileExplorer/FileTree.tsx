@@ -3,6 +3,16 @@
 import React, { useMemo, useState } from "react";
 import { File, Folder, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { PendingFileItem } from "./PendingFileItem";
 import { FileTreeItemIcon } from "./FileTreeItemIcon";
 import { FileTreeItemActions } from "./FileTreeItemActions";
@@ -37,6 +47,7 @@ const FileTreeItem = React.memo(function FileTreeItem({
 	const isActive = activeFile === path;
 
 	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { pendingItems, createPendingItem, removePendingItem } =
 		usePendingItems(onToggleExpanded, isExpanded);
 
@@ -58,10 +69,13 @@ const FileTreeItem = React.memo(function FileTreeItem({
 		}
 	};
 
+	const openDeleteDialog = () => {
+		setIsDeleteDialogOpen(true);
+	};
+
 	const handleDelete = () => {
-		if (confirm(`Are you sure you want to delete ${name}?`)) {
-			onFileDelete(path);
-		}
+		onFileDelete(path);
+		setIsDeleteDialogOpen(false);
 	};
 
 	const handleRename = () => {
@@ -106,7 +120,15 @@ const FileTreeItem = React.memo(function FileTreeItem({
 					)}
 					style={{ paddingLeft: `${12 + level * 20}px` }}
 					onClick={handleClick}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							e.preventDefault();
+							handleClick();
+						}
+					}}
 					onContextMenu={handleRightClick}
+					role="button"
+					tabIndex={0}
 				>
 					{isDirectory && (
 						<Button
@@ -140,7 +162,7 @@ const FileTreeItem = React.memo(function FileTreeItem({
 						onCreateFolder={() =>
 							createPendingItem(DIRECTORY, isDirectory ? path : undefined)
 						}
-						onDelete={handleDelete}
+						onDelete={openDeleteDialog}
 						onRename={handleRename}
 						dropdownOpen={dropdownOpen}
 						onDropdownOpenChange={setDropdownOpen}
@@ -162,27 +184,52 @@ const FileTreeItem = React.memo(function FileTreeItem({
 						/>
 					))}
 
-					{children &&
-						children.map((child) => (
-							<FileTreeItem
-								key={child.path}
-								element={child}
-								level={level + 1}
-								activeFile={activeFile}
-								onFileSelect={onFileSelect}
-								onFileCreate={onFileCreate}
-								onFileDelete={onFileDelete}
-								onFileRename={onFileRename}
-								searchQuery={searchQuery}
-								isExpanded={expandedFolders.has(child.path)}
-								onToggleExpanded={onToggleExpanded}
-								expandedFolders={expandedFolders}
-								renamingPath={renamingPath}
-								setRenamingPath={setRenamingPath}
-							/>
-						))}
+					{children?.map((child) => (
+						<FileTreeItem
+							key={child.path}
+							element={child}
+							level={level + 1}
+							activeFile={activeFile}
+							onFileSelect={onFileSelect}
+							onFileCreate={onFileCreate}
+							onFileDelete={onFileDelete}
+							onFileRename={onFileRename}
+							searchQuery={searchQuery}
+							isExpanded={expandedFolders.has(child.path)}
+							onToggleExpanded={onToggleExpanded}
+							expandedFolders={expandedFolders}
+							renamingPath={renamingPath}
+							setRenamingPath={setRenamingPath}
+						/>
+					))}
 				</div>
 			)}
+
+			<AlertDialog
+				open={isDeleteDialogOpen}
+				onOpenChange={setIsDeleteDialogOpen}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action cannot be undone. This will permanently delete "{name}
+							"{isDirectory ? " and all its contents" : ""} from your project.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleDelete}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 });
