@@ -116,7 +116,7 @@ const CompaniesAccordion: FC<{ companies: string[] }> = ({ companies }) => {
 								<Badge
 									variant="secondary"
 									key={index}
-									className="text-sm flex items-center gap-2"
+									className="text-sm flex items-center gap-2 capitalize"
 								>
 									{matchedCompany ? <matchedCompany.icon /> : defaultLogo}
 									{companyName}
