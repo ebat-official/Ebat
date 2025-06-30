@@ -99,18 +99,18 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 		<div>
 			{/* <Header /> */}
 			<ResizablePanelGroup
-				className="max-w-screen p-2 !flex-col md:!flex-row"
+				className="max-w-screen p-2 !flex-col md:!flex-row "
 				direction="horizontal"
 			>
 				<ResizablePanel
-					defaultSize={50}
+					defaultSize={40}
 					className="!basis-auto md:!basis-0 md:h-[calc(100vh-80px)]"
 				>
 					<ChallengeQuestionView post={post} />
 				</ResizablePanel>
 				<ResizableHandle withHandle className="hidden md:flex bg-transparent" />
-				<ResizablePanel defaultSize={50} className="!basis-auto md:!basis-0">
-					<Card className="h-full w-full py-0">
+				<ResizablePanel defaultSize={60} className="!basis-auto md:!basis-0 ">
+					<Card className="h-full w-full py-0 bg-gray-100 dark:bg-[#181825]">
 						<ResizablePanelGroup direction="vertical" className="!flex-col">
 							<ResizablePanel
 								className="flex-1 !basis-auto md:!basis-0"

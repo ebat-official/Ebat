@@ -276,9 +276,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 					<div className="flex items-center justify-center h-32 text-muted-foreground">
 						<div className="text-center">
 							<p className="text-lg font-medium">No submissions yet</p>
-							<p className="text-sm mt-2">
-								Submit your solution and your submissions will appear here
-							</p>
+							<p className="text-sm mt-2">Your submissions will appear here</p>
 						</div>
 					</div>
 				</div>
