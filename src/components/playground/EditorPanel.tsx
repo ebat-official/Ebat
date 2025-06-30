@@ -9,14 +9,12 @@ import { Editor } from "@monaco-editor/react";
 import { RotateCcwIcon, TypeIcon } from "lucide-react";
 import useMounted from "@/hooks/useMounted";
 import { Card, CardContent } from "@/components/ui/card";
-import { useSidebar } from "@/context/SidebarContext";
 import { useTheme } from "next-themes";
 import LanguageSelector from "./LanguageSelector";
 import { Button } from "@/components/ui/button";
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 
 function EditorPanel() {
-	const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 	const {
 		language,
 		theme,
@@ -26,9 +24,7 @@ function EditorPanel() {
 		setEditor,
 		setTheme,
 	} = useCodeEditorStore();
-	const { setMobileNav } = useSidebar();
 	const { resolvedTheme } = useTheme();
-	setMobileNav(true);
 
 	useEffect(() => {
 		setTheme(
@@ -37,12 +33,6 @@ function EditorPanel() {
 				: EditorThemeId.VSLight,
 		);
 	}, [resolvedTheme, setTheme]);
-
-	useEffect(() => {
-		return () => {
-			setMobileNav(false);
-		};
-	}, [setMobileNav]);
 
 	const mounted = useMounted();
 
