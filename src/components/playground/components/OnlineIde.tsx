@@ -5,8 +5,6 @@ import { Header } from "./layout/Headers";
 import { FileExplorer } from "./FileExplorer/FileExplorer";
 import { EditorPanel } from "./ide/EditorPanel";
 import { useWebContainerStore } from "../store/webContainer";
-import { useSidebar } from "@/context/SidebarContext";
-
 export function OnlineIDE() {
 	const [explorerCollapsed, setExplorerCollapsed] = useState(true);
 	const {
@@ -18,13 +16,6 @@ export function OnlineIDE() {
 		getFileTree,
 		setFiles,
 	} = useWebContainerStore();
-	const { setMobileNav } = useSidebar();
-	useEffect(() => {
-		setMobileNav(true);
-		return () => {
-			setMobileNav(false);
-		};
-	}, [setMobileNav]);
 
 	// Initialize WebContainer on mount
 	useEffect(() => {
