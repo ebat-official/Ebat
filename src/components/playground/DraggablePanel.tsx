@@ -122,7 +122,10 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 													withHandle
 													className="hidden md:flex bg-transparent"
 												/>
-												<ResizablePanel className="!basis-auto md:!basis-0">
+												<ResizablePanel
+													className="!basis-auto md:!basis-0"
+													defaultSize={40}
+												>
 													<PreviewPanel selectedTemplate={selectedTemplate} />
 												</ResizablePanel>
 											</>
