@@ -66,8 +66,8 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 	}
 
 	return (
-		<div className="space-y-6">
-			<div>
+		<div className="flex flex-col gap-6">
+			<div className="flex flex-col gap-1">
 				<h4 className="text-lg font-medium">Change Password</h4>
 				<p className="text-sm text-muted-foreground">
 					Enter your current password and choose a new secure password.
@@ -75,7 +75,7 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 			</div>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+				<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
 					<FormField
 						control={form.control}
 						name="currentPassword"
@@ -83,7 +83,7 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 							<FormItem>
 								<FormLabel>Current Password</FormLabel>
 								<FormControl>
-									<div className="relative">
+									<div className="relative flex">
 										<Input
 											type={showCurrentPassword ? "text" : "password"}
 											placeholder="Enter your current password"
@@ -118,7 +118,7 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 							<FormItem>
 								<FormLabel>New Password</FormLabel>
 								<FormControl>
-									<div className="relative">
+									<div className="relative flex">
 										<Input
 											type={showNewPassword ? "text" : "password"}
 											placeholder="Enter your new password"
@@ -156,7 +156,7 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 							<FormItem>
 								<FormLabel>Confirm New Password</FormLabel>
 								<FormControl>
-									<div className="relative">
+									<div className="relative flex">
 										<Input
 											type={showConfirmPassword ? "text" : "password"}
 											placeholder="Confirm your new password"
@@ -184,7 +184,7 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 						)}
 					/>
 
-					<div className="flex justify-end space-x-2 pt-4">
+					<div className="flex justify-end gap-2 pt-4">
 						<Button
 							type="button"
 							variant="outline"
