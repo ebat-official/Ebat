@@ -19,23 +19,26 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const passwordChangeSchema = z.object({
-	currentPassword: z.string().min(1, {
-		message: "Current password is required.",
-	}),
-	newPassword: z
-		.string()
-		.min(8, {
-			message: "Password must be at least 8 characters.",
-		})
-		.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-			message: "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+const passwordChangeSchema = z
+	.object({
+		currentPassword: z.string().min(1, {
+			message: "Current password is required.",
 		}),
-	confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-	message: "Passwords don't match",
-	path: ["confirmPassword"],
-});
+		newPassword: z
+			.string()
+			.min(8, {
+				message: "Password must be at least 8 characters.",
+			})
+			.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+				message:
+					"Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+			}),
+		confirmPassword: z.string(),
+	})
+	.refine((data) => data.newPassword === data.confirmPassword, {
+		message: "Passwords don't match",
+		path: ["confirmPassword"],
+	});
 
 type PasswordChangeValues = z.infer<typeof passwordChangeSchema>;
 
@@ -44,7 +47,10 @@ interface PasswordChangeFormProps {
 	onCancel?: () => void;
 }
 
-export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
+export default function PasswordChangeForm({
+	onSuccess,
+	onCancel,
+}: PasswordChangeFormProps) {
 	const [showCurrentPassword, setShowCurrentPassword] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -60,9 +66,9 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 	});
 
 	async function onSubmit(data: PasswordChangeValues) {
-        console.log(data,"data")
-		
-		console.log("hiiii")
+		console.log(data, "data");
+
+		console.log("hiiii");
 	}
 
 	return (
@@ -75,7 +81,10 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 			</div>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="flex flex-col gap-4"
+				>
 					<FormField
 						control={form.control}
 						name="currentPassword"
@@ -95,7 +104,9 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 											variant="ghost"
 											size="sm"
 											className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-											onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+											onClick={() =>
+												setShowCurrentPassword(!showCurrentPassword)
+											}
 											disabled={isLoading}
 										>
 											{showCurrentPassword ? (
@@ -142,7 +153,8 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 									</div>
 								</FormControl>
 								<FormDescription>
-									Password must be at least 8 characters and contain uppercase, lowercase, and numbers.
+									Password must be at least 8 characters and contain uppercase,
+									lowercase, and numbers.
 								</FormDescription>
 								<FormMessage />
 							</FormItem>
@@ -168,7 +180,9 @@ export default function PasswordChangeForm({ onSuccess, onCancel }: PasswordChan
 											variant="ghost"
 											size="sm"
 											className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-											onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+											onClick={() =>
+												setShowConfirmPassword(!showConfirmPassword)
+											}
 											disabled={isLoading}
 										>
 											{showConfirmPassword ? (

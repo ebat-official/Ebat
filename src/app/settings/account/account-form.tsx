@@ -75,7 +75,7 @@ const defaultValues: Partial<AccountFormValues> = {
 };
 
 export function AccountForm() {
-	const [showPasswordForm, setShowPasswordForm] = useState(false)
+	const [showPasswordForm, setShowPasswordForm] = useState(false);
 	const form = useForm<AccountFormValues>({
 		resolver: zodResolver(accountFormSchema),
 		defaultValues,
@@ -113,13 +113,22 @@ export function AccountForm() {
 					)}
 				/>
 				<div>
-					{!showPasswordForm?(<Button type="button" variant="outline" onClick={()=>setShowPasswordForm(true)} >Change Password</Button>):( <div className="border rounded-lg p-4 bg-muted/50">
-      <PasswordChangeForm
-        onSuccess={() => setShowPasswordForm(false)}
-        onCancel={() => setShowPasswordForm(false)}
-      />
-    </div>)}
-					
+					{!showPasswordForm ? (
+						<Button
+							type="button"
+							variant="outline"
+							onClick={() => setShowPasswordForm(true)}
+						>
+							Change Password
+						</Button>
+					) : (
+						<div className="border rounded-lg p-4 bg-muted/50">
+							<PasswordChangeForm
+								onSuccess={() => setShowPasswordForm(false)}
+								onCancel={() => setShowPasswordForm(false)}
+							/>
+						</div>
+					)}
 				</div>
 
 				<FormField
