@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { PostWithExtraDetails, ChallengeTemplate } from "@/utils/types";
 import {
 	ResizableHandle,
@@ -13,7 +13,8 @@ import { PreviewPanel } from "./components/preview/PreviewPanel";
 import { useWebContainerStore } from "./store/webContainer";
 import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
-import { TemplateStorage, SavedTemplate } from "./utils/templateStorage";
+import { TemplateStorage } from "./utils/templateStorage";
+import { ChallengeStartModal } from "./components/ChallengeStartModal";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
@@ -25,8 +26,10 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
 	)?.toUpperCase();
 
-	const { selectedTemplate, isContainerReady, selectTemplate, setPost } =
-		useWebContainerStore();
+	const { selectedTemplate, selectTemplate, setPost } = useWebContainerStore();
+
+	// Simple state to show/hide the coding interface
+	const [showCodingInterface, setShowCodingInterface] = useState(false);
 
 	// Set post in store when component mounts
 	useEffect(() => {
@@ -36,12 +39,7 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 	// Handle template selection from post.challengeTemplates
 	useEffect(() => {
 		// Only run if container is ready and no template is currently selected
-		if (
-			post.challengeTemplates &&
-			post.challengeTemplates.length > 0 &&
-			isContainerReady &&
-			!selectedTemplate // Prevent re-running when template is already selected
-		) {
+		if (post.challengeTemplates && post.challengeTemplates.length > 0) {
 			// Find template that matches TemplateIdFromUrl
 			let templateToLoad = post.challengeTemplates.find(
 				(template: ChallengeTemplate) =>
@@ -80,14 +78,7 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 				}
 			}
 		}
-	}, [
-		post.challengeTemplates,
-		TemplateIdFromUrl,
-		isContainerReady,
-		selectedTemplate,
-		post.id,
-		selectTemplate,
-	]);
+	}, [post.challengeTemplates, TemplateIdFromUrl, post.id, selectTemplate]);
 
 	return (
 		<div>
@@ -103,7 +94,7 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 					<ChallengeQuestionView post={post} />
 				</ResizablePanel>
 				<ResizableHandle withHandle className="hidden md:flex bg-transparent" />
-				<ResizablePanel className="!basis-auto md:!basis-0">
+				<ResizablePanel defaultSize={60} className="!basis-auto md:!basis-0">
 					<Card className="h-full w-full py-0">
 						<ResizablePanelGroup direction="vertical" className="!flex-col">
 							<ResizablePanel className="flex-1 !basis-auto md:!basis-0">
