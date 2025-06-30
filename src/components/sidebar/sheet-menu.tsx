@@ -19,12 +19,12 @@ import { useMobileSidebar } from "@/utils/routeUtils";
 
 export function SheetMenu() {
 	const { mobileNav } = useSidebar();
-	const showMobileNav = useMobileSidebar();
+	const shouldHideSidebar = useMobileSidebar();
 
 	return (
 		<Sheet>
 			<SheetTrigger
-				className={cn(mobileNav || showMobileNav ? "" : "lg:hidden")}
+				className={cn(mobileNav || shouldHideSidebar ? "" : "lg:hidden")}
 				asChild
 			>
 				<Button className="h-8" variant="outline" size="icon">
