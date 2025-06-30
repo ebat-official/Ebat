@@ -1,61 +1,44 @@
 import { usePathname } from "next/navigation";
 
 /**
- * Routes that should hide the sidebar on mobile/specific views
+ * Configuration for sidebar hiding logic
  */
-export const mobileSidebarPaths = ["challenges"];
-
-/**
- * Utility to determine if the sidebar should be hidden based on current route
- * Uses mobileSidebarPaths internally
- * @param includeParent - If true, also hide for parent routes like /challenges (default: false)
- * Returns true for routes that match the patterns
- */
-export const useMobileSidebar = (includeParent = false): boolean => {
-	const pathname = usePathname();
-
-	if (!pathname) return false;
-
-	// Check each route in mobileSidebarPaths
-	for (const route of mobileSidebarPaths) {
-		if (includeParent) {
-			// Match both /route and /route/something
-			// Pattern: /route or /route/ or /route/anything
-			const parentPattern = new RegExp(`\\/${route}(?:\\/|$)`);
-			if (parentPattern.test(pathname)) return true;
-		} else {
-			// Only match /route/something (with content after route)
-			// Pattern: /route/non-empty-content
-			const childPattern = new RegExp(`\\/${route}\\/[^/]+`);
-			if (childPattern.test(pathname)) return true;
-		}
-	}
-
-	return false;
+export const sidebarConfig = {
+	parentRoute: "challenges", // Parent route to check (note: plural)
+	excludePaths: ["/create/", "/edit/"], // Sub-paths where sidebar should be visible (with trailing slash!)
 };
 
 /**
- * Alternative function if you want to pass pathname directly
- * Uses mobileSidebarPaths internally
+ * Utility to determine if the sidebar should be hidden based on current route
+ * Returns true if sidebar should be HIDDEN, false if it should be VISIBLE
+ *
+ * Logic: Hide sidebar ONLY for challenge sub-routes that are NOT in exclude list
  */
-export const shouldHideSidebar = (
-	pathname: string,
-	includeParent = false,
-): boolean => {
-	if (!pathname) return false;
+export const useMobileSidebar = (): boolean => {
+	const pathname = usePathname();
 
-	// Check each route in mobileSidebarPaths
-	for (const route of mobileSidebarPaths) {
-		if (includeParent) {
-			// Match both /route and /route/something
-			const parentPattern = new RegExp(`\\/${route}(?:\\/|$)`);
-			if (parentPattern.test(pathname)) return true;
-		} else {
-			// Only match /route/something (with content after route)
-			const childPattern = new RegExp(`\\/${route}\\/[^/]+`);
-			if (childPattern.test(pathname)) return true;
-		}
+	if (!pathname) return false; // Show sidebar if no pathname
+
+	const { parentRoute, excludePaths } = sidebarConfig;
+
+	// Build single regex pattern to match all cases where sidebar should be VISIBLE
+	const excludePattern = excludePaths
+		.map((path) => `${path.replace(/^\//, "").replace(/\/$/, "")}(?:/.*)?`)
+		.join("|");
+
+	// Single regex that matches:
+	// 1. Exact parent: .../challenges or .../challenges/
+	// 2. Excluded paths: .../challenges/create/anything or .../challenges/edit/anything
+	const showSidebarRegex = new RegExp(
+		`\\/${parentRoute}(?:\\/?$|\\/(${excludePattern})$)`,
+	);
+
+	// If matches show pattern, show sidebar
+	if (showSidebarRegex.test(pathname)) {
+		return false; // Show sidebar
 	}
 
-	return false;
+	// If contains parent route but doesn't match show pattern, hide sidebar
+	const hasParentRoute = new RegExp(`\\/${parentRoute}\\/`).test(pathname);
+	return hasParentRoute; // Hide if under parent, show otherwise
 };
