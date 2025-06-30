@@ -131,14 +131,9 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 					selectedTemplate,
 				);
 
-				const templateWithDefaultFile = createTemplateWithDefaultFile(
-					cleanTemplate,
-					selectedTemplate.defaultFile,
-				);
+				setAnswerTemplate(cleanTemplate);
 
-				// Set both templates with the same defaultFile
-				setAnswerTemplate(templateWithDefaultFile);
-				setQuestionTemplate(templateWithDefaultFile);
+				setQuestionTemplate(cleanTemplate);
 			}
 			setCurrentStep("question");
 		} catch (error) {
@@ -149,7 +144,6 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 	}, [
 		selectedTemplate,
 		getFileTree,
-		createTemplateWithDefaultFile,
 		setAnswerTemplate,
 		setQuestionTemplate,
 		setCurrentStep,
@@ -193,8 +187,11 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 				selectedTemplate,
 			);
 
+			// Get the default file from the current questionTemplate state (which has the updated default file)
 			const defaultFile =
-				cleanQuestionTemplate.defaultFile || selectedTemplate.defaultFile;
+				questionTemplate?.defaultFile ||
+				cleanQuestionTemplate.defaultFile ||
+				selectedTemplate.defaultFile;
 
 			// Ensure both templates have the same defaultFile
 			const finalAnswerTemplate = createTemplateWithDefaultFile(
@@ -341,3 +338,5 @@ const TemplateCreationInterface: FC<TemplateCreationInterfaceProps> = ({
 };
 
 export default TemplateCreationInterface;
+
+// default path not saving

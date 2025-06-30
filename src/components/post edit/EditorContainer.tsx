@@ -212,6 +212,7 @@ function EditorContainer({
 	const getTitlePlaceHolder = () => {
 		switch (postType) {
 			case PostType.QUESTION:
+			case PostType.CHALLENGE:
 				return "Question";
 			case PostType.BLOGS:
 			case PostType.SYSTEMDESIGN:
@@ -224,6 +225,7 @@ function EditorContainer({
 	const getContentPlaceHolder = () => {
 		switch (postType) {
 			case PostType.QUESTION:
+			case PostType.CHALLENGE:
 				return "Add more info to clarify (optional)...";
 			case PostType.BLOGS:
 				return "Type your blog here...";
