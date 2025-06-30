@@ -200,7 +200,7 @@ export function ProfileForm() {
 													onClick={() => field.onChange(company.label)}
 												>
 													{company.icon}
-													<span>{company.label}</span>
+													<span className="capitalize">{company.label}</span>
 												</button>
 											))}
 										</div>
