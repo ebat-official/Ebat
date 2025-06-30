@@ -14,7 +14,6 @@ import { useWebContainerStore } from "./store/webContainer";
 import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { TemplateStorage } from "./utils/templateStorage";
-import { ChallengeStartModal } from "./components/ChallengeStartModal";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
@@ -114,21 +113,19 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 										defaultSize={60}
 										className="!basis-auto md:!basis-0 rounded-t-xl"
 									>
-										{!showCodingInterface ? (
-											<ChallengeStartModal onStart={handleStartChallenge} />
-										) : (
-											<OnlineIDE />
-										)}
+										<OnlineIDE />
 									</ResizablePanel>
 									{selectedTemplate &&
-										selectedTemplate.hasPreview !== false &&
-										showCodingInterface && (
+										selectedTemplate.hasPreview !== false && (
 											<>
 												<ResizableHandle
 													withHandle
 													className="hidden md:flex bg-transparent"
 												/>
-												<ResizablePanel className="!basis-auto md:!basis-0">
+												<ResizablePanel
+													className="!basis-auto md:!basis-0"
+													defaultSize={40}
+												>
 													<PreviewPanel selectedTemplate={selectedTemplate} />
 												</ResizablePanel>
 											</>
