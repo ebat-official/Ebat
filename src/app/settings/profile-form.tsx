@@ -28,7 +28,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import useCompanies from "@/hooks/useCompanyList";
 import { useRef, useState } from "react";
-import { FaGithub, FaLink, FaLinkedinIn, FaCamera, FaTrash, FaPlus } from "react-icons/fa";
+import {
+	FaGithub,
+	FaLink,
+	FaLinkedinIn,
+	FaCamera,
+	FaTrash,
+	FaPlus,
+} from "react-icons/fa";
 
 const profileFormSchema = z.object({
 	name: z
@@ -260,13 +267,15 @@ export function ProfileForm() {
 
 				<div>
 					{fields.map((item, index) => {
-						const type = item.type || (index === 0 ? "linkedin" : index === 1 ? "github" : "other");
+						const type =
+							item.type ||
+							(index === 0 ? "linkedin" : index === 1 ? "github" : "other");
 						const Icon =
 							type === "linkedin"
 								? FaLinkedinIn
 								: type === "github"
-								? FaGithub
-								: FaLink;
+									? FaGithub
+									: FaLink;
 
 						return (
 							<FormField
