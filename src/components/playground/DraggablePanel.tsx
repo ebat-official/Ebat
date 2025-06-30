@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { TemplateStorage } from "./utils/templateStorage";
 import { ChallengeStartModal } from "./components/ChallengeStartModal";
+import { useSidebar } from "@/context/SidebarContext";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
@@ -27,6 +28,7 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 	)?.toUpperCase();
 
 	const { selectedTemplate, selectTemplate, setPost } = useWebContainerStore();
+	const { setMobileNav } = useSidebar();
 
 	// Simple state to show/hide the coding interface
 	const [showCodingInterface, setShowCodingInterface] = useState(false);
@@ -35,6 +37,14 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 	useEffect(() => {
 		setPost(post);
 	}, [post, setPost]);
+
+	// Set mobile navigation state
+	useEffect(() => {
+		setMobileNav(true);
+		return () => {
+			setMobileNav(false);
+		};
+	}, [setMobileNav]);
 
 	// Handle template selection from post.challengeTemplates
 	useEffect(() => {
@@ -80,6 +90,11 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 		}
 	}, [post.challengeTemplates, TemplateIdFromUrl, post.id, selectTemplate]);
 
+	// Handle start challenge click
+	const handleStartChallenge = () => {
+		setShowCodingInterface(true);
+	};
+
 	return (
 		<div>
 			{/* <Header /> */}
@@ -88,16 +103,19 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 				direction="horizontal"
 			>
 				<ResizablePanel
-					defaultSize={40}
+					defaultSize={50}
 					className="!basis-auto md:!basis-0 md:h-[calc(100vh-80px)]"
 				>
 					<ChallengeQuestionView post={post} />
 				</ResizablePanel>
 				<ResizableHandle withHandle className="hidden md:flex bg-transparent" />
-				<ResizablePanel defaultSize={60} className="!basis-auto md:!basis-0">
+				<ResizablePanel defaultSize={50} className="!basis-auto md:!basis-0">
 					<Card className="h-full w-full py-0">
 						<ResizablePanelGroup direction="vertical" className="!flex-col">
-							<ResizablePanel className="flex-1 !basis-auto md:!basis-0">
+							<ResizablePanel
+								className="flex-1 !basis-auto md:!basis-0"
+								defaultSize={70}
+							>
 								<ResizablePanelGroup
 									direction="horizontal"
 									className="!flex-col md:!flex-row"
@@ -106,10 +124,15 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 										defaultSize={60}
 										className="!basis-auto md:!basis-0 rounded-t-xl"
 									>
-										<OnlineIDE />
+										{!showCodingInterface ? (
+											<ChallengeStartModal onStart={handleStartChallenge} />
+										) : (
+											<OnlineIDE />
+										)}
 									</ResizablePanel>
 									{selectedTemplate &&
-										selectedTemplate.hasPreview !== false && (
+										selectedTemplate.hasPreview !== false &&
+										showCodingInterface && (
 											<>
 												<ResizableHandle
 													withHandle
