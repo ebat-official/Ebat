@@ -15,7 +15,6 @@ import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { TemplateStorage } from "./utils/templateStorage";
 import { ChallengeStartModal } from "./components/ChallengeStartModal";
-import { useSidebar } from "@/context/SidebarContext";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
@@ -28,7 +27,6 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 	)?.toUpperCase();
 
 	const { selectedTemplate, selectTemplate, setPost } = useWebContainerStore();
-	const { setMobileNav } = useSidebar();
 
 	// Simple state to show/hide the coding interface
 	const [showCodingInterface, setShowCodingInterface] = useState(false);
@@ -37,14 +35,6 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 	useEffect(() => {
 		setPost(post);
 	}, [post, setPost]);
-
-	// Set mobile navigation state
-	useEffect(() => {
-		setMobileNav(true);
-		return () => {
-			setMobileNav(false);
-		};
-	}, [setMobileNav]);
 
 	// Handle template selection from post.challengeTemplates
 	useEffect(() => {
