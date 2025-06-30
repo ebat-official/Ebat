@@ -14,13 +14,19 @@ import { CategorySwitcher } from "./CategorySwitcher";
 import { Navigation } from "./Navigation";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import { useMobileSidebar } from "@/utils/routeUtils";
 
 export function SheetMenu() {
 	const { mobileNav } = useSidebar();
+	const showMobileNav = useMobileSidebar();
 
 	return (
 		<Sheet>
-			<SheetTrigger className={cn(mobileNav ? "" : "lg:hidden")} asChild>
+			<SheetTrigger
+				className={cn(mobileNav || showMobileNav ? "" : "lg:hidden")}
+				asChild
+			>
 				<Button className="h-8" variant="outline" size="icon">
 					<MenuIcon size={20} />
 				</Button>

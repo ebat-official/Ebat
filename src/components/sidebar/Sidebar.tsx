@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { PanelsTopLeft } from "lucide-react";
 import Link from "next/link";
 import { CategorySwitcher } from "./CategorySwitcher";
+import { useMobileSidebar } from "@/utils/routeUtils";
 
 import { FaReact } from "react-icons/fa";
 import { Navigation } from "./Navigation";
@@ -18,13 +19,19 @@ export function Sidebar() {
 	const { isOpen, toggleOpen, getOpenState, setIsHover, settings, mobileNav } =
 		sidebar;
 
+	// Hide sidebar for specific routes
+	const shouldHideForRoute = useMobileSidebar();
+
+	// Combine mobile nav and route-based hiding
+	const shouldHideSidebar = mobileNav || shouldHideForRoute;
+
 	return (
 		<aside
 			className={cn(
 				"font-inter  fixed lg:sticky top-0 left-0 z-20 h-screen  -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
 				!getOpenState() ? "w-[90px]" : "w-72",
 				settings.disabled && "hidden",
-				{ "!-translate-x-full !fixed": mobileNav },
+				{ "!-translate-x-full !fixed": shouldHideSidebar },
 			)}
 		>
 			<SidebarToggle
@@ -32,7 +39,7 @@ export function Sidebar() {
 				setIsOpen={toggleOpen}
 				className={cn(
 					"invisible lg:visible absolute top-[112px] -right-[16px] z-20",
-					{ "!invisible": mobileNav },
+					{ "!invisible": shouldHideSidebar },
 				)}
 			/>
 			<div
