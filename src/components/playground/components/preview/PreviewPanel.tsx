@@ -3,6 +3,7 @@ import { Code2 } from "lucide-react";
 import { PreviewControls } from "./PreviewControls";
 import type { Template } from "../../lib/types";
 import { useWebContainerStore } from "../../store/webContainer";
+import { PreviewStartButton } from "./PreviewStartButton";
 
 // Constants
 const TEMPLATE_ICONS = {
@@ -89,6 +90,7 @@ export function PreviewPanel({ selectedTemplate }: PreviewPanelProps) {
 	const { previewUrl, isContainerReady } = useWebContainerStore();
 	const [isLoading, setIsLoading] = useState(false);
 	const [key, setKey] = useState(0);
+	const [showPreview, setShowPreview] = useState(false);
 
 	const handleRefresh = useCallback(() => {
 		setIsLoading(true);
@@ -97,6 +99,10 @@ export function PreviewPanel({ selectedTemplate }: PreviewPanelProps) {
 
 	const handleLoad = useCallback(() => {
 		setIsLoading(false);
+	}, []);
+
+	const handleStartPreview = useCallback(() => {
+		setShowPreview(true);
 	}, []);
 
 	const iframeProps = useMemo(
@@ -111,6 +117,11 @@ export function PreviewPanel({ selectedTemplate }: PreviewPanelProps) {
 		}),
 		[key, previewUrl, handleLoad],
 	);
+
+	// Show the start button first if preview hasn't been started yet
+	if (!showPreview) {
+		return <PreviewStartButton onStart={handleStartPreview} />;
+	}
 
 	if (!isContainerReady) {
 		return (
