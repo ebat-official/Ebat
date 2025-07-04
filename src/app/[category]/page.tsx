@@ -1,11 +1,12 @@
 import { FeedProvider } from "@/components/feed/FeedContext";
-import { PostSortOrder } from "@/utils/types";
-import { SubCategory, PostCategory } from "@prisma/client";
+import { PostSearchResponse, PostSortOrder } from "@/utils/types";
+import { EndpointMap } from "@/utils/contants";
+import { PostCategory, SubCategory } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 import { Feed } from "@/components/feed/Feed";
-import type { Metadata } from "next";
 import { generateCategoryMetadata } from "@/utils/categoryMetadata";
+import { Metadata } from "next";
 
 type PageProps = Promise<{
 	category: string;
@@ -19,11 +20,10 @@ export async function generateMetadata({
 	params: PageProps;
 }): Promise<Metadata> {
 	const awaitedParams = await params;
-	const { category: categoryRoute, subCategory: subCategoryRoute } =
-		awaitedParams;
+	const { category: categoryRoute } = awaitedParams;
 
 	const category = categoryRoute?.toUpperCase();
-	const subCategory = subCategoryRoute?.toUpperCase() || SubCategory.BLOGS;
+	const subCategory = SubCategory.BLOGS;
 
 	// Validate parameters
 	if (
@@ -42,7 +42,7 @@ export async function generateMetadata({
 	);
 
 	// Generate canonical URL
-	const url = `${process.env.ENV_URL}/${categoryRoute.toLowerCase()}/${subCategoryRoute.toLowerCase()}`;
+	const url = `${process.env.ENV_URL}/${categoryRoute.toLowerCase()}}`;
 
 	return {
 		title: metadata.title,
@@ -73,17 +73,13 @@ export async function generateMetadata({
 // SSR: fetch data on every request
 export default async function Page({ params }: { params: PageProps }) {
 	const awaitedParams = await params;
-	awaitedParams.subCategory = awaitedParams.subCategory || SubCategory.BLOGS;
-
-	if (
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.BLOGS &&
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.SYSTEMDESIGN
-	) {
+	if (awaitedParams.category.toUpperCase() !== PostCategory.FRONTEND) {
 		return notFound();
 	}
+
 	const queryParams = {
 		category: awaitedParams.category,
-		subCategory: awaitedParams.subCategory,
+		subCategory: SubCategory.BLOGS,
 		page: 1,
 		pageSize: 10,
 		sortOrder: PostSortOrder.Latest,
