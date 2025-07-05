@@ -4,13 +4,16 @@ import DOMPurify from "isomorphic-dompurify";
 // src/components/shared/Lexical Editor/themes/theme.css
 import "../shared/Lexical Editor/themes/theme.css";
 import { cn } from "@/lib/utils";
+
 interface PostContentRenderProps {
-	content: ContentReturnType;
+	post?: string;
+	answer?: string;
 	className?: string;
 }
 
 export const PostContentRender: React.FC<PostContentRenderProps> = ({
-	content,
+	post,
+	answer,
 	className = "",
 }) => {
 	// Safely render HTML content by sanitizing it first
@@ -30,13 +33,9 @@ export const PostContentRender: React.FC<PostContentRenderProps> = ({
 
 	return (
 		<div className={cn("post-content-container", className)}>
-			{content.post && (
-				<div className="post-section ">{renderHtml(content.post)}</div>
-			)}
+			{post && <div className="post-section ">{renderHtml(post)}</div>}
 
-			{content.answer && (
-				<div className="answer-section">{renderHtml(content.answer)}</div>
-			)}
+			{answer && <div className="answer-section">{renderHtml(answer)}</div>}
 		</div>
 	);
 };

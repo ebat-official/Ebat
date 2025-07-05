@@ -21,6 +21,8 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 }) => {
 	const { data: session } = useSession();
 
+	const content = post.content as ContentReturnType;
+
 	return (
 		<Tabs defaultValue="description" className="h-full">
 			<Card className="h-full pt-0">
@@ -56,14 +58,14 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 								</div>
 							</div>
 							<Separator />
-							<PostContentRender content={post.content as ContentReturnType} />
+							<PostContentRender post={content.post} />
 							<Separator />
 							<PostDetailsAccordian post={post} />
 						</CardContent>
 					</TabsContent>
 
 					<TabsContent value="solution">
-						<PostContentRender content={post.content as ContentReturnType} />
+						<PostContentRender answer={content.answer} />
 					</TabsContent>
 
 					<TabsContent className="mt-8" value="discussion">
