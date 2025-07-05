@@ -97,7 +97,6 @@
 		"embla-carousel-react": "^8.5.2",
 		"fast-xml-parser": "5.2.5",
 		"framer-motion": "^12.5.0",
-		"headless": "link:@/editor/headless",
 		"input-otp": "^1.4.2",
 		"isomorphic-dompurify": "2.25.0",
 		"katex": "^0.16.21",

@@ -1,8 +1,6 @@
 import { serve } from "@upstash/workflow/nextjs";
 import { getAllApprovedPosts } from "@/utils/api utils/posts";
 import { generatePostPath } from "@/utils/generatePostPath";
-import { writeFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
 
 // Generate sitemap XML content
 function generateSitemapXML(
@@ -68,6 +66,7 @@ async function pingSearchEngines(baseUrl: string) {
 	return results;
 }
 
+// POST route to trigger sitemap generation and ping search engines
 export const { POST } = serve(async (context) => {
 	await context.run("sitemap-generation", async () => {
 		const baseUrl = process.env.ENV_URL || "https://ebat.dev";
@@ -75,25 +74,16 @@ export const { POST } = serve(async (context) => {
 		// 1. Get all approved posts
 		const posts = await getAllApprovedPosts();
 
-		// 2. Generate sitemap XML
+		// 2. Generate sitemap XML (for validation)
 		const sitemapXML = generateSitemapXML(posts, baseUrl);
 
-		// 3. Write to public directory
-		const publicDir = join(process.cwd(), "public");
-		const sitemapPath = join(publicDir, "sitemap.xml");
-
-		// Ensure public directory exists
-		await mkdir(publicDir, { recursive: true });
-
-		// Write sitemap file
-		await writeFile(sitemapPath, sitemapXML, "utf-8");
-
-		// 4. Ping search engines
+		// 3. Ping search engines
 		const pingResults = await pingSearchEngines(baseUrl);
 
 		return {
 			success: true,
 			postsCount: posts.length,
+			sitemapSize: sitemapXML.length,
 			pingResults,
 		};
 	});
