@@ -135,9 +135,9 @@ export function AccountForm() {
 								initial={{ opacity: 0, height: 0, y: -20 }}
 								animate={{ opacity: 1, height: "auto", y: 0 }}
 								exit={{ opacity: 0, height: 0, y: -20 }}
-								transition={{ 
+								transition={{
 									duration: 0.3,
-									ease: "easeInOut"
+									ease: "easeInOut",
 								}}
 								className="overflow-hidden"
 							>
