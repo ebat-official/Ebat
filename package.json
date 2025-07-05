@@ -10,7 +10,11 @@
 		"postinstall": "npx prisma generate",
 		"format": "biome format . --write",
 		"format:check": "biome format --check",
-		"prepare": "husky"
+		"prepare": "husky",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.2.7",
@@ -92,6 +96,7 @@
 		"clsx": "^2.1.1",
 		"cmdk": "1.1.1",
 		"date-fns": "^4.1.0",
+		"dotenv": "17.0.1",
 		"drizzle-orm": "0.44.2",
 		"drizzle-zod": "0.8.2",
 		"embla-carousel-react": "^8.5.2",

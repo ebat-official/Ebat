@@ -25,7 +25,7 @@ import { completionStatuses } from "./completionStatuses";
 import { challengeTemplates, challengeSubmissions } from "./challenges";
 import { accounts, verificationTokens, resetTokens } from "./auth";
 
-// Export all tables as a single object for easy access
+// Export all tables as a single object for drizzle
 export const schema = {
 	users,
 	userProfiles,
