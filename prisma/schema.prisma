@@ -127,10 +127,9 @@ model UserProfile {
   jobTitle         String?
   description      String?
   companyName      String?
-  phoneNumber      String?
   image            String?
   coverImage       String?
-  location         String?
+  country          String?
   subscriptionPlan SubscriptionPlan @default(BASIC)
   externalLinks    Json?
   user             User             @relation("UserToProfile", fields: [userId], references: [id], onDelete: Cascade)
@@ -357,7 +356,7 @@ model ChallengeTemplate {
   answerTemplate   Json // Answer template (FileSystemTree structure)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-  
+
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, framework]) // Ensure one template per framework per challenge
@@ -365,14 +364,14 @@ model ChallengeTemplate {
 }
 
 model ChallengeSubmission {
-  id             String           @id @default(uuid()) @db.Uuid
-  userId         String           @db.Uuid
+  id             String            @id @default(uuid()) @db.Uuid
+  userId         String            @db.Uuid
   postId         String // Reference to the challenge post
   framework      TemplateFramework
   answerTemplate Json // User's complete solution template (same structure as ChallengeTemplate)
-  runTime        Int              @default(0) // Runtime in milliseconds
-  status         SubmissionStatus @default(REJECTED) // Status of the submission
-  submittedAt    DateTime         @default(now())
+  runTime        Int               @default(0) // Runtime in milliseconds
+  status         SubmissionStatus  @default(REJECTED) // Status of the submission
+  submittedAt    DateTime          @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)

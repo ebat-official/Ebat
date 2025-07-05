@@ -277,6 +277,17 @@ export function ProfileForm() {
 									? FaGithub
 									: FaLink;
 
+						const getPlaceholder = (type: string) => {
+							switch (type) {
+								case "linkedin":
+									return "LinkedIn URL";
+								case "github":
+									return "GitHub URL";
+								default:
+									return "Add URL";
+							}
+						};
+
 						return (
 							<FormField
 								key={item.id}
@@ -291,7 +302,7 @@ export function ProfileForm() {
 												</span>
 												<Input
 													{...field}
-													placeholder="Add URL"
+													placeholder={getPlaceholder(type)}
 													className="pl-8"
 												/>
 											</div>
@@ -303,15 +314,17 @@ export function ProfileForm() {
 						);
 					})}
 
-					<Button
-						type="button"
-						variant="outline"
-						size="sm"
-						className="mt-2"
-						onClick={() => append({ value: "" })}
-					>
-						Add URL
-					</Button>
+					{fields.length < 5 && (
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							className="mt-2"
+							onClick={() => append({ value: "" })}
+						>
+							Add URL
+						</Button>
+					)}
 				</div>
 				<Button type="submit">Update profile</Button>
 			</form>
