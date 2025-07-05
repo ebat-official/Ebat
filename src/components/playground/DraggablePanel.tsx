@@ -14,6 +14,7 @@ import { useWebContainerStore } from "./store/webContainer";
 import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import { TemplateStorage } from "./utils/templateStorage";
+import { recordPostView } from "@/lib/viewTracker";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;
@@ -26,6 +27,8 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 	)?.toUpperCase();
 
 	const { selectedTemplate, selectTemplate, setPost } = useWebContainerStore();
+
+	recordPostView(post.id);
 
 	// Simple state to show/hide the coding interface
 	const [showCodingInterface, setShowCodingInterface] = useState(false);
@@ -78,11 +81,6 @@ const DraggablePanel: FC<DraggablePanelProps> = ({ post }) => {
 			}
 		}
 	}, [post.challengeTemplates, TemplateIdFromUrl, post.id, selectTemplate]);
-
-	// Handle start challenge click
-	const handleStartChallenge = () => {
-		setShowCodingInterface(true);
-	};
 
 	return (
 		<div>
