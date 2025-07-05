@@ -24,7 +24,6 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 
 	const content = post.content as ContentReturnType;
 	const challengeTemplates = post.challengeTemplates || [];
-	debugger;
 	return (
 		<Tabs defaultValue="description" className="h-full">
 			<Card className="h-full pt-0">
@@ -66,7 +65,7 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 						</CardContent>
 					</TabsContent>
 
-					<TabsContent value="solution">
+					<TabsContent value="solution" className="flex flex-col gap-8">
 						<PostContentRender answer={content.answer} />
 						{challengeTemplates.length > 0 && (
 							<CodeViewer challengeTemplates={challengeTemplates} />
