@@ -48,3 +48,6 @@ export const schema = {
 	verificationTokens,
 	resetTokens,
 };
+
+// Export zod schemas
+export * from "./zod-schemas";

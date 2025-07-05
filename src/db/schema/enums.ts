@@ -1,6 +1,7 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("UserRole", ["ADMIN", "USER"]);
+export type UserRole = "ADMIN" | "USER";
 export const subscriptionPlanEnum = pgEnum("SubscriptionPlan", [
 	"BASIC",
 	"PREMIUM",

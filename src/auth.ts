@@ -1,7 +1,9 @@
 import NextAuth, { type DefaultSession } from "next-auth";
-import { UserRole, UserProfile } from "@prisma/client";
-import { prismaCustomAdapter } from "@/prismaAdapter";
+import { drizzleCustomAdapter } from "@/drizzleAdapter";
 import authConfig from "@/utils/auth.config";
+import type { User } from "@/db/schema/zod-schemas";
+import type { UserProfile } from "@/db/schema/zod-schemas";
+import type { UserRole } from "@/db/schema/enums";
 
 declare module "next-auth" {
 	interface Session {
@@ -18,7 +20,7 @@ declare module "next-auth" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-	adapter: prismaCustomAdapter(),
+	adapter: drizzleCustomAdapter(),
 	session: { strategy: "jwt" },
 	...authConfig,
 });
