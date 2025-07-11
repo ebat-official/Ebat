@@ -9,7 +9,11 @@ import type * as schema from "@/db/schema";
 
 // Helper function to create challenge templates
 export const createChallengeTemplatesForPost = async (
-	tx: PgTransaction<NodePgQueryResultHKT, typeof schema, ExtractTablesWithRelations<typeof schema>>,
+	tx: PgTransaction<
+		NodePgQueryResultHKT,
+		typeof schema,
+		ExtractTablesWithRelations<typeof schema>
+	>,
 	postId: string,
 	questionTemplate: FileSystemTree,
 	answerTemplate: FileSystemTree,
@@ -24,8 +28,8 @@ export const createChallengeTemplatesForPost = async (
 			.where(
 				and(
 					eq(challengeTemplates.postId, postId),
-					eq(challengeTemplates.framework, framework as TemplateFrameworkType)
-				)
+					eq(challengeTemplates.framework, framework as TemplateFrameworkType),
+				),
 			)
 			.limit(1);
 
@@ -40,19 +44,20 @@ export const createChallengeTemplatesForPost = async (
 				.where(
 					and(
 						eq(challengeTemplates.postId, postId),
-						eq(challengeTemplates.framework, framework as TemplateFrameworkType)
-					)
+						eq(
+							challengeTemplates.framework,
+							framework as TemplateFrameworkType,
+						),
+					),
 				);
 		} else {
 			// Create new template
-			await tx
-				.insert(challengeTemplates)
-				.values({
-					postId,
-					framework: framework as TemplateFrameworkType,
-					questionTemplate: JSON.stringify(questionTemplate),
-					answerTemplate: JSON.stringify(answerTemplate),
-				});
+			await tx.insert(challengeTemplates).values({
+				postId,
+				framework: framework as TemplateFrameworkType,
+				questionTemplate: JSON.stringify(questionTemplate),
+				answerTemplate: JSON.stringify(answerTemplate),
+			});
 		}
 	}
 };

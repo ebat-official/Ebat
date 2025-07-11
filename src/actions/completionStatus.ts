@@ -24,11 +24,7 @@ export async function getCompletionStatusesForPosts(
 	return await db.query.completionStatuses.findMany({
 		where: and(
 			eq(completionStatuses.userId, user.id),
-			inArray(completionStatuses.postId, postIds)
+			inArray(completionStatuses.postId, postIds),
 		),
 	});
 }
-
-
-
-

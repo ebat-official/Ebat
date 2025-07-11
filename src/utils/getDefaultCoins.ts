@@ -2,7 +2,9 @@ import { PostValidator } from "@/lib/validators/post";
 import { Difficulty, PostType } from "@/db/schema/enums";
 import { z } from "zod";
 
-export const getDefaultCoins = (data: z.infer<typeof PostValidator>): number => {
+export const getDefaultCoins = (
+	data: z.infer<typeof PostValidator>,
+): number => {
 	const { type, difficulty } = data;
 	switch (type) {
 		case PostType.QUESTION:

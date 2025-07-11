@@ -52,7 +52,9 @@ export type InsertFollow = InferInsertModel<typeof follows>;
 export type InsertPost = InferInsertModel<typeof posts>;
 export type InsertPostViews = InferInsertModel<typeof postViews>;
 export type InsertPostEdit = InferInsertModel<typeof postEdits>;
-export type InsertPostCollaborators = InferInsertModel<typeof postCollaborators>;
+export type InsertPostCollaborators = InferInsertModel<
+	typeof postCollaborators
+>;
 export type InsertComment = InferInsertModel<typeof comments>;
 export type InsertCommentVote = InferInsertModel<typeof commentVotes>;
 export type InsertCommentMention = InferInsertModel<typeof commentMentions>;
@@ -60,9 +62,17 @@ export type InsertVote = InferInsertModel<typeof votes>;
 export type InsertBookmark = InferInsertModel<typeof bookmarks>;
 export type InsertNotification = InferInsertModel<typeof notifications>;
 export type InsertReport = InferInsertModel<typeof reports>;
-export type InsertCompletionStatus = InferInsertModel<typeof completionStatuses>;
-export type InsertChallengeTemplate = InferInsertModel<typeof challengeTemplates>;
-export type InsertChallengeSubmission = InferInsertModel<typeof challengeSubmissions>;
+export type InsertCompletionStatus = InferInsertModel<
+	typeof completionStatuses
+>;
+export type InsertChallengeTemplate = InferInsertModel<
+	typeof challengeTemplates
+>;
+export type InsertChallengeSubmission = InferInsertModel<
+	typeof challengeSubmissions
+>;
 export type InsertAccount = InferInsertModel<typeof accounts>;
-export type InsertVerificationToken = InferInsertModel<typeof verificationTokens>;
+export type InsertVerificationToken = InferInsertModel<
+	typeof verificationTokens
+>;
 export type InsertResetToken = InferInsertModel<typeof resetTokens>;

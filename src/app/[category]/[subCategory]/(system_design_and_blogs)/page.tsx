@@ -1,6 +1,11 @@
 import { FeedProvider } from "@/components/feed/FeedContext";
 import { PostSortOrder } from "@/utils/types";
-import { SubCategory, PostCategory, PostCategoryType, SubCategoryType } from "@/db/schema/enums";
+import {
+	SubCategory,
+	PostCategory,
+	PostCategoryType,
+	SubCategoryType,
+} from "@/db/schema/enums";
 import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 import { Feed } from "@/components/feed/Feed";

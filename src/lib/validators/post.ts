@@ -38,7 +38,7 @@ const DirectoryNodeSchema: z.ZodType<{
 }> = z.lazy(() =>
 	z.object({
 		directory: z.record(z.string(), FileSystemNodeSchema),
-	})
+	}),
 );
 
 const FileSystemNodeSchema = z.union([

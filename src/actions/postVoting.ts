@@ -32,12 +32,14 @@ export async function voteAction(
 
 	if (voteData.type === null) {
 		// Delete the vote if type is null
-		await db.delete(votes).where(
-			and(
-				eq(votes.userId, voteData.userId),
-				eq(votes.postId, voteData.postId)
-			)
-		);
+		await db
+			.delete(votes)
+			.where(
+				and(
+					eq(votes.userId, voteData.userId),
+					eq(votes.postId, voteData.postId),
+				),
+			);
 	} else {
 		// Upsert the vote if type is "UP" or "DOWN"
 		await db

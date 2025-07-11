@@ -85,7 +85,9 @@ const QuestionsList: FC = () => {
 													variant="secondary"
 													className={cn(
 														"text-xs",
-														getDifficultyColor(post.difficulty || Difficulty.EASY),
+														getDifficultyColor(
+															post.difficulty || Difficulty.EASY,
+														),
 													)}
 												>
 													{post.difficulty || Difficulty.EASY}
@@ -116,7 +118,11 @@ const QuestionsList: FC = () => {
 										<div className="flex items-center gap-3">
 											<div className="flex items-center gap-1">
 												<Eye className="h-4 w-4" />
-												<span>{typeof post.views === 'object' ? post.views.count : post.views || 0}</span>
+												<span>
+													{typeof post.views === "object"
+														? post.views.count
+														: post.views || 0}
+												</span>
 											</div>
 											<div className="flex items-center gap-1">
 												<ThumbsUp className="h-4 w-4" />

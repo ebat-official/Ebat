@@ -27,4 +27,4 @@ export async function fetchVoteCounts(postId: string, userId?: string) {
 		downVotes: Number(row.downvotes),
 		userVoteType: row.uservotetype,
 	};
-} 
+}

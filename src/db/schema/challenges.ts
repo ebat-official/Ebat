@@ -8,7 +8,11 @@ import {
 	index,
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { templateFrameworkEnum, submissionStatusEnum, SubmissionStatus } from "./enums";
+import {
+	templateFrameworkEnum,
+	submissionStatusEnum,
+	SubmissionStatus,
+} from "./enums";
 import { relations } from "drizzle-orm";
 import { posts } from "./posts";
 import { users } from "./users";
@@ -26,7 +30,10 @@ export const challengeTemplates = pgTable(
 		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("ChallengeTemplate_postId_framework_idx").on(table.postId, table.framework),
+		uniqueIndex("ChallengeTemplate_postId_framework_idx").on(
+			table.postId,
+			table.framework,
+		),
 		index("ChallengeTemplate_postId_idx").on(table.postId),
 	],
 );
@@ -41,7 +48,9 @@ export const challengeSubmissions = pgTable(
 		framework: templateFrameworkEnum("framework").notNull(),
 		answerTemplate: json("answerTemplate").notNull(),
 		runTime: integer("runTime").notNull().default(0),
-		status: submissionStatusEnum("status").notNull().default(SubmissionStatus.REJECTED),
+		status: submissionStatusEnum("status")
+			.notNull()
+			.default(SubmissionStatus.REJECTED),
 		submittedAt: timestamp("submittedAt").notNull().defaultNow(),
 	},
 	(table) => ({
@@ -55,20 +64,26 @@ export const challengeSubmissions = pgTable(
 );
 
 // Relations
-export const challengeTemplatesRelations = relations(challengeTemplates, ({ one }) => ({
-	post: one(posts, {
-		fields: [challengeTemplates.postId],
-		references: [posts.id],
+export const challengeTemplatesRelations = relations(
+	challengeTemplates,
+	({ one }) => ({
+		post: one(posts, {
+			fields: [challengeTemplates.postId],
+			references: [posts.id],
+		}),
 	}),
-}));
+);
 
-export const challengeSubmissionsRelations = relations(challengeSubmissions, ({ one }) => ({
-	post: one(posts, {
-		fields: [challengeSubmissions.postId],
-		references: [posts.id],
+export const challengeSubmissionsRelations = relations(
+	challengeSubmissions,
+	({ one }) => ({
+		post: one(posts, {
+			fields: [challengeSubmissions.postId],
+			references: [posts.id],
+		}),
+		user: one(users, {
+			fields: [challengeSubmissions.userId],
+			references: [users.id],
+		}),
 	}),
-	user: one(users, {
-		fields: [challengeSubmissions.userId],
-		references: [users.id],
-	}),
-}));
+);

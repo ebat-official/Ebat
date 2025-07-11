@@ -3,7 +3,7 @@ import {
 	PostApprovalStatus,
 	PostStatus,
 	PostType,
-	PostStatusType
+	PostStatusType,
 } from "@/db/schema/enums";
 import { auth } from "@/auth";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
@@ -29,7 +29,6 @@ import { posts, postEdits, challengeTemplates } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { InsertPost, InsertPostEdit } from "@/db/schema/zod-schemas";
 
-
 const getPostDetails = async (postId: string) => {
 	return await db.query.posts.findFirst({
 		where: eq(posts.id, postId),
@@ -49,7 +48,8 @@ const checkPostOwnership = async (postId: string, userId: string) => {
 
 const checkPostLiveStatus = async (postId: string) => {
 	const existingPost = await getPostDetails(postId);
-	const isLivePost = existingPost?.approvalStatus === PostApprovalStatus.APPROVED;
+	const isLivePost =
+		existingPost?.approvalStatus === PostApprovalStatus.APPROVED;
 	return { existingPost, isLivePost };
 };
 
@@ -123,7 +123,9 @@ export async function createDraftPost(
 					.returning();
 
 				// Delete all existing templates for this post
-				await tx.delete(challengeTemplates).where(eq(challengeTemplates.postId, post[0].id));
+				await tx
+					.delete(challengeTemplates)
+					.where(eq(challengeTemplates.postId, post[0].id));
 
 				// Create all new templates
 				if (data.challengeTemplates) {
@@ -189,7 +191,10 @@ export async function createPost(
 		title: data.title,
 		completionDuration: getCompletionDuration(data),
 		coins: getDefaultCoins(data),
-		approvalStatus: data.type === PostType.BLOGS ? PostApprovalStatus.APPROVED : PostApprovalStatus.PENDING,
+		approvalStatus:
+			data.type === PostType.BLOGS
+				? PostApprovalStatus.APPROVED
+				: PostApprovalStatus.PENDING,
 		approvalLogs: [],
 		slug: generateTitleSlug(data.title),
 	};
@@ -213,7 +218,9 @@ export async function createPost(
 					.returning();
 
 				// Delete all existing templates for this post
-				await tx.delete(challengeTemplates).where(eq(challengeTemplates.postId, post[0].id));
+				await tx
+					.delete(challengeTemplates)
+					.where(eq(challengeTemplates.postId, post[0].id));
 
 				// Create all new templates
 				if (data.challengeTemplates) {

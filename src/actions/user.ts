@@ -73,9 +73,11 @@ export async function findUserById(
 				karmaPoints: true,
 				accountStatus: true,
 			},
-			with: includeProfile ? {
-				profile: true,
-			} : undefined,
+			with: includeProfile
+				? {
+						profile: true,
+					}
+				: undefined,
 		});
 
 		return user as UserWithProfile | User | null;
@@ -109,7 +111,8 @@ export async function setEmailVerifiedUsingToken(token: string) {
 	}
 
 	try {
-		await db.update(users)
+		await db
+			.update(users)
 			.set({ emailVerified: new Date() })
 			.where(eq(users.email, user.data.email));
 		return true;
@@ -121,7 +124,8 @@ export async function setEmailVerifiedUsingToken(token: string) {
 export async function updateUserPassword(email: string, password: string) {
 	try {
 		const hashedPassword = await bcrypt.hash(password, 10);
-		await db.update(users)
+		await db
+			.update(users)
 			.set({ password: hashedPassword })
 			.where(eq(users.email, email));
 		return true;
@@ -132,20 +136,19 @@ export async function updateUserPassword(email: string, password: string) {
 
 export async function updateUserCoins(userId: string, coins: number) {
 	try {
-		await db.update(users)
-			.set({ coins })
-			.where(eq(users.id, userId));
+		await db.update(users).set({ coins }).where(eq(users.id, userId));
 		return true;
 	} catch (error) {
 		return null;
 	}
 }
 
-export async function updateUserKarmaPoints(userId: string, karmaPoints: number) {
+export async function updateUserKarmaPoints(
+	userId: string,
+	karmaPoints: number,
+) {
 	try {
-		await db.update(users)
-			.set({ karmaPoints })
-			.where(eq(users.id, userId));
+		await db.update(users).set({ karmaPoints }).where(eq(users.id, userId));
 		return true;
 	} catch (error) {
 		return null;
@@ -154,7 +157,8 @@ export async function updateUserKarmaPoints(userId: string, karmaPoints: number)
 
 export async function setEmailVerified(userId: string) {
 	try {
-		await db.update(users)
+		await db
+			.update(users)
 			.set({ emailVerified: new Date() })
 			.where(eq(users.id, userId));
 		return true;

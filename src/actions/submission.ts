@@ -18,7 +18,11 @@ import {
 	SUBMISSION_NOT_FOUND_ERROR,
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
-import { UserRole, TemplateFramework, SubmissionStatus } from "@/db/schema/enums";
+import {
+	UserRole,
+	TemplateFramework,
+	SubmissionStatus,
+} from "@/db/schema/enums";
 
 // Submit Challenge Solution
 export async function submitChallengeSolution(
@@ -35,14 +39,17 @@ export async function submitChallengeSolution(
 
 	try {
 		// Create the submission - database will handle foreign key constraints
-		const submission = await db.insert(challengeSubmissions).values({
-			userId: user.id,
-			postId: validatedData.postId,
-			framework: validatedData.framework as TemplateFramework,
-			answerTemplate: validatedData.answerTemplate,
-			runTime: validatedData.runTime,
-			status: validatedData.status as SubmissionStatus,
-		}).returning();
+		const submission = await db
+			.insert(challengeSubmissions)
+			.values({
+				userId: user.id,
+				postId: validatedData.postId,
+				framework: validatedData.framework as TemplateFramework,
+				answerTemplate: validatedData.answerTemplate,
+				runTime: validatedData.runTime,
+				status: validatedData.status as SubmissionStatus,
+			})
+			.returning();
 
 		return { status: SUCCESS, data: submission[0].id };
 	} catch (error) {
@@ -71,9 +78,9 @@ export async function deleteChallengeSubmission(
 		if (submission.userId !== user.id) return UNAUTHORIZED_ERROR;
 
 		// Delete the submission
-		await db.delete(challengeSubmissions).where(
-			eq(challengeSubmissions.id, submissionId)
-		);
+		await db
+			.delete(challengeSubmissions)
+			.where(eq(challengeSubmissions.id, submissionId));
 
 		return { status: SUCCESS, data: "Submission deleted successfully" };
 	} catch (error) {
@@ -95,9 +102,11 @@ export async function getUserSubmissions(
 		const submissions = await db.query.challengeSubmissions.findMany({
 			where: and(
 				eq(challengeSubmissions.postId, postId),
-				eq(challengeSubmissions.userId, user.id)
+				eq(challengeSubmissions.userId, user.id),
 			),
-			orderBy: (challengeSubmissions, { desc }) => [desc(challengeSubmissions.submittedAt)],
+			orderBy: (challengeSubmissions, { desc }) => [
+				desc(challengeSubmissions.submittedAt),
+			],
 		});
 
 		return { status: SUCCESS, data: submissions };
@@ -119,7 +128,9 @@ export async function getPostSubmissions(
 	try {
 		const submissions = await db.query.challengeSubmissions.findMany({
 			where: eq(challengeSubmissions.postId, postId),
-			orderBy: (challengeSubmissions, { desc }) => [desc(challengeSubmissions.submittedAt)],
+			orderBy: (challengeSubmissions, { desc }) => [
+				desc(challengeSubmissions.submittedAt),
+			],
 			with: {
 				user: {
 					columns: {

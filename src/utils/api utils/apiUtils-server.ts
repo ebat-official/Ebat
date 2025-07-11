@@ -10,7 +10,12 @@ import {
 } from "../types";
 import { PostCategory, SubCategory } from "@/db/schema/enums";
 import { db } from "@/db";
-import { posts, postViews, challengeTemplates, completionStatuses } from "@/db/schema";
+import {
+	posts,
+	postViews,
+	challengeTemplates,
+	completionStatuses,
+} from "@/db/schema";
 import { eq, count } from "drizzle-orm";
 import pako from "pako";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
@@ -82,12 +87,12 @@ export async function getPostFromURL(params: {
 		if (post.content) {
 			// Handle both string and Uint8Array content
 			let contentData: string;
-			if (typeof post.content === 'string') {
+			if (typeof post.content === "string") {
 				contentData = post.content;
 			} else {
 				contentData = pako.inflate(post.content, { to: "string" });
 			}
-			
+
 			const parsedContent = JSON.parse(contentData) as ContentType;
 
 			if (parsedContent.post?.blocks) {
@@ -108,15 +113,16 @@ export async function getPostFromURL(params: {
 			completionCount,
 			tableOfContent,
 			views: viewsResult,
-			challengeTemplates: post.challengeTemplates as unknown as ChallengeTemplate[],
+			challengeTemplates:
+				post.challengeTemplates as unknown as ChallengeTemplate[],
 			// Add _count for backward compatibility
 			_count: {
 				completionStatus: completionCount,
 			},
 			// Map userProfile to profile for backward compatibility
 			author: {
-				id: post.author?.id || '',
-				userName: post.author?.userName || '',
+				id: post.author?.id || "",
+				userName: post.author?.userName || "",
 				userProfile: post.author?.profile || null,
 			},
 			collaborators: [], // Empty array for now since we're not querying collaborators
@@ -127,4 +133,4 @@ export async function getPostFromURL(params: {
 		console.error("Error fetching post:", error);
 		return null;
 	}
-} 
+}

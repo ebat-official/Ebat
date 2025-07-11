@@ -11,7 +11,14 @@ import {
 	index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { userRoleEnum, accountStatusEnum, subscriptionPlanEnum, UserRole, AccountStatus, SubscriptionPlan } from "./enums";
+import {
+	userRoleEnum,
+	accountStatusEnum,
+	subscriptionPlanEnum,
+	UserRole,
+	AccountStatus,
+	SubscriptionPlan,
+} from "./enums";
 
 // Users table
 export const users = pgTable(

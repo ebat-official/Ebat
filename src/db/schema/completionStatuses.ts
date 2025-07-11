@@ -19,18 +19,24 @@ export const completionStatuses = pgTable(
 		completedAt: timestamp("completedAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("CompletionStatus_userId_postId_idx").on(table.userId, table.postId),
+		uniqueIndex("CompletionStatus_userId_postId_idx").on(
+			table.userId,
+			table.postId,
+		),
 	],
 );
 
 // Relations
-export const completionStatusesRelations = relations(completionStatuses, ({ one }) => ({
-	user: one(users, {
-		fields: [completionStatuses.userId],
-		references: [users.id],
+export const completionStatusesRelations = relations(
+	completionStatuses,
+	({ one }) => ({
+		user: one(users, {
+			fields: [completionStatuses.userId],
+			references: [users.id],
+		}),
+		post: one(posts, {
+			fields: [completionStatuses.postId],
+			references: [posts.id],
+		}),
 	}),
-	post: one(posts, {
-		fields: [completionStatuses.postId],
-		references: [posts.id],
-	}),
-}));
+);

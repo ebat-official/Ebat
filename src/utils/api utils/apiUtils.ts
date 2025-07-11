@@ -16,7 +16,12 @@ import {
 } from "../types";
 import { PostCategory, SubCategory } from "@/db/schema/enums";
 import { db } from "@/db";
-import { posts, postViews, challengeTemplates, completionStatuses } from "@/db/schema";
+import {
+	posts,
+	postViews,
+	challengeTemplates,
+	completionStatuses,
+} from "@/db/schema";
 import { eq, count } from "drizzle-orm";
 import pako from "pako";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";

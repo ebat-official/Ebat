@@ -37,10 +37,7 @@ export async function getEditPostByPostId(postId: string) {
 
 	if (!user) return null;
 	const postEdit = await db.query.postEdits.findFirst({
-		where: and(
-			eq(postEdits.postId, postId),
-			eq(postEdits.authorId, user.id)
-		),
+		where: and(eq(postEdits.postId, postId), eq(postEdits.authorId, user.id)),
 		columns: {
 			id: true,
 			postId: true,

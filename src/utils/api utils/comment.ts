@@ -1,8 +1,5 @@
 import { VoteTypeType } from "@/db/schema/enums";
-import {
-	CommentSortOption,
-	PaginatedComments,
-} from "../types";
+import { CommentSortOption, PaginatedComments } from "../types";
 
 // Client-side function to fetch comments via API route
 export async function fetchComments(
@@ -26,8 +23,10 @@ export async function fetchComments(
 		...(sort && { sort }),
 	});
 
-	const response = await fetch(`/api/comments/${postId}?${queryParams.toString()}`);
-	
+	const response = await fetch(
+		`/api/comments/${postId}?${queryParams.toString()}`,
+	);
+
 	if (!response.ok) {
 		throw new Error(`Failed to fetch comments: ${response.statusText}`);
 	}

@@ -9,10 +9,7 @@ import { sql } from "drizzle-orm";
  * @param postId - The ID of the post
  * @param incrementBy - The number to add to the current view count
  */
-export async function incrementPostView(
-	postId: string,
-	incrementBy = 1,
-) {
+export async function incrementPostView(postId: string, incrementBy = 1) {
 	if (!postId || incrementBy <= 0) return;
 
 	await db

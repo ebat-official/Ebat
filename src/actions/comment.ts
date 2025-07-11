@@ -110,7 +110,8 @@ async function formatCommentWithVotes(
 			},
 		},
 		upVotes: comment.votes.filter((vote) => vote.type === VoteType.UP).length,
-		downVotes: comment.votes.filter((vote) => vote.type === VoteType.DOWN).length,
+		downVotes: comment.votes.filter((vote) => vote.type === VoteType.DOWN)
+			.length,
 		userVoteType: comment.userVoteType || null,
 		repliesExist: comment._count.replies > 0,
 		repliesLoaded: false,
@@ -151,15 +152,18 @@ export async function createEditComment(
 	}
 
 	const result = await db.transaction(async (tx) => {
-		let comment: Awaited<ReturnType<typeof tx.query.comments.findFirst>> | null = null;
+		let comment: Awaited<
+			ReturnType<typeof tx.query.comments.findFirst>
+		> | null = null;
 
 		if (data.id) {
 			// Update existing comment
-			const updatedComments = await tx.update(comments)
+			const updatedComments = await tx
+				.update(comments)
 				.set({ content: commentData.content })
 				.where(eq(comments.id, data.id))
 				.returning();
-			
+
 			// Get comment with relations
 			comment = await tx.query.comments.findFirst({
 				where: eq(comments.id, data.id),
@@ -187,7 +191,8 @@ export async function createEditComment(
 			});
 		} else {
 			// Create new comment
-			const newComments = await tx.insert(comments)
+			const newComments = await tx
+				.insert(comments)
 				.values(commentData)
 				.returning();
 
@@ -226,7 +231,7 @@ export async function createEditComment(
 		const replyCount = await tx.query.comments.findMany({
 			where: eq(comments.parentId, comment.id),
 		});
-		
+
 		const voteCount = await tx.query.commentVotes.findMany({
 			where: eq(commentVotes.commentId, comment.id),
 		});
@@ -251,7 +256,8 @@ export async function createEditComment(
 				}));
 
 			if (mentionData.length > 0) {
-				await tx.insert(commentMentions)
+				await tx
+					.insert(commentMentions)
 					.values(mentionData)
 					.onConflictDoNothing();
 			}
@@ -296,9 +302,9 @@ export async function deleteComment(
 
 	// Delete the comment (children will be deleted automatically due to cascade)
 	await db.delete(comments).where(eq(comments.id, commentId));
-	
+
 	invalidateCommentsCache(postId);
-	
+
 	// Return success response
 	return {
 		status: SUCCESS,

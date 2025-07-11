@@ -45,7 +45,10 @@ export const commentVotes = pgTable(
 		type: voteTypeEnum("type").notNull(),
 	},
 	(table) => [
-		uniqueIndex("CommentVote_userId_commentId_idx").on(table.userId, table.commentId),
+		uniqueIndex("CommentVote_userId_commentId_idx").on(
+			table.userId,
+			table.commentId,
+		),
 		index("CommentVote_commentId_type_idx").on(table.commentId, table.type),
 	],
 );
@@ -60,7 +63,10 @@ export const commentMentions = pgTable(
 		createdAt: timestamp("createdAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("CommentMention_userId_commentId_idx").on(table.userId, table.commentId),
+		uniqueIndex("CommentMention_userId_commentId_idx").on(
+			table.userId,
+			table.commentId,
+		),
 		index("CommentMention_commentId_idx").on(table.commentId),
 	],
 );

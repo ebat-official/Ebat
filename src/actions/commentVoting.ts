@@ -34,12 +34,14 @@ export async function CommentVoteAction(
 
 	if (voteData.type === null) {
 		// Delete the vote if type is null
-		await db.delete(commentVotes).where(
-			and(
-				eq(commentVotes.userId, voteData.userId),
-				eq(commentVotes.commentId, voteData.commentId)
-			)
-		);
+		await db
+			.delete(commentVotes)
+			.where(
+				and(
+					eq(commentVotes.userId, voteData.userId),
+					eq(commentVotes.commentId, voteData.commentId),
+				),
+			);
 	} else {
 		// Upsert the vote if type is "UP" or "DOWN"
 		await db

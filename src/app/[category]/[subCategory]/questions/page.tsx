@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: PageProps }) {
 
 	if (
 		!Object.values(SubCategory).includes(
-			awaitedParams.subCategory.toUpperCase() as typeof SubCategory[keyof typeof SubCategory],
+			awaitedParams.subCategory.toUpperCase() as (typeof SubCategory)[keyof typeof SubCategory],
 		)
 	) {
 		return notFound();

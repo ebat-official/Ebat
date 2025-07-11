@@ -82,17 +82,29 @@ export enum SubmissionStatus {
 
 // pgEnum definitions for database schema
 export const userRoleEnum = pgEnum("user_role", UserRole);
-export const subscriptionPlanEnum = pgEnum("subscription_plan", SubscriptionPlan);
+export const subscriptionPlanEnum = pgEnum(
+	"subscription_plan",
+	SubscriptionPlan,
+);
 export const accountStatusEnum = pgEnum("account_status", AccountStatus);
 export const voteTypeEnum = pgEnum("vote_type", VoteType);
 export const postTypeEnum = pgEnum("post_type", PostType);
 export const difficultyEnum = pgEnum("difficulty", Difficulty);
 export const postCategoryEnum = pgEnum("post_category", PostCategory);
 export const postStatusEnum = pgEnum("post_status", PostStatus);
-export const postApprovalStatusEnum = pgEnum("post_approval_status", PostApprovalStatus);
+export const postApprovalStatusEnum = pgEnum(
+	"post_approval_status",
+	PostApprovalStatus,
+);
 export const subCategoryEnum = pgEnum("sub_category", SubCategory);
-export const templateFrameworkEnum = pgEnum("template_framework", TemplateFramework);
-export const submissionStatusEnum = pgEnum("submission_status", SubmissionStatus);
+export const templateFrameworkEnum = pgEnum(
+	"template_framework",
+	TemplateFramework,
+);
+export const submissionStatusEnum = pgEnum(
+	"submission_status",
+	SubmissionStatus,
+);
 
 // Type exports (these will now be the enum types directly)
 export type UserRoleType = UserRole;

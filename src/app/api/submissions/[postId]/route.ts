@@ -22,7 +22,7 @@ export async function GET(
 		const submissions = await db.query.challengeSubmissions.findMany({
 			where: and(
 				eq(challengeSubmissions.postId, postId),
-				eq(challengeSubmissions.userId, user.id)
+				eq(challengeSubmissions.userId, user.id),
 			),
 			orderBy: [desc(challengeSubmissions.submittedAt)],
 		});

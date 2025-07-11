@@ -54,13 +54,13 @@ export async function getCommentsWithVotes(
 		.where(
 			and(
 				eq(comments.postId, postId),
-				parentId ? eq(comments.parentId, parentId) : isNull(comments.parentId)
-			)
+				parentId ? eq(comments.parentId, parentId) : isNull(comments.parentId),
+			),
 		)
 		.orderBy(
 			sort === COMMENT_SORT_OPTIONS.NEWEST
 				? desc(comments.createdAt)
-				: asc(comments.createdAt)
+				: asc(comments.createdAt),
 		)
 		.limit(take)
 		.offset(skip);
@@ -72,73 +72,79 @@ export async function getCommentsWithVotes(
 		.where(
 			and(
 				eq(comments.postId, postId),
-				parentId ? eq(comments.parentId, parentId) : isNull(comments.parentId)
-			)
+				parentId ? eq(comments.parentId, parentId) : isNull(comments.parentId),
+			),
 		);
 
 	const totalCount = totalCountResult[0]?.count || 0;
 
 	// Get vote counts and user votes for each comment
-	const commentIds = baseComments.map(c => c.id);
-	const voteCounts = includeVotes && commentIds.length > 0 
-		? await db
-			.select({
-				commentId: commentVotes.commentId,
-				upvotes: sql<number>`SUM(CASE WHEN ${commentVotes.type} = 'UP' THEN 1 ELSE 0 END)`,
-				downvotes: sql<number>`SUM(CASE WHEN ${commentVotes.type} = 'DOWN' THEN 1 ELSE 0 END)`,
-			})
-			.from(commentVotes)
-			.where(sql`${commentVotes.commentId} = ANY(${commentIds})`)
-			.groupBy(commentVotes.commentId)
-		: [];
+	const commentIds = baseComments.map((c) => c.id);
+	const voteCounts =
+		includeVotes && commentIds.length > 0
+			? await db
+					.select({
+						commentId: commentVotes.commentId,
+						upvotes: sql<number>`SUM(CASE WHEN ${commentVotes.type} = 'UP' THEN 1 ELSE 0 END)`,
+						downvotes: sql<number>`SUM(CASE WHEN ${commentVotes.type} = 'DOWN' THEN 1 ELSE 0 END)`,
+					})
+					.from(commentVotes)
+					.where(sql`${commentVotes.commentId} = ANY(${commentIds})`)
+					.groupBy(commentVotes.commentId)
+			: [];
 
 	// Get user votes if userId provided
-	const userVotes = userId && commentIds.length > 0
-		? await db
-			.select({
-				commentId: commentVotes.commentId,
-				type: commentVotes.type,
-			})
-			.from(commentVotes)
-			.where(
-				and(
-					sql`${commentVotes.commentId} = ANY(${commentIds})`,
-					eq(commentVotes.userId, userId)
-				)
-			)
-		: [];
+	const userVotes =
+		userId && commentIds.length > 0
+			? await db
+					.select({
+						commentId: commentVotes.commentId,
+						type: commentVotes.type,
+					})
+					.from(commentVotes)
+					.where(
+						and(
+							sql`${commentVotes.commentId} = ANY(${commentIds})`,
+							eq(commentVotes.userId, userId),
+						),
+					)
+			: [];
 
 	// Get reply counts
-	const replyCounts = commentIds.length > 0
-		? await db
-			.select({
-				parentId: comments.parentId,
-				count: sql<number>`count(*)`,
-			})
-			.from(comments)
-			.where(sql`${comments.parentId} = ANY(${commentIds})`)
-			.groupBy(comments.parentId)
-		: [];
+	const replyCounts =
+		commentIds.length > 0
+			? await db
+					.select({
+						parentId: comments.parentId,
+						count: sql<number>`count(*)`,
+					})
+					.from(comments)
+					.where(sql`${comments.parentId} = ANY(${commentIds})`)
+					.groupBy(comments.parentId)
+			: [];
 
 	// Get author info if needed
-	const authors = includeAuthor && commentIds.length > 0
-		? await db
-			.select({
-				id: users.id,
-				userName: users.userName,
-				name: userProfiles.name,
-				image: userProfiles.image,
-			})
-			.from(users)
-			.leftJoin(userProfiles, eq(userProfiles.userId, users.id))
-			.where(sql`${users.id} = ANY(${baseComments.map(c => c.authorId)})`)
-		: [];
+	const authors =
+		includeAuthor && commentIds.length > 0
+			? await db
+					.select({
+						id: users.id,
+						userName: users.userName,
+						name: userProfiles.name,
+						image: userProfiles.image,
+					})
+					.from(users)
+					.leftJoin(userProfiles, eq(userProfiles.userId, users.id))
+					.where(sql`${users.id} = ANY(${baseComments.map((c) => c.authorId)})`)
+			: [];
 
 	// Create lookup maps
-	const voteMap = new Map(voteCounts.map(v => [v.commentId, v]));
-	const userVoteMap = new Map(userVotes.map(v => [v.commentId, v.type]));
-	const replyCountMap = new Map(replyCounts.map(r => [r.parentId!, Number(r.count)]));
-	const authorMap = new Map(authors.map(a => [a.id, a]));
+	const voteMap = new Map(voteCounts.map((v) => [v.commentId, v]));
+	const userVoteMap = new Map(userVotes.map((v) => [v.commentId, v.type]));
+	const replyCountMap = new Map(
+		replyCounts.map((r) => [r.parentId!, Number(r.count)]),
+	);
+	const authorMap = new Map(authors.map((a) => [a.id, a]));
 
 	const processed: CommentWithVotes[] = await Promise.all(
 		baseComments.map(async (comment) => {
@@ -146,7 +152,9 @@ export async function getCommentsWithVotes(
 			try {
 				// Decompress the content
 				const decompressedContent = comment.content
-					? JSON.parse(pako.inflate(Buffer.from(comment.content), { to: "string" }))
+					? JSON.parse(
+							pako.inflate(Buffer.from(comment.content), { to: "string" }),
+						)
 					: null;
 
 				// Convert the decompressed content to HTML
@@ -172,14 +180,15 @@ export async function getCommentsWithVotes(
 				authorId: comment.authorId,
 				postId: comment.postId,
 				parentId: comment.parentId,
-				author: includeAuthor && author
-					? {
-							id: author.id,
-							userName: author.userName || "Unknown",
-							name: author.name || "Unknown",
-							image: author.image || null,
-						}
-					: undefined,
+				author:
+					includeAuthor && author
+						? {
+								id: author.id,
+								userName: author.userName || "Unknown",
+								name: author.name || "Unknown",
+								image: author.image || null,
+							}
+						: undefined,
 				_count: {
 					replies: replyCount,
 					votes: totalVotes,
@@ -190,7 +199,8 @@ export async function getCommentsWithVotes(
 				},
 				upVotes,
 				downVotes,
-				userVoteType: (userVoteMap.get(comment.id) ?? null) as VoteTypeType | null,
+				userVoteType: (userVoteMap.get(comment.id) ??
+					null) as VoteTypeType | null,
 				repliesExist: replyCount > 0,
 				repliesLoaded: false,
 				replies: [],
@@ -260,4 +270,4 @@ export async function getCommentsWithVotes(
 			nextSkip: currentPage < totalPages ? skip + take : undefined,
 		},
 	};
-} 
+}

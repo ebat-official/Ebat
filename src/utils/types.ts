@@ -1,8 +1,4 @@
-import {
-	Post,
-	User,
-	ChallengeSubmission,
-} from "@/db/schema/zod-schemas";
+import { Post, User, ChallengeSubmission } from "@/db/schema/zod-schemas";
 import {
 	PostCategory,
 	PostType,
@@ -50,13 +46,16 @@ export interface ContentReturnType {
 	answer?: string;
 }
 
-export type DatabaseJson = Record<string, unknown> | unknown[] | string | number | boolean | null;
+export type DatabaseJson =
+	| Record<string, unknown>
+	| unknown[]
+	| string
+	| number
+	| boolean
+	| null;
 
 export type CategoryType = PostCategoryType;
-export type SubCategoryType =
-	| SubCategoryEnumType
-	| DesignBlogType
-	| undefined;
+export type SubCategoryType = SubCategoryEnumType | DesignBlogType | undefined;
 
 export type TopicCategory = SubCategoryType | PostCategoryType;
 
