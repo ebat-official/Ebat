@@ -18,7 +18,7 @@ export default {
 	trustHost: true,
 	events: {
 		async linkAccount({ user }) {
-			await setEmailVerified(user.email!);
+			await setEmailVerified(user.id!);
 		},
 	},
 	callbacks: {
