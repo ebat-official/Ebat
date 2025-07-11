@@ -2,7 +2,6 @@ import { comments, commentVotes, users, userProfiles } from "@/db/schema";
 import { VoteTypeType } from "@/db/schema/enums";
 import { db } from "@/db";
 import { eq, and, isNull, sql, desc, asc } from "drizzle-orm";
-import pako from "pako";
 import {
 	CommentSortOption,
 	CommentWithVotes,
@@ -10,6 +9,8 @@ import {
 } from "../types";
 import { COMMENT_SORT_OPTIONS } from "../contants";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
+import { decompressContent } from "../compression";
+import { SerializedEditorState } from "lexical";
 
 export async function getCommentsWithVotes(
 	postId: string,
@@ -150,16 +151,16 @@ export async function getCommentsWithVotes(
 		baseComments.map(async (comment) => {
 			let content: string | null = null;
 			try {
-				// Decompress the content
+				// Decompress the content using utility
 				const decompressedContent = comment.content
-					? JSON.parse(
-							pako.inflate(Buffer.from(comment.content), { to: "string" }),
-						)
+					? decompressContent(comment.content)
 					: null;
 
 				// Convert the decompressed content to HTML
 				content = decompressedContent
-					? await getHtml(decompressedContent)
+					? await getHtml(
+							decompressedContent as unknown as SerializedEditorState,
+						)
 					: null;
 			} catch {
 				content = null;

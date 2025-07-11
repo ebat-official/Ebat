@@ -23,7 +23,6 @@ import {
 	completionStatuses,
 } from "@/db/schema";
 import { eq, count } from "drizzle-orm";
-import pako from "pako";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
 

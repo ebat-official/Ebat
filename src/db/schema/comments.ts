@@ -14,13 +14,14 @@ import { voteTypeEnum } from "./enums";
 import { users } from "./users";
 import { posts } from "./posts";
 import { reports } from "./reports";
+import { bytea } from "@/db/database-types";
 
 // Comments table
 export const comments = pgTable(
 	"Comment",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		content: text("content").notNull(),
+		content: bytea("content"),
 		createdAt: timestamp("createdAt").notNull().defaultNow(),
 		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 		authorId: uuid("authorId").notNull(),

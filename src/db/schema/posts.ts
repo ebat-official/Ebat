@@ -9,7 +9,6 @@ import {
 	boolean,
 	uniqueIndex,
 	index,
-	customType,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import {
@@ -26,29 +25,7 @@ import {
 	PostApprovalStatus,
 	SubCategory,
 } from "./enums";
-
-// Custom bytea type for binary data
-const bytea = customType<{
-	data: Buffer;
-	notNull: false;
-	default: false;
-}>({
-	dataType() {
-		return "bytea";
-	},
-	toDriver(value: unknown): Buffer {
-		if (Buffer.isBuffer(value)) {
-			return value;
-		}
-		throw new Error("Expected Buffer for bytea field");
-	},
-	fromDriver(value: unknown): Buffer {
-		if (Buffer.isBuffer(value)) {
-			return value;
-		}
-		throw new Error("Expected Buffer from database");
-	},
-});
+import { bytea } from "@/db/database-types";
 
 // Posts table
 export const posts = pgTable(

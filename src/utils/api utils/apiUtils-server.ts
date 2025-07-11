@@ -17,7 +17,7 @@ import {
 	completionStatuses,
 } from "@/db/schema";
 import { eq, count } from "drizzle-orm";
-import pako from "pako";
+import { decompressContent } from "../compression";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
 
@@ -85,15 +85,9 @@ export async function getPostFromURL(params: {
 		let tableOfContent: TableOfContent = [];
 
 		if (post.content) {
-			// Handle both string and Uint8Array content
-			let contentData: string;
-			if (typeof post.content === "string") {
-				contentData = post.content;
-			} else {
-				contentData = pako.inflate(post.content, { to: "string" });
-			}
-
-			const parsedContent = JSON.parse(contentData) as ContentType;
+			// Decompress content using utility
+			const decompressedContent = decompressContent(post.content);
+			const parsedContent = decompressedContent as ContentType;
 
 			if (parsedContent.post?.blocks) {
 				const postHtml = await getHtml(parsedContent.post.blocks);

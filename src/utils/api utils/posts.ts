@@ -1,4 +1,3 @@
-import pako from "pako";
 import { validateUser } from "@/actions/user";
 import { db } from "@/db";
 import { posts, postEdits, challengeTemplates } from "@/db/schema";

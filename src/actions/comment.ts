@@ -1,26 +1,19 @@
 "use server";
-import { auth } from "@/auth";
 import { db } from "@/db";
 import { comments, commentMentions, commentVotes } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { z } from "zod";
-import {
-	CommentSortOption,
-	CommentWithVotes,
-	ErrorType,
-	GenerateActionReturnType,
-	SuccessType,
-} from "@/utils/types";
+import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
 import { Comment } from "@/db/schema/zod-schemas";
 import { VoteType } from "@/db/schema/enums";
-import { getCurrentUser, validateUser } from "./user";
-import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
-import pako from "pako";
+import { validateUser } from "./user";
+import { compressContent, decompressContent } from "@/utils/compression";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { commentNodes } from "@/components/shared/Lexical Editor/utils/SSR/nodes";
 import { ERROR, SUCCESS } from "@/utils/contants";
+import { SerializedEditorState } from "lexical";
 
 // Type for comment with relations
 type CommentWithRelations = Comment & {
@@ -79,10 +72,19 @@ const checkCommentOwnership = async (
 async function formatCommentWithVotes(
 	comment: CommentWithRelations,
 ): Promise<CommentWithVotes> {
+	// Decompress content from binary storage
+	const decompressedContent = comment.content
+		? decompressContent(comment.content)
+		: null;
+
 	return {
 		id: comment.id,
-		// @ts-ignore
-		content: await getHtml(comment.content, commentNodes),
+		content: decompressedContent
+			? await getHtml(
+					decompressedContent as unknown as SerializedEditorState,
+					commentNodes,
+				)
+			: "",
 		createdAt: comment.createdAt,
 		updatedAt: comment.updatedAt,
 		authorId: comment.authorId,
@@ -139,7 +141,7 @@ export async function createEditComment(
 	const commentData = {
 		parentId: data.parentId || null,
 		postId: data.postId,
-		content: pako.deflate(JSON.stringify(data.content)).toString(), // Compress content and convert to string
+		content: compressContent(data.content), // Compress content to Buffer
 		authorId: user.id,
 		updatedAt: new Date(),
 	};
@@ -264,7 +266,6 @@ export async function createEditComment(
 		}
 
 		invalidateCommentsCache(data.postId);
-		commentWithCounts.content = data.content;
 		return formatCommentWithVotes(commentWithCounts);
 	});
 

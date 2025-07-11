@@ -400,12 +400,12 @@ importers:
       '@types/react-dom':
         specifier: 19.0.3
         version: 19.0.3(@types/react@19.0.7)
-      drizzle-kit:
-        specifier: 0.31.4
-        version: 0.31.4
       '@types/react-syntax-highlighter':
         specifier: 15.5.13
         version: 15.5.13
+      drizzle-kit:
+        specifier: 0.31.4
+        version: 0.31.4
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -4607,6 +4607,7 @@ packages:
   source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+
   space-separated-tokens@1.1.5:
     resolution: {integrity: sha512-q/JSVd1Lptzhf5bkYm4ob4iWPjx0KiRe3sRFBNrVqbJkFaBm5vbbowy1mymoPNLRa52+oadOhJ+K49wsSeSjTA==}
 
@@ -9792,6 +9793,7 @@ snapshots:
       source-map: 0.6.1
 
   source-map@0.6.1: {}
+
   space-separated-tokens@1.1.5: {}
 
   space-separated-tokens@2.0.2: {}
