@@ -1,7 +1,9 @@
 "use server";
 
-import { Prisma, ChallengeSubmission } from "@prisma/client";
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { challengeSubmissions } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
+import { ChallengeSubmission } from "@/db/schema/zod-schemas";
 import { ChallengeSubmissionValidator } from "@/lib/validators/submission";
 import { UNAUTHENTICATED_ERROR, ValidationErr } from "@/utils/errors";
 import { z } from "zod";
@@ -16,6 +18,7 @@ import {
 	SUBMISSION_NOT_FOUND_ERROR,
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
+import { UserRole, TemplateFramework, SubmissionStatus } from "@/db/schema/enums";
 
 // Submit Challenge Solution
 export async function submitChallengeSolution(
@@ -32,59 +35,100 @@ export async function submitChallengeSolution(
 
 	try {
 		// Create the submission - database will handle foreign key constraints
-		const submission = await prisma.challengeSubmission.create({
-			data: {
-				userId: user.id,
-				postId: validatedData.postId,
-				framework: validatedData.framework,
-				answerTemplate:
-					validatedData.answerTemplate as unknown as Prisma.InputJsonValue,
-				runTime: validatedData.runTime,
-				status: validatedData.status, // Use validated status from request
-			},
-		});
+		const submission = await db.insert(challengeSubmissions).values({
+			userId: user.id,
+			postId: validatedData.postId,
+			framework: validatedData.framework as TemplateFramework,
+			answerTemplate: validatedData.answerTemplate,
+			runTime: validatedData.runTime,
+			status: validatedData.status as SubmissionStatus,
+		}).returning();
 
-		return { status: SUCCESS, data: submission.id };
+		return { status: SUCCESS, data: submission[0].id };
 	} catch (error) {
 		console.error("Failed to create challenge submission:", error);
-
-		// Handle specific database constraint errors
-		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			if (error.code === "P2003") {
-				return CHALLENGE_NOT_FOUND_ERROR;
-			}
-		}
-
 		return FAILED_TO_SUBMIT_CHALLENGE_ERROR;
 	}
 }
 
-// Get user submissions for a specific challenge
+// Delete Challenge Submission
+export async function deleteChallengeSubmission(
+	submissionId: string,
+): Promise<GenerateActionReturnType<string>> {
+	if (!submissionId) return ValidationErr("Submission ID is required");
+
+	const user = await validateUser();
+	if (!user) return UNAUTHENTICATED_ERROR;
+
+	try {
+		// Check if submission exists and belongs to user
+		const submission = await db.query.challengeSubmissions.findFirst({
+			where: eq(challengeSubmissions.id, submissionId),
+			columns: { userId: true },
+		});
+
+		if (!submission) return SUBMISSION_NOT_FOUND_ERROR;
+		if (submission.userId !== user.id) return UNAUTHORIZED_ERROR;
+
+		// Delete the submission
+		await db.delete(challengeSubmissions).where(
+			eq(challengeSubmissions.id, submissionId)
+		);
+
+		return { status: SUCCESS, data: "Submission deleted successfully" };
+	} catch (error) {
+		console.error("Failed to delete challenge submission:", error);
+		return FAILED_TO_DELETE_SUBMISSION_ERROR;
+	}
+}
+
+// Get User Submissions for a Post
 export async function getUserSubmissions(
 	postId: string,
-	userId?: string,
 ): Promise<GenerateActionReturnType<ChallengeSubmission[]>> {
+	if (!postId) return ValidationErr(POST_ID_REQUIRED);
+
+	const user = await validateUser();
+	if (!user) return UNAUTHENTICATED_ERROR;
+
 	try {
-		const user = await getCurrentUser();
-		const targetUserId = userId || user?.id;
+		const submissions = await db.query.challengeSubmissions.findMany({
+			where: and(
+				eq(challengeSubmissions.postId, postId),
+				eq(challengeSubmissions.userId, user.id)
+			),
+			orderBy: (challengeSubmissions, { desc }) => [desc(challengeSubmissions.submittedAt)],
+		});
 
-		if (!targetUserId) return UNAUTHENTICATED_ERROR;
+		return { status: SUCCESS, data: submissions };
+	} catch (error) {
+		console.error("Failed to fetch user submissions:", error);
+		return FAILED_TO_FETCH_SUBMISSIONS_ERROR;
+	}
+}
 
-		const submissions = await prisma.challengeSubmission.findMany({
-			where: {
-				postId,
-				userId: targetUserId,
-			},
-			orderBy: {
-				submittedAt: "desc",
-			},
-			include: {
+// Get All Submissions for a Post (Admin/Author only)
+export async function getPostSubmissions(
+	postId: string,
+): Promise<GenerateActionReturnType<ChallengeSubmission[]>> {
+	if (!postId) return ValidationErr(POST_ID_REQUIRED);
+
+	const user = await validateUser();
+	if (!user) return UNAUTHENTICATED_ERROR;
+
+	try {
+		const submissions = await db.query.challengeSubmissions.findMany({
+			where: eq(challengeSubmissions.postId, postId),
+			orderBy: (challengeSubmissions, { desc }) => [desc(challengeSubmissions.submittedAt)],
+			with: {
 				user: {
-					select: {
+					columns: {
 						id: true,
 						userName: true,
-						userProfile: {
-							select: {
+					},
+					with: {
+						profile: {
+							columns: {
 								name: true,
 								image: true,
 							},
@@ -96,45 +140,38 @@ export async function getUserSubmissions(
 
 		return { status: SUCCESS, data: submissions };
 	} catch (error) {
-		console.error("Failed to get user submissions:", error);
+		console.error("Failed to fetch post submissions:", error);
 		return FAILED_TO_FETCH_SUBMISSIONS_ERROR;
 	}
 }
 
-// Delete user's submission
-export async function deleteSubmission(
+// Get Submission by ID
+export async function getSubmissionById(
 	submissionId: string,
-): Promise<GenerateActionReturnType<{ message: string }>> {
-	try {
-		const user = await getCurrentUser();
-		if (!user) return UNAUTHENTICATED_ERROR;
+): Promise<GenerateActionReturnType<ChallengeSubmission>> {
+	if (!submissionId) return ValidationErr("Submission ID is required");
 
-		// First check if the submission exists and belongs to the user
-		const submission = await prisma.challengeSubmission.findUnique({
-			where: { id: submissionId },
-			select: { id: true, userId: true },
+	const user = await validateUser();
+	if (!user) return UNAUTHENTICATED_ERROR;
+
+	try {
+		const submission = await db.query.challengeSubmissions.findFirst({
+			where: eq(challengeSubmissions.id, submissionId),
 		});
 
-		if (!submission) {
-			return SUBMISSION_NOT_FOUND_ERROR;
-		}
+		if (!submission) return SUBMISSION_NOT_FOUND_ERROR;
 
-		// Only allow users to delete their own submissions
-		if (submission.userId !== user.id) {
+		// Check if user owns the submission or is admin
+		if (submission.userId !== user.id && user.role !== UserRole.ADMIN) {
 			return UNAUTHORIZED_ERROR;
 		}
 
-		// Delete the submission
-		await prisma.challengeSubmission.delete({
-			where: { id: submissionId },
-		});
-
-		return {
-			status: SUCCESS,
-			data: { message: "Submission deleted successfully" },
-		};
+		return { status: SUCCESS, data: submission };
 	} catch (error) {
-		console.error("Failed to delete submission:", error);
-		return FAILED_TO_DELETE_SUBMISSION_ERROR;
+		console.error("Failed to fetch submission:", error);
+		return FAILED_TO_FETCH_SUBMISSIONS_ERROR;
 	}
 }
+
+// Alias for backward compatibility
+export const deleteSubmission = deleteChallengeSubmission;

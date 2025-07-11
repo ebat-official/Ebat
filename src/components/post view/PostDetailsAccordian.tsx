@@ -6,7 +6,8 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Post, PostType } from "@prisma/client";
+import { Post } from "@/db/schema/zod-schemas";
+import { PostType } from "@/db/schema/enums";
 import { normalizeCompaniesData } from "@/hooks/useCompanyList";
 import companiesData from "@/utils/companyListConfig";
 import { AiOutlineTag } from "react-icons/ai";
@@ -50,11 +51,11 @@ const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 						)}
 					{((post.type !== PostType.BLOGS &&
 						post.type !== PostType.SYSTEMDESIGN) ||
-						post.companies?.length > 0) && (
-						<CompaniesAccordion companies={post.companies} />
+						(post.companies && post.companies.length > 0)) && (
+						<CompaniesAccordion companies={post.companies || []} />
 					)}
 
-					<TopicsAccordion topics={post.topics} />
+					<TopicsAccordion topics={post.topics || []} />
 					<CollaboratorsAccordion collaborators={post.collaborators} />
 				</Accordion>
 			</CardContent>

@@ -4,7 +4,6 @@ import { signIn } from "@/auth";
 import { db } from "@/db";
 import { users, verificationTokens, resetTokens } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { selectUserSchema } from "@/db/schema/zod-schemas";
 import type { User } from "@/db/schema/zod-schemas";
 import { defaultLoginRedirect } from "@/utils/routes";
 import { authFormSchema, authFormSchemaType } from "@/lib/validators/authForm";
@@ -157,7 +156,7 @@ export async function upsertVerificationToken(
 				token: verificationTokens.token,
 				expires: verificationTokens.expires,
 			});
-		return { status: SUCCESS, data: record };
+		return { status: SUCCESS, data: record[0] };
 	} catch (error) {
 		return SOMETHING_WENT_WRONG_ERROR;
 	}
@@ -225,7 +224,7 @@ export async function upsertResetToken(
 				token: resetTokens.token,
 				expires: resetTokens.expires,
 			});
-		return { status: SUCCESS, data: record };
+		return { status: SUCCESS, data: record[0] };
 	} catch (error) {
 		return SOMETHING_WENT_WRONG_ERROR;
 	}

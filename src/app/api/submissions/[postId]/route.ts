@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { challengeSubmissions } from "@/db/schema";
+import { eq, and, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/actions/user";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { FAILED_TO_FETCH_SUBMISSIONS } from "@/utils/contants";
@@ -17,14 +19,12 @@ export async function GET(
 		const { postId } = await params;
 
 		// Get only current user's submissions for this challenge
-		const submissions = await prisma.challengeSubmission.findMany({
-			where: {
-				postId,
-				userId: user.id, // Only fetch current user's submissions
-			},
-			orderBy: {
-				submittedAt: "desc",
-			},
+		const submissions = await db.query.challengeSubmissions.findMany({
+			where: and(
+				eq(challengeSubmissions.postId, postId),
+				eq(challengeSubmissions.userId, user.id)
+			),
+			orderBy: [desc(challengeSubmissions.submittedAt)],
 		});
 
 		return NextResponse.json(submissions);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
-import { getCommentsWithVotes } from "@/utils/api utils/comment";
+import { getCommentsWithVotes } from "@/utils/api utils/comment-server";
 import { CommentSortOption } from "@/utils/types";
 import { redis } from "@/lib/redis";
 import { COMMENT_SORT_OPTIONS } from "@/utils/contants";

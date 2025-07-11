@@ -25,7 +25,7 @@ import {
 	ChallengeTemplate,
 } from "@/utils/types";
 import { Loader2, Code, FileCode2 } from "lucide-react";
-import { PostType, TemplateFramework } from "@prisma/client";
+import { PostType, TemplateFramework } from "@/db/schema/enums";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
 import { POST_ACTIONS } from "@/utils/contants";
 import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";

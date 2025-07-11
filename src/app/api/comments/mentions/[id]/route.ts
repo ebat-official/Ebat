@@ -1,4 +1,6 @@
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { commentMentions } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { COMMENT_ID_NOT_EXIST_ERROR } from "@/utils/errors";
@@ -15,13 +17,11 @@ export async function GET(
 		}
 
 		// Fetch all mentions for the given commentId
-		const mentions = await prisma.commentMention.findMany({
-			where: {
-				commentId,
-			},
-			include: {
+		const mentions = await db.query.commentMentions.findMany({
+			where: eq(commentMentions.commentId, commentId),
+			with: {
 				user: {
-					select: {
+					columns: {
 						id: true,
 						userName: true,
 						email: true,

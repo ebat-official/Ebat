@@ -2,7 +2,7 @@ import { FeedProvider } from "@/components/feed/FeedContext";
 import { PostSearchResponse, PostSortOrder } from "@/utils/types";
 import { EndpointMap } from "@/utils/contants";
 import { FeedList } from "@/components/feed/FeedList";
-import { PostType, SubCategory } from "@prisma/client";
+import { PostType, SubCategory } from "@/db/schema/enums";
 import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 
@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: PageProps }) {
 
 	if (
 		!Object.values(SubCategory).includes(
-			awaitedParams.subCategory.toUpperCase() as SubCategory,
+			awaitedParams.subCategory.toUpperCase() as typeof SubCategory[keyof typeof SubCategory],
 		)
 	) {
 		return notFound();

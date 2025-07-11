@@ -9,7 +9,7 @@ import {
 	PostActions,
 	SubCategoryType,
 } from "@/utils/types";
-import { PostType } from "@prisma/client";
+import { PostType } from "@/db/schema/enums";
 import { ERROR, POST_ACTIONS } from "@/utils/contants";
 
 type PostParams = {

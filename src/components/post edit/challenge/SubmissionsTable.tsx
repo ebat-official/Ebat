@@ -34,7 +34,7 @@ import { deleteSubmission } from "@/actions/submission";
 import { formatDistanceToNow } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SubmissionStatus } from "@prisma/client";
+import { SubmissionStatus } from "@/db/schema/enums";
 import {
 	SubmissionWithStatus,
 	SubmissionSortField,

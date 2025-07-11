@@ -5,7 +5,7 @@ import {
 	PostCategory,
 	SubCategory,
 	TemplateFramework,
-} from "@prisma/client";
+} from "@/db/schema/enums";
 import {
 	ANSWER_REQUIRED,
 	INVALID_CATEGORY,
@@ -19,13 +19,41 @@ import {
 import { OutputData } from "@editorjs/editorjs";
 import { EditorContent } from "@/utils/types";
 import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
-import type { FileSystemTree } from "@/components/playground/lib/types";
+
+// FileSystemTree schema based on WebContainer API structure
+const FileNodeSchema = z.object({
+	file: z.object({
+		contents: z.union([z.string(), z.instanceof(Uint8Array)]),
+	}),
+});
+
+const SymlinkNodeSchema = z.object({
+	file: z.object({
+		symlink: z.string(),
+	}),
+});
+
+const DirectoryNodeSchema: z.ZodType<{
+	directory: Record<string, z.infer<typeof FileSystemNodeSchema>>;
+}> = z.lazy(() =>
+	z.object({
+		directory: z.record(z.string(), FileSystemNodeSchema),
+	})
+);
+
+const FileSystemNodeSchema = z.union([
+	FileNodeSchema,
+	SymlinkNodeSchema,
+	DirectoryNodeSchema,
+]);
+
+const FileSystemTreeSchema = z.record(z.string(), FileSystemNodeSchema);
 
 // Challenge template schema
 const ChallengeTemplateSchema = z.object({
 	framework: z.nativeEnum(TemplateFramework),
-	questionTemplate: z.any(), // FileSystemTree
-	answerTemplate: z.any(), // FileSystemTree
+	questionTemplate: FileSystemTreeSchema,
+	answerTemplate: FileSystemTreeSchema,
 });
 
 export const PostDraftValidator = z.object({
@@ -178,3 +206,6 @@ export const PostValidator = BasePostValidator.superRefine((data, ctx) => {
 export type ValidatedPostType = z.infer<typeof PostValidator>;
 
 export type PostDraftType = z.infer<typeof PostDraftValidator>;
+
+// Export the FileSystemTree schema for reuse
+export { FileSystemTreeSchema };

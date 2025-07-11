@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { DifficultyBadge } from "../shared/DifficultyBadge";
 import { ViewsBadge } from "../shared/viewsBadge";
 import { FeedPost } from "@/utils/types";
-import { Difficulty } from "@prisma/client";
+import { Difficulty } from "@/db/schema/enums";
 import { usePathname, useRouter } from "next/navigation";
 import { useFeedContext } from "./FeedContext";
 import Image from "next/image";
@@ -51,7 +51,7 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
             <AuthorNudge author={post.author.userProfile} />
           )} */}
 					<div className="flex">
-						{post.topics?.length > 0 && (
+						{post.topics && post.topics.length > 0 && (
 							<>
 								{post.topics.slice(0, 2).map((topic, index) => (
 									<Badge

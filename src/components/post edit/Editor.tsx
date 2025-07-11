@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import PostContentSkeleton from "./PostContentSkelton";
 import { ContentType, EditorContent } from "@/utils/types";
-import { PostType } from "@prisma/client";
+import { PostType } from "@/db/schema/enums";
 import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { RiQuestionAnswerLine } from "react-icons/ri";

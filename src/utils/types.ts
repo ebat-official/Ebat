@@ -1,14 +1,22 @@
 import {
 	Post,
+	User,
+	ChallengeSubmission,
+} from "@/db/schema/zod-schemas";
+import {
 	PostCategory,
 	PostType,
 	SubCategory,
-	User,
 	VoteType,
 	TemplateFramework,
-	ChallengeSubmission,
 	SubmissionStatus,
-} from "@prisma/client";
+	type PostCategoryType,
+	type PostTypeType,
+	type SubCategoryType as SubCategoryEnumType,
+	type VoteTypeType,
+	type TemplateFrameworkType,
+	type SubmissionStatusType,
+} from "@/db/schema/enums";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
 import {
@@ -26,7 +34,7 @@ import type {
 
 // Challenge template type
 export interface ChallengeTemplate {
-	framework: TemplateFramework;
+	framework: TemplateFrameworkType;
 	questionTemplate: Template;
 	answerTemplate: Template;
 }
@@ -42,15 +50,15 @@ export interface ContentReturnType {
 	answer?: string;
 }
 
-export type PrismaJson = ReturnType<typeof JSON.parse> | null | undefined;
+export type DatabaseJson = Record<string, unknown> | unknown[] | string | number | boolean | null;
 
-export type CategoryType = keyof typeof PostCategory;
+export type CategoryType = PostCategoryType;
 export type SubCategoryType =
-	| keyof typeof SubCategory
+	| SubCategoryEnumType
 	| DesignBlogType
 	| undefined;
 
-export type TopicCategory = SubCategoryType | PostCategory;
+export type TopicCategory = SubCategoryType | PostCategoryType;
 
 export type QuestionSidebarData = {
 	companies?: string[];
@@ -83,7 +91,7 @@ export type postCreateOptions = Partial<
 };
 
 export type PostActions = (typeof POST_ACTIONS)[keyof typeof POST_ACTIONS];
-export type DesignBlogType = Extract<PostType, "BLOGS" | "SYSTEMDESIGN">;
+export type DesignBlogType = Extract<PostTypeType, "BLOGS" | "SYSTEMDESIGN">;
 export type PostRouteType =
 	(typeof POST_ROUTE_TYPE)[keyof typeof POST_ROUTE_TYPE];
 
@@ -161,7 +169,7 @@ export type CommentWithVotes = {
 	};
 	upVotes: number;
 	downVotes: number;
-	userVoteType: VoteType | null;
+	userVoteType: VoteTypeType | null;
 	repliesExist: boolean;
 	repliesLoaded: boolean;
 	replies: CommentWithVotes[];
@@ -198,6 +206,7 @@ export interface RawCommentResult {
 		id: string;
 		name: string;
 		avatar?: string | null;
+		userName: string;
 	};
 }
 
@@ -293,7 +302,7 @@ export interface UsePostSearchOptions {
 
 // Submission Table Types
 export type SubmissionWithStatus = ChallengeSubmission & {
-	status: SubmissionStatus;
+	status: SubmissionStatusType;
 };
 
 export type SubmissionSortField =

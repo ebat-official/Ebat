@@ -15,7 +15,7 @@ import { AiOutlineTag } from "react-icons/ai";
 import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
 import { TopicCategory } from "@/utils/types";
 import { useFeedContext } from "./FeedContext";
-import { Difficulty } from "@prisma/client";
+import { Difficulty } from "@/db/schema/enums";
 import { MdOutlineGpsFixed } from "react-icons/md";
 
 interface FeedSidebarProps {}

@@ -7,14 +7,14 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"postinstall": "npx prisma generate",
+		"postinstall": "drizzle-kit generate",
 		"format": "biome format . --write",
 		"format:check": "biome format --check",
 		"prepare": "husky",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"db:studio": "drizzle-kit studio"
+		"studio": "drizzle-kit studio"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.2.7",

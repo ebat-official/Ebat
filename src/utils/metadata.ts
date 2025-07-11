@@ -1,6 +1,6 @@
 // utils/metadata.ts
 import { Metadata } from "next";
-import { Post } from "@prisma/client";
+import { Post } from "@/db/schema/zod-schemas";
 import {
 	ContentReturnType,
 	ContentType,
@@ -139,6 +139,24 @@ export const generateStructuredData = (
 					item: postUrl,
 				},
 			],
+		},
+	};
+};
+
+export const generateMetadata = (post: Post): Metadata => {
+	return {
+		title: post.title || "Untitled Post",
+		description: `${post.type} post in ${post.category}`,
+		openGraph: {
+			title: post.title || "Untitled Post",
+			description: `${post.type} post in ${post.category}`,
+			images: post.thumbnail ? [post.thumbnail] : [],
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: post.title || "Untitled Post",
+			description: `${post.type} post in ${post.category}`,
+			images: post.thumbnail ? [post.thumbnail] : [],
 		},
 	};
 };

@@ -1,4 +1,4 @@
-import { PostType } from "@prisma/client";
+import { PostType, PostTypeType } from "@/db/schema/enums";
 
 const supportedTypes = new Set(Object.values(PostType));
 

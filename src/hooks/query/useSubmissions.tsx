@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChallengeSubmission } from "@prisma/client";
+import { ChallengeSubmission } from "@/db/schema/zod-schemas";
 
 export const useSubmissions = (postId: string) => {
 	return useQuery({

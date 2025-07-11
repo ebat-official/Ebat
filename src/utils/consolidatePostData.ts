@@ -1,4 +1,5 @@
-import { Post, PostType } from "@prisma/client";
+import { Post } from "@/db/schema/zod-schemas";
+import { PostType } from "@/db/schema/enums";
 import {
 	CategoryType,
 	ContentType,

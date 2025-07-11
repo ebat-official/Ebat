@@ -1,15 +1,11 @@
 "use server";
 import {
-	Difficulty,
-	Post,
 	PostApprovalStatus,
 	PostStatus,
 	PostType,
-	Prisma,
-	TemplateFramework,
-} from "@prisma/client";
+	PostStatusType
+} from "@/db/schema/enums";
 import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
 import {
 	FailedToEditPostErr,
@@ -19,47 +15,45 @@ import {
 	ValidationErr,
 } from "@/utils/errors";
 import { z } from "zod";
-import { GenerateActionReturnType, PrismaJson } from "@/utils/types";
+import { GenerateActionReturnType, DatabaseJson } from "@/utils/types";
 import { generateTitleSlug } from "@/utils/generateTileSlug";
 import { getCompletionDuration } from "@/utils/getCompletionDuration";
 import { getDefaultCoins } from "@/utils/getDefaultCoins";
 import { generatePostPath } from "@/utils/generatePostPath";
 import { revalidatePath } from "next/cache";
-import pako from "pako";
+import { compressContent } from "@/utils/compression";
 import { validateUser } from "./user";
 import { ERROR, SUCCESS, POST_ID_REQUIRED } from "@/utils/contants";
-import type { FileSystemTree } from "@/components/playground/lib/types";
-import { createChallengeTemplatesForPost } from "@/utils/api utils/challengeTemplateHelpers";
+import { db } from "@/db";
+import { posts, postEdits, challengeTemplates } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { InsertPost, InsertPostEdit } from "@/db/schema/zod-schemas";
 
-// Shared utility functions
-const currentUser = async () => {
-	const session = await auth();
-	return session?.user;
-};
 
 const getPostDetails = async (postId: string) => {
-	return await prisma.post.findUnique({
-		where: { id: postId },
-		select: { authorId: true, status: true, approvalStatus: true },
+	return await db.query.posts.findFirst({
+		where: eq(posts.id, postId),
+		columns: {
+			authorId: true,
+			status: true,
+			approvalStatus: true,
+		},
 	});
 };
 
 const checkPostOwnership = async (postId: string, userId: string) => {
 	const existingPost = await getPostDetails(postId);
-
 	if (existingPost && existingPost.authorId !== userId) return false;
 	return true;
 };
 
 const checkPostLiveStatus = async (postId: string) => {
 	const existingPost = await getPostDetails(postId);
-
-	const isLivePost =
-		existingPost?.approvalStatus === PostApprovalStatus.APPROVED;
+	const isLivePost = existingPost?.approvalStatus === PostApprovalStatus.APPROVED;
 	return { existingPost, isLivePost };
 };
 
-const revalidatePostPath = (post: Post) => {
+const revalidatePostPath = (post: typeof posts.$inferSelect) => {
 	const path = generatePostPath({
 		category: post.category,
 		subCategory: post.subCategory,
@@ -73,15 +67,15 @@ const revalidatePostPath = (post: Post) => {
 const buildBasePostData = (
 	user: { id: string },
 	data: z.infer<typeof PostDraftValidator> | z.infer<typeof PostValidator>,
-	status: PostStatus,
-) => ({
+	status: PostStatusType,
+): InsertPost => ({
 	id: data.id,
 	authorId: user.id,
 	status,
 	title: data.title || null,
-	content: pako.deflate(JSON.stringify(data.content)),
+	content: data.content ? compressContent(data.content) : null,
 	type: data.type,
-	difficulty: data.difficulty as Difficulty,
+	difficulty: data.difficulty,
 	companies: data.companies?.map((company) => company.toLowerCase()) || [],
 	completionDuration: data.completionDuration || null,
 	topics: data.topics?.map((topic) => topic.toLowerCase()) || [],
@@ -105,7 +99,7 @@ export async function createDraftPost(
 	if (!isOwner) return UNAUTHORIZED_ERROR;
 
 	const postData = {
-		...buildBasePostData(user, data, "DRAFT"),
+		...buildBasePostData(user, data, PostStatus.DRAFT),
 		approvalStatus: PostApprovalStatus.PENDING,
 		approvalLogs: [],
 	};
@@ -117,37 +111,33 @@ export async function createDraftPost(
 		data.challengeTemplates.length > 0
 	) {
 		try {
-			const result = await prisma.$transaction(async (tx) => {
+			const result = await db.transaction(async (tx) => {
 				// Create the post
-				const post = await tx.post.upsert({
-					where: { id: data.id || undefined },
-					create: postData,
-					update: postData,
-				});
+				const post = await tx
+					.insert(posts)
+					.values(postData)
+					.onConflictDoUpdate({
+						target: posts.id,
+						set: postData,
+					})
+					.returning();
 
-				// Create challenge templates using helper function
+				// Delete all existing templates for this post
+				await tx.delete(challengeTemplates).where(eq(challengeTemplates.postId, post[0].id));
+
+				// Create all new templates
 				if (data.challengeTemplates) {
-					// Delete all existing templates for this post
-					await tx.challengeTemplate.deleteMany({
-						where: { postId: post.id },
-					});
-
-					// Create all new templates
 					for (const template of data.challengeTemplates) {
-						await tx.challengeTemplate.create({
-							data: {
-								postId: post.id,
-								framework: template.framework,
-								questionTemplate:
-									template.questionTemplate as unknown as Prisma.InputJsonValue,
-								answerTemplate:
-									template.answerTemplate as unknown as Prisma.InputJsonValue,
-							},
+						await tx.insert(challengeTemplates).values({
+							postId: post[0].id,
+							framework: template.framework,
+							questionTemplate: template.questionTemplate,
+							answerTemplate: template.answerTemplate,
 						});
 					}
 				}
 
-				return post;
+				return post[0];
 			});
 
 			return { status: SUCCESS, data: result.id };
@@ -159,12 +149,15 @@ export async function createDraftPost(
 		}
 	} else {
 		// Regular draft creation without challenge templates
-		const post = await prisma.post.upsert({
-			where: { id: data.id || undefined },
-			create: postData,
-			update: postData,
-		});
-		return { status: SUCCESS, data: post.id };
+		const post = await db
+			.insert(posts)
+			.values(postData)
+			.onConflictDoUpdate({
+				target: posts.id,
+				set: postData,
+			})
+			.returning();
+		return { status: SUCCESS, data: post[0].id };
 	}
 }
 
@@ -192,14 +185,11 @@ export async function createPost(
 	}
 
 	const postData = {
-		...buildBasePostData(user, data, "PUBLISHED"),
+		...buildBasePostData(user, data, PostStatus.PUBLISHED),
 		title: data.title,
 		completionDuration: getCompletionDuration(data),
 		coins: getDefaultCoins(data),
-		approvalStatus:
-			data.type === PostType.BLOGS
-				? PostApprovalStatus.APPROVED
-				: PostApprovalStatus.PENDING,
+		approvalStatus: data.type === PostType.BLOGS ? PostApprovalStatus.APPROVED : PostApprovalStatus.PENDING,
 		approvalLogs: [],
 		slug: generateTitleSlug(data.title),
 	};
@@ -211,37 +201,33 @@ export async function createPost(
 		data.challengeTemplates.length > 0
 	) {
 		try {
-			const result = await prisma.$transaction(async (tx) => {
+			const result = await db.transaction(async (tx) => {
 				// Create the post
-				const post = await tx.post.upsert({
-					where: { id: data.id || undefined },
-					create: postData,
-					update: postData,
-				});
+				const post = await tx
+					.insert(posts)
+					.values(postData)
+					.onConflictDoUpdate({
+						target: posts.id,
+						set: postData,
+					})
+					.returning();
 
-				// Create challenge templates using helper function
+				// Delete all existing templates for this post
+				await tx.delete(challengeTemplates).where(eq(challengeTemplates.postId, post[0].id));
+
+				// Create all new templates
 				if (data.challengeTemplates) {
-					// Delete all existing templates for this post
-					await tx.challengeTemplate.deleteMany({
-						where: { postId: post.id },
-					});
-
-					// Create all new templates
 					for (const template of data.challengeTemplates) {
-						await tx.challengeTemplate.create({
-							data: {
-								postId: post.id,
-								framework: template.framework,
-								questionTemplate:
-									template.questionTemplate as unknown as Prisma.InputJsonValue,
-								answerTemplate:
-									template.answerTemplate as unknown as Prisma.InputJsonValue,
-							},
+						await tx.insert(challengeTemplates).values({
+							postId: post[0].id,
+							framework: template.framework,
+							questionTemplate: template.questionTemplate,
+							answerTemplate: template.answerTemplate,
 						});
 					}
 				}
 
-				return post;
+				return post[0];
 			});
 
 			// Trigger revalidation for the post's path
@@ -255,15 +241,18 @@ export async function createPost(
 		}
 	} else {
 		// Regular post creation without challenge templates
-		const post = await prisma.post.upsert({
-			where: { id: data.id || undefined },
-			create: postData,
-			update: postData,
-		});
+		const post = await db
+			.insert(posts)
+			.values(postData)
+			.onConflictDoUpdate({
+				target: posts.id,
+				set: postData,
+			})
+			.returning();
 
 		// Trigger revalidation for the post's path
-		revalidatePostPath(post);
-		return { status: SUCCESS, data: { id: post.id, slug: post.slug } };
+		revalidatePostPath(post[0]);
+		return { status: SUCCESS, data: { id: post[0].id, slug: post[0].slug } };
 	}
 }
 
@@ -271,7 +260,6 @@ export async function createPostEdit(
 	data: z.infer<typeof PostValidator>,
 ): Promise<GenerateActionReturnType<CreatePostReturnType>> {
 	// Validate the input data
-
 	const validation = PostValidator.safeParse(data);
 	if (!validation.success) return { status: ERROR, data: validation.error };
 
@@ -289,11 +277,11 @@ export async function createPostEdit(
 	if (!user) return UNAUTHENTICATED_ERROR;
 
 	// Build the post edit data
-	const postEditData = {
+	const postEditData: InsertPostEdit = {
 		postId: data.id,
 		authorId: user.id,
 		title: data.title,
-		content: data.content,
+		content: data.content ? compressContent(data.content) : null,
 		type: data.type,
 		difficulty: data.difficulty,
 		companies: data.companies?.map((company) => company.toLowerCase()) || [],
@@ -302,16 +290,14 @@ export async function createPostEdit(
 		approvalLogs: [],
 	};
 
-	const postEdit = await prisma.postEdit.upsert({
-		where: {
-			postId_authorId: {
-				postId: data.id,
-				authorId: user.id,
-			},
-		},
-		create: postEditData as PrismaJson,
-		update: postEditData as PrismaJson,
-	});
+	const postEdit = await db
+		.insert(postEdits)
+		.values(postEditData)
+		.onConflictDoUpdate({
+			target: [postEdits.postId, postEdits.authorId],
+			set: postEditData,
+		})
+		.returning();
 
-	return { status: SUCCESS, data: { id: postEdit.postId, slug: "" } };
+	return { status: SUCCESS, data: { id: postEdit[0].postId, slug: "" } };
 }

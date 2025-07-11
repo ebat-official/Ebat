@@ -1,7 +1,7 @@
 import fallbackImg from "@/assets/img/avatarFallback.webp";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Image from "next/image";
-import { UserProfile } from "@prisma/client";
+import { UserProfile } from "@/db/schema/zod-schemas";
 import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
 
 interface AuthorNudgeProps {

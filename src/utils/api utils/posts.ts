@@ -1,43 +1,47 @@
 import pako from "pako";
 import { validateUser } from "@/actions/user";
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { posts, postEdits, challengeTemplates } from "@/db/schema";
+import { eq, and, desc, asc, count, inArray, ilike, sql } from "drizzle-orm";
 import {
 	Difficulty,
 	PostApprovalStatus,
 	PostCategory,
 	PostType,
 	SubCategory,
-} from "@prisma/client";
+} from "@/db/schema/enums";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
 import { PostSearchResponse, PostSortOrder } from "../types";
 import { EndpointMap } from "../contants";
 import { t } from "@excalidraw/excalidraw/i18n";
+import { decompressContent, type JsonContent } from "../compression";
+
 export async function getPostById(postId: string) {
-	const post = await prisma.post.findUnique({
-		where: { id: postId },
-		include: {
+	const post = await db.query.posts.findFirst({
+		where: eq(posts.id, postId),
+		with: {
 			challengeTemplates: true,
 		},
 	});
 
-	if (post?.content) {
-		post.content = JSON.parse(pako.inflate(post.content, { to: "string" }));
-	}
-	return post;
+	if (!post) return null;
+
+	return {
+		...post,
+		content: post.content ? decompressContent(post.content) : null,
+	};
 }
 
 export async function getEditPostByPostId(postId: string) {
 	const user = await validateUser();
 
 	if (!user) return null;
-	const postEdit = await prisma.postEdit.findUnique({
-		where: {
-			postId_authorId: {
-				postId,
-				authorId: user.id,
-			},
-		},
-		select: {
+	const postEdit = await db.query.postEdits.findFirst({
+		where: and(
+			eq(postEdits.postId, postId),
+			eq(postEdits.authorId, user.id)
+		),
+		columns: {
 			id: true,
 			postId: true,
 			authorId: true,
@@ -54,35 +58,30 @@ export async function getEditPostByPostId(postId: string) {
 		},
 	});
 
-	if (postEdit?.content) {
-		postEdit.content = JSON.parse(
-			pako.inflate(postEdit.content, { to: "string" }),
-		);
-	}
+	if (!postEdit) return null;
 
-	return postEdit;
+	return {
+		...postEdit,
+		content: postEdit.content ? decompressContent(postEdit.content) : null,
+	};
 }
 
 export async function getAllApprovedPosts() {
-	const posts = await prisma.post.findMany({
-		where: {
-			approvalStatus: PostApprovalStatus.APPROVED,
-		},
-		select: {
+	const postsList = await db.query.posts.findMany({
+		where: eq(posts.approvalStatus, PostApprovalStatus.APPROVED),
+		columns: {
 			slug: true,
 			id: true,
 			category: true,
 			subCategory: true,
-			content: true, // Include content if needed
+			content: true,
 		},
 	});
 
-	return posts.map((post) => {
-		if (post.content) {
-			post.content = JSON.parse(pako.inflate(post.content, { to: "string" }));
-		}
-		return post;
-	});
+	return postsList.map((post) => ({
+		...post,
+		content: post.content ? decompressContent(post.content) : null,
+	}));
 }
 
 // utils/api-utils/search.ts
@@ -113,6 +112,7 @@ export async function searchPosts({
 	const searchQuerySanitized = sanitizeSearchQuery(searchQuery);
 	const skip = (page - 1) * pageSize;
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const where: any = {
 		...(searchQuerySanitized && {
 			title: {
@@ -139,6 +139,7 @@ export async function searchPosts({
 		}),
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let orderBy: any = { createdAt: "desc" };
 	if (sortOrder === PostSortOrder.Oldest) {
 		orderBy = { createdAt: "asc" };
@@ -147,9 +148,9 @@ export async function searchPosts({
 	}
 
 	const [posts, totalCount] = await Promise.all([
-		prisma.post.findMany({
+		db.query.posts.findMany({
 			where,
-			select: {
+			columns: {
 				id: true,
 				title: true,
 				slug: true,
@@ -158,14 +159,18 @@ export async function searchPosts({
 				difficulty: true,
 				companies: true,
 				type: true,
-				views: true,
 				topics: true,
+			},
+			with: {
+				views: true,
 				author: {
-					select: {
+					columns: {
 						id: true,
 						userName: true,
-						userProfile: {
-							select: {
+					},
+					with: {
+						profile: {
+							columns: {
 								name: true,
 								image: true,
 								companyName: true,
@@ -173,19 +178,14 @@ export async function searchPosts({
 						},
 					},
 				},
-				_count: {
-					select: {
-						votes: true,
-						comments: true,
-					},
-				},
 			},
 			orderBy,
-			skip,
-			take: pageSize + 1, // check for next page
+			limit: pageSize + 1, // check for next page
+			offset: skip,
 		}),
 
-		prisma.post.count({ where }),
+		// @ts-expect-error: Complex Drizzle query types
+		db.query.posts.count({ where }),
 	]);
 
 	const hasMore = posts.length > pageSize;
@@ -205,7 +205,7 @@ export interface PostSearchQueryParams {
 	page?: number;
 	pageSize?: number;
 	sortOrder?: PostSortOrder;
-	[key: string]: any;
+	[key: string]: string | number | PostSortOrder | undefined;
 }
 
 export async function fetchPostSearch(
@@ -219,10 +219,10 @@ export async function fetchPostSearch(
 	};
 
 	const url = new URL(`${process.env.ENV_URL}${EndpointMap.PostSearch}`);
-	Object.entries(queryParams).forEach(([key, value]) => {
+	for (const [key, value] of Object.entries(queryParams)) {
 		if (value !== undefined && value !== null)
 			url.searchParams.append(key, String(value));
-	});
+	}
 
 	const res = await fetch(url.toString(), { cache: "no-store" });
 	if (!res.ok) throw new Error("Failed to fetch posts");

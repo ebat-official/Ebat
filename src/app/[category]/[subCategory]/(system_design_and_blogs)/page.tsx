@@ -1,6 +1,6 @@
 import { FeedProvider } from "@/components/feed/FeedContext";
 import { PostSortOrder } from "@/utils/types";
-import { SubCategory, PostCategory } from "@prisma/client";
+import { SubCategory, PostCategory, PostCategoryType, SubCategoryType } from "@/db/schema/enums";
 import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 import { Feed } from "@/components/feed/Feed";
@@ -28,7 +28,7 @@ export async function generateMetadata({
 	// Validate parameters
 	if (
 		!category ||
-		!Object.values(PostCategory).includes(category as PostCategory) ||
+		!Object.values(PostCategory).includes(category as PostCategoryType) ||
 		(subCategory !== SubCategory.BLOGS &&
 			subCategory !== SubCategory.SYSTEMDESIGN)
 	) {
@@ -37,8 +37,8 @@ export async function generateMetadata({
 
 	// Generate metadata using utility function
 	const metadata = generateCategoryMetadata(
-		category as PostCategory,
-		subCategory as SubCategory,
+		category as PostCategoryType,
+		subCategory as SubCategoryType,
 	);
 
 	// Generate canonical URL

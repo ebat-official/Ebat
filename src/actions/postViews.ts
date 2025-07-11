@@ -1,5 +1,7 @@
 "use server";
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { postViews } from "@/db/schema";
+import { sql } from "drizzle-orm";
 
 /**
  * Increment the view count for a post by a given number.
@@ -9,13 +11,15 @@ import prisma from "@/lib/prisma";
  */
 export async function incrementPostView(
 	postId: string,
-	incrementBy: number = 1,
+	incrementBy = 1,
 ) {
 	if (!postId || incrementBy <= 0) return;
 
-	await prisma.postViews.upsert({
-		where: { postId },
-		update: { count: { increment: incrementBy } },
-		create: { postId, count: incrementBy },
-	});
+	await db
+		.insert(postViews)
+		.values({ postId, count: incrementBy })
+		.onConflictDoUpdate({
+			target: postViews.postId,
+			set: { count: sql`${postViews.count} + ${incrementBy}` },
+		});
 }

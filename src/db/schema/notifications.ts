@@ -7,6 +7,8 @@ import {
 	timestamp,
 	index,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { users } from "./users";
 
 // Notifications table
 export const notifications = pgTable(
@@ -28,3 +30,11 @@ export const notifications = pgTable(
 		),
 	}),
 );
+
+// Relations
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+	user: one(users, {
+		fields: [notifications.userId],
+		references: [users.id],
+	}),
+}));

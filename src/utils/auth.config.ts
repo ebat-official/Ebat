@@ -11,7 +11,8 @@ import Linkedin from "next-auth/providers/linkedin";
 import { EMAIL_NOT_VERIFIED } from "@/utils/contants";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { UserRole, UserProfile } from "@prisma/client";
+import { UserRole } from "@/db/schema/enums";
+import { UserProfile } from "@/db/schema/zod-schemas";
 
 export default {
 	trustHost: true,
@@ -34,9 +35,10 @@ export default {
 			const user = await findUserById(token.sub, true);
 			if (!user) return token;
 			token.role = user.role;
-			if (user && "userProfile" in user) {
-				token.image = user?.userProfile?.image;
-				token.name = user?.userProfile?.name;
+			if (user && "userProfile" in user && user.userProfile) {
+				const profile = user.userProfile as UserProfile;
+				token.image = profile.image;
+				token.name = profile.name;
 			}
 			return token;
 		},

@@ -19,7 +19,7 @@ import { useServerAction } from "@/hooks/useServerAction";
 import { extractSolutionTemplate } from "../../utils/submissionUtils";
 import { submitChallengeSolution } from "@/actions/submission";
 import { toast } from "sonner";
-import { PostType, SubmissionStatus } from "@prisma/client";
+import { PostType, SubmissionStatus } from "@/db/schema/enums";
 import { ERROR } from "@/utils/contants";
 import { SubmissionSuccessModal } from "./SubmissionSuccessModal";
 import { SubmissionFailureModal } from "./SubmissionFailureModal";
@@ -165,7 +165,8 @@ export function BottomPanel() {
 			const result = await submitSolution({
 				postId: post.id,
 				framework,
-				answerTemplate: template,
+				// @ts-expect-error: WebContainer FileSystemTree type is compatible but has different structure
+				answerTemplate: template.files,
 				runTime: Math.round(totalRuntime), // Ensure runtime is an integer
 				status: submissionStatus,
 			});
