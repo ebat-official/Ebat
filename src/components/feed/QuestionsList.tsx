@@ -51,88 +51,39 @@ const QuestionsList: FC = () => {
 				</div>
 			) : posts.length > 0 ? (
 				<div className="flex flex-col gap-4 mb-4">
-					{posts.map((post) => {
-						const postPath = generatePostPath({
-							category: post.category,
-							subCategory: post.subCategory,
-							slug: post.slug || "",
-							id: post.id,
-							postType: post.type,
-						});
-
-						return (
-							<Link
-								key={post.id}
-								href={postPath}
-								className="cursor-pointer block px-2 md:px-0"
-								prefetch={false}
-							>
-								<Card className="hover:shadow-md transition-shadow">
-									<CardHeader className="pb-3">
-										<div className="flex items-start justify-between">
-											<div className="flex-1">
-												<CardTitle className="text-lg hover:text-primary">
-													{post.title}
-												</CardTitle>
-												<div className="flex items-center gap-2 mt-2">
-													<Badge
-														variant="secondary"
-														className={cn(
-															"text-xs",
-															getDifficultyColor(
-																post.difficulty || Difficulty.EASY,
-															),
-														)}
-													>
-														{post.difficulty || Difficulty.EASY}
-													</Badge>
-													<Badge variant="outline" className="text-xs">
-														{post.type}
-													</Badge>
-												</div>
-											</div>
-										</div>
-									</CardHeader>
-									<CardContent className="pt-0">
-										<div className="flex items-center justify-between text-sm text-muted-foreground">
-											<div className="flex items-center gap-4">
-												<div className="flex items-center gap-1">
-													<User className="h-4 w-4" />
-													<span>{post.author.userName}</span>
-												</div>
-												<div className="flex items-center gap-1">
-													<Clock className="h-4 w-4" />
-													<span>
-														{formatDistanceToNow(new Date(post.createdAt), {
-															addSuffix: true,
-														})}
-													</span>
-												</div>
-											</div>
-											<div className="flex items-center gap-3">
-												<div className="flex items-center gap-1">
-													<Eye className="h-4 w-4" />
-													<span>
-														{typeof post.views === "object"
-															? post.views.count
-															: post.views || 0}
-													</span>
-												</div>
-												<div className="flex items-center gap-1">
-													<ThumbsUp className="h-4 w-4" />
-													<span>{post.votes || 0}</span>
-												</div>
-												<div className="flex items-center gap-1">
-													<MessageCircle className="h-4 w-4" />
-													<span>{post.comments || 0}</span>
-												</div>
-											</div>
-										</div>
-									</CardContent>
-								</Card>
-							</Link>
-						);
-					})}
+					{posts.map((post) => (
+						<Link
+							key={post.id}
+							href={getUrl(post)}
+							className="cursor-pointer block px-2 md:px-0"
+							prefetch={false}
+						>
+							<Card>
+								<CardContent className="flex items-center gap-4 min-h-16 md:min-h-16  justify-between">
+									<div className="flex gap-2 items-center">
+										<span>
+											<FiCheckCircle
+												className={cn("text-gray-500", {
+													"text-green-500": completionStatuses[post.id],
+												})}
+												size={18}
+												strokeWidth={2}
+											/>
+										</span>
+										<p className=" font-semibold overflow-hidden text-ellipsis capitalize line-clamp-2">
+											{post.title}
+										</p>
+									</div>
+									<div className="flex gap-4 md:gap-8">
+										<DifficultyBadge
+											difficulty={post.difficulty || Difficulty.EASY}
+										/>
+										<ViewsBadge views={post?.views?.count || 0} />
+									</div>
+								</CardContent>
+							</Card>
+						</Link>
+					))}
 					<FeedPagination />
 				</div>
 			) : (
