@@ -19,17 +19,9 @@ export const generatePostPath = ({
 	id: string;
 	postType: PostTypeType;
 }) => {
-	const baseUrl = `/${category}/${subCategory}`;
-
-	if (postType === "CHALLENGE") {
-		return `${baseUrl}/challenges/${slug || id}`;
-	}
-
-	if (postType === "QUESTION") {
-		return `${baseUrl}/questions/${slug || id}`;
-	}
-
-	return `${baseUrl}/${slug || id}`;
+	return `/${category.toLowerCase()}/${
+		subCategory ? `${subCategory.toLowerCase()}/` : ""
+	}${postType?.toLowerCase()}/${slug}-${id}`;
 };
 
 export const generatePostPathFromPostId = (

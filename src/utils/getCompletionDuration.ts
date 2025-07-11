@@ -10,29 +10,29 @@ export const getCompletionDuration = (
 		case PostType.QUESTION:
 			switch (difficulty) {
 				case Difficulty.EASY:
-					return 15;
+					return 5;
 				case Difficulty.MEDIUM:
-					return 30;
+					return 15;
 				case Difficulty.HARD:
-					return 45;
+					return 30;
 				default:
 					return 15;
 			}
 		case PostType.CHALLENGE:
 			switch (difficulty) {
 				case Difficulty.EASY:
-					return 30;
+					return 15;
 				case Difficulty.MEDIUM:
-					return 60;
+					return 30;
 				case Difficulty.HARD:
-					return 90;
+					return 60;
 				default:
 					return 30;
 			}
 		case PostType.BLOGS:
-			return 10;
+			return 20;
 		case PostType.SYSTEMDESIGN:
-			return 60;
+			return 20;
 		default:
 			return 15;
 	}

@@ -10,29 +10,47 @@ export const getDefaultCoins = (
 		case PostType.QUESTION:
 			switch (difficulty) {
 				case Difficulty.EASY:
-					return 10;
+					return 1;
 				case Difficulty.MEDIUM:
-					return 15;
+					return 5;
 				case Difficulty.HARD:
-					return 20;
+					return 10;
 				default:
 					return 10;
 			}
 		case PostType.CHALLENGE:
 			switch (difficulty) {
 				case Difficulty.EASY:
-					return 20;
+					return 5;
 				case Difficulty.MEDIUM:
-					return 30;
+					return 10;
 				case Difficulty.HARD:
-					return 40;
+					return 20;
+				default:
+					return 10;
+			}
+		case PostType.BLOGS:
+			switch (difficulty) {
+				case Difficulty.EASY:
+					return 2;
+				case Difficulty.MEDIUM:
+					return 5;
+				case Difficulty.HARD:
+					return 10;
+				default:
+					return 5;
+			}
+		case PostType.SYSTEMDESIGN:
+			switch (difficulty) {
+				case Difficulty.EASY:
+					return 5;
+				case Difficulty.MEDIUM:
+					return 10;
+				case Difficulty.HARD:
+					return 20;
 				default:
 					return 20;
 			}
-		case PostType.BLOGS:
-			return 5;
-		case PostType.SYSTEMDESIGN:
-			return 25;
 		default:
 			return 10;
 	}

@@ -13,23 +13,4 @@ const formatSidebarDefaultData = (
 	};
 };
 
-export const formatSidebarDefaultDataForPosts = (posts: Post[]) => {
-	return posts.map((post) => ({
-		id: post.id,
-		title: post.title,
-		category: post.category,
-		subCategory: post.subCategory,
-		type: post.type,
-		slug: post.slug,
-		thumbnail: post.thumbnail,
-		difficulty: post.difficulty,
-		createdAt: post.createdAt,
-		updatedAt: post.updatedAt,
-		coins: post.coins,
-		topics: post.topics,
-		companies: post.companies,
-		completionDuration: post.completionDuration,
-	}));
-};
-
 export default formatSidebarDefaultData;
