@@ -18,7 +18,7 @@ import {
 } from "@/utils/types";
 import { handleError } from "@/utils/handleError";
 import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
-import { PostType } from "@prisma/client";
+import { PostType, SubCategory } from "@/db/schema/enums";
 import StatusDialog from "@/components/shared/StatusDialog";
 import { Button } from "@/components/ui/button";
 import { usePostPublishManager } from "@/hooks/query/usePostPublishManager";
@@ -220,7 +220,7 @@ function PostCreateEdit({
 						<QuestionSidebar
 							postType={postType}
 							postId={postId}
-							topicCategory={subCategory || "JAVASCRIPT"}
+							topicCategory={subCategory || SubCategory.JAVASCRIPT}
 							getSidebarData={setSidebarData}
 							defaultContent={formatSidebarDefaultData(postData)}
 							dataLoading={isLoading}

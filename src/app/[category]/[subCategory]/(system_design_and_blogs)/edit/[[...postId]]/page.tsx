@@ -4,7 +4,7 @@ import React from "react";
 import { useParams, notFound } from "next/navigation";
 import isValidCategory from "@/utils/isValidCategory";
 import { POST_ACTIONS } from "@/utils/contants";
-import { PostType } from "@prisma/client";
+import { PostType } from "@/db/schema/enums";
 import PostCreateEdit from "@/components/post edit/PostCreateEdit";
 
 function Page() {

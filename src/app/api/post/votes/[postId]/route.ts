@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/actions/user";
-import { fetchVoteCounts } from "@/utils/api utils/vote";
+import { fetchVoteCounts } from "@/utils/api utils/vote-server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(

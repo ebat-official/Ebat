@@ -1,7 +1,10 @@
 "use server";
 
 import { signIn } from "@/auth";
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { users, verificationTokens, resetTokens } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import type { User } from "@/db/schema/zod-schemas";
 import { defaultLoginRedirect } from "@/utils/routes";
 import { authFormSchema, authFormSchemaType } from "@/lib/validators/authForm";
 import {
@@ -24,9 +27,8 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { findUserByEmail } from "@/actions/user";
 import mailer from "@/lib/mailer";
-import { prismaCustomAdapter } from "@/prismaAdapter";
+import { drizzleCustomAdapter } from "@/drizzleAdapter";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { User } from "@prisma/client";
 
 type dataType = {
 	token?: string;
@@ -62,16 +64,16 @@ export async function signUp(
 	if (!validateFields.success) {
 		return INVALID_USERNAME_PASSWORD_ERROR;
 	}
-	const userExist = await prisma.user.findUnique({
-		where: {
-			email: data.email,
-		},
-	});
+	const userExist = await db
+		.select()
+		.from(users)
+		.where(eq(users.email, data.email))
+		.limit(1);
 
-	if (userExist) {
+	if (userExist.length > 0) {
 		return EMAIL_ALREADY_EXISTS_ERROR;
 	}
-	const customAdapter = prismaCustomAdapter();
+	const customAdapter = drizzleCustomAdapter();
 
 	const user = await customAdapter.createUser({
 		name: data.name,
@@ -136,27 +138,40 @@ export async function upsertVerificationToken(
 		new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES),
 	);
 	try {
-		const record = await prisma.verificationToken.upsert({
-			where: { email: email },
-			update: { token: uuidToken, expires: tokenExpires },
-			create: { email: email, token: uuidToken, expires: tokenExpires },
-		});
-		return { status: SUCCESS, data: record };
+		const record = await db
+			.insert(verificationTokens)
+			.values({
+				email: email,
+				token: uuidToken,
+				expires: tokenExpires,
+			})
+			.onConflictDoUpdate({
+				target: verificationTokens.email,
+				set: {
+					token: uuidToken,
+					expires: tokenExpires,
+				},
+			})
+			.returning({
+				token: verificationTokens.token,
+				expires: verificationTokens.expires,
+			});
+		return { status: SUCCESS, data: record[0] };
 	} catch (error) {
 		return SOMETHING_WENT_WRONG_ERROR;
 	}
 }
 export async function validateVerificationToken(token: string) {
 	try {
-		const record = await prisma.verificationToken.findFirst({
-			where: {
-				token: token,
-			},
-		});
+		const record = await db
+			.select()
+			.from(verificationTokens)
+			.where(eq(verificationTokens.token, token))
+			.limit(1);
 
-		if (record?.token === token) {
-			if (record.expires.getTime() > new Date().getTime()) {
-				return { status: SUCCESS, data: record };
+		if (record.length > 0) {
+			if (record[0].expires.getTime() > new Date().getTime()) {
+				return { status: SUCCESS, data: record[0] };
 			}
 			return { status: ERROR, data: TOKEN_EXPIRED };
 		}
@@ -167,11 +182,12 @@ export async function validateVerificationToken(token: string) {
 }
 export async function deleteVerificationToken(email: string) {
 	try {
-		const record = await prisma.verificationToken.delete({
-			where: {
-				email: email,
-			},
-		});
+		const record = await db
+			.delete(verificationTokens)
+			.where(eq(verificationTokens.email, email))
+			.returning({
+				token: verificationTokens.token,
+			});
 
 		return { status: SUCCESS, data: record };
 	} catch (error) {
@@ -190,27 +206,40 @@ export async function upsertResetToken(
 		new Date().getTime() + Number(process.env.VERIFICATION_TOKEN_EXPIRES),
 	);
 	try {
-		const record = await prisma.resetToken.upsert({
-			where: { email: email },
-			update: { token: uuidToken, expires: tokenExpires },
-			create: { email: email, token: uuidToken, expires: tokenExpires },
-		});
-		return { status: SUCCESS, data: record };
+		const record = await db
+			.insert(resetTokens)
+			.values({
+				email: email,
+				token: uuidToken,
+				expires: tokenExpires,
+			})
+			.onConflictDoUpdate({
+				target: resetTokens.email,
+				set: {
+					token: uuidToken,
+					expires: tokenExpires,
+				},
+			})
+			.returning({
+				token: resetTokens.token,
+				expires: resetTokens.expires,
+			});
+		return { status: SUCCESS, data: record[0] };
 	} catch (error) {
 		return SOMETHING_WENT_WRONG_ERROR;
 	}
 }
 export async function validateResetToken(token: string) {
 	try {
-		const record = await prisma.resetToken.findFirst({
-			where: {
-				token: token,
-			},
-		});
+		const record = await db
+			.select()
+			.from(resetTokens)
+			.where(eq(resetTokens.token, token))
+			.limit(1);
 
-		if (record?.token === token) {
-			if (record.expires.getTime() > new Date().getTime()) {
-				return { status: SUCCESS, data: record };
+		if (record.length > 0) {
+			if (record[0].expires.getTime() > new Date().getTime()) {
+				return { status: SUCCESS, data: record[0] };
 			}
 			return { status: ERROR, data: TOKEN_EXPIRED };
 		}
@@ -223,11 +252,12 @@ export async function validateResetToken(token: string) {
 
 export async function deleteResetToken(email: string) {
 	try {
-		const record = await prisma.resetToken.delete({
-			where: {
-				email: email,
-			},
-		});
+		const record = await db
+			.delete(resetTokens)
+			.where(eq(resetTokens.email, email))
+			.returning({
+				token: resetTokens.token,
+			});
 
 		return { status: SUCCESS, data: record };
 	} catch (error) {
@@ -240,22 +270,20 @@ export async function updateUserPasswordWithToken(
 	password: string,
 ) {
 	try {
-		const tokenData = await prisma.resetToken.findFirst({
-			where: {
-				token: token,
-			},
-		});
-		if (!tokenData) {
+		const tokenData = await db
+			.select()
+			.from(resetTokens)
+			.where(eq(resetTokens.token, token))
+			.limit(1);
+		if (tokenData.length === 0) {
 			return { status: ERROR, data: INVALID_TOKEN_ERROR };
 		}
 
-		await prisma.user.update({
-			where: {
-				email: tokenData.email,
-			},
-			data: { password: bcrypt.hashSync(password, 12) },
-		});
-		deleteResetToken(tokenData.email);
+		await db
+			.update(users)
+			.set({ password: bcrypt.hashSync(password, 12) })
+			.where(eq(users.email, tokenData[0].email));
+		deleteResetToken(tokenData[0].email);
 		return true;
 	} catch (error) {
 		return null;

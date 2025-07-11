@@ -7,7 +7,7 @@ import {
 	HiOutlineThumbUp,
 	HiOutlineThumbDown,
 } from "react-icons/hi";
-import { VoteType } from "@prisma/client";
+import { VoteType } from "@/db/schema/enums";
 import { voteAction } from "@/actions/postVoting";
 import { handleError } from "@/utils/handleError";
 import { toast } from "@/hooks/use-toast";

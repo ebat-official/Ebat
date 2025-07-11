@@ -2,8 +2,10 @@
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { z } from "zod";
 import { validateUser } from "./user";
-import { VoteType } from "@prisma/client";
-import prisma from "@/lib/prisma";
+import { VoteType } from "@/db/schema/enums";
+import { db } from "@/db";
+import { commentVotes } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { SUCCESS } from "@/utils/contants";
 import { GenerateActionReturnType } from "@/utils/types";
@@ -11,7 +13,7 @@ import { GenerateActionReturnType } from "@/utils/types";
 const CommentVoteValidator = z.object({
 	postId: z.string(),
 	commentId: z.string(),
-	type: z.union([z.nativeEnum(VoteType), z.null()]),
+	type: z.nativeEnum(VoteType).nullable(),
 });
 
 export async function CommentVoteAction(
@@ -32,32 +34,27 @@ export async function CommentVoteAction(
 
 	if (voteData.type === null) {
 		// Delete the vote if type is null
-		await prisma.commentVote.delete({
-			where: {
-				userId_commentId: {
-					userId: voteData.userId,
-					commentId: voteData.commentId,
-				},
-			},
-		});
+		await db
+			.delete(commentVotes)
+			.where(
+				and(
+					eq(commentVotes.userId, voteData.userId),
+					eq(commentVotes.commentId, voteData.commentId),
+				),
+			);
 	} else {
 		// Upsert the vote if type is "UP" or "DOWN"
-		await prisma.commentVote.upsert({
-			where: {
-				userId_commentId: {
-					userId: voteData.userId,
-					commentId: voteData.commentId,
-				},
-			},
-			update: {
-				type: voteData.type as VoteType,
-			},
-			create: {
+		await db
+			.insert(commentVotes)
+			.values({
 				userId: voteData.userId,
 				commentId: voteData.commentId,
-				type: voteData.type as VoteType,
-			},
-		});
+				type: voteData.type,
+			})
+			.onConflictDoUpdate({
+				target: [commentVotes.userId, commentVotes.commentId],
+				set: { type: voteData.type },
+			});
 	}
 	invalidateCommentsCache(data.postId);
 	return { status: SUCCESS, data: SUCCESS };

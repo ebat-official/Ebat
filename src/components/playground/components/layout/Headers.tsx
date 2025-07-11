@@ -12,7 +12,7 @@ import {
 import { PanelLeftClose, PanelLeftOpen, RotateCcw } from "lucide-react";
 import { useWebContainerStore } from "../../store/webContainer";
 import { ChallengeTemplate } from "@/utils/types";
-import { TemplateFramework } from "@prisma/client";
+import { TemplateFramework } from "@/db/schema/enums";
 
 interface HeaderProps {
 	explorerCollapsed: boolean;

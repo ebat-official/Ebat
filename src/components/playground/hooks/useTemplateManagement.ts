@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useWebContainerStore } from "../store/webContainer";
 import { handleTemplateSelect } from "../utils/templateUtils";
 import type { Template } from "../lib/types";
-import { TemplateFramework } from "@prisma/client";
+import { TemplateFramework } from "@/db/schema/enums";
 
 interface EditingTemplate {
 	framework: TemplateFramework;

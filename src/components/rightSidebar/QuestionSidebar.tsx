@@ -23,7 +23,7 @@ import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import { QuestionSidebarData, TopicCategory } from "@/utils/types";
 import { CiCircleList } from "react-icons/ci";
 import { TableOfContent } from "../post edit/TableOfContent";
-import { PostType } from "@prisma/client";
+import { PostType } from "@/db/schema/enums";
 
 export type Duration = {
 	days: string;

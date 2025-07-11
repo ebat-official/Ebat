@@ -1,12 +1,14 @@
 "use server";
 import bcrypt from "bcryptjs";
 
-import prisma from "@/lib/prisma";
-import { User, UserProfile } from "@prisma/client";
+import { db } from "@/db";
+import { users, userProfiles } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { User, UserProfile } from "@/db/schema/zod-schemas";
 import { validateVerificationToken } from "./auth";
 import { auth } from "@/auth";
 
-type UserWithProfile = User & { userProfile: UserProfile | null };
+type UserWithProfile = User & { profile: UserProfile | null };
 
 /**
  *
@@ -17,10 +19,8 @@ type UserWithProfile = User & { userProfile: UserProfile | null };
  */
 export async function findUserByEmailServer(email: string) {
 	try {
-		const user = await prisma.user.findUnique({
-			where: {
-				email,
-			},
+		const user = await db.query.users.findFirst({
+			where: eq(users.email, email),
 		});
 		return user;
 	} catch (error) {
@@ -30,25 +30,25 @@ export async function findUserByEmailServer(email: string) {
 
 export async function findUserByEmail(email: string) {
 	try {
-		const user = await prisma.user.findUnique({
-			where: {
-				email,
-			},
-			select: {
+		const user = await db.query.users.findFirst({
+			where: eq(users.email, email),
+			columns: {
 				id: true,
 				email: true,
 				userName: true,
 				emailVerified: true,
-				userProfile: {
-					select: {
+				role: true,
+				karmaPoints: true,
+				accountStatus: true,
+			},
+			with: {
+				profile: {
+					columns: {
 						name: true,
 						id: true,
 						image: true,
 					},
 				},
-				role: true,
-				karmaPoints: true,
-				accountStatus: true,
 			},
 		});
 		return user;
@@ -56,14 +56,15 @@ export async function findUserByEmail(email: string) {
 		return null;
 	}
 }
+
 export async function findUserById(
 	id: string,
 	includeProfile = false,
 ): Promise<User | UserWithProfile | null> {
 	try {
-		const user = await prisma.user.findUnique({
-			where: { id },
-			select: {
+		const user = await db.query.users.findFirst({
+			where: eq(users.id, id),
+			columns: {
 				id: true,
 				email: true,
 				userName: true,
@@ -71,8 +72,12 @@ export async function findUserById(
 				role: true,
 				karmaPoints: true,
 				accountStatus: true,
-				userProfile: !!includeProfile,
 			},
+			with: includeProfile
+				? {
+						profile: true,
+					}
+				: undefined,
 		});
 
 		return user as UserWithProfile | User | null;
@@ -82,19 +87,22 @@ export async function findUserById(
 	}
 }
 
-export async function setEmailVerified(email: string) {
-	try {
-		await prisma.user.update({
-			where: {
-				email,
-			},
-			data: { emailVerified: new Date() },
-		});
-		return true;
-	} catch (error) {
-		return null;
-	}
+export async function validateUser() {
+	const session = await auth();
+	if (!session?.user?.id) return null;
+
+	const user = await findUserById(session.user.id);
+	return user;
 }
+
+export async function getCurrentUser() {
+	const session = await auth();
+	if (!session?.user?.id) return null;
+
+	const user = await findUserById(session.user.id, true);
+	return user;
+}
+
 export async function setEmailVerifiedUsingToken(token: string) {
 	const user = await validateVerificationToken(token);
 
@@ -103,51 +111,59 @@ export async function setEmailVerifiedUsingToken(token: string) {
 	}
 
 	try {
-		await prisma.user.update({
-			where: {
-				email: user.data.email,
-			},
-			data: { emailVerified: new Date() },
-		});
+		await db
+			.update(users)
+			.set({ emailVerified: new Date() })
+			.where(eq(users.email, user.data.email));
 		return true;
 	} catch (error) {
 		return null;
 	}
 }
+
 export async function updateUserPassword(email: string, password: string) {
-	//get email from session
 	try {
-		await prisma.user.update({
-			where: {
-				email,
-			},
-			data: { password: bcrypt.hashSync(password, 12) },
-		});
-		return true;
-	} catch (error) {
-		return null;
-	}
-}
-export async function updateUserName(id: string, userName: string) {
-	try {
-		await prisma.user.update({
-			where: {
-				id,
-			},
-			data: { userName },
-		});
+		const hashedPassword = await bcrypt.hash(password, 10);
+		await db
+			.update(users)
+			.set({ password: hashedPassword })
+			.where(eq(users.email, email));
 		return true;
 	} catch (error) {
 		return null;
 	}
 }
 
-export const getCurrentUser = async () => {
-	const session = await auth();
-	return session?.user;
-};
+export async function updateUserCoins(userId: string, coins: number) {
+	try {
+		await db.update(users).set({ coins }).where(eq(users.id, userId));
+		return true;
+	} catch (error) {
+		return null;
+	}
+}
 
-export const validateUser = async () => {
-	const user = await getCurrentUser();
-	return user;
-};
+export async function updateUserKarmaPoints(
+	userId: string,
+	karmaPoints: number,
+) {
+	try {
+		await db.update(users).set({ karmaPoints }).where(eq(users.id, userId));
+		return true;
+	} catch (error) {
+		return null;
+	}
+}
+
+export async function setEmailVerified(userId: string) {
+	try {
+		await db
+			.update(users)
+			.set({ emailVerified: new Date() })
+			.where(eq(users.id, userId));
+		return true;
+	} catch (error) {
+		console.error("Error setting email verified:", error);
+		return null;
+	}
+}

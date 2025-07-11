@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { TemplateFramework } from "@prisma/client";
+import { TemplateFramework } from "@/db/schema/enums";
 
 import {
 	Select,

@@ -1,5 +1,5 @@
 import { fetchVoteCountsFromAPI } from "@/utils/api utils/vote";
-import { VoteType } from "@prisma/client";
+import { VoteType } from "@/db/schema/enums";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 interface VoteCounts {

@@ -4,7 +4,7 @@ import {
 	PostSearchResponse,
 	UsePostSearchOptions,
 } from "@/utils/types";
-import { Post } from "@prisma/client";
+import { Post } from "@/db/schema/zod-schemas";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 // Import the API response type directly from the endpoint if exported
 // If not, you can define it here or use zod/yup inference if available

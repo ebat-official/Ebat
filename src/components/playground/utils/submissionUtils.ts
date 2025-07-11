@@ -1,7 +1,7 @@
 import { useWebContainerStore } from "../store/webContainer";
 import { extractSrcFromTemplate } from "./templateUtils";
 import type { Template } from "../lib/types";
-import type { TemplateFramework } from "@prisma/client";
+import type { TemplateFramework } from "@/db/schema/enums";
 
 /**
  * Extract the current solution template from WebContainer

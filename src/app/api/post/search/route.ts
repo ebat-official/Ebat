@@ -5,7 +5,7 @@ import {
 	PostCategory,
 	PostType,
 	SubCategory,
-} from "@prisma/client";
+} from "@/db/schema/enums";
 import { NextRequest, NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
 

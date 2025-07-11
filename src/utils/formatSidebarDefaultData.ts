@@ -1,4 +1,4 @@
-import { Post } from "@prisma/client";
+import { Post } from "@/db/schema/zod-schemas";
 import { QuestionSidebarData } from "./types";
 
 const formatSidebarDefaultData = (
@@ -12,4 +12,5 @@ const formatSidebarDefaultData = (
 		completionDuration: post.completionDuration || 0,
 	};
 };
+
 export default formatSidebarDefaultData;

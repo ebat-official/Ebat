@@ -1,25 +1,32 @@
-import { PostCategory, PostType, SubCategory, Post } from "@prisma/client";
-import { PostWithExtraDetails, SubCategoryType } from "./types";
+import {
+	PostCategoryType,
+	PostTypeType,
+	SubCategoryType,
+} from "@/db/schema/enums";
+import { Post } from "@/db/schema/zod-schemas";
+import { PostWithExtraDetails } from "@/utils/types";
 
-export function generatePostPath({
+export const generatePostPath = ({
 	category,
 	subCategory,
-	postType,
 	slug,
 	id,
+	postType,
 }: {
-	category: PostCategory;
-	subCategory?: SubCategoryType | null;
-	postType: PostType;
+	category: PostCategoryType;
+	subCategory: SubCategoryType | null;
 	slug: string;
 	id: string;
-}): string {
+	postType: PostTypeType;
+}) => {
 	return `/${category.toLowerCase()}/${
 		subCategory ? `${subCategory.toLowerCase()}/` : ""
 	}${postType?.toLowerCase()}/${slug}-${id}`;
-}
+};
 
-export const generatePostPathFromPostId = (post: PostWithExtraDetails) => {
+export const generatePostPathFromPostId = (
+	post: Post | PostWithExtraDetails,
+) => {
 	return generatePostPath({
 		category: post.category,
 		subCategory: post.subCategory,

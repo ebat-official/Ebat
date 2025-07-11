@@ -1,54 +1,57 @@
 import { PostValidator } from "@/lib/validators/post";
-import { Difficulty, PostType } from "@prisma/client";
+import { Difficulty, PostType } from "@/db/schema/enums";
 import { z } from "zod";
 
-export const getDefaultCoins = (data: z.infer<typeof PostValidator>) => {
-	switch (data.type) {
+export const getDefaultCoins = (
+	data: z.infer<typeof PostValidator>,
+): number => {
+	const { type, difficulty } = data;
+	switch (type) {
 		case PostType.QUESTION:
-			switch (data.difficulty) {
+			switch (difficulty) {
 				case Difficulty.EASY:
 					return 1;
 				case Difficulty.MEDIUM:
-					return 3;
+					return 5;
 				case Difficulty.HARD:
-					return 5;
-				default:
-					return 0;
-			}
-		case PostType.SYSTEMDESIGN:
-			switch (data.difficulty) {
-				case Difficulty.EASY:
-					return 5;
-				case Difficulty.MEDIUM:
 					return 10;
-				case Difficulty.HARD:
-					return 20;
 				default:
-					return 0;
-			}
-		case PostType.BLOGS:
-			switch (data.difficulty) {
-				case Difficulty.EASY:
-					return 5;
-				case Difficulty.MEDIUM:
 					return 10;
-				case Difficulty.HARD:
-					return 20;
-				default:
-					return 0;
 			}
 		case PostType.CHALLENGE:
-			switch (data.difficulty) {
+			switch (difficulty) {
 				case Difficulty.EASY:
-					return 3;
+					return 5;
+				case Difficulty.MEDIUM:
+					return 10;
+				case Difficulty.HARD:
+					return 20;
+				default:
+					return 10;
+			}
+		case PostType.BLOGS:
+			switch (difficulty) {
+				case Difficulty.EASY:
+					return 2;
 				case Difficulty.MEDIUM:
 					return 5;
 				case Difficulty.HARD:
 					return 10;
 				default:
-					return 0;
+					return 5;
+			}
+		case PostType.SYSTEMDESIGN:
+			switch (difficulty) {
+				case Difficulty.EASY:
+					return 5;
+				case Difficulty.MEDIUM:
+					return 10;
+				case Difficulty.HARD:
+					return 20;
+				default:
+					return 20;
 			}
 		default:
-			return 0;
+			return 10;
 	}
 };

@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useFeedContext } from "./FeedContext";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DifficultyBadge } from "../shared/DifficultyBadge";
 import { FiCheckCircle } from "react-icons/fi";
 import { cn } from "@/lib/utils";
@@ -10,10 +10,25 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { FeedPagination } from "./FeedPagination";
 import { QuestionSkeleton } from "./QuestionSkelton";
-import { Difficulty } from "@prisma/client";
+import { Difficulty } from "@/db/schema/enums";
 import NoSearchResults from "./NoSearchResults";
 import FeedSearch from "./FeedSearch";
 import AddPostRoundButton from "./AddPostRoundButton";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Clock, User, MessageCircle, ThumbsUp, Eye } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { DifficultyType } from "@/db/schema/enums";
+import { PostSearchResponse } from "@/utils/types";
+import { generatePostPath } from "@/utils/generatePostPath";
+import { getDifficultyColor } from "@/utils/difficultyUtils";
+
+interface QuestionsListProps {
+	posts: PostSearchResponse["posts"];
+	hasMore: boolean;
+	onLoadMore: () => void;
+	isLoading: boolean;
+}
 
 const QuestionsList: FC = () => {
 	const { posts, isLoadingData, completionStatuses, context, pageSize } =

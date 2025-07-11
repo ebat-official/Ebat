@@ -2,14 +2,16 @@
 import { UNAUTHENTICATED_ERROR, ValidationErr } from "@/utils/errors";
 import { z } from "zod";
 import { getCurrentUser, validateUser } from "./user";
-import { VoteType } from "@prisma/client";
-import prisma from "@/lib/prisma";
+import { VoteType } from "@/db/schema/enums";
+import { db } from "@/db";
+import { votes } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { GenerateActionReturnType } from "@/utils/types";
 import { SUCCESS } from "@/utils/contants";
 
 const VoteValidator = z.object({
 	postId: z.string(),
-	type: z.union([z.nativeEnum(VoteType), z.null()]),
+	type: z.nativeEnum(VoteType).nullable(),
 });
 
 export async function voteAction(
@@ -30,32 +32,27 @@ export async function voteAction(
 
 	if (voteData.type === null) {
 		// Delete the vote if type is null
-		await prisma.vote.delete({
-			where: {
-				userId_postId: {
-					userId: voteData.userId,
-					postId: voteData.postId,
-				},
-			},
-		});
+		await db
+			.delete(votes)
+			.where(
+				and(
+					eq(votes.userId, voteData.userId),
+					eq(votes.postId, voteData.postId),
+				),
+			);
 	} else {
 		// Upsert the vote if type is "UP" or "DOWN"
-		await prisma.vote.upsert({
-			where: {
-				userId_postId: {
-					userId: voteData.userId,
-					postId: voteData.postId,
-				},
-			},
-			update: {
-				type: voteData.type as VoteType,
-			},
-			create: {
+		await db
+			.insert(votes)
+			.values({
 				userId: voteData.userId,
 				postId: voteData.postId,
-				type: voteData.type as VoteType,
-			},
-		});
+				type: voteData.type,
+			})
+			.onConflictDoUpdate({
+				target: [votes.userId, votes.postId],
+				set: { type: voteData.type },
+			});
 	}
 	return { status: SUCCESS, data: SUCCESS };
 }

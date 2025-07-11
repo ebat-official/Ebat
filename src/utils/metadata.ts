@@ -1,6 +1,6 @@
 // utils/metadata.ts
 import { Metadata } from "next";
-import { Post } from "@prisma/client";
+import { Post } from "@/db/schema/zod-schemas";
 import {
 	ContentReturnType,
 	ContentType,
@@ -28,7 +28,7 @@ export const extractMetadata = (
 		`Learn more about ${post.topics?.join(", ") || "various topics"} on EBAT`;
 	const metaImage = post.thumbnail || "";
 	const postUrl = `${process.env.ENV_URL}${url}`;
-	const authorName = post.author?.userProfile?.name || "Unknown Author";
+	const authorName = post.author?.profile?.name || "Unknown Author";
 	// Generate keywords
 	const topics = post.topics?.join(", ") || "";
 	const companies = post.companies?.join(", ") || "";
@@ -138,6 +138,24 @@ export const generateStructuredData = (
 					item: postUrl,
 				},
 			],
+		},
+	};
+};
+
+export const generateMetadata = (post: Post): Metadata => {
+	return {
+		title: post.title || "Untitled Post",
+		description: `${post.type} post in ${post.category}`,
+		openGraph: {
+			title: post.title || "Untitled Post",
+			description: `${post.type} post in ${post.category}`,
+			images: post.thumbnail ? [post.thumbnail] : [],
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: post.title || "Untitled Post",
+			description: `${post.type} post in ${post.category}`,
+			images: post.thumbnail ? [post.thumbnail] : [],
 		},
 	};
 };

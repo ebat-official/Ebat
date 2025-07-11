@@ -1,7 +1,7 @@
 import { FeedProvider } from "@/components/feed/FeedContext";
 import { PostSearchResponse, PostSortOrder } from "@/utils/types";
 import { EndpointMap } from "@/utils/contants";
-import { PostCategory, SubCategory } from "@prisma/client";
+import { PostCategory, SubCategory } from "@/db/schema/enums";
 import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 import { Feed } from "@/components/feed/Feed";

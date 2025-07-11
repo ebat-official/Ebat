@@ -1,27 +1,36 @@
 "use server";
-import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { comments, commentMentions, commentVotes } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { z } from "zod";
-import {
-	CommentSortOption,
-	CommentWithVotes,
-	ErrorType,
-	GenerateActionReturnType,
-	SuccessType,
-} from "@/utils/types";
-import { Comment, Prisma, VoteType } from "@prisma/client";
-import { getCurrentUser, validateUser } from "./user";
-import { MentionData } from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
-import pako from "pako";
+import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
+import { Comment } from "@/db/schema/zod-schemas";
+import { VoteType } from "@/db/schema/enums";
+import { validateUser } from "./user";
+import { compressContent, decompressContent } from "@/utils/compression";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { commentNodes } from "@/components/shared/Lexical Editor/utils/SSR/nodes";
 import { ERROR, SUCCESS } from "@/utils/contants";
+import { SerializedEditorState } from "lexical";
 
-type CommentIncludeType = Prisma.CommentGetPayload<{
-	include: typeof commentInclude;
-}>;
+// Type for comment with relations
+type CommentWithRelations = Comment & {
+	author: {
+		id: string;
+		userName: string | null;
+		profile: {
+			name: string | null;
+			image: string | null;
+		} | null;
+	} | null;
+	votes: Array<{ type: VoteType }>;
+	repliesCount: number;
+	votesCount: number;
+	userVoteType?: VoteType | null;
+};
+
 // Validator for comment data
 const MentionDataSchema = z.object({
 	trigger: z.string(),
@@ -42,40 +51,13 @@ const CommentValidator = z.object({
 	mentions: z.array(MentionDataSchema), // Can be an empty array or valid MentionData[]
 });
 
-// Include object for comment queries
-const commentInclude = {
-	author: {
-		select: {
-			id: true,
-			userName: true,
-			userProfile: {
-				select: {
-					name: true,
-					image: true,
-				},
-			},
-		},
-	},
-	_count: {
-		select: {
-			replies: true,
-			votes: true,
-		},
-	},
-	votes: {
-		select: {
-			type: true,
-		},
-	},
-};
-
 const checkCommentOwnership = async (
 	commentId: string,
 	userId: string,
 ): Promise<boolean> => {
-	const existingComment = await prisma.comment.findUnique({
-		where: { id: commentId },
-		select: { authorId: true },
+	const existingComment = await db.query.comments.findFirst({
+		where: eq(comments.id, commentId),
+		columns: { authorId: true },
 	});
 
 	if (!existingComment) {
@@ -86,12 +68,21 @@ const checkCommentOwnership = async (
 };
 
 async function formatCommentWithVotes(
-	comment: CommentIncludeType & { userVoteType?: VoteType | null },
+	comment: CommentWithRelations,
 ): Promise<CommentWithVotes> {
+	// Decompress content from binary storage
+	const decompressedContent = comment.content
+		? decompressContent(comment.content)
+		: null;
+
 	return {
 		id: comment.id,
-		// @ts-ignore
-		content: await getHtml(comment.content, commentNodes),
+		content: decompressedContent
+			? await getHtml(
+					decompressedContent as unknown as SerializedEditorState,
+					commentNodes,
+				)
+			: "",
 		createdAt: comment.createdAt,
 		updatedAt: comment.updatedAt,
 		authorId: comment.authorId,
@@ -101,33 +92,32 @@ async function formatCommentWithVotes(
 			? {
 					id: comment.author.id,
 					userName: comment.author.userName || "",
-					name: comment.author.userProfile?.name || undefined,
-					image: comment.author.userProfile?.image || null,
+					name: comment.author.profile?.name || undefined,
+					image: comment.author.profile?.image || null,
 				}
 			: undefined,
-		_count: {
-			replies: comment._count.replies,
-			votes: comment._count.votes,
-		},
+		repliesCount: comment.repliesCount,
+		votesCount: comment.votesCount,
 		votesAggregate: {
 			_count: { _all: comment.votes.length },
 			_sum: {
 				voteValue: comment.votes.reduce(
-					(sum, vote) => sum + (vote.type === "UP" ? 1 : -1),
+					(sum, vote) => sum + (vote.type === VoteType.UP ? 1 : -1),
 					0,
 				),
 			},
 		},
-		upVotes: comment.votes.filter((vote) => vote.type === "UP").length,
-		downVotes: comment.votes.filter((vote) => vote.type === "DOWN").length,
+		upVotes: comment.votes.filter((vote) => vote.type === VoteType.UP).length,
+		downVotes: comment.votes.filter((vote) => vote.type === VoteType.DOWN)
+			.length,
 		userVoteType: comment.userVoteType || null,
-		repliesExist: comment._count.replies > 0,
+		repliesExist: comment.repliesCount > 0,
 		repliesLoaded: false,
 		replies: [],
 		repliesPagination: {
 			hasMore: false,
 			nextSkip: 0,
-			totalCount: comment._count.replies,
+			totalCount: comment.repliesCount,
 		},
 	};
 }
@@ -147,7 +137,7 @@ export async function createEditComment(
 	const commentData = {
 		parentId: data.parentId || null,
 		postId: data.postId,
-		content: pako.deflate(JSON.stringify(data.content)), // Compress content
+		content: compressContent(data.content), // Compress content to Buffer
 		authorId: user.id,
 		updatedAt: new Date(),
 	};
@@ -158,45 +148,119 @@ export async function createEditComment(
 			return UNAUTHENTICATED_ERROR;
 		}
 	}
-	const result = await prisma.$transaction(async (prisma) => {
-		// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-		let comment;
+
+	const result = await db.transaction(async (tx) => {
+		let comment: Awaited<
+			ReturnType<typeof tx.query.comments.findFirst>
+		> | null = null;
 
 		if (data.id) {
-			// Check ownership before updating the comment
-			// If id is provided, use update
-			comment = await prisma.comment.update({
-				where: { id: data.id },
-				data: {
-					content: commentData.content,
+			// Update existing comment
+			const updatedComments = await tx
+				.update(comments)
+				.set({ content: commentData.content })
+				.where(eq(comments.id, data.id))
+				.returning();
+
+			// Get comment with relations
+			comment = await tx.query.comments.findFirst({
+				where: eq(comments.id, data.id),
+				with: {
+					author: {
+						columns: {
+							id: true,
+							userName: true,
+						},
+						with: {
+							profile: {
+								columns: {
+									name: true,
+									image: true,
+								},
+							},
+						},
+					},
+					votes: {
+						columns: {
+							type: true,
+						},
+					},
 				},
-				include: commentInclude, // Reuse the include object
 			});
 		} else {
-			// Otherwise, create
-			comment = await prisma.comment.create({
-				data: commentData,
-				include: commentInclude, // Reuse the include object
+			// Create new comment
+			const newComments = await tx
+				.insert(comments)
+				.values(commentData)
+				.returning();
+
+			// Get comment with relations
+			comment = await tx.query.comments.findFirst({
+				where: eq(comments.id, newComments[0].id),
+				with: {
+					author: {
+						columns: {
+							id: true,
+							userName: true,
+						},
+						with: {
+							profile: {
+								columns: {
+									name: true,
+									image: true,
+								},
+							},
+						},
+					},
+					votes: {
+						columns: {
+							type: true,
+						},
+					},
+				},
 			});
 		}
 
+		if (!comment) {
+			throw new Error("Failed to create/update comment");
+		}
+
+		// Add counts manually (since Drizzle doesn't support _count like Prisma)
+		const replyCount = await tx.query.comments.findMany({
+			where: eq(comments.parentId, comment.id),
+		});
+
+		const voteCount = await tx.query.commentVotes.findMany({
+			where: eq(commentVotes.commentId, comment.id),
+		});
+
+		const commentWithCounts = {
+			...comment,
+			repliesCount: replyCount.length,
+			votesCount: voteCount.length,
+		} as CommentWithRelations;
+
+		// Handle mentions
 		const mentions = data.mentions || [];
-
 		if (mentions.length > 0) {
-			await prisma.commentMention.createMany({
-				data: mentions
-					.map((mention) => mention?.data?.id)
-					.filter((userId): userId is string => !!userId)
-					.map((userId) => ({
-						userId,
-						commentId: comment.id,
-					})),
-				skipDuplicates: true,
-			});
+			const mentionData = mentions
+				.map((mention) => mention?.data?.id)
+				.filter((userId): userId is string => !!userId)
+				.map((userId) => ({
+					userId,
+					commentId: comment.id,
+				}));
+
+			if (mentionData.length > 0) {
+				await tx
+					.insert(commentMentions)
+					.values(mentionData)
+					.onConflictDoNothing();
+			}
 		}
+
 		invalidateCommentsCache(data.postId);
-		comment.content = data.content;
-		return formatCommentWithVotes(comment);
+		return formatCommentWithVotes(commentWithCounts);
 	});
 
 	return { status: SUCCESS, data: result };
@@ -212,9 +276,9 @@ export async function deleteComment(
 	if (!user) return UNAUTHENTICATED_ERROR;
 
 	// Check if the comment exists and belongs to the user
-	const existingComment = await prisma.comment.findUnique({
-		where: { id: commentId },
-		select: { authorId: true },
+	const existingComment = await db.query.comments.findFirst({
+		where: eq(comments.id, commentId),
+		columns: { authorId: true },
 	});
 
 	if (!existingComment) {
@@ -231,11 +295,11 @@ export async function deleteComment(
 		};
 	}
 
-	// Delete the comment (children will be deleted automatically due to `onDelete: Cascade`)
-	await prisma.comment.delete({
-		where: { id: commentId },
-	});
+	// Delete the comment (children will be deleted automatically due to cascade)
+	await db.delete(comments).where(eq(comments.id, commentId));
+
 	invalidateCommentsCache(postId);
+
 	// Return success response
 	return {
 		status: SUCCESS,

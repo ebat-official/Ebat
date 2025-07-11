@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Edit, Trash2, Info } from "lucide-react";
 import { ChallengeTemplate } from "@/utils/types";
-import { TemplateFramework } from "@prisma/client";
+import { TemplateFramework } from "@/db/schema/enums";
 import { FRAMEWORK_ICONS } from "../constants";
 import SavedTemplatesSkeleton from "./SavedTemplatesSkeleton";
 

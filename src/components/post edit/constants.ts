@@ -1,4 +1,4 @@
-import { TemplateFramework } from "@prisma/client";
+import { TemplateFramework } from "@/db/schema/enums";
 import { FaReact, FaVuejs, FaAngular, FaJs } from "react-icons/fa";
 import { SiNextdotjs, SiSvelte, SiJavascript } from "react-icons/si";
 import { IconType } from "react-icons";

@@ -1,7 +1,7 @@
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { PostStatus, PostApprovalStatus } from "@prisma/client";
+import { PostStatus, PostApprovalStatus } from "@/db/schema/enums";
 import {
 	ID_NOT_EXIST_ERROR,
 	POST_NOT_EXIST_ERROR,
