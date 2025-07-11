@@ -21,6 +21,7 @@ import { formatDistanceToNow } from "date-fns";
 import { DifficultyType } from "@/db/schema/enums";
 import { PostSearchResponse } from "@/utils/types";
 import { generatePostPath } from "@/utils/generatePostPath";
+import { getDifficultyColor } from "@/utils/difficultyUtils";
 
 interface QuestionsListProps {
 	posts: PostSearchResponse["posts"];
@@ -28,19 +29,6 @@ interface QuestionsListProps {
 	onLoadMore: () => void;
 	isLoading: boolean;
 }
-
-const getDifficultyColor = (difficulty: DifficultyType) => {
-	switch (difficulty) {
-		case "EASY":
-			return "bg-green-100 text-green-800 hover:bg-green-200";
-		case "MEDIUM":
-			return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200";
-		case "HARD":
-			return "bg-red-100 text-red-800 hover:bg-red-200";
-		default:
-			return "bg-gray-100 text-gray-800 hover:bg-gray-200";
-	}
-};
 
 const QuestionsList: FC = () => {
 	const { posts, isLoadingData, completionStatuses, context, pageSize } =
@@ -73,69 +61,76 @@ const QuestionsList: FC = () => {
 						});
 
 						return (
-							<Card key={post.id} className="hover:shadow-md transition-shadow">
-								<CardHeader className="pb-3">
-									<div className="flex items-start justify-between">
-										<div className="flex-1">
-											<CardTitle className="text-lg hover:text-primary">
-												<Link href={postPath}>{post.title}</Link>
-											</CardTitle>
-											<div className="flex items-center gap-2 mt-2">
-												<Badge
-													variant="secondary"
-													className={cn(
-														"text-xs",
-														getDifficultyColor(
-															post.difficulty || Difficulty.EASY,
-														),
-													)}
-												>
-													{post.difficulty || Difficulty.EASY}
-												</Badge>
-												<Badge variant="outline" className="text-xs">
-													{post.type}
-												</Badge>
+							<Link
+								key={post.id}
+								href={postPath}
+								className="cursor-pointer block px-2 md:px-0"
+								prefetch={false}
+							>
+								<Card className="hover:shadow-md transition-shadow">
+									<CardHeader className="pb-3">
+										<div className="flex items-start justify-between">
+											<div className="flex-1">
+												<CardTitle className="text-lg hover:text-primary">
+													{post.title}
+												</CardTitle>
+												<div className="flex items-center gap-2 mt-2">
+													<Badge
+														variant="secondary"
+														className={cn(
+															"text-xs",
+															getDifficultyColor(
+																post.difficulty || Difficulty.EASY,
+															),
+														)}
+													>
+														{post.difficulty || Difficulty.EASY}
+													</Badge>
+													<Badge variant="outline" className="text-xs">
+														{post.type}
+													</Badge>
+												</div>
 											</div>
 										</div>
-									</div>
-								</CardHeader>
-								<CardContent className="pt-0">
-									<div className="flex items-center justify-between text-sm text-muted-foreground">
-										<div className="flex items-center gap-4">
-											<div className="flex items-center gap-1">
-												<User className="h-4 w-4" />
-												<span>{post.author.userName}</span>
+									</CardHeader>
+									<CardContent className="pt-0">
+										<div className="flex items-center justify-between text-sm text-muted-foreground">
+											<div className="flex items-center gap-4">
+												<div className="flex items-center gap-1">
+													<User className="h-4 w-4" />
+													<span>{post.author.userName}</span>
+												</div>
+												<div className="flex items-center gap-1">
+													<Clock className="h-4 w-4" />
+													<span>
+														{formatDistanceToNow(new Date(post.createdAt), {
+															addSuffix: true,
+														})}
+													</span>
+												</div>
 											</div>
-											<div className="flex items-center gap-1">
-												<Clock className="h-4 w-4" />
-												<span>
-													{formatDistanceToNow(new Date(post.createdAt), {
-														addSuffix: true,
-													})}
-												</span>
+											<div className="flex items-center gap-3">
+												<div className="flex items-center gap-1">
+													<Eye className="h-4 w-4" />
+													<span>
+														{typeof post.views === "object"
+															? post.views.count
+															: post.views || 0}
+													</span>
+												</div>
+												<div className="flex items-center gap-1">
+													<ThumbsUp className="h-4 w-4" />
+													<span>{post.votes || 0}</span>
+												</div>
+												<div className="flex items-center gap-1">
+													<MessageCircle className="h-4 w-4" />
+													<span>{post.comments || 0}</span>
+												</div>
 											</div>
 										</div>
-										<div className="flex items-center gap-3">
-											<div className="flex items-center gap-1">
-												<Eye className="h-4 w-4" />
-												<span>
-													{typeof post.views === "object"
-														? post.views.count
-														: post.views || 0}
-												</span>
-											</div>
-											<div className="flex items-center gap-1">
-												<ThumbsUp className="h-4 w-4" />
-												<span>{post.votes || 0}</span>
-											</div>
-											<div className="flex items-center gap-1">
-												<MessageCircle className="h-4 w-4" />
-												<span>{post.comments || 0}</span>
-											</div>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
+									</CardContent>
+								</Card>
+							</Link>
 						);
 					})}
 					<FeedPagination />
