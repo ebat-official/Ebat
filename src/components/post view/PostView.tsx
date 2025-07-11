@@ -18,6 +18,9 @@ type PostViewProps = {
 
 const PostView: FC<PostViewProps> = ({ post }) => {
 	recordPostView(post.id);
+
+	const content = post.content as ContentReturnType;
+
 	return (
 		<EditorProvider>
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
@@ -36,7 +39,8 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 							<Separator />
 							<PostContentRender
 								className="max-w-3xl w-full"
-								content={post.content as ContentReturnType}
+								post={content.post}
+								answer={content.answer}
 							/>
 						</CardContent>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">

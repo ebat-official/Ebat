@@ -71,6 +71,7 @@ export async function getAllApprovedPosts() {
 			id: true,
 			category: true,
 			subCategory: true,
+			type: true,
 			content: true,
 		},
 	});

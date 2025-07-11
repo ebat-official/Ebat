@@ -6,7 +6,6 @@ import {
 	ContentType,
 	PostWithExtraDetails,
 } from "@/utils/types";
-import { getFirstImageUrl } from "@/utils/getFirstPostImage";
 import { getMetaDescription } from "./getMetaDescription";
 
 export interface MetadataOptions {
@@ -27,7 +26,7 @@ export const extractMetadata = (
 	const metaDescription =
 		getMetaDescription(content.post || "") ||
 		`Learn more about ${post.topics?.join(", ") || "various topics"} on EBAT`;
-	const metaImage = getFirstImageUrl(content.post || "");
+	const metaImage = post.thumbnail || "";
 	const postUrl = `${process.env.ENV_URL}${url}`;
 	const authorName = post.author?.userProfile?.name || "Unknown Author";
 	// Generate keywords

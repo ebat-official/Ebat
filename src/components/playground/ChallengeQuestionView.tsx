@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Lightbulb, MessageCircle, Upload } from "lucide-react";
 import { SubmissionsTable } from "../post edit/challenge/SubmissionsTable";
 import { useSession } from "next-auth/react";
+import CodeViewer from "./components/editor/CodeViewer";
 
 type ChallengeQuestionViewProps = {
 	post: PostWithExtraDetails;
@@ -21,6 +22,8 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 }) => {
 	const { data: session } = useSession();
 
+	const content = post.content as ContentReturnType;
+	const challengeTemplates = post.challengeTemplates || [];
 	return (
 		<Tabs defaultValue="description" className="h-full">
 			<Card className="h-full pt-0">
@@ -56,14 +59,17 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 								</div>
 							</div>
 							<Separator />
-							<PostContentRender content={post.content as ContentReturnType} />
+							<PostContentRender post={content.post} />
 							<Separator />
 							<PostDetailsAccordian post={post} />
 						</CardContent>
 					</TabsContent>
 
-					<TabsContent value="solution">
-						<PostContentRender content={post.content as ContentReturnType} />
+					<TabsContent value="solution" className="flex flex-col gap-8">
+						<PostContentRender answer={content.answer} />
+						{challengeTemplates.length > 0 && (
+							<CodeViewer challengeTemplates={challengeTemplates} />
+						)}
 					</TabsContent>
 
 					<TabsContent className="mt-8" value="discussion">
