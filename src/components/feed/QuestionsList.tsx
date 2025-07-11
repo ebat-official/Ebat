@@ -126,11 +126,11 @@ const QuestionsList: FC = () => {
 											</div>
 											<div className="flex items-center gap-1">
 												<ThumbsUp className="h-4 w-4" />
-												<span>{post._count?.votes || 0}</span>
+												<span>{post.votes || 0}</span>
 											</div>
 											<div className="flex items-center gap-1">
 												<MessageCircle className="h-4 w-4" />
-												<span>{post._count?.comments || 0}</span>
+												<span>{post.comments || 0}</span>
 											</div>
 										</div>
 									</div>

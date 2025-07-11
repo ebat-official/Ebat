@@ -47,8 +47,8 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 					<p className="font-semibold overflow-hidden text-ellipsis capitalize line-clamp-3">
 						{post.title}
 					</p>
-					{/* {post.author?.userProfile && (
-            <AuthorNudge author={post.author.userProfile} />
+					{/* {post.author?.profile && (
+				<AuthorNudge author={post.author.profile} />
           )} */}
 					<div className="flex">
 						{post.topics && post.topics.length > 0 && (
@@ -85,15 +85,15 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 					)}
 					<div className="flex justify-between items-center">
 						{/* <DifficultyBadge difficulty={post.difficulty || Difficulty.EASY} /> */}
-						<PostLikeDummyButton count={post._count?.votes || 0} />
+						<PostLikeDummyButton count={post.votes || 0} />
 						<ViewsBadge views={post?.views?.count || 0} />
 						<Button className="rounded-full" variant="ghost">
 							<Link
-								href={getUrl(post) + "#comments"}
+								href={`${getUrl(post)}#comments`}
 								className="flex items-center gap-2 rounded-full"
 							>
 								<FaRegCommentDots />
-								<span>{post._count?.comments || 0}</span>
+								<span>{post.comments || 0}</span>
 							</Link>
 						</Button>
 						<Button className="rounded-full" variant="ghost" size="icon">

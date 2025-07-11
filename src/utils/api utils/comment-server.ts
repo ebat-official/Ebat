@@ -190,10 +190,8 @@ export async function getCommentsWithVotes(
 								image: author.image || null,
 							}
 						: undefined,
-				_count: {
-					replies: replyCount,
-					votes: totalVotes,
-				},
+				repliesCount: replyCount,
+				votesCount: totalVotes,
 				votesAggregate: {
 					_count: { _all: totalVotes },
 					_sum: { voteValue: upVotes - downVotes },

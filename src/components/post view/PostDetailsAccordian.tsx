@@ -138,7 +138,7 @@ const CollaboratorsAccordion: FC<{
 	collaborators: {
 		id: string;
 		userName: string | null; // Allow userName to be null
-		userProfile: { name?: string | null; image?: string | null } | null; // Adjust userProfile type
+		profile: { name?: string | null; image?: string | null } | null; // Adjust profile type
 	}[];
 }> = ({ collaborators }) => {
 	return (
@@ -153,10 +153,10 @@ const CollaboratorsAccordion: FC<{
 				<div className="flex flex-wrap gap-2">
 					{collaborators?.length > 0 ? (
 						collaborators.map((collaborator) => {
-							const { userProfile, userName } = collaborator;
+							const { profile, userName } = collaborator;
 							const profileName =
-								userProfile?.name?.split(" ")[0] || userName || "Unknown";
-							const profileImage = userProfile?.image || undefined;
+								profile?.name?.split(" ")[0] || userName || "Unknown";
+							const profileImage = profile?.image || undefined;
 
 							return (
 								<Badge

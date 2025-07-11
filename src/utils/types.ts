@@ -106,11 +106,11 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	challengeTemplates?: ChallengeTemplate[];
 	collaborators: Array<
 		Pick<User, "id" | "userName"> & {
-			userProfile: { name: string | null; image: string | null } | null;
+			profile: { name: string | null; image: string | null } | null;
 		}
 	>;
 	author: Pick<User, "id" | "userName"> & {
-		userProfile: {
+		profile: {
 			name: string | null;
 			image: string | null;
 			companyName: string | null;
@@ -158,10 +158,8 @@ export type CommentWithVotes = {
 		image?: string | null;
 		userName: string;
 	};
-	_count: {
-		replies: number;
-		votes: number;
-	};
+	repliesCount: number;
+	votesCount: number;
 	votesAggregate: {
 		_count: { _all: number };
 		_sum: { voteValue: number };
@@ -268,12 +266,13 @@ export interface PostSearchContext {
 }
 
 export type FeedPost = Post & {
-	_count?: { votes: number; comments: number };
+	votes?: number;
+	comments?: number;
 	views?: { count: number; updatedAt: Date };
 	author: {
 		id: string;
 		userName: string;
-		userProfile: {
+		profile: {
 			name: string | null;
 			image: string | null;
 			companyName: string | null;

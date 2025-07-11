@@ -26,10 +26,8 @@ type CommentWithRelations = Comment & {
 		} | null;
 	} | null;
 	votes: Array<{ type: VoteType }>;
-	_count: {
-		replies: number;
-		votes: number;
-	};
+	repliesCount: number;
+	votesCount: number;
 	userVoteType?: VoteType | null;
 };
 
@@ -98,10 +96,8 @@ async function formatCommentWithVotes(
 					image: comment.author.profile?.image || null,
 				}
 			: undefined,
-		_count: {
-			replies: comment._count.replies,
-			votes: comment._count.votes,
-		},
+		repliesCount: comment.repliesCount,
+		votesCount: comment.votesCount,
 		votesAggregate: {
 			_count: { _all: comment.votes.length },
 			_sum: {
@@ -115,13 +111,13 @@ async function formatCommentWithVotes(
 		downVotes: comment.votes.filter((vote) => vote.type === VoteType.DOWN)
 			.length,
 		userVoteType: comment.userVoteType || null,
-		repliesExist: comment._count.replies > 0,
+		repliesExist: comment.repliesCount > 0,
 		repliesLoaded: false,
 		replies: [],
 		repliesPagination: {
 			hasMore: false,
 			nextSkip: 0,
-			totalCount: comment._count.replies,
+			totalCount: comment.repliesCount,
 		},
 	};
 }
@@ -240,10 +236,8 @@ export async function createEditComment(
 
 		const commentWithCounts = {
 			...comment,
-			_count: {
-				replies: replyCount.length,
-				votes: voteCount.length,
-			},
+			repliesCount: replyCount.length,
+			votesCount: voteCount.length,
 		} as CommentWithRelations;
 
 		// Handle mentions
