@@ -6,7 +6,7 @@ import { posts } from "./posts";
 
 // Votes table (for posts)
 export const votes = pgTable(
-	"Vote",
+	"vote",
 	{
 		userId: uuid("userId").notNull(),
 		postId: varchar("postId", { length: 21 }).notNull(),
@@ -14,7 +14,7 @@ export const votes = pgTable(
 	},
 	(table) => ({
 		pk: { primaryKey: [table.userId, table.postId] },
-		postIdTypeIdx: index("Vote_postId_type_idx").on(table.postId, table.type),
+		postIdTypeIdx: index("vote_postId_type_idx").on(table.postId, table.type),
 	}),
 );
 

@@ -5,7 +5,7 @@ import { posts } from "./posts";
 import { comments } from "./comments";
 
 // Reports table
-export const reports = pgTable("Report", {
+export const reports = pgTable("report", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	reporterId: uuid("reporterId").notNull(),
 	postId: varchar("postId", { length: 21 }),

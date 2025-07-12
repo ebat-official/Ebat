@@ -29,7 +29,7 @@ import { bytea } from "@/db/database-types";
 
 // Posts table
 export const posts = pgTable(
-	"Post",
+	"post",
 	{
 		id: varchar("id", { length: 21 }).primaryKey(), // nanoid format
 		title: varchar("title", { length: 500 }),
@@ -54,21 +54,21 @@ export const posts = pgTable(
 		approvalLogs: json("approvalLogs"), // Array of approval/rejection logs
 	},
 	(table) => [
-		index("Post_authorId_idx").on(table.authorId),
-		index("Post_slug_idx").on(table.slug),
-		index("Post_type_idx").on(table.type),
-		index("Post_category_idx").on(table.category),
-		index("Post_subCategory_idx").on(table.subCategory),
-		index("Post_status_idx").on(table.status),
-		index("Post_approvalStatus_idx").on(table.approvalStatus),
-		index("Post_createdAt_idx").on(table.createdAt),
+		index("post_authorId_idx").on(table.authorId),
+		index("post_slug_idx").on(table.slug),
+		index("post_type_idx").on(table.type),
+		index("post_category_idx").on(table.category),
+		index("post_subCategory_idx").on(table.subCategory),
+		index("post_status_idx").on(table.status),
+		index("post_approvalStatus_idx").on(table.approvalStatus),
+		index("post_createdAt_idx").on(table.createdAt),
 		// Composite unique constraint
-		uniqueIndex("PostIdSlug").on(table.id, table.slug),
+		uniqueIndex("postIdSlug").on(table.id, table.slug),
 	],
 );
 
 // Post views table
-export const postViews = pgTable("PostViews", {
+export const postViews = pgTable("postViews", {
 	postId: varchar("postId", { length: 21 }).primaryKey(),
 	count: integer("count").notNull().default(0),
 	updatedAt: timestamp("updatedAt").notNull().defaultNow(),
@@ -76,7 +76,7 @@ export const postViews = pgTable("PostViews", {
 
 // Post edits table
 export const postEdits = pgTable(
-	"PostEdit",
+	"postEdit",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		postId: varchar("postId", { length: 21 }).notNull(),
@@ -96,28 +96,28 @@ export const postEdits = pgTable(
 		topics: varchar("topics", { length: 255 }).array().default([]),
 	},
 	(table) => [
-		index("PostEdit_postId_idx").on(table.postId),
-		index("PostEdit_authorId_idx").on(table.authorId),
-		index("PostEdit_approvalStatus_idx").on(table.approvalStatus),
+		index("postEdit_postId_idx").on(table.postId),
+		index("postEdit_authorId_idx").on(table.authorId),
+		index("postEdit_approvalStatus_idx").on(table.approvalStatus),
 		// Composite unique constraint
-		uniqueIndex("postId_authorId").on(table.postId, table.authorId),
+		uniqueIndex("postEdit_postId_authorId").on(table.postId, table.authorId),
 	],
 );
 
 // Post collaborators (many-to-many relationship)
 export const postCollaborators = pgTable(
-	"PostCollaborators",
+	"postCollaborators",
 	{
 		postId: varchar("postId", { length: 21 }).notNull(),
 		userId: uuid("userId").notNull(),
 	},
 	(table) => [
-		uniqueIndex("PostCollaborators_postId_userId_idx").on(
+		uniqueIndex("postCollaborators_postId_userId_idx").on(
 			table.postId,
 			table.userId,
 		),
-		index("PostCollaborators_postId_idx").on(table.postId),
-		index("PostCollaborators_userId_idx").on(table.userId),
+		index("postCollaborators_postId_idx").on(table.postId),
+		index("postCollaborators_userId_idx").on(table.userId),
 	],
 );
 

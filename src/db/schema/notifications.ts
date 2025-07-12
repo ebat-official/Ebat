@@ -12,7 +12,7 @@ import { users } from "./users";
 
 // Notifications table
 export const notifications = pgTable(
-	"Notification",
+	"notification",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		userId: uuid("userId").notNull(),
@@ -24,7 +24,7 @@ export const notifications = pgTable(
 		relatedId: varchar("relatedId", { length: 255 }),
 	},
 	(table) => ({
-		userIdIsReadIdx: index("Notification_userId_isRead_idx").on(
+		userIdIsReadIdx: index("notification_userId_isRead_idx").on(
 			table.userId,
 			table.isRead,
 		),

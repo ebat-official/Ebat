@@ -19,7 +19,7 @@ import { users } from "./users";
 
 // ChallengeTemplate table
 export const challengeTemplates = pgTable(
-	"ChallengeTemplate",
+	"challengeTemplate",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		postId: varchar("postId", { length: 21 }).notNull(),
@@ -30,17 +30,17 @@ export const challengeTemplates = pgTable(
 		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("ChallengeTemplate_postId_framework_idx").on(
+		uniqueIndex("challengeTemplate_postId_framework_idx").on(
 			table.postId,
 			table.framework,
 		),
-		index("ChallengeTemplate_postId_idx").on(table.postId),
+		index("challengeTemplate_postId_idx").on(table.postId),
 	],
 );
 
 // ChallengeSubmission table
 export const challengeSubmissions = pgTable(
-	"ChallengeSubmission",
+	"challengeSubmission",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		userId: uuid("userId").notNull(),
@@ -54,12 +54,12 @@ export const challengeSubmissions = pgTable(
 		submittedAt: timestamp("submittedAt").notNull().defaultNow(),
 	},
 	(table) => ({
-		postIdUserIdIdx: index("ChallengeSubmission_postId_userId_idx").on(
+		postIdUserIdIdx: index("challengeSubmission_postId_userId_idx").on(
 			table.postId,
 			table.userId,
 		),
-		userIdIdx: index("ChallengeSubmission_userId_idx").on(table.userId),
-		postIdIdx: index("ChallengeSubmission_postId_idx").on(table.postId),
+		userIdIdx: index("challengeSubmission_userId_idx").on(table.userId),
+		postIdIdx: index("challengeSubmission_postId_idx").on(table.postId),
 	}),
 );
 

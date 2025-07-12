@@ -12,7 +12,7 @@ import { users } from "./users";
 
 // Account table (OAuth)
 export const accounts = pgTable(
-	"Account",
+	"account",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		userId: uuid("userId").notNull(),
@@ -30,7 +30,7 @@ export const accounts = pgTable(
 		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("Account_provider_providerAccountId_idx").on(
+		uniqueIndex("account_provider_providerAccountId_idx").on(
 			table.provider,
 			table.providerAccountId,
 		),
@@ -38,7 +38,7 @@ export const accounts = pgTable(
 );
 
 // VerificationToken table
-export const verificationTokens = pgTable("VerificationToken", {
+export const verificationTokens = pgTable("verificationToken", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	email: varchar("email", { length: 255 }).notNull().unique(),
 	token: varchar("token", { length: 255 }).notNull(),
@@ -54,7 +54,7 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 }));
 
 // ResetToken table
-export const resetTokens = pgTable("ResetToken", {
+export const resetTokens = pgTable("resetToken", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	email: varchar("email", { length: 255 }).notNull().unique(),
 	token: varchar("token", { length: 255 }).notNull(),

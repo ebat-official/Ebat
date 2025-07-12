@@ -11,7 +11,7 @@ import { posts } from "./posts";
 
 // CompletionStatus table
 export const completionStatuses = pgTable(
-	"CompletionStatus",
+	"completionStatus",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		userId: uuid("userId").notNull(),
@@ -19,7 +19,7 @@ export const completionStatuses = pgTable(
 		completedAt: timestamp("completedAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("CompletionStatus_userId_postId_idx").on(
+		uniqueIndex("completionStatus_userId_postId_idx").on(
 			table.userId,
 			table.postId,
 		),

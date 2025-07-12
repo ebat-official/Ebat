@@ -22,7 +22,7 @@ import {
 
 // Users table
 export const users = pgTable(
-	"User",
+	"user",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		email: varchar("email", { length: 255 }).notNull().unique(),
@@ -40,14 +40,14 @@ export const users = pgTable(
 		lastLoginAt: timestamp("lastLoginAt"),
 	},
 	(table) => [
-		index("User_email_idx").on(table.email),
-		index("User_userName_idx").on(table.userName),
+		index("user_email_idx").on(table.email),
+		index("user_userName_idx").on(table.userName),
 	],
 );
 
 // User profiles table
 export const userProfiles = pgTable(
-	"UserProfile",
+	"userProfile",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		userId: uuid("userId").notNull().unique(),
@@ -65,14 +65,14 @@ export const userProfiles = pgTable(
 		externalLinks: json("externalLinks"),
 	},
 	(table) => [
-		index("UserProfile_userId_idx").on(table.userId),
-		index("UserProfile_email_idx").on(table.email),
+		index("userProfile_userId_idx").on(table.userId),
+		index("userProfile_email_idx").on(table.email),
 	],
 );
 
 // Follows table for user relationships
 export const follows = pgTable(
-	"Follow",
+	"follow",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		followerId: uuid("followerId").notNull(),
@@ -80,12 +80,12 @@ export const follows = pgTable(
 		createdAt: timestamp("createdAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("Follow_followerId_followedId_idx").on(
+		uniqueIndex("follow_followerId_followedId_idx").on(
 			table.followerId,
 			table.followedId,
 		),
-		index("Follow_followerId_idx").on(table.followerId),
-		index("Follow_followedId_idx").on(table.followedId),
+		index("follow_followerId_idx").on(table.followerId),
+		index("follow_followedId_idx").on(table.followedId),
 	],
 );
 

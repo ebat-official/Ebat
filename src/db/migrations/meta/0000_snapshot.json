@@ -1,11 +1,11 @@
 {
-	"id": "d52eaf27-6d83-4c3b-abb7-8c4e07937e69",
+	"id": "aac59208-4bbd-4be7-b325-cded173f4332",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
-		"public.Account": {
-			"name": "Account",
+		"public.account": {
+			"name": "account",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -97,8 +97,8 @@
 				}
 			},
 			"indexes": {
-				"Account_provider_providerAccountId_idx": {
-					"name": "Account_provider_providerAccountId_idx",
+				"account_provider_providerAccountId_idx": {
+					"name": "account_provider_providerAccountId_idx",
 					"columns": [
 						{
 							"expression": "provider",
@@ -126,8 +126,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.ResetToken": {
-			"name": "ResetToken",
+		"public.resetToken": {
+			"name": "resetToken",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -160,8 +160,8 @@
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {
-				"ResetToken_email_unique": {
-					"name": "ResetToken_email_unique",
+				"resetToken_email_unique": {
+					"name": "resetToken_email_unique",
 					"nullsNotDistinct": false,
 					"columns": ["email"]
 				}
@@ -170,8 +170,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.VerificationToken": {
-			"name": "VerificationToken",
+		"public.verificationToken": {
+			"name": "verificationToken",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -204,8 +204,8 @@
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {
-				"VerificationToken_email_unique": {
-					"name": "VerificationToken_email_unique",
+				"verificationToken_email_unique": {
+					"name": "verificationToken_email_unique",
 					"nullsNotDistinct": false,
 					"columns": ["email"]
 				}
@@ -214,8 +214,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.Bookmark": {
-			"name": "Bookmark",
+		"public.bookmark": {
+			"name": "bookmark",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -239,8 +239,8 @@
 				}
 			},
 			"indexes": {
-				"Bookmark_userId_postId_idx": {
-					"name": "Bookmark_userId_postId_idx",
+				"bookmark_userId_postId_idx": {
+					"name": "bookmark_userId_postId_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -268,8 +268,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.ChallengeSubmission": {
-			"name": "ChallengeSubmission",
+		"public.challengeSubmission": {
+			"name": "challengeSubmission",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -326,8 +326,8 @@
 				}
 			},
 			"indexes": {
-				"ChallengeSubmission_postId_userId_idx": {
-					"name": "ChallengeSubmission_postId_userId_idx",
+				"challengeSubmission_postId_userId_idx": {
+					"name": "challengeSubmission_postId_userId_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -347,8 +347,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"ChallengeSubmission_userId_idx": {
-					"name": "ChallengeSubmission_userId_idx",
+				"challengeSubmission_userId_idx": {
+					"name": "challengeSubmission_userId_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -362,8 +362,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"ChallengeSubmission_postId_idx": {
-					"name": "ChallengeSubmission_postId_idx",
+				"challengeSubmission_postId_idx": {
+					"name": "challengeSubmission_postId_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -385,8 +385,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.ChallengeTemplate": {
-			"name": "ChallengeTemplate",
+		"public.challengeTemplate": {
+			"name": "challengeTemplate",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -436,8 +436,8 @@
 				}
 			},
 			"indexes": {
-				"ChallengeTemplate_postId_framework_idx": {
-					"name": "ChallengeTemplate_postId_framework_idx",
+				"challengeTemplate_postId_framework_idx": {
+					"name": "challengeTemplate_postId_framework_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -457,8 +457,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"ChallengeTemplate_postId_idx": {
-					"name": "ChallengeTemplate_postId_idx",
+				"challengeTemplate_postId_idx": {
+					"name": "challengeTemplate_postId_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -480,8 +480,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.CommentMention": {
-			"name": "CommentMention",
+		"public.commentMention": {
+			"name": "commentMention",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -512,8 +512,8 @@
 				}
 			},
 			"indexes": {
-				"CommentMention_userId_commentId_idx": {
-					"name": "CommentMention_userId_commentId_idx",
+				"commentMention_userId_commentId_idx": {
+					"name": "commentMention_userId_commentId_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -533,8 +533,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"CommentMention_commentId_idx": {
-					"name": "CommentMention_commentId_idx",
+				"commentMention_commentId_idx": {
+					"name": "commentMention_commentId_idx",
 					"columns": [
 						{
 							"expression": "commentId",
@@ -556,8 +556,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.CommentVote": {
-			"name": "CommentVote",
+		"public.commentVote": {
+			"name": "commentVote",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -587,8 +587,8 @@
 				}
 			},
 			"indexes": {
-				"CommentVote_userId_commentId_idx": {
-					"name": "CommentVote_userId_commentId_idx",
+				"commentVote_userId_commentId_idx": {
+					"name": "commentVote_userId_commentId_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -608,8 +608,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"CommentVote_commentId_type_idx": {
-					"name": "CommentVote_commentId_type_idx",
+				"commentVote_commentId_type_idx": {
+					"name": "commentVote_commentId_type_idx",
 					"columns": [
 						{
 							"expression": "commentId",
@@ -637,8 +637,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.Comment": {
-			"name": "Comment",
+		"public.comment": {
+			"name": "comment",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -650,9 +650,9 @@
 				},
 				"content": {
 					"name": "content",
-					"type": "text",
+					"type": "bytea",
 					"primaryKey": false,
-					"notNull": true
+					"notNull": false
 				},
 				"createdAt": {
 					"name": "createdAt",
@@ -688,8 +688,8 @@
 				}
 			},
 			"indexes": {
-				"Comment_postId_parentId_idx": {
-					"name": "Comment_postId_parentId_idx",
+				"comment_postId_parentId_idx": {
+					"name": "comment_postId_parentId_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -709,8 +709,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Comment_createdAt_idx": {
-					"name": "Comment_createdAt_idx",
+				"comment_createdAt_idx": {
+					"name": "comment_createdAt_idx",
 					"columns": [
 						{
 							"expression": "createdAt",
@@ -724,8 +724,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Comment_parentId_idx": {
-					"name": "Comment_parentId_idx",
+				"comment_parentId_idx": {
+					"name": "comment_parentId_idx",
 					"columns": [
 						{
 							"expression": "parentId",
@@ -739,8 +739,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Comment_authorId_idx": {
-					"name": "Comment_authorId_idx",
+				"comment_authorId_idx": {
+					"name": "comment_authorId_idx",
 					"columns": [
 						{
 							"expression": "authorId",
@@ -762,8 +762,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.CompletionStatus": {
-			"name": "CompletionStatus",
+		"public.completionStatus": {
+			"name": "completionStatus",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -794,8 +794,8 @@
 				}
 			},
 			"indexes": {
-				"CompletionStatus_userId_postId_idx": {
-					"name": "CompletionStatus_userId_postId_idx",
+				"completionStatus_userId_postId_idx": {
+					"name": "completionStatus_userId_postId_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -823,8 +823,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.Follow": {
-			"name": "Follow",
+		"public.follow": {
+			"name": "follow",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -855,8 +855,8 @@
 				}
 			},
 			"indexes": {
-				"Follow_followerId_followedId_idx": {
-					"name": "Follow_followerId_followedId_idx",
+				"follow_followerId_followedId_idx": {
+					"name": "follow_followerId_followedId_idx",
 					"columns": [
 						{
 							"expression": "followerId",
@@ -876,8 +876,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Follow_followerId_idx": {
-					"name": "Follow_followerId_idx",
+				"follow_followerId_idx": {
+					"name": "follow_followerId_idx",
 					"columns": [
 						{
 							"expression": "followerId",
@@ -891,8 +891,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Follow_followedId_idx": {
-					"name": "Follow_followedId_idx",
+				"follow_followedId_idx": {
+					"name": "follow_followedId_idx",
 					"columns": [
 						{
 							"expression": "followedId",
@@ -914,8 +914,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.UserProfile": {
-			"name": "UserProfile",
+		"public.userProfile": {
+			"name": "userProfile",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -994,8 +994,8 @@
 				}
 			},
 			"indexes": {
-				"UserProfile_userId_idx": {
-					"name": "UserProfile_userId_idx",
+				"userProfile_userId_idx": {
+					"name": "userProfile_userId_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -1009,8 +1009,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"UserProfile_email_idx": {
-					"name": "UserProfile_email_idx",
+				"userProfile_email_idx": {
+					"name": "userProfile_email_idx",
 					"columns": [
 						{
 							"expression": "email",
@@ -1028,13 +1028,13 @@
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {
-				"UserProfile_userId_unique": {
-					"name": "UserProfile_userId_unique",
+				"userProfile_userId_unique": {
+					"name": "userProfile_userId_unique",
 					"nullsNotDistinct": false,
 					"columns": ["userId"]
 				},
-				"UserProfile_email_unique": {
-					"name": "UserProfile_email_unique",
+				"userProfile_email_unique": {
+					"name": "userProfile_email_unique",
 					"nullsNotDistinct": false,
 					"columns": ["email"]
 				}
@@ -1043,8 +1043,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.User": {
-			"name": "User",
+		"public.user": {
+			"name": "user",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -1128,8 +1128,8 @@
 				}
 			},
 			"indexes": {
-				"User_email_idx": {
-					"name": "User_email_idx",
+				"user_email_idx": {
+					"name": "user_email_idx",
 					"columns": [
 						{
 							"expression": "email",
@@ -1143,8 +1143,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"User_userName_idx": {
-					"name": "User_userName_idx",
+				"user_userName_idx": {
+					"name": "user_userName_idx",
 					"columns": [
 						{
 							"expression": "userName",
@@ -1162,13 +1162,13 @@
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {
-				"User_email_unique": {
-					"name": "User_email_unique",
+				"user_email_unique": {
+					"name": "user_email_unique",
 					"nullsNotDistinct": false,
 					"columns": ["email"]
 				},
-				"User_userName_unique": {
-					"name": "User_userName_unique",
+				"user_userName_unique": {
+					"name": "user_userName_unique",
 					"nullsNotDistinct": false,
 					"columns": ["userName"]
 				}
@@ -1177,8 +1177,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.PostCollaborators": {
-			"name": "PostCollaborators",
+		"public.postCollaborators": {
+			"name": "postCollaborators",
 			"schema": "",
 			"columns": {
 				"postId": {
@@ -1195,8 +1195,8 @@
 				}
 			},
 			"indexes": {
-				"PostCollaborators_postId_userId_idx": {
-					"name": "PostCollaborators_postId_userId_idx",
+				"postCollaborators_postId_userId_idx": {
+					"name": "postCollaborators_postId_userId_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -1216,8 +1216,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"PostCollaborators_postId_idx": {
-					"name": "PostCollaborators_postId_idx",
+				"postCollaborators_postId_idx": {
+					"name": "postCollaborators_postId_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -1231,8 +1231,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"PostCollaborators_userId_idx": {
-					"name": "PostCollaborators_userId_idx",
+				"postCollaborators_userId_idx": {
+					"name": "postCollaborators_userId_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -1254,8 +1254,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.PostEdit": {
-			"name": "PostEdit",
+		"public.postEdit": {
+			"name": "postEdit",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -1279,7 +1279,7 @@
 				},
 				"content": {
 					"name": "content",
-					"type": "text",
+					"type": "bytea",
 					"primaryKey": false,
 					"notNull": false
 				},
@@ -1287,7 +1287,8 @@
 					"name": "approvalStatus",
 					"type": "post_approval_status",
 					"primaryKey": false,
-					"notNull": true
+					"notNull": true,
+					"default": "'PENDING'"
 				},
 				"approvalLogs": {
 					"name": "approvalLogs",
@@ -1349,8 +1350,8 @@
 				}
 			},
 			"indexes": {
-				"PostEdit_postId_idx": {
-					"name": "PostEdit_postId_idx",
+				"postEdit_postId_idx": {
+					"name": "postEdit_postId_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -1364,8 +1365,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"PostEdit_authorId_idx": {
-					"name": "PostEdit_authorId_idx",
+				"postEdit_authorId_idx": {
+					"name": "postEdit_authorId_idx",
 					"columns": [
 						{
 							"expression": "authorId",
@@ -1379,8 +1380,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"PostEdit_approvalStatus_idx": {
-					"name": "PostEdit_approvalStatus_idx",
+				"postEdit_approvalStatus_idx": {
+					"name": "postEdit_approvalStatus_idx",
 					"columns": [
 						{
 							"expression": "approvalStatus",
@@ -1394,8 +1395,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"postId_authorId": {
-					"name": "postId_authorId",
+				"postEdit_postId_authorId": {
+					"name": "postEdit_postId_authorId",
 					"columns": [
 						{
 							"expression": "postId",
@@ -1423,8 +1424,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.PostViews": {
-			"name": "PostViews",
+		"public.postViews": {
+			"name": "postViews",
 			"schema": "",
 			"columns": {
 				"postId": {
@@ -1456,8 +1457,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.Post": {
-			"name": "Post",
+		"public.post": {
+			"name": "post",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -1486,7 +1487,7 @@
 				},
 				"content": {
 					"name": "content",
-					"type": "text",
+					"type": "bytea",
 					"primaryKey": false,
 					"notNull": false
 				},
@@ -1565,13 +1566,15 @@
 					"name": "status",
 					"type": "post_status",
 					"primaryKey": false,
-					"notNull": true
+					"notNull": true,
+					"default": "'DRAFT'"
 				},
 				"approvalStatus": {
 					"name": "approvalStatus",
 					"type": "post_approval_status",
 					"primaryKey": false,
-					"notNull": true
+					"notNull": true,
+					"default": "'PENDING'"
 				},
 				"approvalLogs": {
 					"name": "approvalLogs",
@@ -1581,8 +1584,8 @@
 				}
 			},
 			"indexes": {
-				"Post_authorId_idx": {
-					"name": "Post_authorId_idx",
+				"post_authorId_idx": {
+					"name": "post_authorId_idx",
 					"columns": [
 						{
 							"expression": "authorId",
@@ -1596,8 +1599,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Post_slug_idx": {
-					"name": "Post_slug_idx",
+				"post_slug_idx": {
+					"name": "post_slug_idx",
 					"columns": [
 						{
 							"expression": "slug",
@@ -1611,8 +1614,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Post_type_idx": {
-					"name": "Post_type_idx",
+				"post_type_idx": {
+					"name": "post_type_idx",
 					"columns": [
 						{
 							"expression": "type",
@@ -1626,8 +1629,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Post_category_idx": {
-					"name": "Post_category_idx",
+				"post_category_idx": {
+					"name": "post_category_idx",
 					"columns": [
 						{
 							"expression": "category",
@@ -1641,8 +1644,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Post_subCategory_idx": {
-					"name": "Post_subCategory_idx",
+				"post_subCategory_idx": {
+					"name": "post_subCategory_idx",
 					"columns": [
 						{
 							"expression": "subCategory",
@@ -1656,8 +1659,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Post_status_idx": {
-					"name": "Post_status_idx",
+				"post_status_idx": {
+					"name": "post_status_idx",
 					"columns": [
 						{
 							"expression": "status",
@@ -1671,8 +1674,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Post_approvalStatus_idx": {
-					"name": "Post_approvalStatus_idx",
+				"post_approvalStatus_idx": {
+					"name": "post_approvalStatus_idx",
 					"columns": [
 						{
 							"expression": "approvalStatus",
@@ -1686,8 +1689,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"Post_createdAt_idx": {
-					"name": "Post_createdAt_idx",
+				"post_createdAt_idx": {
+					"name": "post_createdAt_idx",
 					"columns": [
 						{
 							"expression": "createdAt",
@@ -1701,8 +1704,8 @@
 					"method": "btree",
 					"with": {}
 				},
-				"PostIdSlug": {
-					"name": "PostIdSlug",
+				"postIdSlug": {
+					"name": "postIdSlug",
 					"columns": [
 						{
 							"expression": "id",
@@ -1730,8 +1733,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.Vote": {
-			"name": "Vote",
+		"public.vote": {
+			"name": "vote",
 			"schema": "",
 			"columns": {
 				"userId": {
@@ -1754,8 +1757,8 @@
 				}
 			},
 			"indexes": {
-				"Vote_postId_type_idx": {
-					"name": "Vote_postId_type_idx",
+				"vote_postId_type_idx": {
+					"name": "vote_postId_type_idx",
 					"columns": [
 						{
 							"expression": "postId",
@@ -1783,8 +1786,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.Notification": {
-			"name": "Notification",
+		"public.notification": {
+			"name": "notification",
 			"schema": "",
 			"columns": {
 				"id": {
@@ -1840,8 +1843,8 @@
 				}
 			},
 			"indexes": {
-				"Notification_userId_isRead_idx": {
-					"name": "Notification_userId_isRead_idx",
+				"notification_userId_isRead_idx": {
+					"name": "notification_userId_isRead_idx",
 					"columns": [
 						{
 							"expression": "userId",
@@ -1869,8 +1872,8 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.Report": {
-			"name": "Report",
+		"public.report": {
+			"name": "report",
 			"schema": "",
 			"columns": {
 				"id": {

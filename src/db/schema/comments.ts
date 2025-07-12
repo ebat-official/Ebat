@@ -18,7 +18,7 @@ import { bytea } from "@/db/database-types";
 
 // Comments table
 export const comments = pgTable(
-	"Comment",
+	"comment",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		content: bytea("content"),
@@ -29,16 +29,16 @@ export const comments = pgTable(
 		parentId: uuid("parentId"),
 	},
 	(table) => [
-		index("Comment_postId_parentId_idx").on(table.postId, table.parentId),
-		index("Comment_createdAt_idx").on(table.createdAt),
-		index("Comment_parentId_idx").on(table.parentId),
-		index("Comment_authorId_idx").on(table.authorId),
+		index("comment_postId_parentId_idx").on(table.postId, table.parentId),
+		index("comment_createdAt_idx").on(table.createdAt),
+		index("comment_parentId_idx").on(table.parentId),
+		index("comment_authorId_idx").on(table.authorId),
 	],
 );
 
 // Comment votes table
 export const commentVotes = pgTable(
-	"CommentVote",
+	"commentVote",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		userId: uuid("userId").notNull(),
@@ -46,17 +46,17 @@ export const commentVotes = pgTable(
 		type: voteTypeEnum("type").notNull(),
 	},
 	(table) => [
-		uniqueIndex("CommentVote_userId_commentId_idx").on(
+		uniqueIndex("commentVote_userId_commentId_idx").on(
 			table.userId,
 			table.commentId,
 		),
-		index("CommentVote_commentId_type_idx").on(table.commentId, table.type),
+		index("commentVote_commentId_type_idx").on(table.commentId, table.type),
 	],
 );
 
 // Comment mentions table
 export const commentMentions = pgTable(
-	"CommentMention",
+	"commentMention",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		userId: uuid("userId").notNull(),
@@ -64,11 +64,11 @@ export const commentMentions = pgTable(
 		createdAt: timestamp("createdAt").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("CommentMention_userId_commentId_idx").on(
+		uniqueIndex("commentMention_userId_commentId_idx").on(
 			table.userId,
 			table.commentId,
 		),
-		index("CommentMention_commentId_idx").on(table.commentId),
+		index("commentMention_commentId_idx").on(table.commentId),
 	],
 );
 
