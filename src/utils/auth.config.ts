@@ -12,7 +12,7 @@ import { EMAIL_NOT_VERIFIED } from "@/utils/contants";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { UserRole } from "@/db/schema/enums";
-import { UserProfile } from "@/db/schema/zod-schemas";
+import { Profile } from "@/db/schema/zod-schemas";
 
 export default {
 	trustHost: true,
@@ -35,8 +35,8 @@ export default {
 			const user = await findUserById(token.sub, true);
 			if (!user) return token;
 			token.role = user.role;
-			if (user && "userProfile" in user && user.userProfile) {
-				const profile = user.userProfile as UserProfile;
+			if (user && "profile" in user && user.profile) {
+				const profile = user.profile as Profile;
 				token.image = profile.image;
 				token.name = profile.name;
 			}

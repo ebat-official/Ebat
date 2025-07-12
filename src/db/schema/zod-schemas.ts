@@ -25,7 +25,7 @@ import {
 
 // Type exports using native Drizzle inference
 export type User = InferSelectModel<typeof users>;
-export type UserProfile = InferSelectModel<typeof userProfiles>;
+export type Profile = InferSelectModel<typeof userProfiles>;
 export type Follow = InferSelectModel<typeof follows>;
 export type Post = InferSelectModel<typeof posts>;
 export type PostViews = InferSelectModel<typeof postViews>;
@@ -47,7 +47,7 @@ export type ResetToken = InferSelectModel<typeof resetTokens>;
 
 // Insert types using native Drizzle inference
 export type InsertUser = InferInsertModel<typeof users>;
-export type InsertUserProfile = InferInsertModel<typeof userProfiles>;
+export type InsertProfile = InferInsertModel<typeof userProfiles>;
 export type InsertFollow = InferInsertModel<typeof follows>;
 export type InsertPost = InferInsertModel<typeof posts>;
 export type InsertPostViews = InferInsertModel<typeof postViews>;

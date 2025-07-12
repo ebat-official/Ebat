@@ -2,7 +2,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import { drizzleCustomAdapter } from "@/drizzleAdapter";
 import authConfig from "@/utils/auth.config";
 import type { User } from "@/db/schema/zod-schemas";
-import type { UserProfile } from "@/db/schema/zod-schemas";
+import type { Profile } from "@/db/schema/zod-schemas";
 import type { UserRole } from "@/db/schema/enums";
 
 declare module "next-auth" {
@@ -12,7 +12,7 @@ declare module "next-auth" {
 			role: UserRole;
 			image: string | unknown;
 		} & DefaultSession["user"]; // To keep the default types
-		userProfile: UserProfile | null;
+		userProfile: Profile | null;
 	}
 	interface User {
 		emailVerified: Date | null;

@@ -4,11 +4,11 @@ import bcrypt from "bcryptjs";
 import { db } from "@/db";
 import { users, userProfiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { User, UserProfile } from "@/db/schema/zod-schemas";
+import { User, Profile } from "@/db/schema/zod-schemas";
 import { validateVerificationToken } from "./auth";
 import { auth } from "@/auth";
 
-type UserWithProfile = User & { profile: UserProfile | null };
+type UserWithProfile = User & { profile: Profile | null };
 
 /**
  *
