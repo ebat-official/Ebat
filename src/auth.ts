@@ -6,7 +6,7 @@ import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
 import mailer from "@/lib/mailer";
 import { AccountStatus, UserRole } from "./db/schema";
 import { generateUniqueUsername } from "@/lib/generateUniqueUsername";
-import { openAPI } from "better-auth/plugins";
+import { admin, openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
@@ -121,7 +121,7 @@ export const auth = betterAuth({
 			clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
 		},
 	},
-	plugins: [openAPI(), nextCookies()],
+	plugins: [openAPI(), admin(), nextCookies()],
 	trustedOrigins:
 		process.env.NODE_ENV === "production"
 			? ["*.ebat.dev", "*.ebat.vercel.app"]
