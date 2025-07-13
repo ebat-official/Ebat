@@ -58,7 +58,6 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({
 		try {
 			const result = await authClient.requestPasswordReset({
 				email: data.email,
-				redirectTo: "/resetPassword",
 			});
 
 			if (result.error) {

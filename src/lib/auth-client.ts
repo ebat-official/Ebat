@@ -16,3 +16,6 @@ export const {
 	resetPassword,
 	changePassword,
 } = authClient;
+
+// Export the session type inferred from Better Auth
+export type Session = typeof authClient.$Infer.Session;

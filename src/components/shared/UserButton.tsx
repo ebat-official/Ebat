@@ -1,35 +1,13 @@
 import React, { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import fallbackImg from "@/assets/img/avatarFallback.webp";
-import { signOut } from "@/lib/auth-client";
+import { signOut, type Session } from "@/lib/auth-client";
 import Image from "next/image";
 
-// BetterAuth session type
-type BetterAuthSession = {
-	user: {
-		id: string;
-		name: string;
-		email: string;
-		image?: string | null;
-		emailVerified: boolean;
-		createdAt: Date;
-		updatedAt: Date;
-	};
-	session: {
-		id: string;
-		token: string;
-		userId: string;
-		expiresAt: Date;
-		createdAt: Date;
-		updatedAt: Date;
-		ipAddress?: string | null;
-		userAgent?: string | null;
-	};
-};
-
 interface UserButtonProps {
-	session: BetterAuthSession | null;
+	session: Session | null;
 }
+
 import {
 	LogOut,
 	// UserPlus,

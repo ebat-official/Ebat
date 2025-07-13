@@ -6,33 +6,13 @@ import LoginModal from "@/components/auth/LoginModal";
 import { SheetMenu } from "../sidebar/sheet-menu";
 import Background from "./Background";
 import { cn } from "@/lib/utils";
+import { type Session } from "@/lib/auth-client";
 
-// BetterAuth session type
-type BetterAuthSession = {
-	user: {
-		id: string;
-		name: string;
-		email: string;
-		image?: string | null;
-		emailVerified: boolean;
-		createdAt: Date;
-		updatedAt: Date;
-	};
-	session: {
-		id: string;
-		token: string;
-		userId: string;
-		expiresAt: Date;
-		createdAt: Date;
-		updatedAt: Date;
-		ipAddress?: string | null;
-		userAgent?: string | null;
-	};
-};
+interface NavbarProps {
+	session: Session | null;
+}
 
-export default function NavBar({
-	session,
-}: { session: BetterAuthSession | null }) {
+export default function Navbar({ session }: NavbarProps) {
 	const scrolled = useScroll(50);
 
 	return (
@@ -46,22 +26,22 @@ export default function NavBar({
 					},
 				)}
 			>
-				<div className="flex items-center justify-between w-full h-16  mx-5">
-					<div>
-						<SheetMenu />
+				<div className="flex items-center justify-between px-4 py-3 max-w-7xl w-full">
+					<div className="flex items-center gap-2">
+						<div className="lg:hidden">
+							<SheetMenu />
+						</div>
+						<h1 className="font-bold text-xl">
+							E<span className="text-orange-500">bat</span>
+						</h1>
 					</div>
-					<div className="flex gap-4 absolute right-16">
+					<div className="flex items-center gap-4">
 						<ThemeSwitcher />
-
-						{session ? (
-							<UserButton session={session} />
-						) : (
-							<LoginModal dialogTrigger />
-						)}
+						{session ? <UserButton session={session} /> : <LoginModal />}
 					</div>
 				</div>
-				<Background shadow={false} />
 			</div>
+			<Background />
 		</>
 	);
 }
