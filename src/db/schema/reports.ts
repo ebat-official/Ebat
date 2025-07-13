@@ -6,9 +6,15 @@ import { comments } from "./comments";
 // Reports table
 export const reports = pgTable("report", {
 	id: uuid("id").primaryKey().defaultRandom(),
-	reporterId: uuid("reporter_id").notNull(),
-	postId: varchar("post_id", { length: 21 }),
-	commentId: uuid("comment_id"),
+	reporterId: uuid("reporter_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	postId: varchar("post_id", { length: 21 }).references(() => posts.id, {
+		onDelete: "cascade",
+	}),
+	commentId: uuid("comment_id").references(() => comments.id, {
+		onDelete: "cascade",
+	}),
 	reason: text("reason").notNull(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 });

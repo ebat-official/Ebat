@@ -8,9 +8,12 @@ import {
 	json,
 	uniqueIndex,
 	index,
+	foreignKey,
 } from "drizzle-orm/pg-core";
 
 import { voteTypeEnum } from "./enums";
+import { user } from "./auth";
+import { posts } from "./posts";
 
 import { bytea } from "@/db/database-types";
 
@@ -22,8 +25,12 @@ export const comments = pgTable(
 		content: bytea("content"),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
-		authorId: uuid("author_id").notNull(),
-		postId: varchar("post_id", { length: 21 }).notNull(),
+		authorId: uuid("author_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
 		parentId: uuid("parent_id"),
 	},
 	(table) => [
@@ -31,6 +38,10 @@ export const comments = pgTable(
 		index("comment_createdAt_idx").on(table.createdAt),
 		index("comment_parentId_idx").on(table.parentId),
 		index("comment_authorId_idx").on(table.authorId),
+		foreignKey({
+			columns: [table.parentId],
+			foreignColumns: [table.id],
+		}),
 	],
 );
 
@@ -39,8 +50,12 @@ export const commentVotes = pgTable(
 	"commentVote",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("user_id").notNull(),
-		commentId: uuid("comment_id").notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		commentId: uuid("comment_id")
+			.notNull()
+			.references(() => comments.id, { onDelete: "cascade" }),
 		type: voteTypeEnum("type").notNull(),
 	},
 	(table) => [
@@ -57,8 +72,12 @@ export const commentMentions = pgTable(
 	"commentMention",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("user_id").notNull(),
-		commentId: uuid("comment_id").notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		commentId: uuid("comment_id")
+			.notNull()
+			.references(() => comments.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 	},
 	(table) => [

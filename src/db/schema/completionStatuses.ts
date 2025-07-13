@@ -13,8 +13,12 @@ export const completionStatuses = pgTable(
 	"completionStatus",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("user_id").notNull(),
-		postId: varchar("post_id", { length: 21 }).notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
 		completedAt: timestamp("completed_at").notNull().defaultNow(),
 	},
 	(table) => [

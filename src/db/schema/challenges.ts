@@ -13,13 +13,17 @@ import {
 	submissionStatusEnum,
 	SubmissionStatus,
 } from "./enums";
+import { posts } from "./posts";
+import { user } from "./auth";
 
 // ChallengeTemplate table
 export const challengeTemplates = pgTable(
 	"challengeTemplate",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		postId: varchar("post_id", { length: 21 }).notNull(),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
 		framework: templateFrameworkEnum("framework").notNull(),
 		questionTemplate: json("question_template").notNull(),
 		answerTemplate: json("answer_template").notNull(),
@@ -40,8 +44,12 @@ export const challengeSubmissions = pgTable(
 	"challengeSubmission",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("user_id").notNull(),
-		postId: varchar("post_id", { length: 21 }).notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
 		framework: templateFrameworkEnum("framework").notNull(),
 		answerTemplate: json("answer_template").notNull(),
 		runTime: integer("run_time").notNull().default(0),

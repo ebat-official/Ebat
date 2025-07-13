@@ -5,14 +5,19 @@ import {
 	uniqueIndex,
 	index,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth";
 
 // Follows table for user relationships
 export const follows = pgTable(
 	"follow",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		followerId: uuid("follower_id").notNull(),
-		followedId: uuid("followed_id").notNull(),
+		followerId: uuid("follower_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		followedId: uuid("followed_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 	},
 	(table) => [

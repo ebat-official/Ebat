@@ -25,6 +25,7 @@ import {
 	PostApprovalStatus,
 	SubCategory,
 } from "./enums";
+import { user } from "./auth";
 import { bytea } from "@/db/database-types";
 
 // Posts table
@@ -38,7 +39,9 @@ export const posts = pgTable(
 		content: bytea("content"), // Binary field for compressed content (pako compressed)
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
-		authorId: uuid("author_id").notNull(),
+		authorId: uuid("author_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		type: postTypeEnum("type").notNull(),
 		difficulty: difficultyEnum("difficulty"),
 		companies: varchar("companies", { length: 255 }).array().default([]),
@@ -69,7 +72,9 @@ export const posts = pgTable(
 
 // Post views table
 export const postViews = pgTable("postViews", {
-	postId: varchar("post_id", { length: 21 }).primaryKey(),
+	postId: varchar("post_id", { length: 21 })
+		.primaryKey()
+		.references(() => posts.id, { onDelete: "cascade" }),
 	count: integer("count").notNull().default(0),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -79,8 +84,12 @@ export const postEdits = pgTable(
 	"postEdit",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		postId: varchar("post_id", { length: 21 }).notNull(),
-		authorId: uuid("author_id").notNull(),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
+		authorId: uuid("author_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		content: bytea("content"), // Binary field for compressed content (pako compressed)
 		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
@@ -108,8 +117,12 @@ export const postEdits = pgTable(
 export const postCollaborators = pgTable(
 	"postCollaborators",
 	{
-		postId: varchar("post_id", { length: 21 }).notNull(),
-		userId: uuid("user_id").notNull(),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 	},
 	(table) => [
 		uniqueIndex("postCollaborators_postId_userId_idx").on(
