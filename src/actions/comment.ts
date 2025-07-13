@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/db";
 import { comments, commentMentions, commentVotes } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, count } from "drizzle-orm";
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { z } from "zod";
 import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
@@ -211,19 +211,16 @@ export async function createEditComment(
 			throw new Error("Failed to create/update comment");
 		}
 
-		// Add counts manually (since Drizzle doesn't support _count like Prisma)
-		const replyCount = await tx.query.comments.findMany({
-			where: eq(comments.parentId, comment.id),
-		});
-
-		const voteCount = await tx.query.commentVotes.findMany({
-			where: eq(commentVotes.commentId, comment.id),
-		});
+		// Get counts using proper count queries
+		const [replyCountResult, voteCountResult] = await Promise.all([
+			tx.select({ count: count() }).from(comments).where(eq(comments.parentId, comment.id)),
+			tx.select({ count: count() }).from(commentVotes).where(eq(commentVotes.commentId, comment.id)),
+		]);
 
 		const commentWithCounts = {
 			...comment,
-			repliesCount: replyCount.length,
-			votesCount: voteCount.length,
+			repliesCount: replyCountResult[0]?.count || 0,
+			votesCount: voteCountResult[0]?.count || 0,
 		} as CommentWithRelations;
 
 		// Handle mentions

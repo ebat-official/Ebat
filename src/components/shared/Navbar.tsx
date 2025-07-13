@@ -2,17 +2,13 @@
 import useScroll from "@/hooks/useScroll";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserButton from "./UserButton";
+import { type Session } from "@/lib/auth-client";
 import LoginModal from "@/components/auth/LoginModal";
 import { SheetMenu } from "../sidebar/sheet-menu";
 import Background from "./Background";
 import { cn } from "@/lib/utils";
-import { type Session } from "@/lib/auth-client";
 
-interface NavbarProps {
-	session: Session | null;
-}
-
-export default function Navbar({ session }: NavbarProps) {
+export default function NavBar({ session }: { session: Session | null }) {
 	const scrolled = useScroll(50);
 
 	return (
@@ -26,22 +22,21 @@ export default function Navbar({ session }: NavbarProps) {
 					},
 				)}
 			>
-				<div className="flex items-center justify-between px-4 py-3 max-w-7xl w-full">
-					<div className="flex items-center gap-2">
-						<div className="lg:hidden">
-							<SheetMenu />
-						</div>
-						<h1 className="font-bold text-xl">
-							E<span className="text-orange-500">bat</span>
-						</h1>
+				<div className="flex items-center justify-between w-full h-16  mx-5">
+					<div>
+						<SheetMenu />
 					</div>
-					<div className="flex items-center gap-4">
+					<div className="flex gap-4 absolute right-16">
 						<ThemeSwitcher />
-						{session ? <UserButton session={session} /> : <LoginModal />}
+						{session ? (
+							<UserButton session={session} />
+						) : (
+							<LoginModal dialogTrigger />
+						)}
 					</div>
 				</div>
+				<Background shadow={false} />
 			</div>
-			<Background />
 		</>
 	);
 }
