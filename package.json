@@ -112,7 +112,7 @@
 		"lucide-react": "^0.485.0",
 		"monaco-editor": "0.52.2",
 		"nanoid": "^5.0.9",
-		"next": "15.2.0-canary.67",
+		"next": "15.4.0-canary.128",
 		"next-themes": "^0.4.4",
 		"openai": "^4.89.0",
 		"pako": "2.1.0",
