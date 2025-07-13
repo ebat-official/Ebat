@@ -1,7 +1,7 @@
 import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
 import { Novu } from "@novu/api";
 
-async function novuMailer(toEmail: string, type: string, token?: string) {
+async function novuMailer(toEmail: string, type: string, tokenOrUrl?: string) {
 	let redirectLink = process.env.ENV_URL;
 	const novu = new Novu({ secretKey: process.env.NOVU_API_KEY });
 	const nameFromEmail = toEmail.split("@")[0];
@@ -33,7 +33,8 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 
 		switch (type) {
 			case EMAIL_VALIDATION:
-				redirectLink = `${process.env.ENV_URL}/api/auth/verify?token=${token}`;
+				// Use the URL provided by better-auth directly
+				redirectLink = tokenOrUrl || `${process.env.ENV_URL}/verify`;
 				await novu.trigger({
 					workflowId: "account-activation",
 					to: {
@@ -47,7 +48,8 @@ async function novuMailer(toEmail: string, type: string, token?: string) {
 				break;
 
 			case RESET_PASSWORD:
-				redirectLink = `${process.env.ENV_URL}/resetPassword?token=${token}`;
+				// Use the URL provided by better-auth directly
+				redirectLink = tokenOrUrl || `${process.env.ENV_URL}/resetPassword`;
 				await novu.trigger({
 					workflowId: "password-reset",
 					to: {

@@ -89,7 +89,7 @@ export const auth = betterAuth({
 		requireEmailVerification: true,
 		sendResetPassword: async ({ user, url, token }, request) => {
 			try {
-				await mailer(user.email, RESET_PASSWORD, token);
+				await mailer(user.email, RESET_PASSWORD, url);
 			} catch (error) {
 				console.error("Failed to send password reset email:", error);
 				throw error;
@@ -99,12 +99,13 @@ export const auth = betterAuth({
 	emailVerification: {
 		sendVerificationEmail: async ({ user, url, token }, request) => {
 			try {
-				await mailer(user.email, EMAIL_VALIDATION, token);
+				await mailer(user.email, EMAIL_VALIDATION, url);
 			} catch (error) {
 				console.error("Failed to send verification email:", error);
 				throw error;
 			}
 		},
+		autoSignInAfterVerification: true,
 	},
 	socialProviders: {
 		google: {
