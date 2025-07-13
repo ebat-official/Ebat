@@ -222,7 +222,9 @@ export const challengeTemplatesRelations = relations(
 			fields: [challengeTemplates.postId],
 			references: [posts.id],
 		}),
-		submissions: many(challengeSubmissions),
+		submissions: many(challengeSubmissions, {
+			relationName: "ChallengeSubmissions",
+		}),
 	}),
 );
 
@@ -236,6 +238,11 @@ export const challengeSubmissionsRelations = relations(
 		user: one(user, {
 			fields: [challengeSubmissions.userId],
 			references: [user.id],
+		}),
+		challengeTemplate: one(challengeTemplates, {
+			fields: [challengeSubmissions.postId],
+			references: [challengeTemplates.postId],
+			relationName: "ChallengeSubmissions",
 		}),
 	}),
 );
