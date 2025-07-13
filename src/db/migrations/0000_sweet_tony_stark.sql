@@ -258,6 +258,8 @@ CREATE INDEX "comment_postId_parentId_idx" ON "comment" USING btree ("post_id","
 CREATE INDEX "comment_createdAt_idx" ON "comment" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "comment_parentId_idx" ON "comment" USING btree ("parent_id");--> statement-breakpoint
 CREATE INDEX "comment_authorId_idx" ON "comment" USING btree ("author_id");--> statement-breakpoint
+CREATE INDEX "comment_post_parent_created_idx" ON "comment" USING btree ("post_id","parent_id","created_at" desc);--> statement-breakpoint
+CREATE INDEX "comment_post_parent_covering_idx" ON "comment" USING btree ("post_id","parent_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "completionStatus_userId_postId_idx" ON "completionStatus" USING btree ("user_id","post_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "follow_followerId_followedId_idx" ON "follow" USING btree ("follower_id","followed_id");--> statement-breakpoint
 CREATE INDEX "follow_followerId_idx" ON "follow" USING btree ("follower_id");--> statement-breakpoint

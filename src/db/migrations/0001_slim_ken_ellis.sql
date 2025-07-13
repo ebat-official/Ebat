@@ -1,2 +1,0 @@
-CREATE INDEX "comment_post_parent_created_idx" ON "comment" USING btree ("post_id","parent_id","created_at" desc);--> statement-breakpoint
-CREATE INDEX "comment_post_parent_covering_idx" ON "comment" USING btree ("post_id","parent_id");
