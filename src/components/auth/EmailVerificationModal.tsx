@@ -29,7 +29,6 @@ const EmailVerificationModal: FC<EmailVerificationModalProps> = ({
 			setLoading(true);
 			const result = await authClient.sendVerificationEmail({
 				email: email,
-				callbackURL: "/", // The redirect URL after verification
 			});
 
 			if (result.error) {
