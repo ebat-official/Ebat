@@ -213,8 +213,14 @@ export async function createEditComment(
 
 		// Get counts using proper count queries
 		const [replyCountResult, voteCountResult] = await Promise.all([
-			tx.select({ count: count() }).from(comments).where(eq(comments.parentId, comment.id)),
-			tx.select({ count: count() }).from(commentVotes).where(eq(commentVotes.commentId, comment.id)),
+			tx
+				.select({ count: count() })
+				.from(comments)
+				.where(eq(comments.parentId, comment.id)),
+			tx
+				.select({ count: count() })
+				.from(commentVotes)
+				.where(eq(commentVotes.commentId, comment.id)),
 		]);
 
 		const commentWithCounts = {

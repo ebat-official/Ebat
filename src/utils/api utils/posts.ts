@@ -18,7 +18,7 @@ import {
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
 import { PostSearchResponse, PostSortOrder } from "../types";
 import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../contants";
-import { decompressContent} from "../compression";
+import { decompressContent } from "../compression";
 import { POST_ID_LENGTH } from "@/config";
 import {
 	ContentType,
@@ -228,15 +228,18 @@ function buildWhereConditions({
 	companies: string[];
 }) {
 	const conditions = [];
-	
+
 	if (category) conditions.push(eq(posts.category, category));
 	if (subCategory) conditions.push(eq(posts.subCategory, subCategory));
 	if (type) conditions.push(eq(posts.type, type));
-	if (searchQuerySanitized) conditions.push(ilike(posts.title, `%${searchQuerySanitized}%`));
-	if (difficulty.length > 0) conditions.push(inArray(posts.difficulty, difficulty));
+	if (searchQuerySanitized)
+		conditions.push(ilike(posts.title, `%${searchQuerySanitized}%`));
+	if (difficulty.length > 0)
+		conditions.push(inArray(posts.difficulty, difficulty));
 	if (topics.length > 0) conditions.push(sql`${posts.topics} && ${topics}`);
-	if (companies.length > 0) conditions.push(sql`${posts.companies} && ${companies}`);
-	
+	if (companies.length > 0)
+		conditions.push(sql`${posts.companies} && ${companies}`);
+
 	return conditions.length > 0 ? and(...conditions) : undefined;
 }
 
@@ -287,30 +290,35 @@ export async function searchPosts({
 	});
 
 	// Determine order by direction
-	const orderByDirection = sortOrder === PostSortOrder.Oldest ? asc(posts.createdAt) : desc(posts.createdAt);
+	const orderByDirection =
+		sortOrder === PostSortOrder.Oldest
+			? asc(posts.createdAt)
+			: desc(posts.createdAt);
 
 	try {
 		const [postsResult, totalCountResult] = await Promise.all([
 			// Main posts query using core query syntax
-			db.select({
-				id: posts.id,
-				title: posts.title,
-				slug: posts.slug,
-				createdAt: posts.createdAt,
-				thumbnail: posts.thumbnail,
-				difficulty: posts.difficulty,
-				companies: posts.companies,
-				type: posts.type,
-				topics: posts.topics,
-			})
-			.from(posts)
-			.where(whereCondition)
-			.orderBy(orderByDirection)
-			.limit(pageSize + 1)
-			.offset(skip),
+			db
+				.select({
+					id: posts.id,
+					title: posts.title,
+					slug: posts.slug,
+					createdAt: posts.createdAt,
+					thumbnail: posts.thumbnail,
+					difficulty: posts.difficulty,
+					companies: posts.companies,
+					type: posts.type,
+					topics: posts.topics,
+				})
+				.from(posts)
+				.where(whereCondition)
+				.orderBy(orderByDirection)
+				.limit(pageSize + 1)
+				.offset(skip),
 
 			// Count query
-			db.select({ count: count() })
+			db
+				.select({ count: count() })
 				.from(posts)
 				.where(whereCondition)
 				.then((result) => result[0]?.count || 0),

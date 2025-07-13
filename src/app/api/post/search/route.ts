@@ -15,8 +15,9 @@ export async function GET(request: NextRequest) {
 		const searchQuery = decodeURIComponent(
 			searchParams.get("searchQuery") || "",
 		);
-		const difficulty = (searchParams.getAll("difficulty") || [])
-			.map((d) => d.toUpperCase()) as Difficulty[];
+		const difficulty = (searchParams.getAll("difficulty") || []).map((d) =>
+			d.toUpperCase(),
+		) as Difficulty[];
 		const topics = searchParams.getAll("topics") || [];
 		const category =
 			(searchParams.get("category")?.toUpperCase() as PostCategory) ||
