@@ -30,30 +30,28 @@ const UserVerification: FC = () => {
 	const intrvl = useRef<NodeJS.Timeout | null>(null);
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const token = searchParams.get("token");
 	const error = searchParams.get("error");
 
 	useEffect(() => {
-		// Check if there's an error parameter
+		// Check if there's an error parameter from better-auth
 		if (error) {
 			setVerificationStatus({
 				status: "error",
 				message: decodeURIComponent(error),
 			});
-		} else if (token) {
-			// If token exists, assume verification was successful
+		} else {
+			// If no error, assume verification was successful
+			// Better-auth handles the verification automatically when the URL is accessed
 			setVerificationStatus({
 				status: "success",
-				message: "Email verified successfully!",
+				message: "Email verified successfully! Redirecting...",
 			});
-		} else {
-			// No token or error, show generic error
-			setVerificationStatus({
-				status: "error",
-				message: "Invalid verification link",
-			});
+			// Redirect immediately since autoSignInAfterVerification is enabled
+			setTimeout(() => {
+				router.push("/");
+			}, 1000);
 		}
-	}, [token, error]);
+	}, [error, router]);
 
 	useEffect(() => {
 		if (verificationStatus.status !== "loading") {
