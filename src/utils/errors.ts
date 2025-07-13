@@ -20,6 +20,7 @@ import {
 	FAILED_TO_FETCH_SUBMISSIONS,
 	CHALLENGE_NOT_FOUND,
 	SUBMISSION_NOT_FOUND,
+	AUTH_ERROR,
 } from "@/utils/contants";
 import { ErrorType } from "./types";
 
@@ -166,6 +167,19 @@ export const SUBMISSION_NOT_FOUND_ERROR = {
 	cause: SUBMISSION_NOT_FOUND,
 	data: { message: "Submission not found" },
 };
+
+export const AUTH_ERROR_BASE = {
+	status: ERROR as ErrorType,
+	cause: AUTH_ERROR,
+	data: { message: "Authentication error" },
+};
+
+export function AuthErr(message: string) {
+	return {
+		...AUTH_ERROR_BASE,
+		data: { message },
+	};
+}
 
 export function ValidationErr(message: string) {
 	return {

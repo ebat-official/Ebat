@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/db";
 import { comments, commentMentions, commentVotes } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, count } from "drizzle-orm";
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { z } from "zod";
 import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
@@ -20,10 +20,8 @@ type CommentWithRelations = Comment & {
 	author: {
 		id: string;
 		userName: string | null;
-		profile: {
-			name: string | null;
-			image: string | null;
-		} | null;
+		name: string | null;
+		image: string | null;
 	} | null;
 	votes: Array<{ type: VoteType }>;
 	repliesCount: number;
@@ -92,8 +90,8 @@ async function formatCommentWithVotes(
 			? {
 					id: comment.author.id,
 					userName: comment.author.userName || "",
-					name: comment.author.profile?.name || undefined,
-					image: comment.author.profile?.image || null,
+					name: comment.author.name || undefined,
+					image: comment.author.image || null,
 				}
 			: undefined,
 		repliesCount: comment.repliesCount,
@@ -170,14 +168,8 @@ export async function createEditComment(
 						columns: {
 							id: true,
 							userName: true,
-						},
-						with: {
-							profile: {
-								columns: {
-									name: true,
-									image: true,
-								},
-							},
+							name: true,
+							image: true,
 						},
 					},
 					votes: {
@@ -202,14 +194,8 @@ export async function createEditComment(
 						columns: {
 							id: true,
 							userName: true,
-						},
-						with: {
-							profile: {
-								columns: {
-									name: true,
-									image: true,
-								},
-							},
+							name: true,
+							image: true,
 						},
 					},
 					votes: {
@@ -225,19 +211,22 @@ export async function createEditComment(
 			throw new Error("Failed to create/update comment");
 		}
 
-		// Add counts manually (since Drizzle doesn't support _count like Prisma)
-		const replyCount = await tx.query.comments.findMany({
-			where: eq(comments.parentId, comment.id),
-		});
-
-		const voteCount = await tx.query.commentVotes.findMany({
-			where: eq(commentVotes.commentId, comment.id),
-		});
+		// Get counts using proper count queries
+		const [replyCountResult, voteCountResult] = await Promise.all([
+			tx
+				.select({ count: count() })
+				.from(comments)
+				.where(eq(comments.parentId, comment.id)),
+			tx
+				.select({ count: count() })
+				.from(commentVotes)
+				.where(eq(commentVotes.commentId, comment.id)),
+		]);
 
 		const commentWithCounts = {
 			...comment,
-			repliesCount: replyCount.length,
-			votesCount: voteCount.length,
+			repliesCount: replyCountResult[0]?.count || 0,
+			votesCount: voteCountResult[0]?.count || 0,
 		} as CommentWithRelations;
 
 		// Handle mentions

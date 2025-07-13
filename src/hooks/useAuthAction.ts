@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { useState, useCallback, useEffect } from "react";
 import LoginModal from "@/components/auth/LoginModal";
 
@@ -51,13 +51,13 @@ interface UseAuthActionReturn {
 export function useAuthAction(
 	options: UseAuthActionOptions = {},
 ): UseAuthActionReturn {
-	const { data: session, status } = useSession();
+	const { data: session, isPending } = useSession();
 	const [showLoginModal, setShowLoginModal] = useState(false);
 	const [pendingAction, setPendingAction] = useState<
 		(() => Promise<void> | void) | null
 	>(null);
 
-	const isAuthenticated = status === "authenticated" && !!session;
+	const isAuthenticated = !isPending && !!session;
 	const loginMessage = options.authMessage || "Please sign in to continue";
 
 	const closeLoginModal = useCallback(() => {

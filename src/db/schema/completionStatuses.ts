@@ -5,21 +5,24 @@ import {
 	timestamp,
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { users } from "./users";
+import { user } from "./auth";
 import { posts } from "./posts";
 
 // CompletionStatus table
 export const completionStatuses = pgTable(
-	"CompletionStatus",
+	"completionStatus",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("userId").notNull(),
-		postId: varchar("postId", { length: 21 }).notNull(),
-		completedAt: timestamp("completedAt").notNull().defaultNow(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
+		completedAt: timestamp("completed_at").notNull().defaultNow(),
 	},
 	(table) => [
-		uniqueIndex("CompletionStatus_userId_postId_idx").on(
+		uniqueIndex("completionStatus_userId_postId_idx").on(
 			table.userId,
 			table.postId,
 		),
@@ -27,16 +30,4 @@ export const completionStatuses = pgTable(
 );
 
 // Relations
-export const completionStatusesRelations = relations(
-	completionStatuses,
-	({ one }) => ({
-		user: one(users, {
-			fields: [completionStatuses.userId],
-			references: [users.id],
-		}),
-		post: one(posts, {
-			fields: [completionStatuses.postId],
-			references: [posts.id],
-		}),
-	}),
-);
+// Relations moved to relations.ts

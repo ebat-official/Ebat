@@ -7,22 +7,11 @@ import { cn } from "@/lib/utils";
 import ButtonBlue from "@/components/shared/ButtonBlue";
 // import useLoginUser from '@/hooks/useLoginUser';
 import { useToast } from "@/hooks/use-toast";
-import { useSearchParams } from "next/navigation";
-import {
-	EMAIL_NOT_VERIFIED,
-	EMAIL_VALIDATION,
-	EMAIL_VERIFICATION,
-	ERROR,
-	LOADING,
-	PASSWORD,
-	SUCCESS,
-	TEXT,
-} from "@/utils/contants";
+// Note: useSearchParams removed - no longer needed for email verification
+import { ERROR, LOADING, PASSWORD, SUCCESS, TEXT } from "@/utils/contants";
 import ForgotPassword from "./ForgotPassword";
-import { logIn, upsertVerificationToken } from "@/actions/auth";
 import EmailVerificationModal from "./EmailVerificationModal";
-import { useServerAction } from "@/hooks/useServerAction";
-import mailer from "@/lib/mailer";
+import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import parseRedirectError from "@/utils/parseRedirectError";
@@ -55,74 +44,61 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormValues>({ resolver });
-	// const mutation = useLoginUser();
-	const searchParams = useSearchParams();
-	const verificationEmail = searchParams.get(EMAIL_VERIFICATION);
-	const [runActionSignin, isLoading] = useServerAction(logIn);
+	const [isLoading, setIsLoading] = useState(false);
 	const [formStatus, setFormStatus] = useState({ type: LOADING, data: "" });
 	const { toast } = useToast();
 	const [showPassword, setShowPassword] = useState(false);
 
-	useEffect(() => {
-		if (verificationEmail) {
-			setOpenEmailVerification(true);
-			setUserData({ email: verificationEmail });
-		}
-	}, []);
-
-	useEffect(() => {
-		(async () => {
-			if (openEmailVerification && userData.email) {
-				const verification = await upsertVerificationToken(userData.email);
-				if (verification.status === ERROR) {
-					return toast({
-						title: ERROR,
-						description: String(verification.data),
-						variant: "destructive",
-					});
-				}
-				mailer(userData.email, EMAIL_VALIDATION, verification.data?.token);
-			}
-		})();
-	}, [openEmailVerification]);
-
 	const onSubmit = handleSubmit(async (userData) => {
+		setIsLoading(true);
 		try {
 			setUserData(userData);
-			const result = await runActionSignin(userData);
 
-			if (result?.status === SUCCESS) {
-				if (modelHandler) modelHandler(false);
-				return;
-			}
-			if (result?.status === ERROR) {
-				if (result.cause === EMAIL_NOT_VERIFIED) {
-					setOpenEmailVerification(true);
-					await upsertVerificationToken(userData.email);
-					return;
-				}
-				return toast({
-					title: ERROR,
-					// @ts-ignore
-					description: result?.data?.message || JSON.stringify(result),
-					variant: "destructive",
-				});
-			}
+			await authClient.signIn.email(
+				{
+					email: userData.email,
+					password: userData.password,
+				},
+				{
+					onError: (ctx) => {
+						setIsLoading(false);
+						if (ctx.error.status === 403) {
+							setOpenEmailVerification(true);
+						} else {
+							toast({
+								title: ERROR,
+								description: ctx.error.message,
+								variant: "destructive",
+							});
+						}
+					},
+					onSuccess: () => {
+						setIsLoading(false);
+						if (modelHandler) modelHandler(false);
+						toast({
+							title: SUCCESS,
+							description: "Login successful",
+							variant: "default",
+						});
+					},
+				},
+			);
 		} catch (error) {
+			setIsLoading(false);
 			if (isRedirectError(error)) {
 				const redirectInfo = parseRedirectError(error);
 				if (redirectInfo?.url) window.location.href = redirectInfo.url;
 			}
 		}
 	});
-
-	const emailVerificationCloseHanlder = () => {
-		if (modelHandler) modelHandler(false);
-		setOpenEmailVerification((prev) => !prev);
-	};
 	const showPasswordHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		setShowPassword((prev) => !prev);
+	};
+
+	const emailVerificationCloseHandler = () => {
+		if (modelHandler) modelHandler(false);
+		setOpenEmailVerification((prev) => !prev);
 	};
 
 	return (
@@ -207,7 +183,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 			{openEmailVerification && (
 				<EmailVerificationModal
 					open={openEmailVerification}
-					dialogHandler={emailVerificationCloseHanlder}
+					dialogHandler={emailVerificationCloseHandler}
 					email={userData?.email || ""}
 				/>
 			)}

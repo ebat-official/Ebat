@@ -17,15 +17,10 @@ import {
 } from "@/utils/contants";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import {
-	updateUserPasswordWithToken,
-	validateResetToken,
-} from "@/actions/auth";
+import { authClient } from "@/lib/auth-client";
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 import FormSuccess from "@/components/shared/FormSuccess";
 import FormError from "@/components/shared/FormError";
-
-type pageProps = {};
 
 type FormValues = {
 	password: string;
@@ -50,7 +45,7 @@ const schema = z
 
 const resolver: Resolver<FormValues> = zodResolver(schema);
 
-const ResetPassword: FC<pageProps> = ({}) => {
+const ResetPassword: FC = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const verificationToken = searchParams.get(TOKEN);
@@ -62,13 +57,13 @@ const ResetPassword: FC<pageProps> = ({}) => {
 
 	const [VerificationStatus, setVerificationStatus] = useState<{
 		status: string;
-		data: any;
+		data: string;
 	}>({
 		status: "",
 		data: "",
 	});
 	const [timer, setTimer] = useState(3);
-	const intrvl: any = useRef(null);
+	const intrvl = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		if (
@@ -79,7 +74,11 @@ const ResetPassword: FC<pageProps> = ({}) => {
 				setTimer((prev) => prev - 1);
 			}, 1000);
 		}
-		return () => clearInterval(intrvl.current);
+		return () => {
+			if (intrvl.current) {
+				clearInterval(intrvl.current);
+			}
+		};
 	}, [VerificationStatus]);
 
 	const onSubmit = handleSubmit(async (formData: { password: string }) => {
@@ -88,26 +87,38 @@ const ResetPassword: FC<pageProps> = ({}) => {
 			setVerificationStatus({ status: ERROR, data: TOKEN_NOT_FOUND });
 			return;
 		}
-		const data = await validateResetToken(verificationToken);
-		if (data.status === ERROR) {
-			return setVerificationStatus(data);
-		}
 
-		if (!(typeof data.data === "object")) {
-			return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
+		try {
+			const { data, error } = await authClient.resetPassword({
+				newPassword: formData.password,
+				token: verificationToken,
+			});
+
+			if (error) {
+				setVerificationStatus({
+					status: ERROR,
+					data: error.message || "Failed to reset password",
+				});
+				return;
+			}
+
+			setVerificationStatus({
+				status: SUCCESS,
+				data: VERIFICATION_SUCCESSFULL,
+			});
+		} catch (error) {
+			console.error("Reset password error:", error);
+			setVerificationStatus({
+				status: ERROR,
+				data: "Something went wrong. Please try again.",
+			});
 		}
-		const updatePassword = await updateUserPasswordWithToken(
-			verificationToken,
-			formData.password,
-		);
-		if (!updatePassword) {
-			return setVerificationStatus(SOMETHING_WENT_WRONG_ERROR);
-		}
-		setVerificationStatus({ status: SUCCESS, data: VERIFICATION_SUCCESSFULL });
 	});
 
 	if (timer === 0) {
-		clearInterval(intrvl.current);
+		if (intrvl.current) {
+			clearInterval(intrvl.current);
+		}
 		router.push("/");
 	}
 
@@ -126,7 +137,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
 								</p>
 							</div>
 							<div className="flex-auto p-6">
-								<form role="form" onSubmit={onSubmit} noValidate>
+								<form onSubmit={onSubmit} noValidate>
 									<div className="mb-4">
 										<input
 											{...register("password")}
@@ -165,7 +176,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
 											</p>
 										)}
 									</div>
-									{VerificationStatus.status == SUCCESS && (
+									{VerificationStatus.status === SUCCESS && (
 										<>
 											<FormSuccess message="Password reset successful" />
 											<p className="text-sm pt-4 text-slate-400 text-center">
@@ -204,7 +215,7 @@ const ResetPassword: FC<pageProps> = ({}) => {
 									style={{
 										backgroundImage: `url(${backgroundImg.src})`,
 									}}
-								></div>
+								/>
 							</div>
 						</div>
 					</div>

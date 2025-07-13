@@ -10,9 +10,7 @@ import {
 import ButtonDark from "@/components/shared/ButtonDark";
 import mailIcon from "@/assets/img/emailIcon.webp";
 import Image from "next/image";
-import { upsertVerificationToken } from "@/actions/auth";
-import { EMAIL_VALIDATION } from "@/utils/contants";
-import mailer from "@/lib/mailer";
+import { authClient } from "@/lib/auth-client";
 
 interface EmailVerificationModalProps {
 	open: boolean;
@@ -27,12 +25,22 @@ const EmailVerificationModal: FC<EmailVerificationModalProps> = ({
 }) => {
 	const [loading, setLoading] = useState(false);
 	const resendBtnHandler = async () => {
-		//send verification mail
-		setLoading(true);
-		const verification = await upsertVerificationToken(email);
-		mailer(email, EMAIL_VALIDATION, verification.data?.token);
-		setLoading(false);
-		dialogHandler();
+		try {
+			setLoading(true);
+			const result = await authClient.sendVerificationEmail({
+				email: email,
+			});
+
+			if (result.error) {
+				console.error("Failed to send verification email:", result.error);
+			}
+
+			setLoading(false);
+			dialogHandler();
+		} catch (error) {
+			console.error("Verification email error:", error);
+			setLoading(false);
+		}
 	};
 	return (
 		<Dialog open={open} onOpenChange={dialogHandler}>

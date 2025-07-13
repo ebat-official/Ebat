@@ -7,34 +7,27 @@ import {
 	timestamp,
 	index,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { users } from "./users";
+import { user } from "./auth";
 
 // Notifications table
 export const notifications = pgTable(
-	"Notification",
+	"notification",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("userId").notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		type: varchar("type", { length: 100 }).notNull(),
 		message: text("message").notNull(),
-		isRead: boolean("isRead").notNull().default(false),
-		createdAt: timestamp("createdAt").notNull().defaultNow(),
+		isRead: boolean("is_read").notNull().default(false),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
 		link: varchar("link", { length: 500 }),
-		relatedId: varchar("relatedId", { length: 255 }),
+		relatedId: varchar("related_id", { length: 255 }),
 	},
-	(table) => ({
-		userIdIsReadIdx: index("Notification_userId_isRead_idx").on(
-			table.userId,
-			table.isRead,
-		),
-	}),
+	(table) => [
+		index("notification_userId_isRead_idx").on(table.userId, table.isRead),
+	],
 );
 
 // Relations
-export const notificationsRelations = relations(notifications, ({ one }) => ({
-	user: one(users, {
-		fields: [notifications.userId],
-		references: [users.id],
-	}),
-}));
+// Relations moved to relations.ts

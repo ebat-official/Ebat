@@ -104,18 +104,8 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	completionCount?: number;
 	tableOfContent?: TableOfContent;
 	challengeTemplates?: ChallengeTemplate[];
-	collaborators: Array<
-		Pick<User, "id" | "userName"> & {
-			profile: { name: string | null; image: string | null } | null;
-		}
-	>;
-	author: Pick<User, "id" | "userName"> & {
-		profile: {
-			name: string | null;
-			image: string | null;
-			companyName: string | null;
-		} | null;
-	};
+	collaborators: Array<Pick<User, "id" | "userName" | "name" | "image">>;
+	author: Pick<User, "id" | "userName" | "name" | "image" | "companyName">;
 	views?: {
 		count: number;
 		updatedAt: Date;
@@ -207,6 +197,54 @@ export interface RawCommentResult {
 	};
 }
 
+// Comment server specific types
+export interface CommentServerRawResult {
+	id: string;
+	content: Buffer;
+	created_at: Date;
+	updated_at: Date;
+	author_id: string;
+	post_id: string;
+	parent_id: string | null;
+	total_count: number;
+	upvotes: number;
+	downvotes: number;
+	userVoteType: VoteTypeType | null;
+	reply_count: number;
+	author_user_id?: string;
+	author_user_name?: string;
+	author_name?: string;
+	author_image?: string;
+	score: number;
+}
+
+export interface ReplyCountResult {
+	parent_id: string;
+	reply_count: number;
+}
+
+export interface CommentWithCountsResult {
+	id: string;
+	content: Buffer;
+	created_at: Date;
+	updated_at: Date;
+	author_id: string;
+	post_id: string;
+	parent_id: string | null;
+	upvotes: number;
+	downvotes: number;
+	score: number;
+	user_vote_type: VoteTypeType | null;
+	reply_count: number;
+}
+
+export interface AuthorData {
+	id: string;
+	userName: string;
+	name: string | null;
+	image: string | null;
+}
+
 export type GetOptimizedCommentsOptions = {
 	sort?: CommentSortOption;
 	take?: number;
@@ -272,11 +310,9 @@ export type FeedPost = Post & {
 	author: {
 		id: string;
 		userName: string;
-		profile: {
-			name: string | null;
-			image: string | null;
-			companyName: string | null;
-		} | null;
+		name: string | null;
+		image: string | null;
+		companyName: string | null;
 	};
 };
 export interface PostSearchResponse {

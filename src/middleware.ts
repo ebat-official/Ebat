@@ -1,4 +1,5 @@
-import { auth as middleware } from "@/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 import {
 	apiAuthRoutes,
 	authRoutes,
@@ -6,9 +7,10 @@ import {
 	privateRoutes,
 } from "./utils/routes";
 
-export default middleware((req) => {
-	const { nextUrl } = req;
-	const isLoggedIn = !!req.auth;
+export default async function middleware(request: NextRequest) {
+	const { nextUrl } = request;
+	const sessionCookie = getSessionCookie(request);
+	const isLoggedIn = !!sessionCookie;
 
 	//api authentication URL shouldnt be blocked
 	if (nextUrl.pathname.startsWith(apiAuthRoutes)) return;
@@ -22,10 +24,11 @@ export default middleware((req) => {
 	// }
 
 	if (!isLoggedIn && privateRoutes.includes(nextUrl.pathname)) {
-		const absoluteURL = new URL("/signin", nextUrl);
-		return Response.redirect(absoluteURL);
+		return NextResponse.redirect(new URL("/signin", nextUrl));
 	}
-});
+
+	return NextResponse.next();
+}
 
 export const config = {
 	// runtime: "nodejs",

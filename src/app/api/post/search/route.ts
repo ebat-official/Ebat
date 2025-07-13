@@ -15,20 +15,20 @@ export async function GET(request: NextRequest) {
 		const searchQuery = decodeURIComponent(
 			searchParams.get("searchQuery") || "",
 		);
-		const difficulty = searchParams
-			.getAll("difficulty")
-			.map((d) => d.toUpperCase()) as Difficulty[];
-		const topics = searchParams.getAll("topics");
+		const difficulty = (searchParams.getAll("difficulty") || []).map((d) =>
+			d.toUpperCase(),
+		) as Difficulty[];
+		const topics = searchParams.getAll("topics") || [];
 		const category =
 			(searchParams.get("category")?.toUpperCase() as PostCategory) ||
 			undefined;
 		const subCategory =
 			(searchParams.get("subCategory")?.toUpperCase() as SubCategory) ||
 			undefined;
-		const page = parseInt(searchParams.get("page") || "1", 10);
-		const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+		const page = Number.parseInt(searchParams.get("page") || "1", 10);
+		const pageSize = Number.parseInt(searchParams.get("pageSize") || "10", 10);
 		const sortOrder = searchParams.get("sortOrder") as PostSortOrder;
-		const companies = searchParams.getAll("companies") as string[];
+		const companies = searchParams.getAll("companies") || [];
 		const type = searchParams.get("type")?.toUpperCase() as PostType;
 
 		// Build a unique cache key for all query params

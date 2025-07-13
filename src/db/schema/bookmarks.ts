@@ -1,29 +1,23 @@
 import { pgTable, uuid, varchar, uniqueIndex } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { users } from "./users";
+import { user } from "./auth";
 import { posts } from "./posts";
 
 // Bookmarks table
 export const bookmarks = pgTable(
-	"Bookmark",
+	"bookmark",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("userId").notNull(),
-		postId: varchar("postId", { length: 21 }).notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
 	},
 	(table) => [
-		uniqueIndex("Bookmark_userId_postId_idx").on(table.userId, table.postId),
+		uniqueIndex("bookmark_userId_postId_idx").on(table.userId, table.postId),
 	],
 );
 
 // Relations
-export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
-	user: one(users, {
-		fields: [bookmarks.userId],
-		references: [users.id],
-	}),
-	post: one(posts, {
-		fields: [bookmarks.postId],
-		references: [posts.id],
-	}),
-}));
+// Relations moved to relations.ts

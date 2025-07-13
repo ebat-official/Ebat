@@ -1,4 +1,3 @@
-import { POST } from "@/app/api/auth/[...nextauth]/route";
 import { fetchPostById } from "@/utils/api utils/apiUtils";
 import { POST_ROUTE_TYPE, UNKNOWN_ERROR } from "@/utils/contants";
 import { ID_NOT_EXIST_ERROR } from "@/utils/errors";

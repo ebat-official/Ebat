@@ -17,9 +17,8 @@ import {
 } from "@/db/schema/enums";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
 import { PostSearchResponse, PostSortOrder } from "../types";
-import { EndpointMap } from "../contants";
-import { t } from "@excalidraw/excalidraw/i18n";
-import { decompressContent, type JsonContent } from "../compression";
+import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../contants";
+import { decompressContent } from "../compression";
 import { POST_ID_LENGTH } from "@/config";
 import {
 	ContentType,
@@ -116,15 +115,9 @@ export async function getPostFromURL(params: {
 					columns: {
 						id: true,
 						userName: true,
-					},
-					with: {
-						profile: {
-							columns: {
-								name: true,
-								image: true,
-								companyName: true,
-							},
-						},
+						name: true,
+						image: true,
+						companyName: true,
 					},
 				},
 				challengeTemplates: true,
@@ -134,14 +127,8 @@ export async function getPostFromURL(params: {
 							columns: {
 								id: true,
 								userName: true,
-							},
-							with: {
-								profile: {
-									columns: {
-										name: true,
-										image: true,
-									},
-								},
+								name: true,
+								image: true,
 							},
 						},
 					},
@@ -202,13 +189,16 @@ export async function getPostFromURL(params: {
 			author: {
 				id: post.author?.id || "",
 				userName: post.author?.userName || "",
-				profile: post.author?.profile || null,
+				name: post.author?.name || null,
+				image: post.author?.image || null,
+				companyName: post.author?.companyName || null,
 			},
 			collaborators:
 				post.collaborators?.map((collaborator) => ({
 					id: collaborator.user.id,
 					userName: collaborator.user.userName,
-					profile: collaborator.user.profile,
+					name: collaborator.user.name,
+					image: collaborator.user.image,
 				})) || [],
 		};
 
@@ -219,7 +209,39 @@ export async function getPostFromURL(params: {
 	}
 }
 
-// utils/api-utils/search.ts
+// Shared filter builder function to ensure consistency between main and count queries
+function buildWhereConditions({
+	searchQuerySanitized,
+	difficulty,
+	topics,
+	category,
+	subCategory,
+	type,
+	companies,
+}: {
+	searchQuerySanitized: string;
+	difficulty: Difficulty[];
+	topics: string[];
+	category?: PostCategory;
+	subCategory?: SubCategory;
+	type?: PostType;
+	companies: string[];
+}) {
+	const conditions = [];
+
+	if (category) conditions.push(eq(posts.category, category));
+	if (subCategory) conditions.push(eq(posts.subCategory, subCategory));
+	if (type) conditions.push(eq(posts.type, type));
+	if (searchQuerySanitized)
+		conditions.push(ilike(posts.title, `%${searchQuerySanitized}%`));
+	if (difficulty.length > 0)
+		conditions.push(inArray(posts.difficulty, difficulty));
+	if (topics.length > 0) conditions.push(sql`${posts.topics} && ${topics}`);
+	if (companies.length > 0)
+		conditions.push(sql`${posts.companies} && ${companies}`);
+
+	return conditions.length > 0 ? and(...conditions) : undefined;
+}
 
 export async function searchPosts({
 	searchQuery,
@@ -244,94 +266,78 @@ export async function searchPosts({
 	companies?: string[];
 	type?: PostType;
 }) {
+	// Input validation
+	if (page < 1) throw new Error(INVALID_PAGE);
+	if (pageSize < 1) throw new Error(INVALID_PAGE_SIZE);
+
+	// Ensure arrays are properly initialized
+	const safeDifficulty = Array.isArray(difficulty) ? difficulty : [];
+	const safeTopics = Array.isArray(topics) ? topics : [];
+	const safeCompanies = Array.isArray(companies) ? companies : [];
+
 	const searchQuerySanitized = sanitizeSearchQuery(searchQuery);
 	const skip = (page - 1) * pageSize;
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const where: any = {
-		...(searchQuerySanitized && {
-			title: {
-				search: searchQuerySanitized,
-			},
-		}),
-		...(difficulty.length > 0 && {
-			difficulty: {
-				in: difficulty,
-			},
-		}),
-		...(topics.length > 0 && {
-			topics: {
-				hasSome: topics,
-			},
-		}),
-		...(category && { category }),
-		...(subCategory && { subCategory }),
-		...(type && { type }),
-		...(companies.length > 0 && {
-			companies: {
-				hasSome: companies,
-			},
-		}),
-	};
+	// Build where conditions for core query builder
+	const whereCondition = buildWhereConditions({
+		searchQuerySanitized,
+		difficulty: safeDifficulty,
+		topics: safeTopics,
+		category,
+		subCategory,
+		type,
+		companies: safeCompanies,
+	});
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let orderBy: any = { createdAt: "desc" };
-	if (sortOrder === PostSortOrder.Oldest) {
-		orderBy = { createdAt: "asc" };
-	} else if (sortOrder === "mostVotes") {
-		orderBy = { votes: { _count: "desc" } };
+	// Determine order by direction
+	const orderByDirection =
+		sortOrder === PostSortOrder.Oldest
+			? asc(posts.createdAt)
+			: desc(posts.createdAt);
+
+	try {
+		const [postsResult, totalCountResult] = await Promise.all([
+			// Main posts query using core query syntax
+			db
+				.select({
+					id: posts.id,
+					title: posts.title,
+					slug: posts.slug,
+					createdAt: posts.createdAt,
+					thumbnail: posts.thumbnail,
+					difficulty: posts.difficulty,
+					companies: posts.companies,
+					type: posts.type,
+					topics: posts.topics,
+				})
+				.from(posts)
+				.where(whereCondition)
+				.orderBy(orderByDirection)
+				.limit(pageSize + 1)
+				.offset(skip),
+
+			// Count query
+			db
+				.select({ count: count() })
+				.from(posts)
+				.where(whereCondition)
+				.then((result) => result[0]?.count || 0),
+		]);
+
+		const totalCount = totalCountResult;
+		const hasMore = postsResult.length > pageSize;
+		const resultPosts = hasMore ? postsResult.slice(0, pageSize) : postsResult;
+		const totalPages = Math.ceil(totalCount / pageSize);
+
+		return {
+			posts: resultPosts,
+			hasMore,
+			totalPages,
+		};
+	} catch (error) {
+		console.error("Error in searchPosts:", error);
+		throw new Error("Failed to search posts");
 	}
-
-	const [posts, totalCount] = await Promise.all([
-		db.query.posts.findMany({
-			where,
-			columns: {
-				id: true,
-				title: true,
-				slug: true,
-				createdAt: true,
-				thumbnail: true,
-				difficulty: true,
-				companies: true,
-				type: true,
-				topics: true,
-			},
-			with: {
-				views: true,
-				author: {
-					columns: {
-						id: true,
-						userName: true,
-					},
-					with: {
-						profile: {
-							columns: {
-								name: true,
-								image: true,
-								companyName: true,
-							},
-						},
-					},
-				},
-			},
-			orderBy,
-			limit: pageSize + 1, // check for next page
-			offset: skip,
-		}),
-
-		// @ts-expect-error: Complex Drizzle query types
-		db.query.posts.count({ where }),
-	]);
-
-	const hasMore = posts.length > pageSize;
-	const resultPosts = hasMore ? posts.slice(0, pageSize) : posts;
-	const totalPages = Math.ceil(totalCount / pageSize);
-
-	return {
-		posts: resultPosts,
-		hasMore,
-		totalPages,
-	};
 }
 
 export interface PostSearchQueryParams {

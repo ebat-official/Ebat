@@ -12,7 +12,7 @@ import CommentLikeButton from "./CommentLikeButton";
 import { CommentActionButton } from "./CommentActionButton";
 import CommentAddBox from "./CommentAddBox";
 import { useCommentContext } from "./CommentContext";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;

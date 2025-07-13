@@ -1,31 +1,25 @@
-import { pgTable, uuid, varchar, index } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, index, primaryKey } from "drizzle-orm/pg-core";
 import { voteTypeEnum } from "./enums";
-import { relations } from "drizzle-orm";
-import { users } from "./users";
+import { user } from "./auth";
 import { posts } from "./posts";
 
 // Votes table (for posts)
 export const votes = pgTable(
-	"Vote",
+	"vote",
 	{
-		userId: uuid("userId").notNull(),
-		postId: varchar("postId", { length: 21 }).notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
 		type: voteTypeEnum("type").notNull(),
 	},
-	(table) => ({
-		pk: { primaryKey: [table.userId, table.postId] },
-		postIdTypeIdx: index("Vote_postId_type_idx").on(table.postId, table.type),
-	}),
+	(table) => [
+		primaryKey({ columns: [table.userId, table.postId] }),
+		index("vote_postId_type_idx").on(table.postId, table.type),
+	],
 );
 
 // Relations
-export const votesRelations = relations(votes, ({ one }) => ({
-	user: one(users, {
-		fields: [votes.userId],
-		references: [users.id],
-	}),
-	post: one(posts, {
-		fields: [votes.postId],
-		references: [posts.id],
-	}),
-}));
+// Relations moved to relations.ts

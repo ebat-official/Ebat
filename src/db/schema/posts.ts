@@ -10,7 +10,7 @@ import {
 	uniqueIndex,
 	index,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+
 import {
 	postTypeEnum,
 	difficultyEnum,
@@ -25,160 +25,113 @@ import {
 	PostApprovalStatus,
 	SubCategory,
 } from "./enums";
+import { user } from "./auth";
 import { bytea } from "@/db/database-types";
 
 // Posts table
 export const posts = pgTable(
-	"Post",
+	"post",
 	{
 		id: varchar("id", { length: 21 }).primaryKey(), // nanoid format
 		title: varchar("title", { length: 500 }),
 		slug: varchar("slug", { length: 255 }),
 		thumbnail: varchar("thumbnail", { length: 500 }),
 		content: bytea("content"), // Binary field for compressed content (pako compressed)
-		createdAt: timestamp("createdAt").notNull().defaultNow(),
-		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
-		authorId: uuid("authorId").notNull(),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+		authorId: uuid("author_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		type: postTypeEnum("type").notNull(),
 		difficulty: difficultyEnum("difficulty"),
 		companies: varchar("companies", { length: 255 }).array().default([]),
-		completionDuration: integer("completionDuration"),
+		completionDuration: integer("completion_duration"),
 		coins: integer("coins").default(0),
 		topics: varchar("topics", { length: 255 }).array().default([]),
 		category: postCategoryEnum("category").notNull(),
-		subCategory: subCategoryEnum("subCategory").notNull(),
+		subCategory: subCategoryEnum("sub_category").notNull(),
 		status: postStatusEnum("status").notNull().default(PostStatus.DRAFT),
-		approvalStatus: postApprovalStatusEnum("approvalStatus")
+		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		approvalLogs: json("approvalLogs"), // Array of approval/rejection logs
+		approvalLogs: json("approval_logs"), // Array of approval/rejection logs
 	},
 	(table) => [
-		index("Post_authorId_idx").on(table.authorId),
-		index("Post_slug_idx").on(table.slug),
-		index("Post_type_idx").on(table.type),
-		index("Post_category_idx").on(table.category),
-		index("Post_subCategory_idx").on(table.subCategory),
-		index("Post_status_idx").on(table.status),
-		index("Post_approvalStatus_idx").on(table.approvalStatus),
-		index("Post_createdAt_idx").on(table.createdAt),
+		index("post_authorId_idx").on(table.authorId),
+		index("post_slug_idx").on(table.slug),
+		index("post_type_idx").on(table.type),
+		index("post_category_idx").on(table.category),
+		index("post_subCategory_idx").on(table.subCategory),
+		index("post_status_idx").on(table.status),
+		index("post_approvalStatus_idx").on(table.approvalStatus),
+		index("post_createdAt_idx").on(table.createdAt),
 		// Composite unique constraint
-		uniqueIndex("PostIdSlug").on(table.id, table.slug),
+		uniqueIndex("postIdSlug").on(table.id, table.slug),
 	],
 );
 
 // Post views table
-export const postViews = pgTable("PostViews", {
-	postId: varchar("postId", { length: 21 }).primaryKey(),
+export const postViews = pgTable("postViews", {
+	postId: varchar("post_id", { length: 21 })
+		.primaryKey()
+		.references(() => posts.id, { onDelete: "cascade" }),
 	count: integer("count").notNull().default(0),
-	updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // Post edits table
 export const postEdits = pgTable(
-	"PostEdit",
+	"postEdit",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		postId: varchar("postId", { length: 21 }).notNull(),
-		authorId: uuid("authorId").notNull(),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
+		authorId: uuid("author_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		content: bytea("content"), // Binary field for compressed content (pako compressed)
-		approvalStatus: postApprovalStatusEnum("approvalStatus")
+		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		approvalLogs: json("approvalLogs"), // Array of approval/rejection logs
-		createdAt: timestamp("createdAt").notNull().defaultNow(),
-		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+		approvalLogs: json("approval_logs"), // Array of approval/rejection logs
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
 		title: varchar("title", { length: 500 }),
 		type: postTypeEnum("type").notNull(),
 		difficulty: difficultyEnum("difficulty"),
 		companies: varchar("companies", { length: 255 }).array().default([]),
-		completionDuration: integer("completionDuration"),
+		completionDuration: integer("completion_duration"),
 		topics: varchar("topics", { length: 255 }).array().default([]),
 	},
 	(table) => [
-		index("PostEdit_postId_idx").on(table.postId),
-		index("PostEdit_authorId_idx").on(table.authorId),
-		index("PostEdit_approvalStatus_idx").on(table.approvalStatus),
+		index("postEdit_postId_idx").on(table.postId),
+		index("postEdit_authorId_idx").on(table.authorId),
+		index("postEdit_approvalStatus_idx").on(table.approvalStatus),
 		// Composite unique constraint
-		uniqueIndex("postId_authorId").on(table.postId, table.authorId),
+		uniqueIndex("postEdit_postId_authorId").on(table.postId, table.authorId),
 	],
 );
 
 // Post collaborators (many-to-many relationship)
 export const postCollaborators = pgTable(
-	"PostCollaborators",
+	"postCollaborators",
 	{
-		postId: varchar("postId", { length: 21 }).notNull(),
-		userId: uuid("userId").notNull(),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 	},
 	(table) => [
-		uniqueIndex("PostCollaborators_postId_userId_idx").on(
+		uniqueIndex("postCollaborators_postId_userId_idx").on(
 			table.postId,
 			table.userId,
 		),
-		index("PostCollaborators_postId_idx").on(table.postId),
-		index("PostCollaborators_userId_idx").on(table.userId),
+		index("postCollaborators_postId_idx").on(table.postId),
+		index("postCollaborators_userId_idx").on(table.userId),
 	],
 );
 
-// Import other tables for relations
-import { users } from "./users";
-import { comments } from "./comments";
-import { votes } from "./votes";
-import { bookmarks } from "./bookmarks";
-import { reports } from "./reports";
-import { completionStatuses } from "./completionStatuses";
-import { challengeTemplates, challengeSubmissions } from "./challenges";
-
-// Relations
-export const postsRelations = relations(posts, ({ one, many }) => ({
-	author: one(users, {
-		fields: [posts.authorId],
-		references: [users.id],
-	}),
-	views: one(postViews, {
-		fields: [posts.id],
-		references: [postViews.postId],
-	}),
-	comments: many(comments),
-	votes: many(votes),
-	bookmarks: many(bookmarks),
-	reports: many(reports),
-	completionStatuses: many(completionStatuses),
-	challengeTemplates: many(challengeTemplates),
-	challengeSubmissions: many(challengeSubmissions),
-	edits: many(postEdits),
-	collaborators: many(postCollaborators),
-}));
-
-export const postViewsRelations = relations(postViews, ({ one }) => ({
-	post: one(posts, {
-		fields: [postViews.postId],
-		references: [posts.id],
-	}),
-}));
-
-export const postEditsRelations = relations(postEdits, ({ one }) => ({
-	post: one(posts, {
-		fields: [postEdits.postId],
-		references: [posts.id],
-	}),
-	author: one(users, {
-		fields: [postEdits.authorId],
-		references: [users.id],
-	}),
-}));
-
-export const postCollaboratorsRelations = relations(
-	postCollaborators,
-	({ one }) => ({
-		post: one(posts, {
-			fields: [postCollaborators.postId],
-			references: [posts.id],
-		}),
-		user: one(users, {
-			fields: [postCollaborators.userId],
-			references: [users.id],
-		}),
-	}),
-);
+// Relations moved to relations.ts

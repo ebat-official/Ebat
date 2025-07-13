@@ -1,9 +1,9 @@
 "use server";
 import novuMailer from "./novuMailer";
 
-async function mailer(to: string, type: string, token?: string) {
+async function mailer(to: string, type: string, tokenOrUrl?: string) {
 	try {
-		await novuMailer(to, type, token);
+		await novuMailer(to, type, tokenOrUrl);
 	} catch (error) {
 		console.error("Failed to send email via Novu:", error);
 		// You could add a fallback email service here

@@ -1,6 +1,6 @@
 {
-	"id": "58d2f06c-ecd6-4c50-b1a5-b71e17cc19dc",
-	"prevId": "00000000-0000-0000-0000-000000000000",
+	"id": "8d40dbe0-afe0-43e1-bc44-90324d2114b3",
+	"prevId": "58d2f06c-ecd6-4c50-b1a5-b71e17cc19dc",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -1020,6 +1020,54 @@
 					"columns": [
 						{
 							"expression": "author_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				},
+				"comment_post_parent_created_idx": {
+					"name": "comment_post_parent_created_idx",
+					"columns": [
+						{
+							"expression": "post_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						},
+						{
+							"expression": "parent_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						},
+						{
+							"expression": "\"created_at\" desc",
+							"asc": true,
+							"isExpression": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				},
+				"comment_post_parent_covering_idx": {
+					"name": "comment_post_parent_covering_idx",
+					"columns": [
+						{
+							"expression": "post_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						},
+						{
+							"expression": "parent_id",
 							"isExpression": false,
 							"asc": true,
 							"nulls": "last"

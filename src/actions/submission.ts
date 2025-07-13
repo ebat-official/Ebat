@@ -136,14 +136,8 @@ export async function getPostSubmissions(
 					columns: {
 						id: true,
 						userName: true,
-					},
-					with: {
-						profile: {
-							columns: {
-								name: true,
-								image: true,
-							},
-						},
+						name: true,
+						image: true,
 					},
 				},
 			},

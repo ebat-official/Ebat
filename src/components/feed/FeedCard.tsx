@@ -47,9 +47,15 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 					<p className="font-semibold overflow-hidden text-ellipsis capitalize line-clamp-3">
 						{post.title}
 					</p>
-					{/* {post.author?.profile && (
-				<AuthorNudge author={post.author.profile} />
-          )} */}
+					{post.author?.name && (
+						<AuthorNudge
+							author={{
+								name: post.author.name,
+								image: post.author.image,
+								companyName: post.author.companyName,
+							}}
+						/>
+					)}
 					<div className="flex">
 						{post.topics && post.topics.length > 0 && (
 							<>
