@@ -9,7 +9,6 @@ import { generateUniqueUsername } from "@/lib/generateUniqueUsername";
 import { openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 
-console.log("pranav");
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
@@ -122,5 +121,8 @@ export const auth = betterAuth({
 		},
 	},
 	plugins: [openAPI(), nextCookies()],
-	trustedOrigins: ["http://localhost:3000"],
+	trustedOrigins:
+		process.env.NODE_ENV === "production"
+			? ["*.ebat.dev", "*.ebat.vercel.app"]
+			: ["http://localhost:3000"],
 });
