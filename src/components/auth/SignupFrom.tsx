@@ -7,12 +7,11 @@ import { cn } from "@/lib/utils";
 import ButtonDark from "@/components/shared/ButtonDark";
 // import useRegisterUser from '@/hooks/useRegisterUser';
 import { useToast } from "@/hooks/use-toast";
-import { signUp } from "@/actions/auth";
-import { useServerAction } from "@/hooks/useServerAction";
+import { authClient } from "@/lib/auth-client";
 import EmailVerificationModal from "./EmailVerificationModal";
 import { Input } from "@/components/ui/input";
 import EyeButton from "./EyeButton";
-import { ERROR, PASSWORD, SUCCESS, TEXT } from "@/utils/contants";
+import { PASSWORD, TEXT } from "@/utils/contants";
 
 type FormValues = {
 	name: string;
@@ -47,21 +46,41 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
 	const [openEmailVerification, setOpenEmailVerification] = useState(false);
 	const [userData, setUserData] = useState({ email: "" });
 	// const mutation = useRegisterUser();
-	const [runActionSignup, isLoading] = useServerAction(signUp);
+	const [isLoading, setIsLoading] = useState(false);
 	const { toast } = useToast();
 	const [showPassword, setShowPassword] = useState(false);
 
 	const onSubmit = handleSubmit(async (userData) => {
+		setIsLoading(true);
 		setUserData(userData);
-		const result = await runActionSignup(userData);
-		if (result?.status === SUCCESS) {
-			setOpenEmailVerification(true);
-		}
-		if (result?.status === ERROR) {
-			const errorData = result.data as { message: string };
-			return toast({
+
+		try {
+			const { data, error } = await authClient.signUp.email({
+				email: userData.email,
+				password: userData.password,
+				name: userData.name,
+			});
+
+			setIsLoading(false);
+
+			if (error) {
+				toast({
+					title: "Error",
+					description: error.message,
+					variant: "destructive",
+				});
+				return;
+			}
+
+			if (data) {
+				// Successfully signed up, show email verification modal
+				setOpenEmailVerification(true);
+			}
+		} catch (error) {
+			setIsLoading(false);
+			toast({
 				title: "Error",
-				description: errorData.message,
+				description: "An unexpected error occurred",
 				variant: "destructive",
 			});
 		}

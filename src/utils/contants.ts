@@ -41,6 +41,7 @@ export const FAILED_TO_DELETE_SUBMISSION = "Failed To Delete Submission";
 export const FAILED_TO_FETCH_SUBMISSIONS = "Failed To Fetch Submissions";
 export const CHALLENGE_NOT_FOUND = "Challenge Not Found";
 export const SUBMISSION_NOT_FOUND = "Submission Not Found";
+export const AUTH_ERROR = "Auth Error";
 export const PASSWORD = "password";
 export const TEXT = "text";
 export const POST_ACTIONS = {

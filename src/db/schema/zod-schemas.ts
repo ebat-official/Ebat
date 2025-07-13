@@ -2,7 +2,6 @@ import { z } from "zod";
 import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
 import {
 	users,
-	userProfiles,
 	follows,
 	posts,
 	postViews,
@@ -18,14 +17,14 @@ import {
 	completionStatuses,
 	challengeTemplates,
 	challengeSubmissions,
-	accounts,
-	verificationTokens,
-	resetTokens,
 } from "./index";
+import { user, session, account, verification } from "./auth";
 
 // Type exports using native Drizzle inference
-export type User = InferSelectModel<typeof users>;
-export type Profile = InferSelectModel<typeof userProfiles>;
+export type User = InferSelectModel<typeof user>;
+export type AuthSession = InferSelectModel<typeof session>;
+export type AuthAccount = InferSelectModel<typeof account>;
+export type AuthVerification = InferSelectModel<typeof verification>;
 export type Follow = InferSelectModel<typeof follows>;
 export type Post = InferSelectModel<typeof posts>;
 export type PostViews = InferSelectModel<typeof postViews>;
@@ -41,13 +40,12 @@ export type Report = InferSelectModel<typeof reports>;
 export type CompletionStatus = InferSelectModel<typeof completionStatuses>;
 export type ChallengeTemplate = InferSelectModel<typeof challengeTemplates>;
 export type ChallengeSubmission = InferSelectModel<typeof challengeSubmissions>;
-export type Account = InferSelectModel<typeof accounts>;
-export type VerificationToken = InferSelectModel<typeof verificationTokens>;
-export type ResetToken = InferSelectModel<typeof resetTokens>;
 
 // Insert types using native Drizzle inference
-export type InsertUser = InferInsertModel<typeof users>;
-export type InsertProfile = InferInsertModel<typeof userProfiles>;
+export type InsertUser = InferInsertModel<typeof user>;
+export type InsertAuthSession = InferInsertModel<typeof session>;
+export type InsertAuthAccount = InferInsertModel<typeof account>;
+export type InsertAuthVerification = InferInsertModel<typeof verification>;
 export type InsertFollow = InferInsertModel<typeof follows>;
 export type InsertPost = InferInsertModel<typeof posts>;
 export type InsertPostViews = InferInsertModel<typeof postViews>;
@@ -71,8 +69,3 @@ export type InsertChallengeTemplate = InferInsertModel<
 export type InsertChallengeSubmission = InferInsertModel<
 	typeof challengeSubmissions
 >;
-export type InsertAccount = InferInsertModel<typeof accounts>;
-export type InsertVerificationToken = InferInsertModel<
-	typeof verificationTokens
->;
-export type InsertResetToken = InferInsertModel<typeof resetTokens>;

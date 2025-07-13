@@ -1,15 +1,14 @@
 import { pgTable, uuid, varchar, index } from "drizzle-orm/pg-core";
 import { voteTypeEnum } from "./enums";
-import { relations } from "drizzle-orm";
-import { users } from "./users";
+import { user } from "./auth";
 import { posts } from "./posts";
 
 // Votes table (for posts)
 export const votes = pgTable(
 	"vote",
 	{
-		userId: uuid("userId").notNull(),
-		postId: varchar("postId", { length: 21 }).notNull(),
+		userId: uuid("user_id").notNull(),
+		postId: varchar("post_id", { length: 21 }).notNull(),
 		type: voteTypeEnum("type").notNull(),
 	},
 	(table) => ({
@@ -19,13 +18,4 @@ export const votes = pgTable(
 );
 
 // Relations
-export const votesRelations = relations(votes, ({ one }) => ({
-	user: one(users, {
-		fields: [votes.userId],
-		references: [users.id],
-	}),
-	post: one(posts, {
-		fields: [votes.postId],
-		references: [posts.id],
-	}),
-}));
+// Relations moved to relations.ts

@@ -104,18 +104,8 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	completionCount?: number;
 	tableOfContent?: TableOfContent;
 	challengeTemplates?: ChallengeTemplate[];
-	collaborators: Array<
-		Pick<User, "id" | "userName"> & {
-			profile: { name: string | null; image: string | null } | null;
-		}
-	>;
-	author: Pick<User, "id" | "userName"> & {
-		profile: {
-			name: string | null;
-			image: string | null;
-			companyName: string | null;
-		} | null;
-	};
+	collaborators: Array<Pick<User, "id" | "userName" | "name" | "image">>;
+	author: Pick<User, "id" | "userName" | "name" | "image" | "companyName">;
 	views?: {
 		count: number;
 		updatedAt: Date;
@@ -272,11 +262,9 @@ export type FeedPost = Post & {
 	author: {
 		id: string;
 		userName: string;
-		profile: {
-			name: string | null;
-			image: string | null;
-			companyName: string | null;
-		} | null;
+		name: string | null;
+		image: string | null;
+		companyName: string | null;
 	};
 };
 export interface PostSearchResponse {

@@ -10,7 +10,7 @@ import {
 	uniqueIndex,
 	index,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+
 import {
 	postTypeEnum,
 	difficultyEnum,
@@ -36,22 +36,22 @@ export const posts = pgTable(
 		slug: varchar("slug", { length: 255 }),
 		thumbnail: varchar("thumbnail", { length: 500 }),
 		content: bytea("content"), // Binary field for compressed content (pako compressed)
-		createdAt: timestamp("createdAt").notNull().defaultNow(),
-		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
-		authorId: uuid("authorId").notNull(),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+		authorId: uuid("author_id").notNull(),
 		type: postTypeEnum("type").notNull(),
 		difficulty: difficultyEnum("difficulty"),
 		companies: varchar("companies", { length: 255 }).array().default([]),
-		completionDuration: integer("completionDuration"),
+		completionDuration: integer("completion_duration"),
 		coins: integer("coins").default(0),
 		topics: varchar("topics", { length: 255 }).array().default([]),
 		category: postCategoryEnum("category").notNull(),
-		subCategory: subCategoryEnum("subCategory").notNull(),
+		subCategory: subCategoryEnum("sub_category").notNull(),
 		status: postStatusEnum("status").notNull().default(PostStatus.DRAFT),
-		approvalStatus: postApprovalStatusEnum("approvalStatus")
+		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		approvalLogs: json("approvalLogs"), // Array of approval/rejection logs
+		approvalLogs: json("approval_logs"), // Array of approval/rejection logs
 	},
 	(table) => [
 		index("post_authorId_idx").on(table.authorId),
@@ -69,9 +69,9 @@ export const posts = pgTable(
 
 // Post views table
 export const postViews = pgTable("postViews", {
-	postId: varchar("postId", { length: 21 }).primaryKey(),
+	postId: varchar("post_id", { length: 21 }).primaryKey(),
 	count: integer("count").notNull().default(0),
-	updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // Post edits table
@@ -79,20 +79,20 @@ export const postEdits = pgTable(
 	"postEdit",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		postId: varchar("postId", { length: 21 }).notNull(),
-		authorId: uuid("authorId").notNull(),
+		postId: varchar("post_id", { length: 21 }).notNull(),
+		authorId: uuid("author_id").notNull(),
 		content: bytea("content"), // Binary field for compressed content (pako compressed)
-		approvalStatus: postApprovalStatusEnum("approvalStatus")
+		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		approvalLogs: json("approvalLogs"), // Array of approval/rejection logs
-		createdAt: timestamp("createdAt").notNull().defaultNow(),
-		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+		approvalLogs: json("approval_logs"), // Array of approval/rejection logs
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
 		title: varchar("title", { length: 500 }),
 		type: postTypeEnum("type").notNull(),
 		difficulty: difficultyEnum("difficulty"),
 		companies: varchar("companies", { length: 255 }).array().default([]),
-		completionDuration: integer("completionDuration"),
+		completionDuration: integer("completion_duration"),
 		topics: varchar("topics", { length: 255 }).array().default([]),
 	},
 	(table) => [
@@ -108,8 +108,8 @@ export const postEdits = pgTable(
 export const postCollaborators = pgTable(
 	"postCollaborators",
 	{
-		postId: varchar("postId", { length: 21 }).notNull(),
-		userId: uuid("userId").notNull(),
+		postId: varchar("post_id", { length: 21 }).notNull(),
+		userId: uuid("user_id").notNull(),
 	},
 	(table) => [
 		uniqueIndex("postCollaborators_postId_userId_idx").on(
@@ -121,64 +121,4 @@ export const postCollaborators = pgTable(
 	],
 );
 
-// Import other tables for relations
-import { users } from "./users";
-import { comments } from "./comments";
-import { votes } from "./votes";
-import { bookmarks } from "./bookmarks";
-import { reports } from "./reports";
-import { completionStatuses } from "./completionStatuses";
-import { challengeTemplates, challengeSubmissions } from "./challenges";
-
-// Relations
-export const postsRelations = relations(posts, ({ one, many }) => ({
-	author: one(users, {
-		fields: [posts.authorId],
-		references: [users.id],
-	}),
-	views: one(postViews, {
-		fields: [posts.id],
-		references: [postViews.postId],
-	}),
-	comments: many(comments),
-	votes: many(votes),
-	bookmarks: many(bookmarks),
-	reports: many(reports),
-	completionStatuses: many(completionStatuses),
-	challengeTemplates: many(challengeTemplates),
-	challengeSubmissions: many(challengeSubmissions),
-	edits: many(postEdits),
-	collaborators: many(postCollaborators),
-}));
-
-export const postViewsRelations = relations(postViews, ({ one }) => ({
-	post: one(posts, {
-		fields: [postViews.postId],
-		references: [posts.id],
-	}),
-}));
-
-export const postEditsRelations = relations(postEdits, ({ one }) => ({
-	post: one(posts, {
-		fields: [postEdits.postId],
-		references: [posts.id],
-	}),
-	author: one(users, {
-		fields: [postEdits.authorId],
-		references: [users.id],
-	}),
-}));
-
-export const postCollaboratorsRelations = relations(
-	postCollaborators,
-	({ one }) => ({
-		post: one(posts, {
-			fields: [postCollaborators.postId],
-			references: [posts.id],
-		}),
-		user: one(users, {
-			fields: [postCollaborators.userId],
-			references: [users.id],
-		}),
-	}),
-);
+// Relations moved to relations.ts

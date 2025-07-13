@@ -1,4 +1,4 @@
-import { comments, commentVotes, users, userProfiles } from "@/db/schema";
+import { comments, commentVotes, users } from "@/db/schema";
 import { VoteTypeType } from "@/db/schema/enums";
 import { db } from "@/db";
 import { eq, and, isNull, sql, desc, asc } from "drizzle-orm";
@@ -131,11 +131,11 @@ export async function getCommentsWithVotes(
 					.select({
 						id: users.id,
 						userName: users.userName,
-						name: userProfiles.name,
-						image: userProfiles.image,
+						name: users.name,
+						image: users.image,
 					})
 					.from(users)
-					.leftJoin(userProfiles, eq(userProfiles.userId, users.id))
+					// Note: userProfiles join removed - fields now in users table
 					.where(sql`${users.id} = ANY(${baseComments.map((c) => c.authorId)})`)
 			: [];
 

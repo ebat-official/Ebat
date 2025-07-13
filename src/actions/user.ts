@@ -2,13 +2,13 @@
 import bcrypt from "bcryptjs";
 
 import { db } from "@/db";
-import { users, userProfiles } from "@/db/schema";
+import { user } from "@/db/schema/auth";
 import { eq } from "drizzle-orm";
-import { User, Profile } from "@/db/schema/zod-schemas";
-import { validateVerificationToken } from "./auth";
+import { User } from "@/db/schema/zod-schemas";
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 
-type UserWithProfile = User & { profile: Profile | null };
+// Note: UserWithProfile type removed - profile fields now in users table
 
 /**
  *
@@ -19,10 +19,10 @@ type UserWithProfile = User & { profile: Profile | null };
  */
 export async function findUserByEmailServer(email: string) {
 	try {
-		const user = await db.query.users.findFirst({
-			where: eq(users.email, email),
+		const foundUser = await db.query.user.findFirst({
+			where: eq(user.email, email),
 		});
-		return user;
+		return foundUser;
 	} catch (error) {
 		return null;
 	}
@@ -30,8 +30,8 @@ export async function findUserByEmailServer(email: string) {
 
 export async function findUserByEmail(email: string) {
 	try {
-		const user = await db.query.users.findFirst({
-			where: eq(users.email, email),
+		const foundUser = await db.query.user.findFirst({
+			where: eq(user.email, email),
 			columns: {
 				id: true,
 				email: true,
@@ -41,29 +41,18 @@ export async function findUserByEmail(email: string) {
 				karmaPoints: true,
 				accountStatus: true,
 			},
-			with: {
-				profile: {
-					columns: {
-						name: true,
-						id: true,
-						image: true,
-					},
-				},
-			},
+			// Note: profile relation removed - fields now in users table
 		});
-		return user;
+		return foundUser;
 	} catch (error) {
 		return null;
 	}
 }
 
-export async function findUserById(
-	id: string,
-	includeProfile = false,
-): Promise<User | UserWithProfile | null> {
+export async function findUserById(id: string): Promise<User | null> {
 	try {
-		const user = await db.query.users.findFirst({
-			where: eq(users.id, id),
+		const foundUser = await db.query.user.findFirst({
+			where: eq(user.id, id),
 			columns: {
 				id: true,
 				email: true,
@@ -72,15 +61,19 @@ export async function findUserById(
 				role: true,
 				karmaPoints: true,
 				accountStatus: true,
+				name: true,
+				image: true,
+				companyName: true,
+				jobTitle: true,
+				description: true,
+				location: true,
+				coverImage: true,
+				externalLinks: true,
 			},
-			with: includeProfile
-				? {
-						profile: true,
-					}
-				: undefined,
+			// Note: profile relation removed - all fields now in users table
 		});
 
-		return user as UserWithProfile | User | null;
+		return foundUser as User | null;
 	} catch (error) {
 		console.error("Error finding user by ID:", error);
 		return null;
@@ -88,46 +81,31 @@ export async function findUserById(
 }
 
 export async function validateUser() {
-	const session = await auth();
-	if (!session?.user?.id) return null;
-
-	const user = await findUserById(session.user.id);
-	return user;
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+	return session?.user;
 }
 
 export async function getCurrentUser() {
-	const session = await auth();
-	if (!session?.user?.id) return null;
+	const user = await validateUser();
+	if (!user?.id) return null;
 
-	const user = await findUserById(session.user.id, true);
-	return user;
-}
-
-export async function setEmailVerifiedUsingToken(token: string) {
-	const user = await validateVerificationToken(token);
-
-	if (typeof user.data !== "object" || !("email" in user.data)) {
-		return null;
-	}
-
-	try {
-		await db
-			.update(users)
-			.set({ emailVerified: new Date() })
-			.where(eq(users.email, user.data.email));
-		return true;
-	} catch (error) {
-		return null;
-	}
+	const foundUser = await findUserById(user.id);
+	return foundUser;
 }
 
 export async function updateUserPassword(email: string, password: string) {
 	try {
-		const hashedPassword = await bcrypt.hash(password, 10);
-		await db
-			.update(users)
-			.set({ password: hashedPassword })
-			.where(eq(users.email, email));
+		// First find the user by email to get their ID
+		const foundUser = await findUserByEmailServer(email);
+		if (!foundUser) {
+			return null;
+		}
+
+		const ctx = await auth.$context;
+		const hash = await ctx.password.hash(password);
+		await ctx.internalAdapter.updatePassword(foundUser.id, hash);
 		return true;
 	} catch (error) {
 		return null;
@@ -136,7 +114,7 @@ export async function updateUserPassword(email: string, password: string) {
 
 export async function updateUserCoins(userId: string, coins: number) {
 	try {
-		await db.update(users).set({ coins }).where(eq(users.id, userId));
+		await db.update(user).set({ coins }).where(eq(user.id, userId));
 		return true;
 	} catch (error) {
 		return null;
@@ -148,22 +126,9 @@ export async function updateUserKarmaPoints(
 	karmaPoints: number,
 ) {
 	try {
-		await db.update(users).set({ karmaPoints }).where(eq(users.id, userId));
+		await db.update(user).set({ karmaPoints }).where(eq(user.id, userId));
 		return true;
 	} catch (error) {
-		return null;
-	}
-}
-
-export async function setEmailVerified(userId: string) {
-	try {
-		await db
-			.update(users)
-			.set({ emailVerified: new Date() })
-			.where(eq(users.id, userId));
-		return true;
-	} catch (error) {
-		console.error("Error setting email verified:", error);
 		return null;
 	}
 }

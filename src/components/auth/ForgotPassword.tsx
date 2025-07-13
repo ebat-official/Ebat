@@ -13,10 +13,8 @@ import * as z from "zod";
 import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-// import usePasswordForgot from "@/hooks/usePasswordForgot";
-import { ERROR, LOADING, RESET_PASSWORD, SUCCESS } from "@/utils/contants";
-import { upsertResetToken } from "@/actions/auth";
-import mailer from "@/lib/mailer";
+import { ERROR, LOADING, SUCCESS } from "@/utils/contants";
+import { authClient } from "@/lib/auth-client";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import FormError from "@/components/shared/FormError";
 
@@ -46,20 +44,39 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormValues>({ resolver });
-	const [formStatus, setFormStatus] = useState<{ status: string; data: any }>({
+	const [formStatus, setFormStatus] = useState<{
+		status: string;
+		data: string;
+	}>({
 		status: "",
 		data: "",
 	});
 
 	const onSubmit = handleSubmit(async (data) => {
 		setFormStatus({ status: LOADING, data: "" });
-		const verification = await upsertResetToken(data.email);
-		if (verification.status === ERROR) {
-			setFormStatus(verification);
-			return;
+
+		try {
+			const result = await authClient.requestPasswordReset({
+				email: data.email,
+				redirectTo: "/resetPassword",
+			});
+
+			if (result.error) {
+				setFormStatus({
+					status: ERROR,
+					data: result.error.message || "Failed to send reset email",
+				});
+				return;
+			}
+
+			setFormStatus({ status: SUCCESS, data: "" });
+		} catch (error) {
+			console.error("Password reset request error:", error);
+			setFormStatus({
+				status: ERROR,
+				data: "Something went wrong. Please try again.",
+			});
 		}
-		mailer(data.email, RESET_PASSWORD, verification.data?.token);
-		setFormStatus({ status: SUCCESS, data: "" });
 	});
 
 	return (

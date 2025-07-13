@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import Image from "next/image";
 import googleIcon from "@/assets/svg/googleIcon.svg";
 import linkedinIcon from "@/assets/svg/linkedinIcon.svg";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/lib/auth-client";
 import useCurrentURL from "@/hooks/useCurrentURL";
 import { Button } from "../ui/button";
 import { FaGithub } from "react-icons/fa";
@@ -13,12 +13,21 @@ interface SocialAuthProps {
 
 const SocialAuth: FC<SocialAuthProps> = ({ loadingHandler }) => {
 	const currentURL = useCurrentURL();
-	function SocialLoginHandler(provider: string) {
+
+	const SocialLoginHandler = async (provider: string) => {
 		loadingHandler(true);
-		signIn(provider, {
-			callbackUrl: currentURL,
-		});
-	}
+		try {
+			await signIn.social({
+				provider,
+				callbackURL: currentURL,
+			});
+		} catch (error) {
+			console.error("Social login error:", error);
+		} finally {
+			loadingHandler(false);
+		}
+	};
+
 	return (
 		<div className="flex justify-around items-center gap-6 mt-4">
 			<Button

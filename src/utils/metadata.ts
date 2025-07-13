@@ -28,7 +28,7 @@ export const extractMetadata = (
 		`Learn more about ${post.topics?.join(", ") || "various topics"} on EBAT`;
 	const metaImage = post.thumbnail || "";
 	const postUrl = `${process.env.ENV_URL}${url}`;
-	const authorName = post.author?.profile?.name || "Unknown Author";
+	const authorName = post.author?.name || "Unknown Author";
 	// Generate keywords
 	const topics = post.topics?.join(", ") || "";
 	const companies = post.companies?.join(", ") || "";

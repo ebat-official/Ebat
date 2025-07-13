@@ -1,11 +1,11 @@
 import fallbackImg from "@/assets/img/avatarFallback.webp";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Image from "next/image";
-import { Profile } from "@/db/schema/zod-schemas";
+import { User } from "@/db/schema/zod-schemas";
 import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
 
 interface AuthorNudgeProps {
-	author: Pick<Profile, "name" | "companyName" | "image">;
+	author: Pick<User, "name" | "companyName" | "image">;
 	onlyAvatar?: boolean;
 }
 

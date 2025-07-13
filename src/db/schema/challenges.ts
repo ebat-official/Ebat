@@ -13,21 +13,18 @@ import {
 	submissionStatusEnum,
 	SubmissionStatus,
 } from "./enums";
-import { relations } from "drizzle-orm";
-import { posts } from "./posts";
-import { users } from "./users";
 
 // ChallengeTemplate table
 export const challengeTemplates = pgTable(
 	"challengeTemplate",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		postId: varchar("postId", { length: 21 }).notNull(),
+		postId: varchar("post_id", { length: 21 }).notNull(),
 		framework: templateFrameworkEnum("framework").notNull(),
-		questionTemplate: json("questionTemplate").notNull(),
-		answerTemplate: json("answerTemplate").notNull(),
-		createdAt: timestamp("createdAt").notNull().defaultNow(),
-		updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+		questionTemplate: json("question_template").notNull(),
+		answerTemplate: json("answer_template").notNull(),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	},
 	(table) => [
 		uniqueIndex("challengeTemplate_postId_framework_idx").on(
@@ -43,47 +40,24 @@ export const challengeSubmissions = pgTable(
 	"challengeSubmission",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		userId: uuid("userId").notNull(),
-		postId: varchar("postId", { length: 21 }).notNull(),
+		userId: uuid("user_id").notNull(),
+		postId: varchar("post_id", { length: 21 }).notNull(),
 		framework: templateFrameworkEnum("framework").notNull(),
-		answerTemplate: json("answerTemplate").notNull(),
-		runTime: integer("runTime").notNull().default(0),
+		answerTemplate: json("answer_template").notNull(),
+		runTime: integer("run_time").notNull().default(0),
 		status: submissionStatusEnum("status")
 			.notNull()
 			.default(SubmissionStatus.REJECTED),
-		submittedAt: timestamp("submittedAt").notNull().defaultNow(),
+		submittedAt: timestamp("submitted_at").notNull().defaultNow(),
 	},
-	(table) => ({
-		postIdUserIdIdx: index("challengeSubmission_postId_userId_idx").on(
+	(table) => [
+		index("challengeSubmission_postId_userId_idx").on(
 			table.postId,
 			table.userId,
 		),
-		userIdIdx: index("challengeSubmission_userId_idx").on(table.userId),
-		postIdIdx: index("challengeSubmission_postId_idx").on(table.postId),
-	}),
+		index("challengeSubmission_userId_idx").on(table.userId),
+		index("challengeSubmission_postId_idx").on(table.postId),
+	],
 );
 
-// Relations
-export const challengeTemplatesRelations = relations(
-	challengeTemplates,
-	({ one }) => ({
-		post: one(posts, {
-			fields: [challengeTemplates.postId],
-			references: [posts.id],
-		}),
-	}),
-);
-
-export const challengeSubmissionsRelations = relations(
-	challengeSubmissions,
-	({ one }) => ({
-		post: one(posts, {
-			fields: [challengeSubmissions.postId],
-			references: [posts.id],
-		}),
-		user: one(users, {
-			fields: [challengeSubmissions.userId],
-			references: [users.id],
-		}),
-	}),
-);
+// Relations moved to relations.ts

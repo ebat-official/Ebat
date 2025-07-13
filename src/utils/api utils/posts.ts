@@ -116,15 +116,9 @@ export async function getPostFromURL(params: {
 					columns: {
 						id: true,
 						userName: true,
-					},
-					with: {
-						profile: {
-							columns: {
-								name: true,
-								image: true,
-								companyName: true,
-							},
-						},
+						name: true,
+						image: true,
+						companyName: true,
 					},
 				},
 				challengeTemplates: true,
@@ -134,14 +128,8 @@ export async function getPostFromURL(params: {
 							columns: {
 								id: true,
 								userName: true,
-							},
-							with: {
-								profile: {
-									columns: {
-										name: true,
-										image: true,
-									},
-								},
+								name: true,
+								image: true,
 							},
 						},
 					},
@@ -202,13 +190,16 @@ export async function getPostFromURL(params: {
 			author: {
 				id: post.author?.id || "",
 				userName: post.author?.userName || "",
-				profile: post.author?.profile || null,
+				name: post.author?.name || null,
+				image: post.author?.image || null,
+				companyName: post.author?.companyName || null,
 			},
 			collaborators:
 				post.collaborators?.map((collaborator) => ({
 					id: collaborator.user.id,
 					userName: collaborator.user.userName,
-					profile: collaborator.user.profile,
+					name: collaborator.user.name,
+					image: collaborator.user.image,
 				})) || [],
 		};
 
@@ -302,15 +293,9 @@ export async function searchPosts({
 					columns: {
 						id: true,
 						userName: true,
-					},
-					with: {
-						profile: {
-							columns: {
-								name: true,
-								image: true,
-								companyName: true,
-							},
-						},
+						name: true,
+						image: true,
+						companyName: true,
 					},
 				},
 			},

@@ -1,31 +1,17 @@
 import { pgTable, uuid, varchar, text, timestamp } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
-import { users } from "./users";
+import { user } from "./auth";
 import { posts } from "./posts";
 import { comments } from "./comments";
 
 // Reports table
 export const reports = pgTable("report", {
 	id: uuid("id").primaryKey().defaultRandom(),
-	reporterId: uuid("reporterId").notNull(),
-	postId: varchar("postId", { length: 21 }),
-	commentId: uuid("commentId"),
+	reporterId: uuid("reporter_id").notNull(),
+	postId: varchar("post_id", { length: 21 }),
+	commentId: uuid("comment_id"),
 	reason: text("reason").notNull(),
-	createdAt: timestamp("createdAt").notNull().defaultNow(),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // Relations
-export const reportsRelations = relations(reports, ({ one }) => ({
-	reporter: one(users, {
-		fields: [reports.reporterId],
-		references: [users.id],
-	}),
-	post: one(posts, {
-		fields: [reports.postId],
-		references: [posts.id],
-	}),
-	comment: one(comments, {
-		fields: [reports.commentId],
-		references: [comments.id],
-	}),
-}));
+// Relations moved to relations.ts

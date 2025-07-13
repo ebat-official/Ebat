@@ -20,10 +20,8 @@ type CommentWithRelations = Comment & {
 	author: {
 		id: string;
 		userName: string | null;
-		profile: {
-			name: string | null;
-			image: string | null;
-		} | null;
+		name: string | null;
+		image: string | null;
 	} | null;
 	votes: Array<{ type: VoteType }>;
 	repliesCount: number;
@@ -92,8 +90,8 @@ async function formatCommentWithVotes(
 			? {
 					id: comment.author.id,
 					userName: comment.author.userName || "",
-					name: comment.author.profile?.name || undefined,
-					image: comment.author.profile?.image || null,
+					name: comment.author.name || undefined,
+					image: comment.author.image || null,
 				}
 			: undefined,
 		repliesCount: comment.repliesCount,
@@ -170,14 +168,8 @@ export async function createEditComment(
 						columns: {
 							id: true,
 							userName: true,
-						},
-						with: {
-							profile: {
-								columns: {
-									name: true,
-									image: true,
-								},
-							},
+							name: true,
+							image: true,
 						},
 					},
 					votes: {
@@ -202,14 +194,8 @@ export async function createEditComment(
 						columns: {
 							id: true,
 							userName: true,
-						},
-						with: {
-							profile: {
-								columns: {
-									name: true,
-									image: true,
-								},
-							},
+							name: true,
+							image: true,
 						},
 					},
 					votes: {

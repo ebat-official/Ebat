@@ -137,8 +137,9 @@ const CompaniesAccordion: FC<{ companies: string[] }> = ({ companies }) => {
 const CollaboratorsAccordion: FC<{
 	collaborators: {
 		id: string;
-		userName: string | null; // Allow userName to be null
-		profile: { name?: string | null; image?: string | null } | null; // Adjust profile type
+		userName: string;
+		name: string | null;
+		image: string | null;
 	}[];
 }> = ({ collaborators }) => {
 	return (
@@ -153,10 +154,9 @@ const CollaboratorsAccordion: FC<{
 				<div className="flex flex-wrap gap-2">
 					{collaborators?.length > 0 ? (
 						collaborators.map((collaborator) => {
-							const { profile, userName } = collaborator;
-							const profileName =
-								profile?.name?.split(" ")[0] || userName || "Unknown";
-							const profileImage = profile?.image || undefined;
+							const { name, userName, image } = collaborator;
+							const profileName = name?.split(" ")[0] || userName || "Unknown";
+							const profileImage = image || undefined;
 
 							return (
 								<Badge

@@ -2,13 +2,37 @@
 import useScroll from "@/hooks/useScroll";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserButton from "./UserButton";
-import type { Session } from "next-auth";
 import LoginModal from "@/components/auth/LoginModal";
 import { SheetMenu } from "../sidebar/sheet-menu";
 import Background from "./Background";
 import { cn } from "@/lib/utils";
 
-export default function NavBar({ session }: { session: Session | null }) {
+// BetterAuth session type
+type BetterAuthSession = {
+	user: {
+		id: string;
+		name: string;
+		email: string;
+		image?: string | null;
+		emailVerified: boolean;
+		createdAt: Date;
+		updatedAt: Date;
+	};
+	session: {
+		id: string;
+		token: string;
+		userId: string;
+		expiresAt: Date;
+		createdAt: Date;
+		updatedAt: Date;
+		ipAddress?: string | null;
+		userAgent?: string | null;
+	};
+};
+
+export default function NavBar({
+	session,
+}: { session: BetterAuthSession | null }) {
 	const scrolled = useScroll(50);
 
 	return (

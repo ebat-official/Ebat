@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { TbTriangle } from "react-icons/tb";
 import { VoteType } from "@/db/schema/enums";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { handleError } from "@/utils/handleError";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { toast } from "@/hooks/use-toast";

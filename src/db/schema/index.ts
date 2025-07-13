@@ -2,7 +2,7 @@
 export * from "./enums";
 
 // Export all tables
-export * from "./users";
+export * from "./follows";
 export * from "./posts";
 export * from "./comments";
 export * from "./votes";
@@ -13,8 +13,11 @@ export * from "./completionStatuses";
 export * from "./challenges";
 export * from "./auth";
 
+// Export all relations
+export * from "../relations";
+
 // Import all tables for type safety
-import { users, userProfiles, follows } from "./users";
+import { follows } from "./follows";
 import { posts, postViews, postEdits, postCollaborators } from "./posts";
 import { comments, commentVotes, commentMentions } from "./comments";
 import { votes } from "./votes";
@@ -23,12 +26,14 @@ import { notifications } from "./notifications";
 import { reports } from "./reports";
 import { completionStatuses } from "./completionStatuses";
 import { challengeTemplates, challengeSubmissions } from "./challenges";
-import { accounts, verificationTokens, resetTokens } from "./auth";
+import { user, session, account, verification } from "./auth";
+
+// Rename BetterAuth user table to users for consistency
+export const users = user;
 
 // Export all tables as a single object for drizzle
 export const schema = {
 	users,
-	userProfiles,
 	follows,
 	posts,
 	postViews,
@@ -44,9 +49,11 @@ export const schema = {
 	completionStatuses,
 	challengeTemplates,
 	challengeSubmissions,
-	accounts,
-	verificationTokens,
-	resetTokens,
+	// BetterAuth tables
+	user,
+	session,
+	account,
+	verification,
 };
 
 // Export zod schemas
