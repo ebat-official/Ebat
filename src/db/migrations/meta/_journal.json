@@ -1,20 +1,20 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1752399409200,
-      "tag": "0000_freezing_kinsey_walden",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1752414607339,
-      "tag": "0001_slim_ken_ellis",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1752399409200,
+			"tag": "0000_freezing_kinsey_walden",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1752414607339,
+			"tag": "0001_slim_ken_ellis",
+			"breakpoints": true
+		}
+	]
 }

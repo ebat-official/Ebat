@@ -6,6 +6,10 @@ import {
 	CommentSortOption,
 	CommentWithVotes,
 	PaginatedComments,
+	CommentServerRawResult,
+	ReplyCountResult,
+	CommentWithCountsResult,
+	AuthorData,
 } from "../types";
 import { COMMENT_SORT_OPTIONS } from "../contants";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
@@ -177,7 +181,7 @@ export async function getCommentsWithVotes(
 		`;
 
 		const result = await db.execute(baseQuery);
-		const rows = result as unknown as RawCommentResult[];
+		const rows = result as unknown as CommentServerRawResult[];
 
 		const processed: CommentWithVotes[] = await Promise.all(
 			rows.map(async (row) => {
@@ -416,11 +420,13 @@ export async function getCommentsWithVotesAlternative(
 		]);
 
 		const replyCountsMap = new Map<string, number>();
-		for (const row of replyCountsResult as any[]) {
+		for (const row of replyCountsResult as unknown as ReplyCountResult[]) {
 			replyCountsMap.set(row.parent_id, Number(row.reply_count));
 		}
 
-		let commentsWithCounts = (commentsResult as any[]).map((row) => ({
+		const commentsWithCounts = (
+			commentsResult as unknown as CommentWithCountsResult[]
+		).map((row) => ({
 			...row,
 			reply_count: replyCountsMap.get(row.id) || 0,
 			userVoteType: row.user_vote_type,
@@ -456,7 +462,7 @@ export async function getCommentsWithVotesAlternative(
 		const totalCount = commentsWithCounts.length;
 		const paginatedComments = commentsWithCounts.slice(skip, skip + take);
 
-		let authorData: Map<string, any> = new Map();
+		const authorData: Map<string, AuthorData> = new Map();
 		if (includeAuthor && paginatedComments.length > 0) {
 			const authorIds = [...new Set(paginatedComments.map((c) => c.author_id))];
 			const authorQuery = db
