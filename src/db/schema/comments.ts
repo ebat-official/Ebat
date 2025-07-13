@@ -16,6 +16,7 @@ import { user } from "./auth";
 import { posts } from "./posts";
 
 import { bytea } from "@/db/database-types";
+import { desc } from "drizzle-orm";
 
 // Comments table
 export const comments = pgTable(
@@ -38,6 +39,12 @@ export const comments = pgTable(
 		index("comment_createdAt_idx").on(table.createdAt),
 		index("comment_parentId_idx").on(table.parentId),
 		index("comment_authorId_idx").on(table.authorId),
+		index("comment_post_parent_created_idx").on(
+			table.postId,
+			table.parentId,
+			desc(table.createdAt),
+		),
+		index("comment_post_parent_covering_idx").on(table.postId, table.parentId),
 		foreignKey({
 			columns: [table.parentId],
 			foreignColumns: [table.id],
