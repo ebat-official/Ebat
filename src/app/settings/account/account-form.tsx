@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
@@ -33,6 +34,8 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { useState } from "react";
+import PasswordChangeForm from "./password-change-form";
 
 const languages = [
 	{ label: "English", value: "en" },
@@ -73,6 +76,7 @@ const defaultValues: Partial<AccountFormValues> = {
 };
 
 export function AccountForm() {
+	const [showPasswordForm, setShowPasswordForm] = useState(false);
 	const form = useForm<AccountFormValues>({
 		resolver: zodResolver(accountFormSchema),
 		defaultValues,
@@ -109,6 +113,44 @@ export function AccountForm() {
 						</FormItem>
 					)}
 				/>
+				<div>
+					{!showPasswordForm ? (
+						<motion.div
+							initial={{ opacity: 0, y: -10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.2 }}
+						>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => setShowPasswordForm(true)}
+							>
+								Change Password
+							</Button>
+						</motion.div>
+					) : (
+						<AnimatePresence>
+							<motion.div
+								initial={{ opacity: 0, height: 0, y: -20 }}
+								animate={{ opacity: 1, height: "auto", y: 0 }}
+								exit={{ opacity: 0, height: 0, y: -20 }}
+								transition={{
+									duration: 0.3,
+									ease: "easeInOut",
+								}}
+								className="overflow-hidden"
+							>
+								<div className="border rounded-lg p-4 bg-muted/50">
+									<PasswordChangeForm
+										onSuccess={() => setShowPasswordForm(false)}
+										onCancel={() => setShowPasswordForm(false)}
+									/>
+								</div>
+							</motion.div>
+						</AnimatePresence>
+					)}
+				</div>
 
 				<FormField
 					control={form.control}

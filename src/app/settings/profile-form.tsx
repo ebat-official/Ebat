@@ -28,6 +28,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import useCompanies from "@/hooks/useCompanyList";
 import { useRef, useState } from "react";
+import {
+	FaGithub,
+	FaLink,
+	FaLinkedinIn,
+	FaCamera,
+	FaTrash,
+	FaPlus,
+} from "react-icons/fa";
 
 const profileFormSchema = z.object({
 	name: z
@@ -49,11 +57,13 @@ const profileFormSchema = z.object({
 		.array(
 			z.object({
 				value: z.string().url({ message: "Please enter a valid URL." }),
+				type: z.string().optional(),
 			}),
 		)
 		.optional(),
 	company: z.string().optional(),
 	currentPosition: z.string().optional(),
+	experience: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -62,8 +72,8 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 const defaultValues: Partial<ProfileFormValues> = {
 	bio: "I own a computer.",
 	urls: [
-		{ value: "https://shadcn.com" },
-		{ value: "http://twitter.com/shadcn" },
+		{ value: "", type: "linkedin" },
+		{ value: "", type: "github" },
 	],
 };
 
@@ -222,33 +232,99 @@ export function ProfileForm() {
 					)}
 				/>
 
-				<div>
-					<FormField
-						control={form.control}
-						name="urls"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>URLs</FormLabel>
-								<FormDescription>
-									Add links to your website, blog, or social media profiles.
-								</FormDescription>
+				<FormField
+					control={form.control}
+					name="experience"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Experience</FormLabel>
+							<Select onValueChange={field.onChange} defaultValue={field.value}>
 								<FormControl>
-									<Input />
+									<SelectTrigger>
+										<SelectValue placeholder="Select experience" />
+									</SelectTrigger>
 								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+								<SelectContent>
+									<SelectItem value="1+">1+ years</SelectItem>
+									<SelectItem value="2+">2+ years</SelectItem>
+									<SelectItem value="3+">3+ years</SelectItem>
+									<SelectItem value="4+">4+ years</SelectItem>
+									<SelectItem value="5+">5+ years</SelectItem>
+									<SelectItem value="6+">6+ years</SelectItem>
+									<SelectItem value="7+">7+ years</SelectItem>
+									<SelectItem value="8+">8+ years</SelectItem>
+									<SelectItem value="9+">9+ years</SelectItem>
+									<SelectItem value="10+">10+ years</SelectItem>
+								</SelectContent>
+							</Select>
+							<FormDescription>
+								Select your years of professional experience.
+							</FormDescription>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 
-					<Button
-						type="button"
-						variant="outline"
-						size="sm"
-						className="mt-2"
-						onClick={() => append({ value: "" })}
-					>
-						Add URL
-					</Button>
+				<div>
+					{fields.map((item, index) => {
+						const type =
+							item.type ||
+							(index === 0 ? "linkedin" : index === 1 ? "github" : "other");
+						const Icon =
+							type === "linkedin"
+								? FaLinkedinIn
+								: type === "github"
+									? FaGithub
+									: FaLink;
+
+						const getPlaceholder = (type: string) => {
+							switch (type) {
+								case "linkedin":
+									return "LinkedIn URL";
+								case "github":
+									return "GitHub URL";
+								default:
+									return "Add URL";
+							}
+						};
+
+						return (
+							<FormField
+								key={item.id}
+								control={form.control}
+								name={`urls.${index}.value`}
+								render={({ field }) => (
+									<FormItem className="relative">
+										<FormControl>
+											<div className="relative">
+												<span className="absolute inset-y-0 left-2 flex items-center text-gray-500">
+													<Icon />
+												</span>
+												<Input
+													{...field}
+													placeholder={getPlaceholder(type)}
+													className="pl-8"
+												/>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						);
+					})}
+
+					{fields.length < 5 && (
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							className="mt-2"
+							onClick={() => append({ value: "" })}
+						>
+							Add URL
+						</Button>
+					)}
 				</div>
 				<Button type="submit">Update profile</Button>
 			</form>

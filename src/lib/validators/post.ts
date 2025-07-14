@@ -16,7 +16,6 @@ import {
 	POST_REQUIRED,
 	TITLE_MIN_LENGTH,
 } from "@/utils/contants";
-import { OutputData } from "@editorjs/editorjs";
 import { EditorContent } from "@/utils/types";
 import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
 
