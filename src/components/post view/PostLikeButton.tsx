@@ -7,13 +7,13 @@ import {
 	HiOutlineThumbUp,
 	HiOutlineThumbDown,
 } from "react-icons/hi";
-import { VoteType } from "@prisma/client";
+import { VoteType } from "@/db/schema/enums";
 import { voteAction } from "@/actions/postVoting";
 import { handleError } from "@/utils/handleError";
 import { toast } from "@/hooks/use-toast";
 import LoginModal from "../auth/LoginModal";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { useServerAction } from "@/hooks/useServerAction";
 import { cn } from "@/lib/utils";
 import { useVotes } from "@/hooks/query/useVotes";

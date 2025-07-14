@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { PostType } from "@prisma/client";
+import { PostType } from "@/db/schema/enums";
 import { CustomErrorType, GenerateActionReturnType } from "./types";
 import { INVALID_DIFFICULTY } from "./contants";
 

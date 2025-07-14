@@ -1,20 +1,10 @@
 "use server";
-import prisma from "@/lib/prisma";
-import { CompletionStatus } from "@prisma/client";
+import { db } from "@/db";
+import { completionStatuses } from "@/db/schema";
+import { eq, and, inArray } from "drizzle-orm";
+import { CompletionStatus } from "@/db/schema/zod-schemas";
 import { z } from "zod";
 import { validateUser } from "./user";
-
-// Utility type for input pairs
-const CompletionStatusPairsValidator = z.array(
-	z.object({
-		postId: z.string(),
-		userId: z.string(),
-	}),
-);
-
-type CompletionStatusPair = z.infer<
-	typeof CompletionStatusPairsValidator
->[number];
 
 // Validator for postId array
 const CompletionStatusPostIdsValidator = z.array(z.string());
@@ -31,10 +21,10 @@ export async function getCompletionStatusesForPosts(
 	const user = await validateUser();
 	if (!user) return [];
 
-	return prisma.completionStatus.findMany({
-		where: {
-			userId: user.id,
-			postId: { in: postIds },
-		},
+	return await db.query.completionStatuses.findMany({
+		where: and(
+			eq(completionStatuses.userId, user.id),
+			inArray(completionStatuses.postId, postIds),
+		),
 	});
 }

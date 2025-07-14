@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Source_Code_Pro, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { SessionProvider } from "next-auth/react";
 import QueryProvider from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -41,13 +40,11 @@ export default function RootLayout({
 			<body
 				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} font-source-serif antialiased relative var(--background) overflow-x-hidden`}
 			>
-				<SessionProvider>
-					<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-						<QueryProvider>{children}</QueryProvider>
-					</ThemeProvider>
-					<Toaster />
-					<Sonner />
-				</SessionProvider>
+				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+					<QueryProvider>{children}</QueryProvider>
+				</ThemeProvider>
+				<Toaster />
+				<Sonner />
 				<SpeedInsights />
 			</body>
 		</html>

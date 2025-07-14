@@ -34,8 +34,14 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 	return (
 		<Card className="border-none shadow-none bg-transparent">
 			<CardContent className="flex gap-1 sm:gap-4 flex-wrap px-0">
-				{post.author.userProfile && (
-					<AuthorNudge author={post.author.userProfile} />
+				{post.author.name && (
+					<AuthorNudge
+						author={{
+							name: post.author.name,
+							image: post.author.image,
+							companyName: post.author.companyName,
+						}}
+					/>
 				)}
 				{post.difficulty && <DifficultyBadge difficulty={post.difficulty} />}
 				<CoinsBadge coins={post.coins || 0} />

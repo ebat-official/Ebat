@@ -19,7 +19,7 @@ import { useServerAction } from "@/hooks/useServerAction";
 import { extractSolutionTemplate } from "../../utils/submissionUtils";
 import { submitChallengeSolution } from "@/actions/submission";
 import { toast } from "sonner";
-import { PostType, SubmissionStatus } from "@prisma/client";
+import { PostType, SubmissionStatus } from "@/db/schema/enums";
 import { ERROR } from "@/utils/contants";
 import { SubmissionSuccessModal } from "./SubmissionSuccessModal";
 import { SubmissionFailureModal } from "./SubmissionFailureModal";

@@ -2,7 +2,7 @@
 import useScroll from "@/hooks/useScroll";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserButton from "./UserButton";
-import type { Session } from "next-auth";
+import { type Session } from "@/lib/auth-client";
 import LoginModal from "@/components/auth/LoginModal";
 import { SheetMenu } from "../sidebar/sheet-menu";
 import Background from "./Background";
@@ -28,7 +28,6 @@ export default function NavBar({ session }: { session: Session | null }) {
 					</div>
 					<div className="flex gap-4 absolute right-16">
 						<ThemeSwitcher />
-
 						{session ? (
 							<UserButton session={session} />
 						) : (

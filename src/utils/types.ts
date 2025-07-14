@@ -1,14 +1,18 @@
+import { Post, User, ChallengeSubmission } from "@/db/schema/zod-schemas";
 import {
-	Post,
 	PostCategory,
 	PostType,
 	SubCategory,
-	User,
 	VoteType,
 	TemplateFramework,
-	ChallengeSubmission,
 	SubmissionStatus,
-} from "@prisma/client";
+	type PostCategoryType,
+	type PostTypeType,
+	type SubCategoryType as SubCategoryEnumType,
+	type VoteTypeType,
+	type TemplateFrameworkType,
+	type SubmissionStatusType,
+} from "@/db/schema/enums";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
 import {
@@ -26,7 +30,7 @@ import type {
 
 // Challenge template type
 export interface ChallengeTemplate {
-	framework: TemplateFramework;
+	framework: TemplateFrameworkType;
 	questionTemplate: Template;
 	answerTemplate: Template;
 }
@@ -42,15 +46,18 @@ export interface ContentReturnType {
 	answer?: string;
 }
 
-export type PrismaJson = ReturnType<typeof JSON.parse> | null | undefined;
+export type DatabaseJson =
+	| Record<string, unknown>
+	| unknown[]
+	| string
+	| number
+	| boolean
+	| null;
 
-export type CategoryType = keyof typeof PostCategory;
-export type SubCategoryType =
-	| keyof typeof SubCategory
-	| DesignBlogType
-	| undefined;
+export type CategoryType = PostCategoryType;
+export type SubCategoryType = SubCategoryEnumType | DesignBlogType | undefined;
 
-export type TopicCategory = SubCategoryType | PostCategory;
+export type TopicCategory = SubCategoryType | PostCategoryType;
 
 export type QuestionSidebarData = {
 	companies?: string[];
@@ -83,7 +90,7 @@ export type postCreateOptions = Partial<
 };
 
 export type PostActions = (typeof POST_ACTIONS)[keyof typeof POST_ACTIONS];
-export type DesignBlogType = Extract<PostType, "BLOGS" | "SYSTEMDESIGN">;
+export type DesignBlogType = Extract<PostTypeType, "BLOGS" | "SYSTEMDESIGN">;
 export type PostRouteType =
 	(typeof POST_ROUTE_TYPE)[keyof typeof POST_ROUTE_TYPE];
 
@@ -97,18 +104,8 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	completionCount?: number;
 	tableOfContent?: TableOfContent;
 	challengeTemplates?: ChallengeTemplate[];
-	collaborators: Array<
-		Pick<User, "id" | "userName"> & {
-			userProfile: { name: string | null; image: string | null } | null;
-		}
-	>;
-	author: Pick<User, "id" | "userName"> & {
-		userProfile: {
-			name: string | null;
-			image: string | null;
-			companyName: string | null;
-		} | null;
-	};
+	collaborators: Array<Pick<User, "id" | "userName" | "name" | "image">>;
+	author: Pick<User, "id" | "userName" | "name" | "image" | "companyName">;
 	views?: {
 		count: number;
 		updatedAt: Date;
@@ -151,17 +148,15 @@ export type CommentWithVotes = {
 		image?: string | null;
 		userName: string;
 	};
-	_count: {
-		replies: number;
-		votes: number;
-	};
+	repliesCount: number;
+	votesCount: number;
 	votesAggregate: {
 		_count: { _all: number };
 		_sum: { voteValue: number };
 	};
 	upVotes: number;
 	downVotes: number;
-	userVoteType: VoteType | null;
+	userVoteType: VoteTypeType | null;
 	repliesExist: boolean;
 	repliesLoaded: boolean;
 	replies: CommentWithVotes[];
@@ -198,7 +193,56 @@ export interface RawCommentResult {
 		id: string;
 		name: string;
 		avatar?: string | null;
+		userName: string;
 	};
+}
+
+// Comment server specific types
+export interface CommentServerRawResult {
+	id: string;
+	content: Buffer;
+	created_at: Date;
+	updated_at: Date;
+	author_id: string;
+	post_id: string;
+	parent_id: string | null;
+	total_count: number;
+	upvotes: number;
+	downvotes: number;
+	userVoteType: VoteTypeType | null;
+	reply_count: number;
+	author_user_id?: string;
+	author_user_name?: string;
+	author_name?: string;
+	author_image?: string;
+	score: number;
+}
+
+export interface ReplyCountResult {
+	parent_id: string;
+	reply_count: number;
+}
+
+export interface CommentWithCountsResult {
+	id: string;
+	content: Buffer;
+	created_at: Date;
+	updated_at: Date;
+	author_id: string;
+	post_id: string;
+	parent_id: string | null;
+	upvotes: number;
+	downvotes: number;
+	score: number;
+	user_vote_type: VoteTypeType | null;
+	reply_count: number;
+}
+
+export interface AuthorData {
+	id: string;
+	userName: string;
+	name: string | null;
+	image: string | null;
 }
 
 export type GetOptimizedCommentsOptions = {
@@ -260,16 +304,15 @@ export interface PostSearchContext {
 }
 
 export type FeedPost = Post & {
-	_count?: { votes: number; comments: number };
+	votes?: number;
+	comments?: number;
 	views?: { count: number; updatedAt: Date };
 	author: {
 		id: string;
 		userName: string;
-		userProfile: {
-			name: string | null;
-			image: string | null;
-			companyName: string | null;
-		} | null;
+		name: string | null;
+		image: string | null;
+		companyName: string | null;
 	};
 };
 export interface PostSearchResponse {
@@ -293,7 +336,7 @@ export interface UsePostSearchOptions {
 
 // Submission Table Types
 export type SubmissionWithStatus = ChallengeSubmission & {
-	status: SubmissionStatus;
+	status: SubmissionStatusType;
 };
 
 export type SubmissionSortField =

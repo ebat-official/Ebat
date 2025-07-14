@@ -1,9 +1,9 @@
-import { PostCategory } from "@prisma/client";
+import { PostCategory, PostCategoryType } from "@/db/schema/enums";
 
-const categorySupportedTypes = new Set(Object.values(PostCategory));
-
-export default function isValidCategory(
+export const isValidCategory = (
 	category: string,
-): category is PostCategory {
-	return categorySupportedTypes.has(category as PostCategory);
-}
+): category is PostCategoryType => {
+	return Object.values(PostCategory).includes(category as PostCategoryType);
+};
+
+export default isValidCategory;

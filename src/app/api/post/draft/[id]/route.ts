@@ -1,7 +1,6 @@
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { PostStatus, PostApprovalStatus } from "@prisma/client";
+import { PostStatus, PostApprovalStatus } from "@/db/schema/enums";
 import {
 	ID_NOT_EXIST_ERROR,
 	POST_NOT_EXIST_ERROR,
@@ -10,6 +9,7 @@ import {
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
 import { getPostById } from "@/utils/api utils/posts";
+import { getCurrentUser } from "@/actions/user";
 
 export async function GET(
 	request: Request,
@@ -35,8 +35,7 @@ export async function GET(
 		}
 
 		// Authorization: Only the author can see Draft/Not Live posts
-		const session = await auth();
-		const user = session?.user;
+		const user = await getCurrentUser();
 
 		if (!user) {
 			return NextResponse.json(UNAUTHENTICATED_ERROR, { status: 401 });

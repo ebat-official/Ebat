@@ -10,6 +10,7 @@ import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getCurrentUser } from "./user";
 
 type ResponseData = { url: string; fileKey: string };
 
@@ -41,8 +42,8 @@ export async function getSignedURL({
 	checksum,
 	metadata,
 }: GetSignedURLParams): Promise<GenerateActionReturnType<ResponseData>> {
-	const session = await auth();
-	if (!session) {
+	const user = await getCurrentUser();
+	if (!user) {
 		return UNAUTHENTICATED_ERROR;
 	}
 
@@ -79,7 +80,7 @@ export async function getSignedURL({
 		ContentLength: fileSize,
 		ChecksumSHA256: checksum,
 		Metadata: {
-			userId: session.user.id,
+			userId: user.id,
 			...metadata,
 		},
 	});

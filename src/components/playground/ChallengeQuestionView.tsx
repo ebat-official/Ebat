@@ -10,7 +10,7 @@ import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Lightbulb, MessageCircle, Upload } from "lucide-react";
 import { SubmissionsTable } from "../post edit/challenge/SubmissionsTable";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import CodeViewer from "./components/editor/CodeViewer";
 
 type ChallengeQuestionViewProps = {

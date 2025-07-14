@@ -1,10 +1,12 @@
-import { SubCategory } from "@prisma/client";
+import { SubCategory, SubCategoryType } from "@/db/schema/enums";
 
 // Create a Set of valid SubCategory values
 const subCategorySupportedTypes = new Set(Object.values(SubCategory));
 
-export default function isValidSubcategory(
-	subcategory: string,
-): subcategory is SubCategory {
-	return subCategorySupportedTypes.has(subcategory as SubCategory);
-}
+export const isValidSubCategory = (
+	subCategory: string,
+): subCategory is SubCategoryType => {
+	return Object.values(SubCategory).includes(subCategory as SubCategoryType);
+};
+
+export default isValidSubCategory;

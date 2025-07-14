@@ -10,7 +10,7 @@ import { BottomPanel } from "../../playground/components/ide/BottomPanel";
 import { PreviewPanel } from "../../playground/components/preview/PreviewPanel";
 import { useWebContainerStore } from "../../playground/store/webContainer";
 import { Card } from "@/components/ui/card";
-import { TemplateFramework } from "@prisma/client";
+import { TemplateFramework } from "@/db/schema/enums";
 import { extractSrcFromTemplate } from "../../playground/utils/templateUtils";
 import type { Template } from "../../playground/lib/types";
 import {

@@ -1,35 +1,21 @@
-import { PostCategory, SubCategory } from "@prisma/client";
+import {
+	PostCategory,
+	SubCategory,
+	PostCategoryType,
+	SubCategoryType,
+} from "@/db/schema/enums";
 
-export function isValidCategoryCombo(
+export const isValidCategoryCombo = (
 	category: string,
-	subCategory: string | null,
-): category is PostCategory {
-	const validCombinations: Record<PostCategory, SubCategory[]> = {
-		[PostCategory.FRONTEND]: [
-			SubCategory.JAVASCRIPT,
-			SubCategory.HTML,
-			SubCategory.CSS,
-			SubCategory.REACT,
-		],
-		[PostCategory.BACKEND]: [],
-		[PostCategory.ANDROID]: [],
-	};
+	subCategory: string,
+): boolean => {
+	// Check if both category and subCategory are valid enum values
+	const validCategory = Object.values(PostCategory).includes(
+		category as PostCategoryType,
+	);
+	const validSubCategory = Object.values(SubCategory).includes(
+		subCategory as SubCategoryType,
+	);
 
-	const categoryEnum = Object.values(PostCategory).find(
-		(c) => c.toLowerCase() === category.toLowerCase(),
-	) as PostCategory | undefined;
-
-	if (!categoryEnum) return false;
-
-	if (validCombinations[categoryEnum].length === 0) return true;
-
-	const subCategoryEnum = subCategory
-		? (Object.values(SubCategory).find(
-				(sc) => sc.toLowerCase() === subCategory.toLowerCase(),
-			) as SubCategory | undefined)
-		: null;
-
-	return subCategoryEnum
-		? validCombinations[categoryEnum].includes(subCategoryEnum)
-		: false;
-}
+	return validCategory && validSubCategory;
+};

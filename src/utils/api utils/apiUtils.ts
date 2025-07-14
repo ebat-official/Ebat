@@ -2,7 +2,8 @@ import { POST_ID_LENGTH } from "@/config";
 import { UNKNOWN_ERROR } from "../contants";
 import { ID_NOT_EXIST_ERROR } from "../errors";
 import { isValidCategoryCombo } from "../isValidCategoryCombo";
-import { CommentMention, PostType } from "@prisma/client";
+import { CommentMention } from "@/db/schema/zod-schemas";
+import { PostType } from "@/db/schema/enums";
 import {
 	ContentType,
 	PostWithContent,
@@ -13,9 +14,15 @@ import {
 	TableOfContent,
 	ChallengeTemplate,
 } from "../types";
-import { PostCategory, SubCategory } from "@prisma/client";
-import prisma from "@/lib/prisma";
-import pako from "pako";
+import { PostCategory, SubCategory } from "@/db/schema/enums";
+import { db } from "@/db";
+import {
+	posts,
+	postViews,
+	challengeTemplates,
+	completionStatuses,
+} from "@/db/schema";
+import { eq, count } from "drizzle-orm";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
 
@@ -41,109 +48,6 @@ export const fetchPostById = async (
 	const post = await res.json();
 	return { ...post, content: post.content as ContentType };
 };
-
-export async function getPostFromURL(params: {
-	category: string;
-	subCategory: string;
-	titleSlug: string;
-}): Promise<PostWithExtraDetails | null> {
-	const { titleSlug, category, subCategory } = params;
-
-	// will do it later if required
-	// if (!isValidCategoryCombo(category, subCategory)) {
-	// 	return null;
-	// }
-
-	const id = titleSlug.slice(-POST_ID_LENGTH);
-	if (!id) return null;
-
-	try {
-		const post = await prisma.post.findUnique({
-			where: {
-				id,
-			},
-			include: {
-				author: {
-					select: {
-						id: true,
-						userName: true,
-						userProfile: {
-							select: {
-								name: true,
-								image: true,
-								companyName: true,
-							},
-						},
-					},
-				},
-				_count: {
-					select: {
-						completionStatus: true,
-					},
-				},
-				collaborators: {
-					select: {
-						id: true,
-						userName: true,
-						userProfile: {
-							select: {
-								name: true,
-								image: true,
-							},
-						},
-					},
-				},
-				views: {
-					select: {
-						count: true,
-						updatedAt: true,
-					},
-				},
-				challengeTemplates: true,
-			},
-		});
-
-		if (!post) return null;
-
-		const ContentHtml: ContentReturnType = {
-			post: "",
-			answer: "",
-		};
-		let tableOfContent: TableOfContent = [];
-
-		if (post.content) {
-			const parsedContent = JSON.parse(
-				pako.inflate(post.content, { to: "string" }),
-			) as ContentType;
-
-			if (parsedContent.post?.blocks) {
-				const postHtml = await getHtml(parsedContent.post.blocks);
-				const { toc, htmlWithAnchors } = extractTOCAndEnhanceHTML(postHtml);
-				ContentHtml.post = htmlWithAnchors;
-				tableOfContent = toc;
-			}
-			if (parsedContent.answer?.blocks) {
-				const answerHtml = await getHtml(parsedContent.answer.blocks);
-				ContentHtml.answer = answerHtml;
-			}
-		}
-
-		const completionCount = post._count?.completionStatus || 0;
-
-		return {
-			...post,
-			content: ContentHtml,
-			completionCount,
-			tableOfContent,
-			views: post.views ?? undefined,
-			challengeTemplates:
-				post.challengeTemplates as unknown as ChallengeTemplate[],
-		};
-	} catch (error) {
-		console.error("Error fetching post:", error);
-		return null;
-	}
-}
 
 export async function fetchMentionsByCommentId(
 	commentId: string,

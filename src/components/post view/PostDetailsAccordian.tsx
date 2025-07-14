@@ -6,7 +6,8 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Post, PostType } from "@prisma/client";
+import { Post } from "@/db/schema/zod-schemas";
+import { PostType } from "@/db/schema/enums";
 import { normalizeCompaniesData } from "@/hooks/useCompanyList";
 import companiesData from "@/utils/companyListConfig";
 import { AiOutlineTag } from "react-icons/ai";
@@ -50,11 +51,11 @@ const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 						)}
 					{((post.type !== PostType.BLOGS &&
 						post.type !== PostType.SYSTEMDESIGN) ||
-						post.companies?.length > 0) && (
-						<CompaniesAccordion companies={post.companies} />
+						(post.companies && post.companies.length > 0)) && (
+						<CompaniesAccordion companies={post.companies || []} />
 					)}
 
-					<TopicsAccordion topics={post.topics} />
+					<TopicsAccordion topics={post.topics || []} />
 					<CollaboratorsAccordion collaborators={post.collaborators} />
 				</Accordion>
 			</CardContent>
@@ -136,8 +137,9 @@ const CompaniesAccordion: FC<{ companies: string[] }> = ({ companies }) => {
 const CollaboratorsAccordion: FC<{
 	collaborators: {
 		id: string;
-		userName: string | null; // Allow userName to be null
-		userProfile: { name?: string | null; image?: string | null } | null; // Adjust userProfile type
+		userName: string;
+		name: string | null;
+		image: string | null;
 	}[];
 }> = ({ collaborators }) => {
 	return (
@@ -152,10 +154,9 @@ const CollaboratorsAccordion: FC<{
 				<div className="flex flex-wrap gap-2">
 					{collaborators?.length > 0 ? (
 						collaborators.map((collaborator) => {
-							const { userProfile, userName } = collaborator;
-							const profileName =
-								userProfile?.name?.split(" ")[0] || userName || "Unknown";
-							const profileImage = userProfile?.image || undefined;
+							const { name, userName, image } = collaborator;
+							const profileName = name?.split(" ")[0] || userName || "Unknown";
+							const profileImage = image || undefined;
 
 							return (
 								<Badge

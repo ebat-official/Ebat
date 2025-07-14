@@ -1,4 +1,6 @@
-import prisma from "@/lib/prisma";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { ilike, asc } from "drizzle-orm";
 import { USERNAME_NOT_EXIST_ERROR } from "@/utils/errors";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -15,25 +17,18 @@ export async function GET(
 		}
 
 		// Fetch top 5 users whose userName starts with the given input
-		const users = await prisma.user.findMany({
-			where: {
-				userName: {
-					startsWith: userName, // Match userName starting with the input
-					mode: "insensitive", // Case-insensitive search
-				},
-			},
-			select: {
-				id: true,
-				userName: true,
-			},
-			orderBy: {
-				userName: "asc",
-			},
-			take: 5, // Limit the results to the top 5 matches
-		});
+		const usersList = await db
+			.select({
+				id: users.id,
+				userName: users.userName,
+			})
+			.from(users)
+			.where(ilike(users.userName, `${userName}%`))
+			.orderBy(asc(users.userName))
+			.limit(5);
 
 		// Return the list of users
-		return new NextResponse(JSON.stringify(users), {
+		return new NextResponse(JSON.stringify(usersList), {
 			status: 200,
 			headers: {
 				"Cache-Control": "public, max-age=120", // cache for 120 seconds

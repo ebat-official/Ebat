@@ -1,4 +1,4 @@
-import { PostCategory, SubCategory } from "@prisma/client";
+import { PostCategory, SubCategory } from "@/db/schema/enums";
 
 interface CategoryMetadata {
 	keywords: string[];

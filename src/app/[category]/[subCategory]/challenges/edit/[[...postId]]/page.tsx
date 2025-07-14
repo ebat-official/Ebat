@@ -6,7 +6,7 @@ import isValidCategory from "@/utils/isValidCategory";
 import isValidSubCategory from "@/utils/isValidSubCategory";
 import { POST_ACTIONS } from "@/utils/contants";
 import QuestionCreateEdit from "@/components/post edit/PostCreateEdit";
-import { PostType } from "@prisma/client";
+import { PostType } from "@/db/schema/enums";
 
 function Page() {
 	const {

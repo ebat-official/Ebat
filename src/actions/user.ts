@@ -1,69 +1,17 @@
 "use server";
-import bcrypt from "bcryptjs";
 
-import prisma from "@/lib/prisma";
-import { User, UserProfile } from "@prisma/client";
-import { validateVerificationToken } from "./auth";
+import { db } from "@/db";
+import { user } from "@/db/schema/auth";
+import { eq } from "drizzle-orm";
+import { User } from "@/db/schema/zod-schemas";
 import { auth } from "@/auth";
+import { headers } from "next/headers";
 
-type UserWithProfile = User & { userProfile: UserProfile | null };
-
-/**
- *
- * @param email
- * @returns
- * this function is used to find user by email from server side
- * this will include password and other sensitive information
- */
-export async function findUserByEmailServer(email: string) {
+export async function findUserById(id: string): Promise<User | null> {
 	try {
-		const user = await prisma.user.findUnique({
-			where: {
-				email,
-			},
-		});
-		return user;
-	} catch (error) {
-		return null;
-	}
-}
-
-export async function findUserByEmail(email: string) {
-	try {
-		const user = await prisma.user.findUnique({
-			where: {
-				email,
-			},
-			select: {
-				id: true,
-				email: true,
-				userName: true,
-				emailVerified: true,
-				userProfile: {
-					select: {
-						name: true,
-						id: true,
-						image: true,
-					},
-				},
-				role: true,
-				karmaPoints: true,
-				accountStatus: true,
-			},
-		});
-		return user;
-	} catch (error) {
-		return null;
-	}
-}
-export async function findUserById(
-	id: string,
-	includeProfile = false,
-): Promise<User | UserWithProfile | null> {
-	try {
-		const user = await prisma.user.findUnique({
-			where: { id },
-			select: {
+		const foundUser = await db.query.user.findFirst({
+			where: eq(user.id, id),
+			columns: {
 				id: true,
 				email: true,
 				userName: true,
@@ -71,83 +19,57 @@ export async function findUserById(
 				role: true,
 				karmaPoints: true,
 				accountStatus: true,
-				userProfile: !!includeProfile,
+				name: true,
+				image: true,
+				companyName: true,
+				jobTitle: true,
+				description: true,
+				location: true,
+				coverImage: true,
+				externalLinks: true,
 			},
+			// Note: profile relation removed - all fields now in users table
 		});
 
-		return user as UserWithProfile | User | null;
+		return foundUser as User | null;
 	} catch (error) {
 		console.error("Error finding user by ID:", error);
 		return null;
 	}
 }
 
-export async function setEmailVerified(email: string) {
-	try {
-		await prisma.user.update({
-			where: {
-				email,
-			},
-			data: { emailVerified: new Date() },
-		});
-		return true;
-	} catch (error) {
-		return null;
-	}
-}
-export async function setEmailVerifiedUsingToken(token: string) {
-	const user = await validateVerificationToken(token);
-
-	if (typeof user.data !== "object" || !("email" in user.data)) {
-		return null;
-	}
-
-	try {
-		await prisma.user.update({
-			where: {
-				email: user.data.email,
-			},
-			data: { emailVerified: new Date() },
-		});
-		return true;
-	} catch (error) {
-		return null;
-	}
-}
-export async function updateUserPassword(email: string, password: string) {
-	//get email from session
-	try {
-		await prisma.user.update({
-			where: {
-				email,
-			},
-			data: { password: bcrypt.hashSync(password, 12) },
-		});
-		return true;
-	} catch (error) {
-		return null;
-	}
-}
-export async function updateUserName(id: string, userName: string) {
-	try {
-		await prisma.user.update({
-			where: {
-				id,
-			},
-			data: { userName },
-		});
-		return true;
-	} catch (error) {
-		return null;
-	}
-}
-
-export const getCurrentUser = async () => {
-	const session = await auth();
+export async function validateUser() {
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
 	return session?.user;
-};
+}
 
-export const validateUser = async () => {
-	const user = await getCurrentUser();
-	return user;
-};
+export async function getCurrentUser() {
+	const user = await validateUser();
+	if (!user?.id) return null;
+
+	const foundUser = await findUserById(user.id);
+	return foundUser;
+}
+
+export async function updateUserCoins(userId: string, coins: number) {
+	try {
+		await db.update(user).set({ coins }).where(eq(user.id, userId));
+		return true;
+	} catch (error) {
+		return null;
+	}
+}
+
+export async function updateUserKarmaPoints(
+	userId: string,
+	karmaPoints: number,
+) {
+	try {
+		await db.update(user).set({ karmaPoints }).where(eq(user.id, userId));
+		return true;
+	} catch (error) {
+		return null;
+	}
+}

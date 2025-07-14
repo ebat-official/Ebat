@@ -1,12 +1,13 @@
 import React, { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import fallbackImg from "@/assets/img/avatarFallback.webp";
-import { signOut } from "next-auth/react";
+import { signOut, type Session } from "@/lib/auth-client";
 import Image from "next/image";
 
 interface UserButtonProps {
 	session: Session | null;
 }
+
 import {
 	LogOut,
 	// UserPlus,
@@ -28,10 +29,14 @@ import {
 	// DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Session } from "next-auth";
 
 const UserButton: FC<UserButtonProps> = ({ session }) => {
 	const userFirstLetter = session?.user?.name?.charAt(0).toUpperCase();
+
+	const handleSignOut = async () => {
+		await signOut();
+	};
+
 	return (
 		<>
 			<DropdownMenu>
@@ -85,7 +90,7 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
               <span>Support</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator /> */}
-						<DropdownMenuItem onClick={() => signOut()}>
+						<DropdownMenuItem onClick={handleSignOut}>
 							<LogOut className="w-4 h-4 mr-2" />
 							<Button className="h-0" variant="ghost">
 								Log out
