@@ -27,8 +27,8 @@ export async function generateMetadata({
 	const { category: categoryRoute, subCategory: subCategoryRoute } =
 		awaitedParams;
 
-	const category = categoryRoute?.toUpperCase();
-	const subCategory = subCategoryRoute?.toUpperCase() || SubCategory.BLOGS;
+	const category = categoryRoute?.toLowerCase();
+	const subCategory = subCategoryRoute?.toLowerCase() || SubCategory.BLOGS;
 
 	// Validate parameters
 	if (
@@ -81,8 +81,8 @@ export default async function Page({ params }: { params: PageProps }) {
 	awaitedParams.subCategory = awaitedParams.subCategory || SubCategory.BLOGS;
 
 	if (
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.BLOGS &&
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.SYSTEMDESIGN
+		awaitedParams.subCategory.toLowerCase() !== SubCategory.BLOGS &&
+		awaitedParams.subCategory.toLowerCase() !== SubCategory.SYSTEMDESIGN
 	) {
 		return notFound();
 	}

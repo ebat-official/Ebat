@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { MdOutlineExpandMore } from "react-icons/md";
 import { Input } from "../shared/Input";
 import { MagnifyingGlassIcon as SearchIcon } from "@radix-ui/react-icons";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { TooltipProvider } from "../ui/tooltip";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { MdAddTask } from "react-icons/md";
 import { toast } from "sonner";

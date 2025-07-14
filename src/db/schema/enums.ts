@@ -1,83 +1,83 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
 export enum UserRole {
-	ADMIN = "ADMIN",
-	USER = "USER",
+	ADMIN = "admin",
+	USER = "user",
 }
 
 export enum SubscriptionPlan {
-	BASIC = "BASIC",
-	PREMIUM = "PREMIUM",
+	BASIC = "basic",
+	PREMIUM = "premium",
 }
 
 export enum AccountStatus {
-	ACTIVE = "ACTIVE",
-	INACTIVE = "INACTIVE",
-	SUSPENDED = "SUSPENDED",
+	ACTIVE = "active",
+	INACTIVE = "inactive",
+	SUSPENDED = "suspended",
 }
 
 export enum VoteType {
-	UP = "UP",
-	DOWN = "DOWN",
+	UP = "up",
+	DOWN = "down",
 }
 
 export enum PostType {
-	BLOGS = "BLOGS",
-	QUESTION = "QUESTION",
-	CHALLENGE = "CHALLENGE",
-	SYSTEMDESIGN = "SYSTEMDESIGN",
+	BLOGS = "blogs",
+	QUESTION = "question",
+	CHALLENGE = "challenge",
+	SYSTEMDESIGN = "systemdesign",
 }
 
 export enum Difficulty {
-	EASY = "EASY",
-	MEDIUM = "MEDIUM",
-	HARD = "HARD",
+	EASY = "easy",
+	MEDIUM = "medium",
+	HARD = "hard",
 }
 
 export enum PostCategory {
-	FRONTEND = "FRONTEND",
-	BACKEND = "BACKEND",
-	ANDROID = "ANDROID",
+	FRONTEND = "frontend",
+	BACKEND = "backend",
+	ANDROID = "android",
 }
 
 export enum PostStatus {
-	DRAFT = "DRAFT",
-	PUBLISHED = "PUBLISHED",
+	DRAFT = "draft",
+	PUBLISHED = "published",
 }
 
 export enum PostApprovalStatus {
-	PENDING = "PENDING",
-	APPROVED = "APPROVED",
-	REJECTED = "REJECTED",
+	PENDING = "pending",
+	APPROVED = "approved",
+	REJECTED = "rejected",
 }
 
 export enum SubCategory {
-	JAVASCRIPT = "JAVASCRIPT",
-	HTML = "HTML",
-	CSS = "CSS",
-	REACT = "REACT",
-	BLOGS = "BLOGS",
-	SYSTEMDESIGN = "SYSTEMDESIGN",
-	VUE = "VUE",
-	ANGULAR = "ANGULAR",
-	SVELTEKIT = "SVELTEKIT",
-	VANILLAJS = "VANILLAJS",
-	NEXTJS = "NEXTJS",
+	JAVASCRIPT = "javascript",
+	HTML = "html",
+	CSS = "css",
+	REACT = "react",
+	BLOGS = "blogs",
+	SYSTEMDESIGN = "systemdesign",
+	VUE = "vue",
+	ANGULAR = "angular",
+	SVELTEKIT = "sveltekit",
+	VANILLAJS = "vanillajs",
+	NEXTJS = "nextjs",
 }
 
 export enum TemplateFramework {
-	REACT = "REACT",
-	NEXTJS = "NEXTJS",
-	ANGULAR = "ANGULAR",
-	VUE = "VUE",
-	SVELTEKIT = "SVELTEKIT",
-	VANILLAJS = "VANILLAJS",
-	JAVASCRIPT = "JAVASCRIPT",
+	REACT = "react",
+	NEXTJS = "nextjs",
+	ANGULAR = "angular",
+	VUE = "vue",
+	SVELTEKIT = "sveltekit",
+	VANILLAJS = "vanillajs",
+	JAVASCRIPT = "javascript",
 }
 
 export enum SubmissionStatus {
-	ACCEPTED = "ACCEPTED",
-	REJECTED = "REJECTED",
+	ACCEPTED = "accepted",
+	REJECTED = "rejected",
 }
 
 // pgEnum definitions for database schema

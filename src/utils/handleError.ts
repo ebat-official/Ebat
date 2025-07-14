@@ -7,7 +7,7 @@ export const sanitizeErrorMessage = (
 	message: string,
 	postType?: PostType,
 ): string => {
-	if (postType === "QUESTION") {
+	if (postType === PostType.QUESTION) {
 		return message.replace(/\btitle\b/gi, "question");
 	}
 	return message;

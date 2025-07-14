@@ -82,9 +82,9 @@ export async function getCommentsWithVotes(
 					${
 						includeVotes
 							? sql`
-						COALESCE(SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END), 0) as upvotes,
-						COALESCE(SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END), 0) as downvotes,
-						COALESCE(SUM(CASE WHEN cv.type = 'UP' THEN 1 WHEN cv.type = 'DOWN' THEN -1 ELSE 0 END), 0) as score
+						COALESCE(SUM(CASE WHEN cv.type = 'up' THEN 1 ELSE 0 END), 0) as upvotes,
+						COALESCE(SUM(CASE WHEN cv.type = 'down' THEN 1 ELSE 0 END), 0) as downvotes,
+						COALESCE(SUM(CASE WHEN cv.type = 'up' THEN 1 WHEN cv.type = 'down' THEN -1 ELSE 0 END), 0) as score
 					`
 							: sql`
 						0 as upvotes,
@@ -371,9 +371,9 @@ export async function getCommentsWithVotesAlternative(
 				${
 					includeVotes
 						? sql`
-					COALESCE(SUM(CASE WHEN cv.type = 'UP' THEN 1 ELSE 0 END), 0) as upvotes,
-					COALESCE(SUM(CASE WHEN cv.type = 'DOWN' THEN 1 ELSE 0 END), 0) as downvotes,
-					COALESCE(SUM(CASE WHEN cv.type = 'UP' THEN 1 WHEN cv.type = 'DOWN' THEN -1 ELSE 0 END), 0) as score
+											COALESCE(SUM(CASE WHEN cv.type = 'up' THEN 1 ELSE 0 END), 0) as upvotes,
+						COALESCE(SUM(CASE WHEN cv.type = 'down' THEN 1 ELSE 0 END), 0) as downvotes,
+						COALESCE(SUM(CASE WHEN cv.type = 'up' THEN 1 WHEN cv.type = 'down' THEN -1 ELSE 0 END), 0) as score
 				`
 						: sql`
 					0 as upvotes,

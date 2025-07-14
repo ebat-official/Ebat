@@ -34,8 +34,8 @@ export const extractSolutionTemplate = async (): Promise<{
 			selectedTemplate,
 		);
 
-		// Convert template ID to framework enum (with safety uppercase)
-		const framework = selectedTemplate.id.toUpperCase() as TemplateFramework;
+		// Convert template ID to framework enum (with safety lowercase)
+		const framework = selectedTemplate.id.toLowerCase() as TemplateFramework;
 
 		return {
 			template: cleanTemplate,
@@ -61,7 +61,7 @@ export const getChallengeContext = () => {
 	}
 
 	const framework = selectedTemplate
-		? (selectedTemplate.id.toUpperCase() as TemplateFramework)
+		? (selectedTemplate.id.toLowerCase() as TemplateFramework)
 		: null;
 
 	return {

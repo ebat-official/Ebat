@@ -22,7 +22,7 @@ export async function generateMetadata({
 	const awaitedParams = await params;
 	const { category: categoryRoute } = awaitedParams;
 
-	const category = categoryRoute?.toUpperCase();
+	const category = categoryRoute?.toLowerCase();
 	const subCategory = SubCategory.BLOGS;
 
 	// Validate parameters
@@ -73,7 +73,7 @@ export async function generateMetadata({
 // SSR: fetch data on every request
 export default async function Page({ params }: { params: PageProps }) {
 	const awaitedParams = await params;
-	if (awaitedParams.category.toUpperCase() !== PostCategory.FRONTEND) {
+	if (awaitedParams.category.toLowerCase() !== PostCategory.FRONTEND) {
 		return notFound();
 	}
 

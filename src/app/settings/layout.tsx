@@ -4,40 +4,58 @@ import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from "./components/sidebar-nav";
 import { Card, CardContent } from "@/components/ui/card";
+import { getSession } from "@/lib/auth-client";
+import { UserRole } from "@/db/schema/enums";
 
 export const metadata: Metadata = {
 	title: "Forms",
 	description: "Advanced form example using react-hook-form and Zod.",
 };
 
-const sidebarNavItems = [
-	{
-		title: "Profile",
-		href: "/settings",
-	},
-	{
-		title: "Account",
-		href: "/settings/account",
-	},
-	{
-		title: "Appearance",
-		href: "/settings/appearance",
-	},
-	{
-		title: "Notifications",
-		href: "/settings/notifications",
-	},
-	{
-		title: "Display",
-		href: "/settings/display",
-	},
-];
-
 interface SettingsLayoutProps {
 	children: React.ReactNode;
 }
 
-export default function SettingsLayout({ children }: SettingsLayoutProps) {
+export default async function SettingsLayout({
+	children,
+}: SettingsLayoutProps) {
+	const session = await getSession();
+	// Type assertion to handle better-auth session structure
+	const userRole = (session as { user?: { role?: string } })?.user?.role;
+	const isAdmin = userRole === UserRole.ADMIN;
+
+	const sidebarNavItems = [
+		{
+			title: "Profile",
+			href: "/settings",
+		},
+		{
+			title: "Account",
+			href: "/settings/account",
+		},
+		{
+			title: "Appearance",
+			href: "/settings/appearance",
+		},
+		{
+			title: "Notifications",
+			href: "/settings/notifications",
+		},
+		{
+			title: "Display",
+			href: "/settings/display",
+		},
+		// Only show admin tab for admin users
+		...(isAdmin
+			? [
+					{
+						title: "Admin",
+						href: "/settings/admin",
+					},
+				]
+			: []),
+	];
+
 	return (
 		<>
 			<Card className="">
