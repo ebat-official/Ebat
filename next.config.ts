@@ -2,32 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	images: {
-		remotePatterns: [
-			{
-				protocol: "https",
-				hostname: "*.ebat.dev",
-				port: "",
-				pathname: "**",
-			},
-			{
-				protocol: "https",
-				hostname: "*.googleusercontent.com",
-				port: "",
-				pathname: "**",
-			},
-			{
-				protocol: "https",
-				hostname: "*.githubusercontent.com",
-				port: "",
-				pathname: "**",
-			},
-			{
-				protocol: "https",
-				hostname: "*.licdn.com",
-				port: "",
-				pathname: "**",
-			},
-		],
+		domains: ["storage.ebat.dev"],
 	},
 	experimental: {
 		reactCompiler: true,
