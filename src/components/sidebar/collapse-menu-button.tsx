@@ -6,7 +6,6 @@ import { ChevronDown, Dot, LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuArrow } from "@radix-ui/react-dropdown-menu";
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -186,7 +185,6 @@ export function CollapseMenuButton({
 						</Link>
 					</DropdownMenuItem>
 				))}
-				<DropdownMenuArrow className="fill-border" />
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

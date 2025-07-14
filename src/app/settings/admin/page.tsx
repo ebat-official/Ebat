@@ -380,7 +380,7 @@ export default function AdminPage() {
 													<TableCell>
 														<div className="flex items-center space-x-2">
 															<Avatar className="h-8 w-8">
-																<AvatarImage src={user.image} />
+																<AvatarImage src={user.image || undefined} />
 																<AvatarFallback>
 																	{user.name?.charAt(0).toUpperCase()}
 																</AvatarFallback>

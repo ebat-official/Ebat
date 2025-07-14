@@ -5,11 +5,11 @@ import { IconType } from "react-icons";
 
 // Framework icons mapping using React Icons
 export const FRAMEWORK_ICONS: Record<TemplateFramework, IconType> = {
-	REACT: FaReact,
-	NEXTJS: SiNextdotjs,
-	VANILLAJS: FaJs,
-	VUE: FaVuejs,
-	ANGULAR: FaAngular,
-	SVELTEKIT: SiSvelte,
-	JAVASCRIPT: SiJavascript,
+	[TemplateFramework.REACT]: FaReact,
+	[TemplateFramework.NEXTJS]: SiNextdotjs,
+	[TemplateFramework.VANILLAJS]: FaJs,
+	[TemplateFramework.VUE]: FaVuejs,
+	[TemplateFramework.ANGULAR]: FaAngular,
+	[TemplateFramework.SVELTEKIT]: SiSvelte,
+	[TemplateFramework.JAVASCRIPT]: SiJavascript,
 };

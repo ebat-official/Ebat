@@ -36,7 +36,11 @@ function Page() {
 	return (
 		<PostCreateEdit
 			category={category}
-			subCategory={postType}
+			subCategory={
+				postType === PostType.BLOGS
+					? SubCategory.BLOGS
+					: SubCategory.SYSTEMDESIGN
+			}
 			postId={postId}
 			action={POST_ACTIONS.CREATE}
 			postType={postType}
