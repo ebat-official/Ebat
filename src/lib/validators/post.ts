@@ -16,17 +16,8 @@ import {
 	POST_REQUIRED,
 	TITLE_MIN_LENGTH,
 } from "@/utils/contants";
-import { OutputData } from "@editorjs/editorjs";
 import { EditorContent } from "@/utils/types";
 import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
-import type { FileSystemTree } from "@/components/playground/lib/types";
-
-// Challenge template schema
-const ChallengeTemplateSchema = z.object({
-	framework: z.nativeEnum(TemplateFramework),
-	questionTemplate: z.any(), // FileSystemTree
-	answerTemplate: z.any(), // FileSystemTree
-});
 
 // FileSystemTree schema based on WebContainer API structure
 const FileNodeSchema = z.object({
