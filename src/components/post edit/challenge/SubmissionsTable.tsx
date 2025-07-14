@@ -160,16 +160,13 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 				case "status": {
 					// For status sorting, we want ACCEPTED to come before REJECTED
 					// Convert enum to numeric value for proper sorting
-					const statusOrder = {
-						[SubmissionStatus.ACCEPTED]: 1,
-						[SubmissionStatus.REJECTED]: 2,
-					};
+					const statusOrder = { ACCEPTED: 1, REJECTED: 2 };
 					aValue =
 						statusOrder[(a as SubmissionWithStatus).status] ||
-						statusOrder[SubmissionStatus.REJECTED];
+						statusOrder.REJECTED;
 					bValue =
 						statusOrder[(b as SubmissionWithStatus).status] ||
-						statusOrder[SubmissionStatus.REJECTED];
+						statusOrder.REJECTED;
 					break;
 				}
 				default:

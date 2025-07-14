@@ -4,7 +4,7 @@ import React from "react";
 import { useParams, notFound } from "next/navigation";
 import isValidCategory from "@/utils/isValidCategory";
 import { POST_ACTIONS } from "@/utils/contants";
-import { PostType, SubCategory } from "@/db/schema/enums";
+import { PostType } from "@/db/schema/enums";
 import PostCreateEdit from "@/components/post edit/PostCreateEdit";
 
 function Page() {
@@ -36,11 +36,7 @@ function Page() {
 	return (
 		<PostCreateEdit
 			category={category}
-			subCategory={
-				postType === PostType.BLOGS
-					? SubCategory.BLOGS
-					: SubCategory.SYSTEMDESIGN
-			}
+			subCategory={postType}
 			postId={postId}
 			action={POST_ACTIONS.EDIT}
 			postType={postType}
