@@ -165,8 +165,7 @@ export function BottomPanel() {
 			const result = await submitSolution({
 				postId: post.id,
 				framework,
-				// @ts-expect-error: WebContainer FileSystemTree type is compatible but has different structure
-				answerTemplate: template.files,
+				answerTemplate: template,
 				runTime: Math.round(totalRuntime), // Ensure runtime is an integer
 				status: submissionStatus,
 			});
