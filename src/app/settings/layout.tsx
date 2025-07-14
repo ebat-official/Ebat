@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from "./components/sidebar-nav";
 import { Card, CardContent } from "@/components/ui/card";
-import { getSession } from "@/lib/auth-client";
+import { validateUser } from "@/actions/user";
 import { UserRole } from "@/db/schema/enums";
 
 export const metadata: Metadata = {
@@ -19,11 +19,9 @@ interface SettingsLayoutProps {
 export default async function SettingsLayout({
 	children,
 }: SettingsLayoutProps) {
-	const session = await getSession();
-	// Type assertion to handle better-auth session structure
-	const userRole = (session as { user?: { role?: string } })?.user?.role;
+	const user = await validateUser();
+	const userRole = user?.role;
 	const isAdmin = userRole === UserRole.ADMIN;
-
 	const sidebarNavItems = [
 		{
 			title: "Profile",
@@ -58,7 +56,7 @@ export default async function SettingsLayout({
 
 	return (
 		<>
-			<Card className="">
+			<Card className="min-h-screen">
 				<CardContent>
 					<div className="md:hidden">
 						<Image

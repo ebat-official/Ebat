@@ -6,7 +6,7 @@ import QueryProvider from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-export const runtime = "nodejs";
+import ImpersonationBanner from "@/components/settings/ImpersonationBanner";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -46,6 +46,7 @@ export default function RootLayout({
 				<Toaster />
 				<Sonner />
 				<SpeedInsights />
+				<ImpersonationBanner />
 			</body>
 		</html>
 	);
