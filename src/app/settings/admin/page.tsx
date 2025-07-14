@@ -430,7 +430,7 @@ export default function AdminPage() {
 	const totalPages = Math.ceil(totalUsers / pageSize);
 
 	return (
-		<div className="space-y-6 max-w-screen lg:w-[60vw]">
+		<div className="space-y-6">
 			<div>
 				<h3 className="text-lg font-medium">Admin Panel</h3>
 				<p className="text-sm text-muted-foreground">
