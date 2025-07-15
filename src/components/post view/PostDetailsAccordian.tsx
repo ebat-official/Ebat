@@ -137,7 +137,7 @@ const CompaniesAccordion: FC<{ companies: string[] }> = ({ companies }) => {
 const CollaboratorsAccordion: FC<{
 	collaborators: {
 		id: string;
-		userName: string;
+		username: string;
 		name: string | null;
 		image: string | null;
 	}[];
@@ -154,8 +154,8 @@ const CollaboratorsAccordion: FC<{
 				<div className="flex flex-wrap gap-2">
 					{collaborators?.length > 0 ? (
 						collaborators.map((collaborator) => {
-							const { name, userName, image } = collaborator;
-							const profileName = name?.split(" ")[0] || userName || "Unknown";
+							const { name, username, image } = collaborator;
+							const profileName = name?.split(" ")[0] || username || "Unknown";
 							const profileImage = image || undefined;
 
 							return (

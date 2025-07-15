@@ -114,7 +114,7 @@ export async function getPostFromURL(params: {
 				author: {
 					columns: {
 						id: true,
-						userName: true,
+						username: true,
 						name: true,
 						image: true,
 						companyName: true,
@@ -126,7 +126,7 @@ export async function getPostFromURL(params: {
 						user: {
 							columns: {
 								id: true,
-								userName: true,
+								username: true,
 								name: true,
 								image: true,
 							},
@@ -188,7 +188,7 @@ export async function getPostFromURL(params: {
 				post.challengeTemplates as unknown as ChallengeTemplate[],
 			author: {
 				id: post.author?.id || "",
-				userName: post.author?.userName || "",
+				username: post.author?.username,
 				name: post.author?.name || null,
 				image: post.author?.image || null,
 				companyName: post.author?.companyName || null,
@@ -196,7 +196,7 @@ export async function getPostFromURL(params: {
 			collaborators:
 				post.collaborators?.map((collaborator) => ({
 					id: collaborator.user.id,
-					userName: collaborator.user.userName,
+					username: collaborator.user.username,
 					name: collaborator.user.name,
 					image: collaborator.user.image,
 				})) || [],

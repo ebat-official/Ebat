@@ -14,7 +14,7 @@ export async function findUserById(id: string): Promise<User | null> {
 			columns: {
 				id: true,
 				email: true,
-				userName: true,
+				username: true,
 				emailVerified: true,
 				role: true,
 				karmaPoints: true,

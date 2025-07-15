@@ -20,12 +20,18 @@ import EyeButton from "./EyeButton";
 import ForgotPassword from "./ForgotPassword";
 
 type FormValues = {
-	email: string;
+	identifier: string;
 	password: string;
 };
 
+// Helper function to check if input is an email
+const isEmail = (value: string): boolean => {
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return emailRegex.test(value);
+};
+
 const schema = z.object({
-	email: z.string().email(),
+	identifier: z.string().min(1, "Please enter your email or username"),
 	password: z.string().min(1, "Please enter your password"),
 });
 
@@ -38,7 +44,7 @@ interface SigninFormProps {
 const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 	const [openResetDialog, setOpenResetDialog] = useState(false);
 	const [openEmailVerification, setOpenEmailVerification] = useState(false);
-	const [userData, setUserData] = useState({ email: "" });
+	const [userData, setUserData] = useState({ identifier: "" });
 	const {
 		register,
 		handleSubmit,
@@ -54,35 +60,68 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 		try {
 			setUserData(userData);
 
-			await authClient.signIn.email(
-				{
-					email: userData.email,
-					password: userData.password,
-				},
-				{
-					onError: (ctx) => {
-						setIsLoading(false);
-						if (ctx.error.status === 403) {
-							setOpenEmailVerification(true);
-						} else {
+			// Determine if the identifier is an email or username
+			const isEmailInput = isEmail(userData.identifier);
+
+			if (isEmailInput) {
+				// Use email sign in
+				await authClient.signIn.email(
+					{
+						email: userData.identifier,
+						password: userData.password,
+					},
+					{
+						onError: (ctx) => {
+							setIsLoading(false);
+							if (ctx.error.status === 403) {
+								setOpenEmailVerification(true);
+							} else {
+								toast({
+									title: ERROR,
+									description: ctx.error.message,
+									variant: "destructive",
+								});
+							}
+						},
+						onSuccess: () => {
+							setIsLoading(false);
+							if (modelHandler) modelHandler(false);
+							toast({
+								title: SUCCESS,
+								description: "Login successful",
+								variant: "default",
+							});
+						},
+					},
+				);
+			} else {
+				// Use username sign in
+				await authClient.signIn.username(
+					{
+						username: userData.identifier,
+						password: userData.password,
+					},
+					{
+						onError: (ctx) => {
+							setIsLoading(false);
 							toast({
 								title: ERROR,
 								description: ctx.error.message,
 								variant: "destructive",
 							});
-						}
+						},
+						onSuccess: () => {
+							setIsLoading(false);
+							if (modelHandler) modelHandler(false);
+							toast({
+								title: SUCCESS,
+								description: "Login successful",
+								variant: "default",
+							});
+						},
 					},
-					onSuccess: () => {
-						setIsLoading(false);
-						if (modelHandler) modelHandler(false);
-						toast({
-							title: SUCCESS,
-							description: "Login successful",
-							variant: "default",
-						});
-					},
-				},
-			);
+				);
+			}
 		} catch (error) {
 			setIsLoading(false);
 			if (isRedirectError(error)) {
@@ -110,19 +149,19 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 			>
 				<div className="mb-4">
 					<Input
-						{...register("email")}
-						type="email"
+						{...register("identifier")}
+						type="text"
 						className={cn("focus-visible:ring-0 focus-visible:outline-none", {
-							"border-red-500": errors?.email,
+							"border-red-500": errors?.identifier,
 						})}
-						placeholder="Email"
-						aria-label="Email"
+						placeholder="Email or Username"
+						aria-label="Email or Username"
 						autoComplete="username"
-						name="email"
+						name="identifier"
 					/>
-					{errors?.email && (
+					{errors?.identifier && (
 						<p className="text-sm text-red-500 dark:text-red-900">
-							{errors.email.message}
+							{errors.identifier.message}
 						</p>
 					)}
 				</div>
@@ -177,14 +216,14 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 				<ForgotPassword
 					open={openResetDialog}
 					dialogHandler={() => setOpenResetDialog((prev) => !prev)}
-					email={userData?.email}
+					email={userData?.identifier}
 				/>
 			)}
 			{openEmailVerification && (
 				<EmailVerificationModal
 					open={openEmailVerification}
 					dialogHandler={emailVerificationCloseHandler}
-					email={userData?.email || ""}
+					email={userData?.identifier || ""}
 				/>
 			)}
 		</>

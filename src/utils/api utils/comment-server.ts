@@ -30,7 +30,7 @@ interface RawCommentResult {
 	userVoteType: VoteTypeType | null;
 	reply_count: number;
 	author_user_id?: string;
-	author_user_name?: string;
+	author_username?: string;
 	author_name?: string;
 	author_image?: string;
 	score: number;
@@ -157,13 +157,13 @@ export async function getCommentsWithVotes(
 					includeAuthor
 						? sql`
 					u.id as author_user_id,
-					u.user_name as author_user_name,
+					u.username as author_username,
 					u.name as author_name,
 					u.image as author_image
 				`
 						: sql`
 					NULL as author_user_id,
-					NULL as author_user_name,
+					NULL as author_username,
 					NULL as author_name,
 					NULL as author_image
 				`
@@ -216,7 +216,7 @@ export async function getCommentsWithVotes(
 					author: includeAuthor
 						? {
 								id: row.author_user_id || row.author_id,
-								userName: row.author_user_name || "Unknown",
+								username: row.author_username,
 								name: row.author_name || "Unknown",
 								image: row.author_image || null,
 							}
@@ -468,7 +468,7 @@ export async function getCommentsWithVotesAlternative(
 			const authorQuery = db
 				.select({
 					id: users.id,
-					userName: users.userName,
+					username: users.username,
 					name: users.name,
 					image: users.image,
 				})
@@ -507,7 +507,7 @@ export async function getCommentsWithVotesAlternative(
 				const authorInfo = includeAuthor
 					? {
 							id: author?.id || row.author_id,
-							userName: author?.userName || "Unknown",
+							username: author?.username,
 							name: author?.name || "Unknown",
 							image: author?.image || null,
 						}

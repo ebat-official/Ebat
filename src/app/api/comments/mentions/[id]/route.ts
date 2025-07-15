@@ -23,7 +23,7 @@ export async function GET(
 				user: {
 					columns: {
 						id: true,
-						userName: true,
+						username: true,
 						email: true,
 					},
 				},

@@ -199,8 +199,8 @@ export function AdminUserTable({
 						Active
 					</Badge>
 				);
-			case "userName":
-				return user.userName || "-";
+			case "username":
+				return user.username || "-";
 			case "emailVerified":
 				return (
 					<Badge variant={user.emailVerified ? "default" : "secondary"}>

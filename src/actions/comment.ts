@@ -19,7 +19,7 @@ import { validateUser } from "./user";
 type CommentWithRelations = Comment & {
 	author: {
 		id: string;
-		userName: string | null;
+		username: string;
 		name: string | null;
 		image: string | null;
 	} | null;
@@ -89,7 +89,7 @@ async function formatCommentWithVotes(
 		author: comment.author
 			? {
 					id: comment.author.id,
-					userName: comment.author.userName || "",
+					username: comment.author.username,
 					name: comment.author.name || undefined,
 					image: comment.author.image || null,
 				}
@@ -167,7 +167,7 @@ export async function createEditComment(
 					author: {
 						columns: {
 							id: true,
-							userName: true,
+							username: true,
 							name: true,
 							image: true,
 						},
@@ -193,7 +193,7 @@ export async function createEditComment(
 					author: {
 						columns: {
 							id: true,
-							userName: true,
+							username: true,
 							name: true,
 							image: true,
 						},
