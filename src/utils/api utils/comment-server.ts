@@ -1,20 +1,20 @@
-import { comments, commentVotes, users } from "@/db/schema";
-import { VoteTypeType } from "@/db/schema/enums";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { db } from "@/db";
-import { eq, and, isNull, sql, desc, asc } from "drizzle-orm";
+import { commentVotes, comments, users } from "@/db/schema";
+import { VoteTypeType } from "@/db/schema/enums";
+import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
+import type { SerializedEditorState, SerializedLexicalNode } from "lexical";
+import { decompressContent } from "../compression";
+import { COMMENT_SORT_OPTIONS } from "../contants";
 import {
+	AuthorData,
+	CommentServerRawResult,
 	CommentSortOption,
+	CommentWithCountsResult,
 	CommentWithVotes,
 	PaginatedComments,
-	CommentServerRawResult,
 	ReplyCountResult,
-	CommentWithCountsResult,
-	AuthorData,
 } from "../types";
-import { COMMENT_SORT_OPTIONS } from "../contants";
-import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
-import { decompressContent } from "../compression";
-import type { SerializedEditorState, SerializedLexicalNode } from "lexical";
 
 interface RawCommentResult {
 	id: string;

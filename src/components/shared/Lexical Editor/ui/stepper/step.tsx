@@ -1,33 +1,33 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import ImagesPlugin from "../../plugins/ImagesPlugin";
-import { Plus } from "lucide-react";
-import { Reorder } from "framer-motion";
-import { StepType } from "../../nodes/Stepper";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { useSharedHistoryContext } from "../../providers/SharedHistoryContext";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { nestedNodes } from "../../nodes";
-import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
-import LexicalAutoLinkPlugin from "../../plugins/AutoLinkPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import CodeHighlightPlugin from "../../plugins/CodeHighlightPlugin";
 import { mergeRegister } from "@lexical/utils";
+import { Reorder } from "framer-motion";
 import {
 	COMMAND_PRIORITY_LOW,
 	LexicalEditor,
 	SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import FloatingTextFormatToolbarPlugin from "../../plugins/FloatingTextFormatToolbarPlugin";
-import SlashCommand from "../../plugins/SlashCommand";
+import { Plus } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { nestedNodes } from "../../nodes";
+import { StepType } from "../../nodes/Stepper";
+import LexicalAutoLinkPlugin from "../../plugins/AutoLinkPlugin";
 import CodeActionMenuPlugin from "../../plugins/CodeActionMenuPlugin";
+import CodeHighlightPlugin from "../../plugins/CodeHighlightPlugin";
 import FloatingLinkEditorPlugin from "../../plugins/FloatingLinkEditorPlugin";
+import FloatingTextFormatToolbarPlugin from "../../plugins/FloatingTextFormatToolbarPlugin";
+import ImagesPlugin from "../../plugins/ImagesPlugin";
+import SlashCommand from "../../plugins/SlashCommand";
+import { useSharedHistoryContext } from "../../providers/SharedHistoryContext";
 
 interface Props {
 	item: StepType;

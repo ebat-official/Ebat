@@ -1,8 +1,8 @@
 "use client";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
-import { Sidebar } from "./Sidebar";
 import Nav from "../shared/nav";
+import { Sidebar } from "./Sidebar";
 
 export default function SidePanelLayout({
 	children,

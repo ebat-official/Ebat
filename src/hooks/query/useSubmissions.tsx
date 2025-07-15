@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { ChallengeSubmission } from "@/db/schema/zod-schemas";
+import { useQuery } from "@tanstack/react-query";
 
 export const useSubmissions = (postId: string) => {
 	return useQuery({

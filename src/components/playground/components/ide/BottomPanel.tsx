@@ -1,28 +1,28 @@
-import React, { useState } from "react";
-import { useWebContainerStore } from "../../store/webContainer";
-import { Terminal } from "../terminal/terminal";
-import { TestPanel } from "../test/TestPanel";
-import {
-	FlaskConical,
-	TerminalIcon,
-	Play,
-	Loader2,
-	Upload,
-} from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { submitChallengeSolution } from "@/actions/submission";
 import { Button } from "@/components/ui/button";
-import { TestResult } from "../../types/test";
-import RunButton from "../../RunButton";
-import ButtonBlue from "../../../shared/ButtonBlue";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PostType, SubmissionStatus } from "@/db/schema/enums";
 import { useAuthAction } from "@/hooks/useAuthAction";
 import { useServerAction } from "@/hooks/useServerAction";
-import { extractSolutionTemplate } from "../../utils/submissionUtils";
-import { submitChallengeSolution } from "@/actions/submission";
-import { toast } from "sonner";
-import { PostType, SubmissionStatus } from "@/db/schema/enums";
 import { ERROR } from "@/utils/contants";
-import { SubmissionSuccessModal } from "./SubmissionSuccessModal";
+import {
+	FlaskConical,
+	Loader2,
+	Play,
+	TerminalIcon,
+	Upload,
+} from "lucide-react";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import ButtonBlue from "../../../shared/ButtonBlue";
+import RunButton from "../../RunButton";
+import { useWebContainerStore } from "../../store/webContainer";
+import { TestResult } from "../../types/test";
+import { extractSolutionTemplate } from "../../utils/submissionUtils";
+import { Terminal } from "../terminal/terminal";
+import { TestPanel } from "../test/TestPanel";
 import { SubmissionFailureModal } from "./SubmissionFailureModal";
+import { SubmissionSuccessModal } from "./SubmissionSuccessModal";
 
 export function BottomPanel() {
 	const {

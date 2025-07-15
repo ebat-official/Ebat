@@ -1,13 +1,13 @@
 "use client";
-import { $getNodeByKey, LexicalEditor, NodeKey } from "lexical";
-import React from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { cva } from "class-variance-authority";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
+import { cva } from "class-variance-authority";
+import { $getNodeByKey, LexicalEditor, NodeKey } from "lexical";
+import React from "react";
 import { $isHintNode, HintType } from ".";
 
 const hintVariants = cva(

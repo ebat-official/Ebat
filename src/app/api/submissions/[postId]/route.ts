@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "@/actions/user";
 import { db } from "@/db";
 import { challengeSubmissions } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
-import { getCurrentUser } from "@/actions/user";
-import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { FAILED_TO_FETCH_SUBMISSIONS } from "@/utils/contants";
+import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { and, desc, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
 	request: NextRequest,

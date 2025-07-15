@@ -9,9 +9,9 @@ import {
 	$getTableRowIndexFromTableCellNode,
 	$isTableCellNode,
 	$isTableRowNode,
+	TableNode,
 	getDOMCellFromTarget,
 	getTableElement,
-	TableNode,
 } from "@lexical/table";
 import { calculateZoomLevel } from "@lexical/utils";
 import { $getNearestNodeFromDOMNode, isHTMLElement } from "lexical";
@@ -200,7 +200,8 @@ function TableCellResizer({
 						const rowCells = tableRow.getChildren<TableCellNode>();
 						height = Math.min(
 							...rowCells.map(
-								(cell) => getCellNodeHeight(cell, editor) ?? Infinity,
+								(cell) =>
+									getCellNodeHeight(cell, editor) ?? Number.POSITIVE_INFINITY,
 							),
 						);
 					}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { PendingItem, FileKind } from "../types";
+import type { FileKind, PendingItem } from "../types";
 
 export function usePendingItems(
 	onToggleExpanded?: (path: string) => void,

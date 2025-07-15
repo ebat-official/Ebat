@@ -1,5 +1,5 @@
-import { Post } from "@/db/schema/zod-schemas";
 import { PostType } from "@/db/schema/enums";
+import { Post } from "@/db/schema/zod-schemas";
 import {
 	CategoryType,
 	ContentType,

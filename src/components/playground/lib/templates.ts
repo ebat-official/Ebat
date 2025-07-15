@@ -1,11 +1,11 @@
-import type { Template } from "./types";
-import { reactViteTemplate } from "./templates/reactJs";
+import { angularTemplate } from "./templates/angular";
+import { javascriptTemplate } from "./templates/javascript";
 import { nextjsTemplate } from "./templates/nextJs";
+import { reactViteTemplate } from "./templates/reactJs";
+import { sveltekitTemplate } from "./templates/sveltekit";
 import { vanillaJsTemplate } from "./templates/vanillaJs";
 import { vueTemplate } from "./templates/vue";
-import { angularTemplate } from "./templates/angular";
-import { sveltekitTemplate } from "./templates/sveltekit";
-import { javascriptTemplate } from "./templates/javascript";
+import type { Template } from "./types";
 
 // Template registry - this will be replaced with API calls later
 export const templateRegistry: Record<string, Template> = {

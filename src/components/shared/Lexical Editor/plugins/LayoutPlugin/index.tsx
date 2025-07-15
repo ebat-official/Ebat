@@ -26,11 +26,11 @@ import {
 	$isRangeSelection,
 	COMMAND_PRIORITY_EDITOR,
 	COMMAND_PRIORITY_LOW,
-	createCommand,
 	KEY_ARROW_DOWN_COMMAND,
 	KEY_ARROW_LEFT_COMMAND,
 	KEY_ARROW_RIGHT_COMMAND,
 	KEY_ARROW_UP_COMMAND,
+	createCommand,
 } from "lexical";
 import { useEffect } from "react";
 

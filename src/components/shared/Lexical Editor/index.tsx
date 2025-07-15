@@ -1,14 +1,14 @@
 "use client";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { SharedHistoryContext } from "./providers/SharedHistoryContext";
 import { ToolbarContext } from "./providers/ToolbarContext";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
 
-import theme from "./themes/editor-theme";
+import { SerializedEditorState } from "lexical";
+import { useEffect } from "react";
 import Core from "./Core";
 import nodes from "./nodes";
 import { useEditorContext } from "./providers/EditorContext";
-import { useEffect } from "react";
-import { SerializedEditorState } from "lexical";
+import theme from "./themes/editor-theme";
 
 interface EditorProps {
 	isEditable: boolean;

@@ -1,20 +1,25 @@
-import { Post, User, ChallengeSubmission } from "@/db/schema/zod-schemas";
+import type {
+	FileSystemTree,
+	Template,
+} from "@/components/playground/lib/types";
 import {
 	PostCategory,
-	PostType,
-	SubCategory,
-	VoteType,
-	TemplateFramework,
-	SubmissionStatus,
 	type PostCategoryType,
+	PostType,
 	type PostTypeType,
+	SubCategory,
 	type SubCategoryType as SubCategoryEnumType,
-	type VoteTypeType,
-	type TemplateFrameworkType,
+	SubmissionStatus,
 	type SubmissionStatusType,
+	TemplateFramework,
+	type TemplateFrameworkType,
+	VoteType,
+	type VoteTypeType,
 } from "@/db/schema/enums";
+import { ChallengeSubmission, Post, User } from "@/db/schema/zod-schemas";
 import { UseQueryOptions } from "@tanstack/react-query";
 import { SerializedEditorState } from "lexical";
+import { boolean } from "zod";
 import {
 	COMMENT_SORT_OPTIONS,
 	ERROR,
@@ -22,11 +27,6 @@ import {
 	POST_ROUTE_TYPE,
 	SUCCESS,
 } from "./contants";
-import { boolean } from "zod";
-import type {
-	FileSystemTree,
-	Template,
-} from "@/components/playground/lib/types";
 
 // Challenge template type
 export interface ChallengeTemplate {

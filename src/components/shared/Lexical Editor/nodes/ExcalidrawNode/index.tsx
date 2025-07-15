@@ -20,8 +20,8 @@ import type {
 import type { JSX } from "react";
 
 import { DecoratorNode } from "lexical";
-import * as React from "react";
 import dynamic from "next/dynamic";
+import * as React from "react";
 
 type Dimension = number | "inherit";
 
@@ -46,9 +46,13 @@ function $convertExcalidrawElement(
 	const heightStr = styleAttributes.getPropertyValue("height");
 	const widthStr = styleAttributes.getPropertyValue("width");
 	const height =
-		!heightStr || heightStr === "inherit" ? "inherit" : parseInt(heightStr, 10);
+		!heightStr || heightStr === "inherit"
+			? "inherit"
+			: Number.parseInt(heightStr, 10);
 	const width =
-		!widthStr || widthStr === "inherit" ? "inherit" : parseInt(widthStr, 10);
+		!widthStr || widthStr === "inherit"
+			? "inherit"
+			: Number.parseInt(widthStr, 10);
 
 	if (excalidrawData) {
 		const node = $createExcalidrawNode(excalidrawData, width, height);
@@ -193,7 +197,7 @@ export class ExcalidrawNode extends DecoratorNode<JSX.Element> {
 }
 
 export function $createExcalidrawNode(
-	data: string = "[]",
+	data = "[]",
 	width: Dimension = "inherit",
 	height: Dimension = "inherit",
 ): ExcalidrawNode {

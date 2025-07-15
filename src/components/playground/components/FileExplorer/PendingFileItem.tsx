@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
 import { File, Folder } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
 import { DIRECTORY } from "./constants";
 import type { FileKind } from "./types";
 

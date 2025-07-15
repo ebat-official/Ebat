@@ -1,16 +1,16 @@
+import { Feed } from "@/components/feed/Feed";
 import { FeedProvider } from "@/components/feed/FeedContext";
-import { PostSortOrder } from "@/utils/types";
 import {
-	SubCategory,
 	PostCategory,
 	PostCategoryType,
+	SubCategory,
 	SubCategoryType,
 } from "@/db/schema/enums";
-import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
-import { Feed } from "@/components/feed/Feed";
-import type { Metadata } from "next";
 import { generateCategoryMetadata } from "@/utils/categoryMetadata";
+import { PostSortOrder } from "@/utils/types";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 type PageProps = Promise<{
 	category: string;

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useSession } from "@/lib/auth-client";
 import { authClient } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle, X, UserCheck } from "lucide-react";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { AlertTriangle, UserCheck, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface ImpersonationBannerProps {
 	className?: string;

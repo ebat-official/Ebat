@@ -1,20 +1,20 @@
 import * as React from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { LexicalEditor } from "lexical";
 import { Minus, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { SHORTCUTS } from "../../plugins/ShortcutsPlugin/shortcuts";
 import {
 	MAX_ALLOWED_FONT_SIZE,
 	MIN_ALLOWED_FONT_SIZE,
 } from "../../providers/ToolbarContext";
 import {
+	UpdateFontSizeType,
 	updateFontSize,
 	updateFontSizeInSelection,
-	UpdateFontSizeType,
 } from "../../utils/editorFormatting";
-import { SHORTCUTS } from "../../plugins/ShortcutsPlugin/shortcuts";
-import { Input } from "@/components/ui/input";
 
 export function parseAllowedFontSize(input: string): string {
 	const match = input.match(/^(\d+(?:\.\d+)?)px$/);

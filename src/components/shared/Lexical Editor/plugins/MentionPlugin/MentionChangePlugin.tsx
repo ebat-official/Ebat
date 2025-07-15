@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useCallback, useEffect } from "react";
 import { findBeautifulMentionNodes } from "./utils";
 
 export type MentionData = {

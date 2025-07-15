@@ -1,10 +1,10 @@
-import React from "react";
+import NoSearchResultsImg from "@/assets/img/NoResultFound.webp";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import NoSearchResultsImg from "@/assets/img/NoResultFound.webp";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 interface NoSearchResultsProps {
 	category: string;

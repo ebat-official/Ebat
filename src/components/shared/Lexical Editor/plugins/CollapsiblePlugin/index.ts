@@ -12,11 +12,11 @@ import {
 	$setSelection,
 	COMMAND_PRIORITY_EDITOR,
 	COMMAND_PRIORITY_LOW,
-	createCommand,
 	DELETE_CHARACTER_COMMAND,
 	INSERT_PARAGRAPH_COMMAND,
 	KEY_ARROW_DOWN_COMMAND,
 	NodeKey,
+	createCommand,
 } from "lexical";
 import { JSX, useEffect } from "react";
 

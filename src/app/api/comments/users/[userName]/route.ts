@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { ilike, asc } from "drizzle-orm";
 import { USERNAME_NOT_EXIST_ERROR } from "@/utils/errors";
+import { asc, ilike } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 

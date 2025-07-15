@@ -1,4 +1,5 @@
-import React, { FC, useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -6,9 +7,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { FileCode2 } from "lucide-react";
+import React, { FC, useState, useEffect } from "react";
 import type { FileSystemTree } from "../../playground/lib/types";
 import type { Template } from "../../playground/lib/types";
 import { useWebContainerStore } from "../../playground/store/webContainer";

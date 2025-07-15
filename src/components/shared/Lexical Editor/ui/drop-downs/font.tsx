@@ -1,6 +1,6 @@
+import { $patchStyleText } from "@lexical/selection";
 import { $getSelection, LexicalEditor } from "lexical";
 import React, { CSSProperties, useCallback } from "react";
-import { $patchStyleText } from "@lexical/selection";
 import { DropDown } from ".";
 
 interface FontOption {

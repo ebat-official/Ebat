@@ -1,11 +1,11 @@
-import { XCircle, CheckCircle2 } from "lucide-react";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import { TestResult, AssertionResult } from "../../types/test";
+import { CheckCircle2, XCircle } from "lucide-react";
+import { AssertionResult, TestResult } from "../../types/test";
 
 interface TestResultItemProps {
 	result: TestResult;

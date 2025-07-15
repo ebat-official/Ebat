@@ -2,15 +2,15 @@ import { relations } from "drizzle-orm";
 
 // Import all tables
 import { user } from "./schema/auth";
-import { follows } from "./schema/follows";
-import { posts, postViews, postEdits, postCollaborators } from "./schema/posts";
-import { comments, commentVotes, commentMentions } from "./schema/comments";
-import { votes } from "./schema/votes";
 import { bookmarks } from "./schema/bookmarks";
-import { notifications } from "./schema/notifications";
-import { reports } from "./schema/reports";
+import { challengeSubmissions, challengeTemplates } from "./schema/challenges";
+import { commentMentions, commentVotes, comments } from "./schema/comments";
 import { completionStatuses } from "./schema/completionStatuses";
-import { challengeTemplates, challengeSubmissions } from "./schema/challenges";
+import { follows } from "./schema/follows";
+import { notifications } from "./schema/notifications";
+import { postCollaborators, postEdits, postViews, posts } from "./schema/posts";
+import { reports } from "./schema/reports";
+import { votes } from "./schema/votes";
 
 // ==================== USER RELATIONS ====================
 export const userRelations = relations(user, ({ many }) => ({

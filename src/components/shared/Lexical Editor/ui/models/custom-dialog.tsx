@@ -1,10 +1,10 @@
 "use client";
-import { AnimatePresence, motion, Transition, Variants } from "framer-motion";
-import React, { createContext, useContext, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, Transition, Variants, motion } from "framer-motion";
+import { X } from "lucide-react";
+import React, { createContext, useContext, useEffect, useRef } from "react";
 import { useId } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
 
 const DialogContext = createContext<{
 	isOpen: boolean;

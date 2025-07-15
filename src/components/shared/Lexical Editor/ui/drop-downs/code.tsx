@@ -1,8 +1,8 @@
-import React from "react";
 import {
 	CODE_LANGUAGE_FRIENDLY_NAME_MAP,
 	getLanguageFriendlyName,
 } from "@lexical/code";
+import React from "react";
 import { DropDown } from ".";
 
 function getCodeLanguageOptions(): [string, string][] {

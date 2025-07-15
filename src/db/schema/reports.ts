@@ -1,7 +1,7 @@
-import { pgTable, uuid, varchar, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { user } from "./auth";
-import { posts } from "./posts";
 import { comments } from "./comments";
+import { posts } from "./posts";
 
 // Reports table
 export const reports = pgTable("report", {

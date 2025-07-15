@@ -16,17 +16,17 @@ export * from "./auth";
 // Export all relations
 export * from "../relations";
 
+import { account, session, user, verification } from "./auth";
+import { bookmarks } from "./bookmarks";
+import { challengeSubmissions, challengeTemplates } from "./challenges";
+import { commentMentions, commentVotes, comments } from "./comments";
+import { completionStatuses } from "./completionStatuses";
 // Import all tables for type safety
 import { follows } from "./follows";
-import { posts, postViews, postEdits, postCollaborators } from "./posts";
-import { comments, commentVotes, commentMentions } from "./comments";
-import { votes } from "./votes";
-import { bookmarks } from "./bookmarks";
 import { notifications } from "./notifications";
+import { postCollaborators, postEdits, postViews, posts } from "./posts";
 import { reports } from "./reports";
-import { completionStatuses } from "./completionStatuses";
-import { challengeTemplates, challengeSubmissions } from "./challenges";
-import { user, session, account, verification } from "./auth";
+import { votes } from "./votes";
 
 // Rename BetterAuth user table to users for consistency
 export const users = user;

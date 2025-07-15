@@ -1,7 +1,7 @@
 import type { HTMLConfig } from "lexical";
 
-import { $isLineBreakNode } from "lexical";
 import { CodeNode } from "@lexical/code";
+import { $isLineBreakNode } from "lexical";
 
 // referenced an internal function updateCodeGutter in @lexical/code
 const generateGutter = (codeNode: CodeNode) => {

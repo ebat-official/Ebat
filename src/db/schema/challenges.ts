@@ -1,20 +1,20 @@
 import {
+	index,
+	integer,
+	json,
 	pgTable,
+	timestamp,
+	uniqueIndex,
 	uuid,
 	varchar,
-	json,
-	timestamp,
-	integer,
-	index,
-	uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth";
 import {
-	templateFrameworkEnum,
-	submissionStatusEnum,
 	SubmissionStatus,
+	submissionStatusEnum,
+	templateFrameworkEnum,
 } from "./enums";
 import { posts } from "./posts";
-import { user } from "./auth";
 
 // ChallengeTemplate table
 export const challengeTemplates = pgTable(

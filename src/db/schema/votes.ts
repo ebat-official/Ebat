@@ -1,6 +1,6 @@
-import { pgTable, uuid, varchar, index, primaryKey } from "drizzle-orm/pg-core";
-import { voteTypeEnum } from "./enums";
+import { index, pgTable, primaryKey, uuid, varchar } from "drizzle-orm/pg-core";
 import { user } from "./auth";
+import { voteTypeEnum } from "./enums";
 import { posts } from "./posts";
 
 // Votes table (for posts)

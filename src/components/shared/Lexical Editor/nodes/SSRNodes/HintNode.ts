@@ -1,7 +1,7 @@
 import { $generateHtmlFromNodes } from "@lexical/html";
 import {
-	DecoratorNode,
 	DOMExportOutput,
+	DecoratorNode,
 	LexicalEditor,
 	LexicalNode,
 	NodeKey,

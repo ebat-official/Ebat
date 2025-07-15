@@ -1,4 +1,11 @@
 "use client";
+import { getCompletionStatusesForPosts } from "@/actions/completionStatus";
+import { usePostSearch } from "@/hooks/query/usePostSearch";
+import {
+	PostSearchContext,
+	PostSearchResponse,
+	PostSortOrder,
+} from "@/utils/types";
 import React, {
 	createContext,
 	useContext,
@@ -6,13 +13,6 @@ import React, {
 	useEffect,
 	use,
 } from "react";
-import {
-	PostSearchContext,
-	PostSearchResponse,
-	PostSortOrder,
-} from "@/utils/types";
-import { usePostSearch } from "@/hooks/query/usePostSearch";
-import { getCompletionStatusesForPosts } from "@/actions/completionStatus";
 
 // Types for the context value
 export interface FeedContextType {

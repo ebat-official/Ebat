@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
+import { useSession } from "@/lib/auth-client";
 import { CommentWithVotes } from "@/utils/types";
+import { formatDistanceToNow } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { FaChevronUp, FaRegCommentDots } from "react-icons/fa";
-import CommentLikeButton from "./CommentLikeButton";
 import { CommentActionButton } from "./CommentActionButton";
 import CommentAddBox from "./CommentAddBox";
 import { useCommentContext } from "./CommentContext";
-import { useSession } from "@/lib/auth-client";
+import CommentLikeButton from "./CommentLikeButton";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;

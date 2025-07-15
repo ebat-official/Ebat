@@ -1,7 +1,7 @@
-import Image from "next/image";
 import icon from "@/assets/img/404.webp";
-import Link from "next/link";
 import ButtonBlue from "@/components/shared/ButtonBlue";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Component() {
 	return (

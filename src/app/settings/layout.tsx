@@ -1,14 +1,14 @@
 import { Metadata } from "next";
 import Image from "next/image";
 
-import { Separator } from "@/components/ui/separator";
-import { SidebarNav } from "./components/sidebar-nav";
-import { Card, CardContent } from "@/components/ui/card";
 import { validateUser } from "@/actions/user";
-import { UserRole } from "@/db/schema/enums";
-import { SidebarProvider } from "@/context/SidebarContext";
-import SidePanelLayout from "@/components/sidebar/panelLayout";
+import { SidebarNav } from "@/components/settings";
 import Background from "@/components/shared/Background";
+import SidePanelLayout from "@/components/sidebar/panelLayout";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { SidebarProvider } from "@/context/SidebarContext";
+import { UserRole } from "@/db/schema/enums";
 
 export const metadata: Metadata = {
 	title: "Forms",

@@ -1,8 +1,8 @@
 "use client";
 import "@excalidraw/excalidraw/index.css";
 import Editor from "@/components/shared/Lexical Editor";
-import React, { type FC, useEffect, useRef, useState } from "react";
 import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
+import React, { type FC, useEffect, useRef, useState } from "react";
 
 // type pageProps = {};
 

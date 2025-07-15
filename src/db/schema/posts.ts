@@ -1,32 +1,32 @@
 import {
-	pgTable,
-	uuid,
-	varchar,
-	text,
-	timestamp,
+	boolean,
+	index,
 	integer,
 	json,
-	boolean,
+	pgTable,
+	text,
+	timestamp,
 	uniqueIndex,
-	index,
+	uuid,
+	varchar,
 } from "drizzle-orm/pg-core";
 
+import { bytea } from "@/db/database-types";
+import { user } from "./auth";
 import {
-	postTypeEnum,
-	difficultyEnum,
-	postCategoryEnum,
-	postStatusEnum,
-	postApprovalStatusEnum,
-	subCategoryEnum,
-	PostType,
 	Difficulty,
+	PostApprovalStatus,
 	PostCategory,
 	PostStatus,
-	PostApprovalStatus,
+	PostType,
 	SubCategory,
+	difficultyEnum,
+	postApprovalStatusEnum,
+	postCategoryEnum,
+	postStatusEnum,
+	postTypeEnum,
+	subCategoryEnum,
 } from "./enums";
-import { user } from "./auth";
-import { bytea } from "@/db/database-types";
 
 // Posts table
 export const posts = pgTable(

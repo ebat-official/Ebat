@@ -8,20 +8,20 @@ import {
 	$insertTableRow__EXPERIMENTAL,
 	$isTableCellNode,
 	$isTableNode,
-	getTableElement,
 	TableCellNode,
 	TableNode,
 	TableRowNode,
+	getTableElement,
 } from "@lexical/table";
 import { $findMatchingParent, mergeRegister } from "@lexical/utils";
-import { $getNearestNodeFromDOMNode, isHTMLElement, NodeKey } from "lexical";
+import { $getNearestNodeFromDOMNode, NodeKey, isHTMLElement } from "lexical";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-import { useDebounce } from "../CodeActionMenuPlugin/utils";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useDebounce } from "../CodeActionMenuPlugin/utils";
 
 const BUTTON_WIDTH_PX = 20;
 

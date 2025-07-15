@@ -1,10 +1,10 @@
-import * as React from "react";
-import { MagnifyingGlassIcon as SearchIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { MagnifyingGlassIcon as SearchIcon } from "@radix-ui/react-icons";
+import { debounce } from "lodash-es";
+import * as React from "react";
 import { useFeedContext } from "./FeedContext";
 import SortDropdown from "./SortDropDown";
-import { debounce } from "lodash-es";
-import { cn } from "@/lib/utils";
 
 interface FeedSearchProps {
 	className?: string;

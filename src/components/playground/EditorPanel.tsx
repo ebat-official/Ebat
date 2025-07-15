@@ -1,18 +1,18 @@
 "use client";
-import { use, useEffect, useState } from "react";
-import {
-	defineMonacoThemes,
-	EditorThemeId,
-	LANGUAGE_CONFIG,
-} from "./constants";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import useMounted from "@/hooks/useMounted";
+import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import { Editor } from "@monaco-editor/react";
 import { RotateCcwIcon, TypeIcon } from "lucide-react";
-import useMounted from "@/hooks/useMounted";
-import { Card, CardContent } from "@/components/ui/card";
 import { useTheme } from "next-themes";
+import { use, useEffect, useState } from "react";
 import LanguageSelector from "./LanguageSelector";
-import { Button } from "@/components/ui/button";
-import { useCodeEditorStore } from "@/store/useCodeEditorStore";
+import {
+	EditorThemeId,
+	LANGUAGE_CONFIG,
+	defineMonacoThemes,
+} from "./constants";
 
 function EditorPanel() {
 	const {

@@ -1,7 +1,7 @@
 import {
 	PostCategory,
-	SubCategory,
 	PostCategoryType,
+	SubCategory,
 	SubCategoryType,
 } from "@/db/schema/enums";
 

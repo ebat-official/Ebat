@@ -1,8 +1,8 @@
 "use server";
 import { db } from "@/db";
 import { completionStatuses } from "@/db/schema";
-import { eq, and, inArray } from "drizzle-orm";
 import { CompletionStatus } from "@/db/schema/zod-schemas";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { validateUser } from "./user";
 

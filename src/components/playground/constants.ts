@@ -1,14 +1,14 @@
-import type { Monaco } from "@monaco-editor/react";
-import jsLogo from "@/assets/img/language/javascript.png";
-import tsLogo from "@/assets/img/language/typescript.png";
-import pythonLogo from "@/assets/img/language/python.png";
-import javaLogo from "@/assets/img/language/java.png";
-import goLogo from "@/assets/img/language/go.png";
-import rustLogo from "@/assets/img/language/rust.png";
 import cppLogo from "@/assets/img/language/cpp.png";
 import csharpLogo from "@/assets/img/language/csharp.png";
+import goLogo from "@/assets/img/language/go.png";
+import javaLogo from "@/assets/img/language/java.png";
+import jsLogo from "@/assets/img/language/javascript.png";
+import pythonLogo from "@/assets/img/language/python.png";
 import rubyLogo from "@/assets/img/language/ruby.png";
+import rustLogo from "@/assets/img/language/rust.png";
 import swiftLogo from "@/assets/img/language/swift.png";
+import tsLogo from "@/assets/img/language/typescript.png";
+import type { Monaco } from "@monaco-editor/react";
 import type { StaticImageData } from "next/image";
 
 type LanguageConfig = Record<

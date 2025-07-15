@@ -1,8 +1,5 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { File, Folder, ChevronDown, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -13,15 +10,18 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { PendingFileItem } from "./PendingFileItem";
-import { FileTreeItemIcon } from "./FileTreeItemIcon";
-import { FileTreeItemActions } from "./FileTreeItemActions";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { convertAndSortTree } from "./utils";
+import { ChevronDown, ChevronRight, File, Folder } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { FileTreeItemActions } from "./FileTreeItemActions";
+import { FileTreeItemIcon } from "./FileTreeItemIcon";
+import { PendingFileItem } from "./PendingFileItem";
+import { DIRECTORY, FILE } from "./constants";
 import { useExpandedFolders } from "./hooks/useExpandedFolders";
 import { usePendingItems } from "./hooks/usePendingItems";
-import type { FileTreeProps, FileTreeItemProps, FileKind } from "./types";
-import { DIRECTORY, FILE } from "./constants";
+import type { FileKind, FileTreeItemProps, FileTreeProps } from "./types";
+import { convertAndSortTree } from "./utils";
 
 const FileTreeItem = React.memo(function FileTreeItem({
 	element,

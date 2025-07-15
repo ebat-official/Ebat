@@ -1,24 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "../ui/card";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import { CheckboxGrid, InternalOption } from "../shared/ChecboxGrid";
+import { Difficulty } from "@/db/schema/enums";
 import useCompanies from "@/hooks/useCompanyList";
 import useTopics from "@/hooks/useTopicList";
-import { RiBuilding2Line } from "react-icons/ri";
-import { AiOutlineTag } from "react-icons/ai";
-import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
 import { TopicCategory } from "@/utils/types";
-import { useFeedContext } from "./FeedContext";
-import { Difficulty } from "@/db/schema/enums";
+import React, { useEffect, useState } from "react";
+import { AiOutlineTag } from "react-icons/ai";
 import { MdOutlineGpsFixed } from "react-icons/md";
+import { RiBuilding2Line } from "react-icons/ri";
+import { CheckboxGrid, InternalOption } from "../shared/ChecboxGrid";
+import TooltipAccordianTrigger from "../shared/TooltipAccordianTrigger";
+import { Card, CardContent } from "../ui/card";
+import { useFeedContext } from "./FeedContext";
 
-interface FeedSidebarProps {}
+type FeedSidebarProps = {};
 
 const difficultyOptions = Object.values(Difficulty).map((d) => ({
 	label: d,

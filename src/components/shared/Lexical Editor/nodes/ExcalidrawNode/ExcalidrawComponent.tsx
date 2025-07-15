@@ -1,5 +1,5 @@
-import type { ExcalidrawInitialElements } from "../../ui/excaliDraw/ExcalidrawModal";
 import type { NodeKey } from "lexical";
+import type { ExcalidrawInitialElements } from "../../ui/excaliDraw/ExcalidrawModal";
 
 import { AppState, BinaryFiles } from "@excalidraw/excalidraw/types";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -15,9 +15,9 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as React from "react";
 
+import { $isExcalidrawNode } from ".";
 import ExcalidrawModal from "../../ui/excaliDraw/ExcalidrawModal";
 import ImageResizer from "../../ui/image/image-resizer";
-import { $isExcalidrawNode } from ".";
 import ExcalidrawImage from "./ExcalidrawImage";
 
 export default function ExcalidrawComponent({

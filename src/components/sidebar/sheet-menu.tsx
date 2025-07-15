@@ -1,21 +1,21 @@
-import Link from "next/link";
 import { MenuIcon, PanelsTopLeft } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Menu } from "./menu";
 import {
 	Sheet,
-	SheetHeader,
 	SheetContent,
-	SheetTrigger,
+	SheetHeader,
 	SheetTitle,
+	SheetTrigger,
 } from "@/components/ui/sheet";
-import { CategorySwitcher } from "./CategorySwitcher";
-import { Navigation } from "./Navigation";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
 import { useMobileSidebar } from "@/utils/routeUtils";
+import { usePathname } from "next/navigation";
+import { CategorySwitcher } from "./CategorySwitcher";
+import { Navigation } from "./Navigation";
+import { Menu } from "./menu";
 
 export function SheetMenu() {
 	const { mobileNav } = useSidebar();

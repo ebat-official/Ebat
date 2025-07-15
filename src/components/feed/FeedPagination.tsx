@@ -1,4 +1,3 @@
-import React from "react";
 import {
 	Pagination,
 	PaginationContent,
@@ -8,6 +7,7 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
+import React from "react";
 import { useFeedContext } from "./FeedContext";
 
 const MAX_VISIBLE = 5;

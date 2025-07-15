@@ -1,30 +1,30 @@
+import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { POST_ID_LENGTH } from "@/config";
+import { db } from "@/db";
+import {
+	challengeTemplates,
+	completionStatuses,
+	postViews,
+	posts,
+} from "@/db/schema";
+import { PostType } from "@/db/schema/enums";
+import { PostCategory, SubCategory } from "@/db/schema/enums";
+import { CommentMention } from "@/db/schema/zod-schemas";
+import { count, eq } from "drizzle-orm";
 import { UNKNOWN_ERROR } from "../contants";
 import { ID_NOT_EXIST_ERROR } from "../errors";
 import { isValidCategoryCombo } from "../isValidCategoryCombo";
-import { CommentMention } from "@/db/schema/zod-schemas";
-import { PostType } from "@/db/schema/enums";
 import {
-	ContentType,
-	PostWithContent,
-	PostRouteType,
-	PostWithExtraDetails,
-	UserSearchResult,
-	ContentReturnType,
-	TableOfContent,
 	ChallengeTemplate,
+	ContentReturnType,
+	ContentType,
+	PostRouteType,
+	PostWithContent,
+	PostWithExtraDetails,
+	TableOfContent,
+	UserSearchResult,
 } from "../types";
-import { PostCategory, SubCategory } from "@/db/schema/enums";
-import { db } from "@/db";
-import {
-	posts,
-	postViews,
-	challengeTemplates,
-	completionStatuses,
-} from "@/db/schema";
-import { eq, count } from "drizzle-orm";
-import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
-import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
 
 export const fetchPostById = async (
 	postId: string,

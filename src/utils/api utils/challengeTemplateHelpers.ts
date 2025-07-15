@@ -1,11 +1,11 @@
-import { TemplateFramework, TemplateFrameworkType } from "@/db/schema/enums";
-import { challengeTemplates } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
 import type { FileSystemTree } from "@/components/playground/lib/types";
+import { challengeTemplates } from "@/db/schema";
+import type * as schema from "@/db/schema";
+import { TemplateFramework, TemplateFrameworkType } from "@/db/schema/enums";
+import { and, eq } from "drizzle-orm";
 import type { ExtractTablesWithRelations } from "drizzle-orm";
 import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import type { PgTransaction } from "drizzle-orm/pg-core";
-import type * as schema from "@/db/schema";
 
 // Helper function to create challenge templates
 export const createChallengeTemplatesForPost = async (

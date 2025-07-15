@@ -1,6 +1,6 @@
 import { ContentReturnType } from "@/utils/types";
-import React from "react";
 import DOMPurify from "isomorphic-dompurify";
+import React from "react";
 // src/components/shared/Lexical Editor/themes/theme.css
 import "../shared/Lexical Editor/themes/theme.css";
 import { cn } from "@/lib/utils";

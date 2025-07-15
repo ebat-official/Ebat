@@ -19,8 +19,9 @@ import {
 } from "lexical";
 import { Dispatch, useEffect } from "react";
 
-import { sanitizeUrl } from "../../utils/url";
+import { useToolbarState } from "../../providers/ToolbarContext";
 import {
+	UpdateFontSizeType,
 	clearFormatting,
 	formatBulletList,
 	formatCheckList,
@@ -30,8 +31,8 @@ import {
 	formatParagraph,
 	formatQuote,
 	updateFontSize,
-	UpdateFontSizeType,
 } from "../../utils/editorFormatting";
+import { sanitizeUrl } from "../../utils/url";
 import {
 	isCapitalize,
 	isCenterAlign,
@@ -58,7 +59,6 @@ import {
 	isSuperscript,
 	isUppercase,
 } from "./shortcuts";
-import { useToolbarState } from "../../providers/ToolbarContext";
 
 export default function ShortcutsPlugin({
 	editor,

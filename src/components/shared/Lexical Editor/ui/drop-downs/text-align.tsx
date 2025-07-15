@@ -1,4 +1,3 @@
-import React, { useMemo } from "react";
 import {
 	ElementFormatType,
 	FORMAT_ELEMENT_COMMAND,
@@ -6,16 +5,17 @@ import {
 	LexicalEditor,
 	OUTDENT_CONTENT_COMMAND,
 } from "lexical";
-import { SHORTCUTS } from "../../plugins/ShortcutsPlugin/shortcuts";
 import {
 	AlignCenter,
+	AlignJustify,
 	AlignLeft,
 	AlignRight,
-	AlignJustify,
-	OutdentIcon,
 	Indent,
+	OutdentIcon,
 } from "lucide-react";
+import React, { useMemo } from "react";
 import { DropDown } from ".";
+import { SHORTCUTS } from "../../plugins/ShortcutsPlugin/shortcuts";
 
 export default function textAlign({
 	editor,

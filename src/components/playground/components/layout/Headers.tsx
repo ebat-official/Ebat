@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Select,
@@ -9,10 +8,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { PanelLeftClose, PanelLeftOpen, RotateCcw } from "lucide-react";
-import { useWebContainerStore } from "../../store/webContainer";
-import { ChallengeTemplate } from "@/utils/types";
 import { TemplateFramework } from "@/db/schema/enums";
+import { ChallengeTemplate } from "@/utils/types";
+import { PanelLeftClose, PanelLeftOpen, RotateCcw } from "lucide-react";
+import React from "react";
+import { useWebContainerStore } from "../../store/webContainer";
 
 interface HeaderProps {
 	explorerCollapsed: boolean;

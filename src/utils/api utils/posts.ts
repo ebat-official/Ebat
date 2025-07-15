@@ -1,13 +1,15 @@
 import { validateUser } from "@/actions/user";
+import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
+import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
+import { POST_ID_LENGTH } from "@/config";
 import { db } from "@/db";
 import {
-	posts,
-	postEdits,
 	challengeTemplates,
-	postViews,
 	completionStatuses,
+	postEdits,
+	postViews,
+	posts,
 } from "@/db/schema";
-import { eq, and, desc, asc, count, inArray, ilike, sql } from "drizzle-orm";
 import {
 	Difficulty,
 	PostApprovalStatus,
@@ -15,20 +17,18 @@ import {
 	PostType,
 	SubCategory,
 } from "@/db/schema/enums";
+import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
+import { decompressContent } from "../compression";
+import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../contants";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
 import { PostSearchResponse, PostSortOrder } from "../types";
-import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../contants";
-import { decompressContent } from "../compression";
-import { POST_ID_LENGTH } from "@/config";
 import {
+	ChallengeTemplate,
+	ContentReturnType,
 	ContentType,
 	PostWithExtraDetails,
-	ContentReturnType,
 	TableOfContent,
-	ChallengeTemplate,
 } from "../types";
-import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
-import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
 
 export async function getPostById(postId: string) {
 	const post = await db.query.posts.findFirst({

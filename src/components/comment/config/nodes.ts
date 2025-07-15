@@ -4,10 +4,10 @@ import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { HashtagNode } from "@lexical/hashtag";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
+import { MarkNode } from "@lexical/mark";
 import { OverflowNode } from "@lexical/overflow";
 import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { MarkNode } from "@lexical/mark";
 import { BeautifulMentionNode } from "lexical-beautiful-mentions";
 const commentNodes: Array<Klass<LexicalNode>> = [
 	HeadingNode, // For headings (e.g., H1, H2, H3)

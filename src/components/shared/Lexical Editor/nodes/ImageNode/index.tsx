@@ -13,7 +13,7 @@ import type {
 } from "lexical";
 import type { JSX } from "react";
 
-import { $applyNodeReplacement, createEditor, DecoratorNode } from "lexical";
+import { $applyNodeReplacement, DecoratorNode, createEditor } from "lexical";
 import * as React from "react";
 import { Suspense } from "react";
 
@@ -193,7 +193,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 		caption?: LexicalEditor,
 		captionsEnabled?: boolean,
 		key?: NodeKey,
-		rounded: number = 0,
+		rounded = 0,
 		alignment: alignmentType = "center",
 	) {
 		super(key);

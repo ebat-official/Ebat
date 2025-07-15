@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import {
-	Terminal as TerminalIcon,
-	X,
 	Minimize2,
 	RotateCw,
+	Terminal as TerminalIcon,
 	Trash2,
+	X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useWebContainerStore } from "../../store/webContainer";
 
 interface TerminalProps {

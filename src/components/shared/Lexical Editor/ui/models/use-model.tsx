@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState, JSX } from "react";
+import { JSX, useCallback, useMemo, useState } from "react";
 import {
 	Dialog,
-	DialogDescription,
+	DialogClose,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogClose,
 } from "./custom-dialog";
 
 export default function useModal(): [

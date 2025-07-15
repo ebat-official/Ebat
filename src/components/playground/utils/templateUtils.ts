@@ -1,7 +1,7 @@
 import { getTemplate } from "../lib/templates";
-import { useWebContainerStore } from "../store/webContainer";
 import type { Template } from "../lib/types";
 import type { FileSystemTree } from "../lib/types";
+import { useWebContainerStore } from "../store/webContainer";
 
 export const handleTemplateSelect = async (templateId: string) => {
 	const template = getTemplate(templateId);

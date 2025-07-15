@@ -1,9 +1,10 @@
 "use client";
 
-import React, { FC, useEffect, useRef, useState, Suspense } from "react";
-import verificationIcon from "@/assets/img/verificationIcon.webp";
 import verificationBackground from "@/assets/img/verificationBackground.avif";
-import Image from "next/image";
+import verificationIcon from "@/assets/img/verificationIcon.webp";
+import FormError from "@/components/shared/FormError";
+import FormSuccess from "@/components/shared/FormSuccess";
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -12,11 +13,10 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MoonLoader } from "react-spinners";
-import FormError from "@/components/shared/FormError";
-import FormSuccess from "@/components/shared/FormSuccess";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import React, { FC, useEffect, useRef, useState, Suspense } from "react";
+import { MoonLoader } from "react-spinners";
 
 const UserVerification: FC = () => {
 	const [verificationStatus, setVerificationStatus] = useState<{

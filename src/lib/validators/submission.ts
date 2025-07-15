@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { TemplateFramework, SubmissionStatus } from "@/db/schema/enums";
-import { INVALID_POST_ID } from "@/utils/contants";
 import type { Template } from "@/components/playground/lib/types";
+import { SubmissionStatus, TemplateFramework } from "@/db/schema/enums";
+import { INVALID_POST_ID } from "@/utils/contants";
+import { z } from "zod";
 
 // Challenge submission schema
 export const ChallengeSubmissionValidator = z.object({

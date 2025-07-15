@@ -1,8 +1,8 @@
-import { $getSelection, $isRangeSelection, LexicalEditor } from "lexical";
-import { $patchStyleText, $setBlocksType } from "@lexical/selection";
+import { Skeleton } from "@/components/ui/skeleton";
 import { $createCodeNode } from "@lexical/code";
-import React, { useMemo, lazy, Suspense } from "react";
-import useModal from "../models/use-model";
+import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
+import { $patchStyleText, $setBlocksType } from "@lexical/selection";
+import { $getSelection, $isRangeSelection, LexicalEditor } from "lexical";
 import {
 	AlertCircle,
 	Code2,
@@ -23,24 +23,24 @@ import {
 	Twitter,
 	Youtube,
 } from "lucide-react";
-import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
+import React, { useMemo, lazy, Suspense } from "react";
+import { boolean } from "zod";
 import { DropDown } from ".";
-import {
-	INSERT_IMAGE_COMMAND,
-	InsertImagePayload,
-} from "../../plugins/ImagesPlugin";
-import { Skeleton } from "@/components/ui/skeleton";
-import { INSERT_LAYOUT_COMMAND } from "../../plugins/LayoutPlugin";
-import { INSERT_COLLAPSIBLE_COMMAND } from "../../plugins/CollapsiblePlugin";
+import { PLUGIN_CONFIG } from "../../appSettings";
+import { PLUGIN_NAMES } from "../../constants";
+import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
 import {
 	AutoEmbedDialog,
 	YoutubeEmbedConfig,
 } from "../../plugins/AutoEmbedPlugin";
-import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
+import { INSERT_COLLAPSIBLE_COMMAND } from "../../plugins/CollapsiblePlugin";
 import { INSERT_EXCALIDRAW_COMMAND } from "../../plugins/ExcalidrawPlugin";
-import { PLUGIN_NAMES } from "../../constants";
-import { PLUGIN_CONFIG } from "../../appSettings";
-import { boolean } from "zod";
+import {
+	INSERT_IMAGE_COMMAND,
+	InsertImagePayload,
+} from "../../plugins/ImagesPlugin";
+import { INSERT_LAYOUT_COMMAND } from "../../plugins/LayoutPlugin";
+import useModal from "../models/use-model";
 
 const InsertMediaDialog = lazy(() =>
 	import("../models/insertMedia").then((module) => ({

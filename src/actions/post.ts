@@ -1,12 +1,17 @@
 "use server";
+import { auth } from "@/auth";
+import { db } from "@/db";
+import { challengeTemplates, postEdits, posts } from "@/db/schema";
 import {
 	PostApprovalStatus,
 	PostStatus,
-	PostType,
 	PostStatusType,
+	PostType,
 } from "@/db/schema/enums";
-import { auth } from "@/auth";
+import { InsertPost, InsertPostEdit } from "@/db/schema/zod-schemas";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
+import { compressContent } from "@/utils/compression";
+import { ERROR, POST_ID_REQUIRED, SUCCESS } from "@/utils/contants";
 import {
 	FailedToEditPostErr,
 	LIVE_POST_EDIT_ERROR,
@@ -14,20 +19,15 @@ import {
 	UNAUTHORIZED_ERROR,
 	ValidationErr,
 } from "@/utils/errors";
-import { z } from "zod";
-import { GenerateActionReturnType, DatabaseJson } from "@/utils/types";
+import { generatePostPath } from "@/utils/generatePostPath";
 import { generateTitleSlug } from "@/utils/generateTileSlug";
 import { getCompletionDuration } from "@/utils/getCompletionDuration";
 import { getDefaultCoins } from "@/utils/getDefaultCoins";
-import { generatePostPath } from "@/utils/generatePostPath";
-import { revalidatePath } from "next/cache";
-import { compressContent } from "@/utils/compression";
-import { validateUser } from "./user";
-import { ERROR, SUCCESS, POST_ID_REQUIRED } from "@/utils/contants";
-import { db } from "@/db";
-import { posts, postEdits, challengeTemplates } from "@/db/schema";
+import { DatabaseJson, GenerateActionReturnType } from "@/utils/types";
 import { eq } from "drizzle-orm";
-import { InsertPost, InsertPostEdit } from "@/db/schema/zod-schemas";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { validateUser } from "./user";
 
 const getPostDetails = async (postId: string) => {
 	return await db.query.posts.findFirst({

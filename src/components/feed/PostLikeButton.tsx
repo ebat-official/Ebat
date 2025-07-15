@@ -1,7 +1,7 @@
-import React, { FC } from "react";
-import { Card, CardContent } from "../ui/card";
-import { TbTriangle } from "react-icons/tb";
 import { formatNumInK } from "@/utils/formatNumInK";
+import React, { FC } from "react";
+import { TbTriangle } from "react-icons/tb";
+import { Card, CardContent } from "../ui/card";
 
 interface PostLikeButtonProps {
 	count: number;

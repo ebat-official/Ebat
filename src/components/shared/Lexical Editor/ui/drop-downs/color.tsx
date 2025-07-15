@@ -1,15 +1,15 @@
-import { $getSelection, LexicalEditor } from "lexical";
-import React, { useCallback } from "react";
-import { $patchStyleText } from "@lexical/selection";
-import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { $patchStyleText } from "@lexical/selection";
+import { $getSelection, LexicalEditor } from "lexical";
+import { useTheme } from "next-themes";
+import React, { useCallback } from "react";
 
 export default function Color({
 	disabled,

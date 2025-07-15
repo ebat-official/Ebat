@@ -1,11 +1,11 @@
-import React, { FC } from "react";
-import Image from "next/image";
 import googleIcon from "@/assets/svg/googleIcon.svg";
 import linkedinIcon from "@/assets/svg/linkedinIcon.svg";
-import { signIn } from "@/lib/auth-client";
 import useCurrentURL from "@/hooks/useCurrentURL";
-import { Button } from "../ui/button";
+import { signIn } from "@/lib/auth-client";
+import Image from "next/image";
+import React, { FC } from "react";
 import { FaGithub } from "react-icons/fa";
+import { Button } from "../ui/button";
 
 interface SocialAuthProps {
 	loadingHandler: (isLoading: boolean) => void;

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FileSystemTree } from "../../../lib/types";
 
 export function useExpandedFolders(files: FileSystemTree, basePath: string) {

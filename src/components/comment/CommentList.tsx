@@ -1,6 +1,6 @@
 import { CommentWithVotes, PaginatedComments } from "@/utils/types";
-import { CommentViewBox } from "./CommentViewBox";
 import { LiaCommentsSolid } from "react-icons/lia";
+import { CommentViewBox } from "./CommentViewBox";
 
 import {
 	Pagination,
@@ -10,10 +10,10 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Card, CardContent } from "../ui/card";
 import { FaComments } from "react-icons/fa";
-import { CommentSkeleton } from "./CommentSkelton";
+import { Card, CardContent } from "../ui/card";
 import { useCommentContext } from "./CommentContext";
+import { CommentSkeleton } from "./CommentSkelton";
 
 export function CommentList() {
 	const {

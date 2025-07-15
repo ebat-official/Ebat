@@ -1,17 +1,17 @@
 "use client";
-import React, { FC, useState } from "react";
-import { useForm, Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { cn } from "@/lib/utils";
 import ButtonDark from "@/components/shared/ButtonDark";
+import { Input } from "@/components/ui/input";
 // import useRegisterUser from '@/hooks/useRegisterUser';
 import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
-import EmailVerificationModal from "./EmailVerificationModal";
-import { Input } from "@/components/ui/input";
-import EyeButton from "./EyeButton";
+import { cn } from "@/lib/utils";
 import { PASSWORD, TEXT } from "@/utils/contants";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { FC, useState } from "react";
+import { Resolver, useForm } from "react-hook-form";
+import * as z from "zod";
+import EmailVerificationModal from "./EmailVerificationModal";
+import EyeButton from "./EyeButton";
 
 type FormValues = {
 	name: string;

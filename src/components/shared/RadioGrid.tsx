@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 type OptionInput = string | { label: string };
 

@@ -1,11 +1,11 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { Search, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { InsertImagePayload } from "../../plugins/ImagesPlugin";
-import { useQuery } from "@tanstack/react-query";
 import fetchGifs from "../../utils/gif";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
 
 export interface InsertGifProps {
 	insertGifOnClick: (payload: InsertImagePayload) => void;

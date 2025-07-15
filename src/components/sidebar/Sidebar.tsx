@@ -1,13 +1,13 @@
 "use client";
-import { Menu } from "./menu";
-import { SidebarToggle } from "./sidebar-toggle";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
+import { useMobileSidebar } from "@/utils/routeUtils";
 import { PanelsTopLeft } from "lucide-react";
 import Link from "next/link";
 import { CategorySwitcher } from "./CategorySwitcher";
-import { useMobileSidebar } from "@/utils/routeUtils";
+import { Menu } from "./menu";
+import { SidebarToggle } from "./sidebar-toggle";
 
 import { FaReact } from "react-icons/fa";
 import { Navigation } from "./Navigation";

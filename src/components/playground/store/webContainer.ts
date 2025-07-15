@@ -1,3 +1,4 @@
+import { isJSON } from "@/utils/isJSON";
 import { PostWithExtraDetails } from "@/utils/types";
 import { WebContainer } from "@webcontainer/api";
 import type { FileSystemTree } from "@webcontainer/api";
@@ -6,9 +7,8 @@ import { create } from "zustand";
 import type { Template } from "../lib/types";
 import { getLanguageFromPath } from "../lib/utils";
 import type { VitestJsonResult } from "../types/test";
-import { isJSON } from "@/utils/isJSON";
-import { junitParser } from "../utils/junitParser";
 import type { TestExecutionResult } from "../types/test";
+import { junitParser } from "../utils/junitParser";
 import { TemplateStorage } from "../utils/templateStorage";
 
 interface OpenFile {

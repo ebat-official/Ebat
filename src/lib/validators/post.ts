@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
 import {
-	PostType,
 	Difficulty,
 	PostCategory,
+	PostType,
 	SubCategory,
 	TemplateFramework,
 } from "@/db/schema/enums";
@@ -17,7 +17,7 @@ import {
 	TITLE_MIN_LENGTH,
 } from "@/utils/contants";
 import { EditorContent } from "@/utils/types";
-import { isLexicalEditorEmpty } from "@/components/shared/Lexical Editor/utils/isLexicalEditorEmpty";
+import { z } from "zod";
 
 // FileSystemTree schema based on WebContainer API structure
 const FileNodeSchema = z.object({

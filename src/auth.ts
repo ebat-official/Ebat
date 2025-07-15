@@ -1,13 +1,13 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db"; // your drizzle instance
 import { authSchema } from "@/db/schema/auth";
-import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
-import mailer from "@/lib/mailer";
-import { AccountStatus, UserRole } from "./db/schema";
 import { generateUniqueUsername } from "@/lib/generateUniqueUsername";
-import { admin, openAPI } from "better-auth/plugins";
+import mailer from "@/lib/mailer";
+import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { admin, openAPI } from "better-auth/plugins";
+import { AccountStatus, UserRole } from "./db/schema";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -54,11 +54,6 @@ export const auth = betterAuth({
 				required: false,
 				defaultValue: 0,
 				input: false, // don't allow user to set coins
-			},
-			lastLoginAt: {
-				type: "date",
-				required: false,
-				input: false, // automatically managed
 			},
 			subscriptionPlan: {
 				type: "string",

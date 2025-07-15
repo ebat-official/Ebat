@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
 	Select,
 	SelectContent,
@@ -9,6 +8,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
 
 // Define prop types for the component
 interface DurationPickerProps {

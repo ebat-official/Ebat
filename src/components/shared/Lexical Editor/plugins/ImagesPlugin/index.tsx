@@ -13,14 +13,14 @@ import {
 	COMMAND_PRIORITY_EDITOR,
 	COMMAND_PRIORITY_HIGH,
 	COMMAND_PRIORITY_LOW,
-	createCommand,
 	DRAGOVER_COMMAND,
 	DRAGSTART_COMMAND,
 	DROP_COMMAND,
-	getDOMSelectionFromTarget,
-	isHTMLElement,
 	LexicalCommand,
 	LexicalEditor,
+	createCommand,
+	getDOMSelectionFromTarget,
+	isHTMLElement,
 } from "lexical";
 import { useEffect } from "react";
 

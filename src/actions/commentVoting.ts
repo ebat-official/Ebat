@@ -1,14 +1,14 @@
 "use server";
-import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
-import { z } from "zod";
-import { validateUser } from "./user";
-import { VoteType } from "@/db/schema/enums";
 import { db } from "@/db";
 import { commentVotes } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { VoteType } from "@/db/schema/enums";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { SUCCESS } from "@/utils/contants";
+import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
+import { and, eq } from "drizzle-orm";
+import { z } from "zod";
+import { validateUser } from "./user";
 
 const CommentVoteValidator = z.object({
 	postId: z.string(),

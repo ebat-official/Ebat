@@ -1,16 +1,16 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { MdOutlineExpandMore } from "react-icons/md";
-import { Input } from "../shared/Input";
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import { MagnifyingGlassIcon as SearchIcon } from "@radix-ui/react-icons";
-import { TooltipProvider } from "../ui/tooltip";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { useEffect, useRef, useState } from "react";
+import { MdOutlineExpandMore } from "react-icons/md";
 import { MdAddTask } from "react-icons/md";
 import { toast } from "sonner";
-import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+import { Input } from "../shared/Input";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import { TooltipProvider } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type OptionInput =
 	| string

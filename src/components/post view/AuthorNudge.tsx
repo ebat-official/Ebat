@@ -1,8 +1,8 @@
 import fallbackImg from "@/assets/img/avatarFallback.webp";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import Image from "next/image";
 import { User } from "@/db/schema/zod-schemas";
+import Image from "next/image";
 import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface AuthorNudgeProps {
 	author: Pick<User, "name" | "companyName" | "image">;

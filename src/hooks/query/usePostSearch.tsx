@@ -1,11 +1,11 @@
+import { Post } from "@/db/schema/zod-schemas";
 import { EndpointMap } from "@/utils/contants";
 import {
 	PostSearchContext,
 	PostSearchResponse,
 	UsePostSearchOptions,
 } from "@/utils/types";
-import { Post } from "@/db/schema/zod-schemas";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
 // Import the API response type directly from the endpoint if exported
 // If not, you can define it here or use zod/yup inference if available
 

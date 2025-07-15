@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -8,16 +8,16 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import React, { FC, useState } from "react";
 
 import SigninForm from "@/components/auth/SigninForm";
 import ButtonDark from "@/components/shared/ButtonDark";
-import SocialAuth from "./SocialAuth";
-import SignupForm from "./SignupFrom";
 import Loader from "@/components/shared/Loader/Loader";
-import FormSuccess from "../shared/FormSuccess";
-import FormError from "../shared/FormError";
 import Link from "next/link";
+import FormError from "../shared/FormError";
+import FormSuccess from "../shared/FormSuccess";
+import SignupForm from "./SignupFrom";
+import SocialAuth from "./SocialAuth";
 
 type LoginModalProps = {
 	isOpen?: boolean;

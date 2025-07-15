@@ -1,20 +1,20 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
-import { PostWithExtraDetails, ChallengeTemplate } from "@/utils/types";
+import { Card } from "@/components/ui/card";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { recordPostView } from "@/lib/viewTracker";
+import { ChallengeTemplate, PostWithExtraDetails } from "@/utils/types";
+import { useParams } from "next/navigation";
+import React, { FC, useEffect, useState } from "react";
 import ChallengeQuestionView from "./ChallengeQuestionView";
 import { OnlineIDE } from "./components/OnlineIde";
 import { BottomPanel } from "./components/ide/BottomPanel";
 import { PreviewPanel } from "./components/preview/PreviewPanel";
 import { useWebContainerStore } from "./store/webContainer";
-import { Card } from "@/components/ui/card";
-import { useParams } from "next/navigation";
 import { TemplateStorage } from "./utils/templateStorage";
-import { recordPostView } from "@/lib/viewTracker";
 
 interface DraggablePanelProps {
 	post: PostWithExtraDetails;

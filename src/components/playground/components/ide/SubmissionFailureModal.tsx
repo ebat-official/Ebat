@@ -1,12 +1,12 @@
-import React from "react";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { XCircle, AlertTriangle, Clock, Target } from "lucide-react";
+import { AlertTriangle, Clock, Target, XCircle } from "lucide-react";
+import React from "react";
 
 interface SubmissionFailureModalProps {
 	isOpen: boolean;

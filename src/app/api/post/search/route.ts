@@ -1,13 +1,13 @@
-import { searchPosts } from "@/utils/api utils/posts";
-import { PostSortOrder } from "@/utils/types";
 import {
 	Difficulty,
 	PostCategory,
 	PostType,
 	SubCategory,
 } from "@/db/schema/enums";
-import { NextRequest, NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
+import { searchPosts } from "@/utils/api utils/posts";
+import { PostSortOrder } from "@/utils/types";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
 	try {

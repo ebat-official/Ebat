@@ -12,8 +12,8 @@ import {
 	$isRangeSelection,
 	$isRootOrShadowRoot,
 	$isTextNode,
-	getDOMSelection,
 	LexicalEditor,
+	getDOMSelection,
 } from "lexical";
 import { Dispatch, useCallback, useEffect, useState } from "react";
 import * as React from "react";
@@ -21,14 +21,14 @@ import { createPortal } from "react-dom";
 
 import { getSelectedNode } from "../../utils/getSelectedNode";
 
+import { $getSelectionStyleValueForProperty } from "@lexical/selection";
 import { blockTypeToBlockName } from "../../providers/ToolbarContext";
 import TextFormatFloatingToolbar from "../../ui/floting-text/write/text-format-floting-toolbar";
-import { $getSelectionStyleValueForProperty } from "@lexical/selection";
 
-import { useRef } from "react";
-import { $isTableNode } from "@lexical/table";
 import { $isListNode, ListNode } from "@lexical/list";
 import { $isHeadingNode } from "@lexical/rich-text";
+import { $isTableNode } from "@lexical/table";
+import { useRef } from "react";
 
 function useFloatingTextFormatToolbar(
 	editor: LexicalEditor,
@@ -159,7 +159,7 @@ function useFloatingTextFormatToolbar(
 			}
 
 			const anchorNode = selection.anchor.getNode();
-			let element =
+			const element =
 				anchorNode.getKey() === "root"
 					? anchorNode
 					: $findMatchingParent(anchorNode, (e) => {

@@ -1,15 +1,15 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import React, { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DesktopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { useTheme } from "next-themes";
+import React, { useEffect, useState } from "react";
 
 import {
 	Tooltip,
 	TooltipContent,
-	TooltipTrigger,
 	TooltipProvider,
+	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "../ui/button";
 

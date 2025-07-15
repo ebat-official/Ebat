@@ -1,19 +1,19 @@
 "use server";
-import { db } from "@/db";
-import { comments, commentMentions, commentVotes } from "@/db/schema";
-import { eq, and, count } from "drizzle-orm";
-import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
-import { z } from "zod";
-import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
-import { Comment } from "@/db/schema/zod-schemas";
-import { VoteType } from "@/db/schema/enums";
-import { validateUser } from "./user";
-import { compressContent, decompressContent } from "@/utils/compression";
-import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { commentNodes } from "@/components/shared/Lexical Editor/utils/SSR/nodes";
+import { db } from "@/db";
+import { commentMentions, commentVotes, comments } from "@/db/schema";
+import { VoteType } from "@/db/schema/enums";
+import { Comment } from "@/db/schema/zod-schemas";
+import { invalidateCommentsCache } from "@/lib/invalidateCache";
+import { compressContent, decompressContent } from "@/utils/compression";
 import { ERROR, SUCCESS } from "@/utils/contants";
+import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
+import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
+import { and, count, eq } from "drizzle-orm";
 import { SerializedEditorState } from "lexical";
+import { z } from "zod";
+import { validateUser } from "./user";
 
 // Type for comment with relations
 type CommentWithRelations = Comment & {

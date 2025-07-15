@@ -1,15 +1,3 @@
-import React, { useState } from "react";
-import { useSubmissions } from "@/hooks/query/useSubmissions";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,36 +8,48 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+import { useSubmissions } from "@/hooks/query/useSubmissions";
+import React, { useState } from "react";
 
-import {
-	Trash2,
-	RefreshCw,
-	ArrowUpDown,
-	MoreHorizontal,
-	Copy,
-} from "lucide-react";
-import { toast } from "sonner";
-import { useServerAction } from "@/hooks/useServerAction";
 import { deleteSubmission } from "@/actions/submission";
-import { formatDistanceToNow } from "date-fns";
-import { useQueryClient } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
-import { SubmissionStatus } from "@/db/schema/enums";
-import {
-	SubmissionWithStatus,
-	SubmissionSortField,
-	SubmissionSortOrder,
-} from "@/utils/types";
+import LoginModal from "@/components/auth/LoginModal";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SubmissionStatus } from "@/db/schema/enums";
+import { useServerAction } from "@/hooks/useServerAction";
+import {
+	SubmissionSortField,
+	SubmissionSortOrder,
+	SubmissionWithStatus,
+} from "@/utils/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
+import {
+	ArrowUpDown,
+	Copy,
+	MoreHorizontal,
+	RefreshCw,
+	Trash2,
+} from "lucide-react";
+import { LogIn } from "lucide-react";
+import { toast } from "sonner";
 import type { Template } from "../../playground/lib/types";
 import { useWebContainerStore } from "../../playground/store/webContainer";
-import LoginModal from "@/components/auth/LoginModal";
-import { LogIn } from "lucide-react";
 
 interface SubmissionsTableProps {
 	postId: string;
@@ -160,13 +160,16 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 				case "status": {
 					// For status sorting, we want ACCEPTED to come before REJECTED
 					// Convert enum to numeric value for proper sorting
-					const statusOrder = { ACCEPTED: 1, REJECTED: 2 };
+					const statusOrder = {
+						[SubmissionStatus.ACCEPTED]: 1,
+						[SubmissionStatus.REJECTED]: 2,
+					};
 					aValue =
 						statusOrder[(a as SubmissionWithStatus).status] ||
-						statusOrder.REJECTED;
+						statusOrder[SubmissionStatus.REJECTED];
 					bValue =
 						statusOrder[(b as SubmissionWithStatus).status] ||
-						statusOrder.REJECTED;
+						statusOrder[SubmissionStatus.REJECTED];
 					break;
 				}
 				default:

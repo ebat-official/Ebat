@@ -1,13 +1,13 @@
 // lib/hooks/useComments.ts
 
+import { fetchComments } from "@/utils/api utils/comment";
+import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import type { CommentSortOption, PaginatedComments } from "@/utils/types"; // Replace with actual path
 import {
-	useQuery,
 	UseQueryResult,
+	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
-import { fetchComments } from "@/utils/api utils/comment";
-import type { CommentSortOption, PaginatedComments } from "@/utils/types"; // Replace with actual path
-import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
 
 interface UseCommentsOptions {
 	page?: number;

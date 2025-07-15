@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
-import { useParams, notFound } from "next/navigation";
-import isValidCategory from "@/utils/isValidCategory";
-import { POST_ACTIONS } from "@/utils/contants";
-import { PostType, SubCategory } from "@/db/schema/enums";
 import PostCreateEdit from "@/components/post edit/PostCreateEdit";
+import { PostType, SubCategory } from "@/db/schema/enums";
+import { POST_ACTIONS } from "@/utils/contants";
+import isValidCategory from "@/utils/isValidCategory";
+import { notFound, useParams } from "next/navigation";
+import React from "react";
 
 function Page() {
 	const {

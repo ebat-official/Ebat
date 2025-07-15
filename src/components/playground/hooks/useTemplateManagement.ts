@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { TemplateFramework } from "@/db/schema/enums";
+import { useCallback, useEffect, useState } from "react";
+import type { Template } from "../lib/types";
 import { useWebContainerStore } from "../store/webContainer";
 import { handleTemplateSelect } from "../utils/templateUtils";
-import type { Template } from "../lib/types";
-import { TemplateFramework } from "@/db/schema/enums";
 
 interface EditingTemplate {
 	framework: TemplateFramework;

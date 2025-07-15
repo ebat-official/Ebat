@@ -1,25 +1,25 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
+	$createTextNode,
+	$getRoot,
 	$getSelection,
 	$isRangeSelection,
+	COMMAND_PRIORITY_CRITICAL,
 	FORMAT_TEXT_COMMAND,
 	SELECTION_CHANGE_COMMAND,
-	COMMAND_PRIORITY_CRITICAL,
-	$getRoot,
-	$createTextNode,
 } from "lexical";
+import { useCallback, useEffect, useState } from "react";
 
 import { EditorBlockType } from "@/utils/types";
 
 import { Button } from "@/components/ui/button";
-import { Bold, Italic, Underline, Code, Link } from "lucide-react";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { Bold, Code, Italic, Link, Underline } from "lucide-react";
 
-import BlockFormatDropDown from "@/components/shared/Lexical Editor/ui/drop-downs/block-format";
 import { useToolbarState } from "@/components/shared/Lexical Editor/providers/ToolbarContext";
+import BlockFormatDropDown from "@/components/shared/Lexical Editor/ui/drop-downs/block-format";
 import { sanitizeUrl } from "@/components/shared/Lexical Editor/utils/url";
 
 export default function Toolbar() {

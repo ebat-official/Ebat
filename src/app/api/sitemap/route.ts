@@ -1,6 +1,6 @@
-import { serve } from "@upstash/workflow/nextjs";
 import { getAllApprovedPosts } from "@/utils/api utils/posts";
 import { generatePostPath } from "@/utils/generatePostPath";
+import { serve } from "@upstash/workflow/nextjs";
 
 // Generate sitemap XML content
 function generateSitemapXML(

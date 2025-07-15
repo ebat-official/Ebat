@@ -1,4 +1,22 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { PostType, TemplateFramework } from "@/db/schema/enums";
+import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
+import { POST_ACTIONS } from "@/utils/contants";
+import {
+	ChallengeTemplate,
+	ContentType,
+	EditorContent,
+	PostActions,
+} from "@/utils/types";
+import { Code, FileCode2, Loader2 } from "lucide-react";
 import React, {
 	useEffect,
 	useState,
@@ -6,32 +24,14 @@ import React, {
 	useRef,
 	useCallback,
 } from "react";
-import { LexicalEditorWrapper } from "./Editor";
-import { Card, CardContent } from "@/components/ui/card";
-import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
-import {
-	ContentType,
-	EditorContent,
-	PostActions,
-	ChallengeTemplate,
-} from "@/utils/types";
-import { Loader2, Code, FileCode2 } from "lucide-react";
-import { PostType, TemplateFramework } from "@/db/schema/enums";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
-import { POST_ACTIONS } from "@/utils/contants";
 import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
+import { LexicalEditorWrapper } from "./Editor";
 import { ThumbnailUpload } from "./ThumbnailUpload";
-import { TemplateCreator } from "./challenge/TemplateCreator";
 import { SavedTemplatesList } from "./challenge/SavedTemplatesList";
+import { TemplateCreator } from "./challenge/TemplateCreator";
 
 interface EditorContainerProps {
 	postId: string;

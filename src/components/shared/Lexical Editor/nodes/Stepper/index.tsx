@@ -1,19 +1,19 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
-	SerializedLexicalNode,
-	SerializedEditor,
-	Spread,
-	DecoratorNode,
-	NodeKey,
-	LexicalNode,
-	createEditor,
-	LexicalCommand,
-	createCommand,
 	$getSelection,
 	$isRangeSelection,
 	COMMAND_PRIORITY_LOW,
-	LexicalEditor,
+	DecoratorNode,
 	EditorState,
+	LexicalCommand,
+	LexicalEditor,
+	LexicalNode,
+	NodeKey,
+	SerializedEditor,
+	SerializedLexicalNode,
+	Spread,
+	createCommand,
+	createEditor,
 } from "lexical";
 import React, { Suspense, useEffect } from "react";
 const StepperComponent = React.lazy(() => import("../../ui/stepper/stepper"));
@@ -169,7 +169,7 @@ export class StepperNode extends DecoratorNode<React.ReactElement> {
 			newEditor.setEditorState(editorState);
 			return {
 				title: serializedStep.title,
-				id: parseInt(serializedStep.id, 10),
+				id: Number.parseInt(serializedStep.id, 10),
 				content: newEditor,
 			};
 		});

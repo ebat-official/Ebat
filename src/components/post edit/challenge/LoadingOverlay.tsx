@@ -1,5 +1,5 @@
-import React, { FC } from "react";
 import { Loader2 } from "lucide-react";
+import React, { FC } from "react";
 
 interface LoadingOverlayProps {
 	isLoading: boolean;

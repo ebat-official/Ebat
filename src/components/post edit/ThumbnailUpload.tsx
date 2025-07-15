@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { Upload, Loader2, X, Image } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
-	CardDescription,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import useFileUpload from "@/hooks/useFileUpload";
-import { toast } from "sonner";
-import { EditorFileUpload, UploadZone } from "@/utils/types";
 import { compressImage } from "@/utils/compressImage";
+import { EditorFileUpload, UploadZone } from "@/utils/types";
+import { AnimatePresence, motion } from "framer-motion";
+import { Image, Loader2, Upload, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { toast } from "sonner";
 import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
 
 // Utility to convert image URL to File

@@ -1,7 +1,7 @@
 import { db } from "@/db";
-import { sql, eq, and, count, sum } from "drizzle-orm";
-import { VoteType } from "@/db/schema/enums";
 import { votes } from "@/db/schema";
+import { VoteType } from "@/db/schema/enums";
+import { and, count, eq, sql, sum } from "drizzle-orm";
 
 export async function fetchVoteCounts(postId: string, userId?: string) {
 	if (!postId) {

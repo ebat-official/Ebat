@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
-import { Header } from "./layout/Headers";
+import { useWebContainerStore } from "../store/webContainer";
 import { FileExplorer } from "./FileExplorer/FileExplorer";
 import { EditorPanel } from "./ide/EditorPanel";
-import { useWebContainerStore } from "../store/webContainer";
+import { Header } from "./layout/Headers";
 export function OnlineIDE() {
 	const [explorerCollapsed, setExplorerCollapsed] = useState(true);
 	const {

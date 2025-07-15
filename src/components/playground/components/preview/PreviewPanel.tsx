@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo, useState } from "react";
 import { Code2 } from "lucide-react";
-import { PreviewControls } from "./PreviewControls";
+import React, { useCallback, useMemo, useState } from "react";
 import type { Template } from "../../lib/types";
 import { useWebContainerStore } from "../../store/webContainer";
+import { PreviewControls } from "./PreviewControls";
 import { PreviewStartButton } from "./PreviewStartButton";
 
 // Constants

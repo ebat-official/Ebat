@@ -1,5 +1,5 @@
-import { PostValidator } from "@/lib/validators/post";
 import { Difficulty, PostType } from "@/db/schema/enums";
+import { PostValidator } from "@/lib/validators/post";
 import { z } from "zod";
 
 export const getDefaultCoins = (

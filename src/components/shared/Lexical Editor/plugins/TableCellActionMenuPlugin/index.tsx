@@ -1,5 +1,5 @@
-import type { ElementNode, LexicalEditor } from "lexical";
 import { Compact } from "@uiw/react-color";
+import type { ElementNode, LexicalEditor } from "lexical";
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
@@ -17,13 +17,13 @@ import {
 	$isTableRowNode,
 	$isTableSelection,
 	$unmergeCell,
-	getTableElement,
-	getTableObserverFromTableElement,
 	TableCellHeaderStates,
 	TableCellNode,
 	TableObserver,
 	TableRowNode,
 	TableSelection,
+	getTableElement,
+	getTableObserverFromTableElement,
 } from "@lexical/table";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -35,13 +35,9 @@ import {
 	$isRangeSelection,
 	$isTextNode,
 	COMMAND_PRIORITY_CRITICAL,
-	getDOMSelection,
 	SELECTION_CHANGE_COMMAND,
+	getDOMSelection,
 } from "lexical";
-import * as React from "react";
-import { ReactPortal, useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import invariant from "../../utils/invariant";
 import {
 	Menu,
 	Merge,
@@ -52,8 +48,12 @@ import {
 	TableRowsSplit,
 	Trash,
 } from "lucide-react";
+import * as React from "react";
+import { ReactPortal, useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { DropDown } from "../../ui/drop-downs";
 import useModal from "../../ui/models/use-model";
+import invariant from "../../utils/invariant";
 
 function computeSelectionCount(selection: TableSelection): {
 	columns: number;

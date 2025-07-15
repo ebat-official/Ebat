@@ -1,12 +1,12 @@
-import { ReactNode, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { SUCCESS } from "@/utils/contants";
+import { ReactNode, useEffect } from "react";
+import { FaCheck, FaCross } from "react-icons/fa";
+import { FaSkullCrossbones } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
-import { FaCheck, FaCross } from "react-icons/fa";
-import { SUCCESS } from "@/utils/contants";
-import { FaSkullCrossbones } from "react-icons/fa";
 import { useReward } from "react-rewards";
 
 type StatusDialogProps = {

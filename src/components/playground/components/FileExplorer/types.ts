@@ -1,5 +1,5 @@
-import { DIRECTORY, FILE } from "./constants";
 import type { FileSystemTree } from "../../lib/types";
+import { DIRECTORY, FILE } from "./constants";
 
 export type FileKind = typeof FILE | typeof DIRECTORY;
 

@@ -8,6 +8,20 @@
 			"when": 1752484593850,
 			"tag": "0000_boring_pyro",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1752572152677,
+			"tag": "0001_fair_black_cat",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1752572488131,
+			"tag": "0002_orange_punisher",
+			"breakpoints": true
 		}
 	]
 }

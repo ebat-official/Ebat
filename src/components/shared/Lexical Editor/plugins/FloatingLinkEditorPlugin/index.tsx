@@ -25,19 +25,19 @@ import {
 	COMMAND_PRIORITY_CRITICAL,
 	COMMAND_PRIORITY_HIGH,
 	COMMAND_PRIORITY_LOW,
-	getDOMSelection,
 	KEY_ESCAPE_COMMAND,
 	LexicalEditor,
 	SELECTION_CHANGE_COMMAND,
+	getDOMSelection,
 } from "lexical";
 import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
+import { Button } from "@/components/ui/button";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { setFloatingElemPositionForLinkEditor } from "../../utils/setFloatingElemPositionForLinkEditor";
 import { sanitizeUrl } from "../../utils/url";
-import { Button } from "@/components/ui/button";
 
 function preventDefault(
 	event: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLElement>,
