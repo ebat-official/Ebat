@@ -73,13 +73,13 @@ export async function fetchMentionsByCommentId(
 }
 
 export async function fetchCommentUsersByUserName(
-	userName: string,
+	username: string,
 ): Promise<UserSearchResult[]> {
-	if (!userName) {
+	if (!username) {
 		throw new Error("User name is required to fetch mentions.");
 	}
 
-	const response = await fetch(`/api/comments/users/${userName}`);
+	const response = await fetch(`/api/comments/users/${username}`);
 
 	if (!response.ok) {
 		let errorMessage = "Failed to fetch mentions.";

@@ -1,6 +1,6 @@
 {
-	"id": "7bae3e2f-cc78-4906-a693-50a4490903f1",
-	"prevId": "8101c522-7dc8-492e-a7da-d37980e2941b",
+	"id": "4d444310-15c3-41e5-a93c-d8feca5cb54c",
+	"prevId": "c66af1ff-fc5e-4604-b3c0-2b2e2e689426",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -263,11 +263,17 @@
 					"primaryKey": false,
 					"notNull": true
 				},
-				"user_name": {
-					"name": "user_name",
+				"username": {
+					"name": "username",
 					"type": "text",
 					"primaryKey": false,
 					"notNull": true
+				},
+				"display_username": {
+					"name": "display_username",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
 				},
 				"role": {
 					"name": "role",
@@ -290,12 +296,6 @@
 				},
 				"ban_expires": {
 					"name": "ban_expires",
-					"type": "timestamp",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"last_login_at": {
-					"name": "last_login_at",
 					"type": "timestamp",
 					"primaryKey": false,
 					"notNull": false
@@ -374,10 +374,10 @@
 					"nullsNotDistinct": false,
 					"columns": ["email"]
 				},
-				"user_user_name_unique": {
-					"name": "user_user_name_unique",
+				"user_username_unique": {
+					"name": "user_username_unique",
 					"nullsNotDistinct": false,
-					"columns": ["user_name"]
+					"columns": ["username"]
 				}
 			},
 			"policies": {},

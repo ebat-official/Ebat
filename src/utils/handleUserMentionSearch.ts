@@ -16,8 +16,8 @@ export const handleUserMentionSearch = async (
 		if (!data) return [];
 		return data.map((user) => ({
 			id: user.id,
-			label: user.userName,
-			value: user.userName,
+			label: user.username,
+			value: user.username,
 		}));
 	} catch (error) {
 		console.error("Error fetching mentions:", error);

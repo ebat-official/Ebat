@@ -65,7 +65,7 @@ export function CommentViewBox({
 								referrerPolicy="no-referrer"
 							/>
 							<AvatarFallback className="flex size-full items-center justify-center">
-								{author?.userName.charAt(0)}
+								{author?.username.charAt(0)}
 							</AvatarFallback>
 						</Avatar>
 						{areRepliesExpanded && replies.length > 0 && (
@@ -92,7 +92,7 @@ export function CommentViewBox({
 					<div className="flex flex-col gap-2 w-full px-2 sm:p-2  ">
 						{/* Header with author and timestamp */}
 						<div className="flex items-center gap-2">
-							<h4 className="font-semibold">{author?.userName}</h4>
+							<h4 className="font-semibold">{author?.username}</h4>
 							<span className="text-sm text-muted-foreground hidden md:block">
 								{formatDistanceToNow(new Date(createdAt))} ago
 							</span>

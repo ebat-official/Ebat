@@ -47,7 +47,8 @@ CREATE TABLE "user" (
 	"image" text,
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL,
-	"user_name" text NOT NULL,
+	"username" text,
+	"display_username" text,
 	"role" "user_role" DEFAULT 'user' NOT NULL,
 	"banned" boolean,
 	"ban_reason" text,
@@ -63,7 +64,7 @@ CREATE TABLE "user" (
 	"subscription_plan" "subscription_plan" DEFAULT 'basic' NOT NULL,
 	"external_links" json,
 	CONSTRAINT "user_email_unique" UNIQUE("email"),
-	CONSTRAINT "user_user_name_unique" UNIQUE("user_name")
+	CONSTRAINT "user_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
 CREATE TABLE "verification" (

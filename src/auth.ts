@@ -6,7 +6,7 @@ import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { admin, openAPI } from "better-auth/plugins";
+import { admin, openAPI, username } from "better-auth/plugins";
 import { AccountStatus, UserRole } from "./db/schema";
 
 export const auth = betterAuth({
@@ -26,11 +26,6 @@ export const auth = betterAuth({
 	},
 	user: {
 		additionalFields: {
-			userName: {
-				type: "string",
-				required: false,
-				input: true,
-			},
 			role: {
 				type: "string",
 				required: false,
@@ -67,12 +62,12 @@ export const auth = betterAuth({
 			create: {
 				before: async (user, ctx) => {
 					// Generate unique username from email
-					const userName = generateUniqueUsername(user.email);
+					const username = generateUniqueUsername(user.email);
 
 					return {
 						data: {
 							...user,
-							userName,
+							username,
 						},
 					};
 				},
@@ -116,7 +111,7 @@ export const auth = betterAuth({
 			clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
 		},
 	},
-	plugins: [openAPI(), admin(), nextCookies()],
+	plugins: [openAPI(), admin(), username(), nextCookies()],
 	trustedOrigins:
 		process.env.NODE_ENV === "production"
 			? ["*.ebat.dev", "*.ebat.vercel.app"]

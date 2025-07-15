@@ -130,7 +130,7 @@ export const COMMENT_ID_NOT_EXIST_ERROR = {
 export const USERNAME_NOT_EXIST_ERROR = {
 	status: ERROR as ErrorType,
 	cause: FAILED_TO_EDIT_POST,
-	data: { message: "userName is required" },
+	data: { message: "username is required" },
 };
 export const COMMENT_ADDITION_ERROR = {
 	status: ERROR as ErrorType,

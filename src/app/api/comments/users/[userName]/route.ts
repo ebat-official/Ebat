@@ -20,11 +20,11 @@ export async function GET(
 		const usersList = await db
 			.select({
 				id: users.id,
-				userName: users.userName,
+				username: users.username,
 			})
 			.from(users)
-			.where(ilike(users.userName, `${userName}%`))
-			.orderBy(asc(users.userName))
+			.where(ilike(users.username, `${userName}%`))
+			.orderBy(asc(users.username))
 			.limit(5);
 
 		// Return the list of users

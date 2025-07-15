@@ -27,8 +27,8 @@ export const columnConfig: Record<string, ColumnConfig> = {
 		description: "Account status (active/banned)",
 		category: "basic",
 	},
-	userName: {
-		id: "userName",
+	username: {
+		id: "username",
 		label: "Username",
 		description: "User's unique username",
 		category: "profile",
@@ -97,7 +97,7 @@ export const columnConfig: Record<string, ColumnConfig> = {
 
 export const categoryColumns: CategoryColumns = {
 	basic: ["user", "role", "createdAt", "status"],
-	profile: ["userName", "emailVerified", "updatedAt", "accountStatus"],
+	profile: ["username", "emailVerified", "updatedAt", "accountStatus"],
 	engagement: ["karmaPoints", "coins", "subscriptionPlan"],
 	professional: ["jobTitle", "companyName", "location", "description"],
 };
@@ -128,7 +128,7 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const MAX_PAGE_SIZE = 100;
 
 // Search and filter constants
-export const SEARCH_FIELDS = ["name", "email", "userName"] as const;
+export const SEARCH_FIELDS = ["name", "email", "username"] as const;
 
 // Sort field constants using enum-like structure
 export const SORT_FIELDS = {
@@ -136,7 +136,7 @@ export const SORT_FIELDS = {
 	UPDATED_AT: "updatedAt",
 	NAME: "name",
 	EMAIL: "email",
-	USER_NAME: "userName",
+	USER_NAME: "username",
 	ROLE: "role",
 	ACCOUNT_STATUS: "accountStatus",
 	KARMA_POINTS: "karmaPoints",
@@ -160,7 +160,7 @@ export const SORT_FIELD_VALUES = [
 export const SEARCH_FIELD_KEYS = {
 	NAME: "name",
 	EMAIL: "email",
-	USER_NAME: "userName",
+	USER_NAME: "username",
 } as const;
 
 // Search field values array for backward compatibility

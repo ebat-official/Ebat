@@ -33,7 +33,8 @@ export const user = pgTable("user", {
 	updatedAt: timestamp("updated_at")
 		.$defaultFn(() => new Date())
 		.notNull(),
-	userName: text("user_name").unique().notNull(),
+	username: text("username").unique().notNull(),
+	displayUsername: text("display_username"),
 	role: userRoleEnum("role").notNull().default(UserRole.USER),
 	banned: boolean("banned"),
 	banReason: text("ban_reason"),

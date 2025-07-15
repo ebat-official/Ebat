@@ -13,6 +13,7 @@ import * as z from "zod";
 import EmailVerificationModal from "./EmailVerificationModal";
 import EyeButton from "./EyeButton";
 import { CheckIcon, XIcon } from "lucide-react";
+import { generateUniqueUsername } from "@/lib/generateUniqueUsername";
 
 type FormValues = {
 	name: string;
@@ -101,6 +102,7 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
 				email: userData.email,
 				password: userData.password,
 				name: userData.name,
+				username: generateUniqueUsername(userData.email),
 			});
 
 			setIsLoading(false);

@@ -104,8 +104,8 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	completionCount?: number;
 	tableOfContent?: TableOfContent;
 	challengeTemplates?: ChallengeTemplate[];
-	collaborators: Array<Pick<User, "id" | "userName" | "name" | "image">>;
-	author: Pick<User, "id" | "userName" | "name" | "image" | "companyName">;
+	collaborators: Array<Pick<User, "id" | "username" | "name" | "image">>;
+	author: Pick<User, "id" | "username" | "name" | "image" | "companyName">;
 	views?: {
 		count: number;
 		updatedAt: Date;
@@ -131,7 +131,7 @@ export type EditorBlockType =
 
 export type UserSearchResult = {
 	id: string;
-	userName: string;
+	username: string;
 };
 
 export type CommentWithVotes = {
@@ -146,7 +146,7 @@ export type CommentWithVotes = {
 		id: string;
 		name?: string;
 		image?: string | null;
-		userName: string;
+		username: string;
 	};
 	repliesCount: number;
 	votesCount: number;
@@ -193,7 +193,7 @@ export interface RawCommentResult {
 		id: string;
 		name: string;
 		avatar?: string | null;
-		userName: string;
+		username: string;
 	};
 }
 
@@ -212,7 +212,7 @@ export interface CommentServerRawResult {
 	userVoteType: VoteTypeType | null;
 	reply_count: number;
 	author_user_id?: string;
-	author_user_name?: string;
+	author_username?: string;
 	author_name?: string;
 	author_image?: string;
 	score: number;
@@ -240,7 +240,7 @@ export interface CommentWithCountsResult {
 
 export interface AuthorData {
 	id: string;
-	userName: string;
+	username: string;
 	name: string | null;
 	image: string | null;
 }
@@ -309,7 +309,7 @@ export type FeedPost = Post & {
 	views?: { count: number; updatedAt: Date };
 	author: {
 		id: string;
-		userName: string;
+		username: string;
 		name: string | null;
 		image: string | null;
 		companyName: string | null;
