@@ -18,7 +18,13 @@ const StepDescription: FC<StepDescriptionProps> = ({
 			return "Node.js built-in test runner (node:test)";
 		}
 
-		if ([TemplateFramework.REACT, TemplateFramework.NEXTJS, TemplateFramework.VUE].includes(frameworkLower as TemplateFramework)) {
+		if (
+			[
+				TemplateFramework.REACT,
+				TemplateFramework.NEXTJS,
+				TemplateFramework.VUE,
+			].includes(frameworkLower as TemplateFramework)
+		) {
 			return "Vitest";
 		}
 
