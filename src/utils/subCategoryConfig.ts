@@ -1,5 +1,7 @@
+import { PostCategory, SubCategory } from "@/db/schema/enums";
+
 const subCategory: { [key: string]: string[] } = {
-	JAVASCRIPT: [
+	[SubCategory.JAVASCRIPT]: [
 		"Async",
 		"AsyncAwait",
 		"Closures",
@@ -31,7 +33,7 @@ const subCategory: { [key: string]: string[] } = {
 		"Debouncing",
 		"Throttling",
 	],
-	HTML: [
+	[SubCategory.HTML]: [
 		"HTML5",
 		"SemanticHTML",
 		"Forms",
@@ -48,7 +50,7 @@ const subCategory: { [key: string]: string[] } = {
 		"ProgressiveWebApps",
 		"WebPerformance",
 	],
-	CSS: [
+	[SubCategory.CSS]: [
 		"CSS3",
 		"Flexbox",
 		"Grid",
@@ -68,7 +70,7 @@ const subCategory: { [key: string]: string[] } = {
 		"CriticalCSS",
 		"CSSGrid",
 	],
-	REACT: [
+	[SubCategory.REACT]: [
 		"JSX",
 		"Components",
 		"Props",
@@ -93,7 +95,7 @@ const subCategory: { [key: string]: string[] } = {
 		"ServerSideRendering",
 		"ReactConcurrentMode",
 	],
-	FRONTEND: [
+	[PostCategory.FRONTEND]: [
 		"HTML",
 		"CSS",
 		"JAVASCRIPT",
@@ -191,7 +193,7 @@ const subCategory: { [key: string]: string[] } = {
 		"CSSFLEXBOX",
 		"CSS",
 	],
-	BACKEND: [
+	[PostCategory.BACKEND]: [
 		"NodeJS",
 		"Express",
 		"RESTAPI",
@@ -199,7 +201,7 @@ const subCategory: { [key: string]: string[] } = {
 		"WebSockets",
 		"Authentication",
 	],
-	ANDROID: [
+	[PostCategory.ANDROID]: [
 		"Activity",
 		"Fragment",
 		"Intent",
@@ -256,19 +258,19 @@ const subCategory: { [key: string]: string[] } = {
 		"AndroidBackgroundAndroidJobScheduler",
 		"AndroidBackgroundAndroidFirebaseJobDispatcher",
 	],
-	BLOGS: [],
-	SYSTEMDESIGN: [],
+	[SubCategory.BLOGS]: [],
+	[SubCategory.SYSTEMDESIGN]: [],
 };
 
-subCategory.BLOGS = [
-	...subCategory.FRONTEND,
-	...subCategory.BACKEND,
-	...subCategory.ANDROID,
+subCategory[SubCategory.BLOGS] = [
+	...subCategory[PostCategory.FRONTEND],
+	...subCategory[PostCategory.BACKEND],
+	...subCategory[PostCategory.ANDROID],
 ];
-subCategory.SYSTEMDESIGN = [
-	...subCategory.FRONTEND,
-	...subCategory.BACKEND,
-	...subCategory.ANDROID,
+subCategory[SubCategory.SYSTEMDESIGN] = [
+	...subCategory[PostCategory.FRONTEND],
+	...subCategory[PostCategory.BACKEND],
+	...subCategory[PostCategory.ANDROID],
 ];
 
 export default subCategory;

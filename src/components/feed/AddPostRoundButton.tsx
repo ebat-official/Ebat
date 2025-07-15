@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { SubCategory } from "@/db/schema/enums";
 import React from "react";
 import { IoMdAdd } from "react-icons/io";
 
@@ -13,7 +14,7 @@ const AddPostRoundButton: React.FC = () => {
 	const params = useParams();
 
 	// Get subcategory from params, default to 'blogs' if not present
-	const subCategory = params.subCategory || "blogs";
+	const subCategory = params.subCategory || SubCategory.BLOGS;
 
 	// If we have a subcategory in the URL, use the current path + /create
 	// If we don't have a subcategory, append the default subcategory + /create

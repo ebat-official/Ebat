@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import type { TemplateStep } from "./StepIndicator";
+import { TemplateFramework } from "@/db/schema/enums";
 
 interface StepDescriptionProps {
 	currentStep: TemplateStep;
@@ -13,15 +14,15 @@ const StepDescription: FC<StepDescriptionProps> = ({
 	const getTestingFramework = () => {
 		const frameworkLower = framework.toLowerCase();
 
-		if (frameworkLower === "javascript") {
+		if (frameworkLower === TemplateFramework.JAVASCRIPT) {
 			return "Node.js built-in test runner (node:test)";
 		}
 
-		if (["react", "nextjs", "vue"].includes(frameworkLower)) {
+		if ([TemplateFramework.REACT, TemplateFramework.NEXTJS, TemplateFramework.VUE].includes(frameworkLower as TemplateFramework)) {
 			return "Vitest";
 		}
 
-		if (frameworkLower === "angular") {
+		if (frameworkLower === TemplateFramework.ANGULAR) {
 			return "Jest";
 		}
 
@@ -33,7 +34,7 @@ const StepDescription: FC<StepDescriptionProps> = ({
 		const frameworkLower = framework.toLowerCase();
 
 		switch (frameworkLower) {
-			case "nextjs":
+			case TemplateFramework.NEXTJS:
 				return "src/app/__tests__";
 			default:
 				return "src/__tests__";

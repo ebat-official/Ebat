@@ -18,6 +18,7 @@ import {
 } from "react-icons/fa";
 import { ImHtmlFive2 } from "react-icons/im";
 import { IoLogoJavascript } from "react-icons/io";
+import { PostCategory } from "@/db/schema/enums";
 type Submenu = {
 	href: string;
 	label: string;
@@ -57,12 +58,12 @@ const SidebarConfig = {
 			logo: FaReact,
 			logoClassName: "text-blue-500",
 			// plan: "Enterprise",
-			route: "/frontend",
+			route: `/${PostCategory.FRONTEND}`,
 		},
 		{
 			name: "Backend",
 			logo: AudioWaveform,
-			route: "/backend",
+			route: `/${PostCategory.BACKEND}`,
 			// plan: "Startup",
 		},
 		{

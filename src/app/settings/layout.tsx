@@ -60,14 +60,14 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 			<CardContent>
 				<div className="md:hidden">
 					<Image
-						src="/examples/forms-light.png"
+						src=""
 						width={1280}
 						height={791}
 						alt="Forms"
 						className="block dark:hidden"
 					/>
 					<Image
-						src="/examples/forms-dark.png"
+						src=""
 						width={1280}
 						height={791}
 						alt="Forms"
@@ -86,7 +86,7 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 						<aside className=" lg:w-1/5">
 							<SidebarNav items={sidebarNavItems} />
 						</aside>
-						<div className="flex-1  bg-card/50 p-2">{children}</div>
+						<div className="flex-1  bg-card/50 p-4 rounded-md">{children}</div>
 					</div>
 				</div>
 			</CardContent>

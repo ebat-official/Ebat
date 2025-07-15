@@ -5,7 +5,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
-import { PostType } from "@/db/schema/enums";
+import { Difficulty, PostType } from "@/db/schema/enums";
 import useCompanies from "@/hooks/useCompanyList";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import useTopics from "@/hooks/useTopicList";
@@ -114,7 +114,7 @@ function QuestionSidebar({
 		}
 
 		if (difficulty) {
-			data.difficulty = difficulty.toUpperCase();
+			data.difficulty = difficulty;
 		}
 
 		if (completionDuration) {
@@ -142,7 +142,7 @@ function QuestionSidebar({
 						<AccordionContent>
 							<RadioGroupGrid
 								selectedOption={difficulty}
-								options={["EASY", "MEDIUM", "HARD"]}
+								options={[Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD]}
 								getSelectedOption={setDifficulty}
 								disabled={dataLoading}
 							/>
