@@ -1,14 +1,14 @@
+import { ChallengeTemplate } from "@/utils/types";
+import { Copy, RefreshCw } from "lucide-react";
+import { useTheme } from "next-themes";
 import React, { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
 	atomDark,
 	oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useTheme } from "next-themes";
-import { Copy, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useWebContainerStore } from "../../store/webContainer";
-import { ChallengeTemplate } from "@/utils/types";
 
 interface CodeViewerProps {
 	challengeTemplates: ChallengeTemplate[];

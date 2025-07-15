@@ -134,7 +134,7 @@ export class LayoutContainerNode extends ElementNode {
 }
 
 export function $createLayoutContainerNode(
-	templateColumns: string = "",
+	templateColumns = "",
 ): LayoutContainerNode {
 	return new LayoutContainerNode(templateColumns);
 }

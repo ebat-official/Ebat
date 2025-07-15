@@ -1,6 +1,4 @@
-// components/CommentActionButton.tsx
-import { useState } from "react";
-import { IoIosMore } from "react-icons/io";
+import { deleteComment } from "@/actions/comment";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -8,12 +6,14 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useServerAction } from "@/hooks/useServerAction";
-import { deleteComment } from "@/actions/comment";
-import { SUCCESS } from "@/utils/contants";
 import { toast } from "@/hooks/use-toast";
-import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { useServerAction } from "@/hooks/useServerAction";
+import { SUCCESS } from "@/utils/contants";
+// components/CommentActionButton.tsx
+import { useState } from "react";
+import { IoIosMore } from "react-icons/io";
 import { useCommentContext } from "./CommentContext";
+import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 type CommentActionButtonProps = {
 	commentId: string;

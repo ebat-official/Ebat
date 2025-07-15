@@ -1,6 +1,6 @@
-import { $isParagraphNode, LexicalNode } from "lexical";
-import { $isHeadingNode, $isQuoteNode } from "@lexical/rich-text";
 import { $isListItemNode } from "@lexical/list";
+import { $isHeadingNode, $isQuoteNode } from "@lexical/rich-text";
+import { $isParagraphNode, LexicalNode } from "lexical";
 export const getNodePlaceholder = (lexicalNode: LexicalNode) => {
 	let placeholder;
 

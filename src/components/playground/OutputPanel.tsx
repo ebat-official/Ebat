@@ -10,8 +10,8 @@ import {
 	Terminal,
 } from "lucide-react";
 import { useState } from "react";
-import RunningCodeSkeleton from "./RunningCodeSkeleton";
 import RunButton from "./RunButton";
+import RunningCodeSkeleton from "./RunningCodeSkeleton";
 
 function OutputPanel() {
 	const { output, error, isRunning } = useCodeEditorStore();

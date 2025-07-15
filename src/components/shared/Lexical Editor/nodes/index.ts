@@ -9,16 +9,16 @@ import { OverflowNode } from "@lexical/overflow";
 import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
-import { ImageNode } from "./ImageNode";
-import { LayoutItemNode } from "./LayoutNode/LayoutItemNode";
-import { LayoutContainerNode } from "./LayoutNode/LayoutContainerNode";
+import { YouTubeNode } from "../plugins/YouTubeNode";
 import { CollapsibleContainerNode } from "./CollapsibleNode/CollapsibleContainerNode";
 import { CollapsibleContentNode } from "./CollapsibleNode/CollapsibleContentNode";
 import { CollapsibleTitleNode } from "./CollapsibleNode/CollapsibleTitleNode";
-import { YouTubeNode } from "../plugins/YouTubeNode";
-import { Hint } from "./Hint";
-import { StepperNode } from "./Stepper";
 import { ExcalidrawNode } from "./ExcalidrawNode";
+import { Hint } from "./Hint";
+import { ImageNode } from "./ImageNode";
+import { LayoutContainerNode } from "./LayoutNode/LayoutContainerNode";
+import { LayoutItemNode } from "./LayoutNode/LayoutItemNode";
+import { StepperNode } from "./Stepper";
 
 const nodes: Array<Klass<LexicalNode>> = [
 	HeadingNode,

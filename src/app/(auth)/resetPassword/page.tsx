@@ -1,12 +1,11 @@
 "use client";
 
-import React, { FC, useEffect, useRef, useState, Suspense } from "react";
-import { useForm, Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import backgroundImg from "@/assets/img/resetBackground.jpg";
 import ButtonDark from "@/components/shared/ButtonDark";
-import { useRouter } from "next/navigation";
+import FormError from "@/components/shared/FormError";
+import FormSuccess from "@/components/shared/FormSuccess";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 import {
 	ERROR,
 	LOADING,
@@ -15,12 +14,13 @@ import {
 	TOKEN_NOT_FOUND,
 	VERIFICATION_SUCCESSFULL,
 } from "@/utils/contants";
-import { cn } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
-import FormSuccess from "@/components/shared/FormSuccess";
-import FormError from "@/components/shared/FormError";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import React, { FC, useEffect, useRef, useState, Suspense } from "react";
+import { Resolver, useForm } from "react-hook-form";
+import * as z from "zod";
 
 type FormValues = {
 	password: string;

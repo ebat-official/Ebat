@@ -1,3 +1,7 @@
+import { CodeNode } from "@lexical/code";
+import { ListItemNode, ListNode } from "@lexical/list";
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { TableNode } from "@lexical/table";
 import {
 	$getRoot,
 	ElementNode,
@@ -5,10 +9,6 @@ import {
 	ParagraphNode,
 	TextNode,
 } from "lexical";
-import { ListItemNode, ListNode } from "@lexical/list";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { TableNode } from "@lexical/table";
-import { CodeNode } from "@lexical/code";
 import { CollapsibleContainerNode } from "../nodes/CollapsibleNode/CollapsibleContainerNode";
 import { CollapsibleTitleNode } from "../nodes/CollapsibleNode/CollapsibleTitleNode";
 export type BlockType =

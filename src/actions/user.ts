@@ -1,10 +1,10 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import { user } from "@/db/schema/auth";
-import { eq } from "drizzle-orm";
 import { User } from "@/db/schema/zod-schemas";
-import { auth } from "@/auth";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export async function findUserById(id: string): Promise<User | null> {

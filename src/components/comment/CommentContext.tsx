@@ -1,8 +1,8 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { CommentSortOption, CommentWithVotes } from "@/utils/types";
-import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
 import { useComments } from "@/hooks/query/useComments";
+import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import { CommentSortOption, CommentWithVotes } from "@/utils/types";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 type CommentContextType = {
 	comments: CommentWithVotes[];

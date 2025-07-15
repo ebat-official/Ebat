@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { useServerAction } from "@/hooks/useServerAction";
 import { createDraftPost, createPost, createPostEdit } from "@/actions/post";
+import { PostType, SubCategory } from "@/db/schema/enums";
+import { useServerAction } from "@/hooks/useServerAction";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
 import consolidatePostData from "@/utils/consolidatePostData";
+import { ERROR, POST_ACTIONS } from "@/utils/contants";
 import {
 	CategoryType,
 	ContentType,
 	PostActions,
 	SubCategoryType,
 } from "@/utils/types";
-import { PostType } from "@/db/schema/enums";
-import { ERROR, POST_ACTIONS } from "@/utils/contants";
+import { useState } from "react";
 
 type PostParams = {
 	postId: string;
@@ -28,7 +28,7 @@ export const usePostPublishManager = (
 	// Separate loading states for draft and publish actions
 	const [createDraft, isDrafting] = useServerAction(createDraftPost);
 	const publishingAction =
-		action === POST_ACTIONS.CREATE || subCategory === PostType.BLOGS
+		action === POST_ACTIONS.CREATE || subCategory === SubCategory.BLOGS
 			? createPost
 			: createPostEdit;
 	const [publishPost, isPublishing] = useServerAction(publishingAction);

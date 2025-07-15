@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { CheckCircle2, Trophy, Clock, Target } from "lucide-react";
+import { CheckCircle2, Clock, Target, Trophy } from "lucide-react";
+import React, { useEffect } from "react";
 import { useReward } from "react-rewards";
 
 interface SubmissionSuccessModalProps {

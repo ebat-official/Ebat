@@ -1,8 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { TemplateFramework } from "@/db/schema/enums";
+import * as React from "react";
 
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
 	Select,
 	SelectContent,
@@ -10,12 +11,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import TemplateCreationInterface from "./TemplateCreationInterface";
-import { handleTemplateSelect } from "../../playground/utils/templateUtils";
+import { ChallengeTemplate } from "@/utils/types";
 import type { FileSystemTree } from "../../playground/lib/types";
 import { useWebContainerStore } from "../../playground/store/webContainer";
-import { ChallengeTemplate } from "@/utils/types";
+import { handleTemplateSelect } from "../../playground/utils/templateUtils";
+import TemplateCreationInterface from "./TemplateCreationInterface";
 
 const frameworks = Object.values(TemplateFramework);
 

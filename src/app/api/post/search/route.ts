@@ -1,13 +1,13 @@
-import { searchPosts } from "@/utils/api utils/posts";
-import { PostSortOrder } from "@/utils/types";
 import {
 	Difficulty,
 	PostCategory,
 	PostType,
 	SubCategory,
 } from "@/db/schema/enums";
-import { NextRequest, NextResponse } from "next/server";
 import { redis } from "@/lib/redis";
+import { searchPosts } from "@/utils/api utils/posts";
+import { PostSortOrder } from "@/utils/types";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
 	try {
@@ -16,20 +16,20 @@ export async function GET(request: NextRequest) {
 			searchParams.get("searchQuery") || "",
 		);
 		const difficulty = (searchParams.getAll("difficulty") || []).map((d) =>
-			d.toUpperCase(),
+			d.toLowerCase(),
 		) as Difficulty[];
 		const topics = searchParams.getAll("topics") || [];
 		const category =
-			(searchParams.get("category")?.toUpperCase() as PostCategory) ||
+			(searchParams.get("category")?.toLowerCase() as PostCategory) ||
 			undefined;
 		const subCategory =
-			(searchParams.get("subCategory")?.toUpperCase() as SubCategory) ||
+			(searchParams.get("subCategory")?.toLowerCase() as SubCategory) ||
 			undefined;
 		const page = Number.parseInt(searchParams.get("page") || "1", 10);
 		const pageSize = Number.parseInt(searchParams.get("pageSize") || "10", 10);
 		const sortOrder = searchParams.get("sortOrder") as PostSortOrder;
 		const companies = searchParams.getAll("companies") || [];
-		const type = searchParams.get("type")?.toUpperCase() as PostType;
+		const type = searchParams.get("type")?.toLowerCase() as PostType;
 
 		// Build a unique cache key for all query params
 		const cacheKey = `posts:search:${searchQuery}:difficulty:${difficulty.join(",")}:topics:${topics.join(",")}:category:${category ?? "none"}:subCategory:${subCategory ?? "none"}:type:${type ?? "none"}:companies:${companies.join(",")}:page:${page}:pageSize:${pageSize}:sortOrder:${sortOrder ?? "latest"}`;

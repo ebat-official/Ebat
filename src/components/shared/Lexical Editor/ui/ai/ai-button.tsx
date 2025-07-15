@@ -1,10 +1,3 @@
-import { Loader2, RotateCcw, StarsIcon, WandSparkles } from "lucide-react";
-import React, { useMemo, useState } from "react";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
 import {
 	Command,
 	CommandEmpty,
@@ -19,21 +12,28 @@ import {
 	HoverCardContent,
 	HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { HoverBorderGradient } from "./border";
-import { PlaceholdersAndVanishInput } from "./placeholder-input-vanish";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { useCompletion } from "@ai-sdk/react";
 import { motion } from "framer-motion";
+import { LexicalEditor } from "lexical";
+import { Loader2, RotateCcw, StarsIcon, WandSparkles } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { toast } from "sonner";
+import { AIAction } from "../../hooks/instructions-messages";
 import {
 	getSelectedText,
 	insertText,
 	insertTextUnderSelected,
 	replaceSelectedText,
 } from "../../utils/ai";
-import { LexicalEditor } from "lexical";
-import { useCompletion } from "@ai-sdk/react";
-import { toast } from "sonner";
-import ReactMarkdown from "react-markdown";
 import { ExtractData } from "../../utils/extract-data";
-import { AIAction } from "../../hooks/instructions-messages";
+import { HoverBorderGradient } from "./border";
+import { PlaceholdersAndVanishInput } from "./placeholder-input-vanish";
 const placeholders = [
 	"Chat with what you are writing.",
 	"Click on the stepper to generate tasks step by step.",

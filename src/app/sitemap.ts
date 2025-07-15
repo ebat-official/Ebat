@@ -1,6 +1,6 @@
-import { MetadataRoute } from "next";
 import { getAllApprovedPosts } from "@/utils/api utils/posts";
 import { generatePostPath } from "@/utils/generatePostPath";
+import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	const baseUrl = process.env.ENV_URL || "https://ebat.dev";

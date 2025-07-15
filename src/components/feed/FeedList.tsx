@@ -1,12 +1,12 @@
 "use client";
 import React, { FC } from "react";
-import { useFeedContext } from "./FeedContext";
 import RightPanelLayout from "../shared/RightPanelLayout";
 import { Card } from "../ui/card";
-import QuestionsList from "./QuestionsList";
+import { useFeedContext } from "./FeedContext";
 import FeedSidebar from "./FeedSidebar";
+import QuestionsList from "./QuestionsList";
 
-interface FeedProps {}
+type FeedProps = {};
 
 export const FeedList: FC<FeedProps> = ({}) => {
 	return (

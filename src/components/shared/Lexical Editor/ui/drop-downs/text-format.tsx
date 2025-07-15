@@ -10,9 +10,9 @@ import {
 	Trash,
 } from "lucide-react";
 import React, { useMemo } from "react";
+import { DropDown } from ".";
 import { SHORTCUTS } from "../../plugins/ShortcutsPlugin/shortcuts";
 import { clearFormatting } from "../../utils/editorFormatting";
-import { DropDown } from ".";
 
 export default function TextFormat({
 	disabled = false,

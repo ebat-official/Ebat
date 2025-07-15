@@ -1,15 +1,15 @@
+import { getCurrentUser } from "@/actions/user";
 import { db } from "@/db";
-import { NextResponse } from "next/server";
-import { PostStatus, PostApprovalStatus } from "@/db/schema/enums";
+import { PostApprovalStatus, PostStatus } from "@/db/schema/enums";
+import { getPostById } from "@/utils/api utils/posts";
 import {
 	ID_NOT_EXIST_ERROR,
-	POST_NOT_EXIST_ERROR,
 	LIVE_POST_EDIT_ERROR,
+	POST_NOT_EXIST_ERROR,
 	UNAUTHENTICATED_ERROR,
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
-import { getPostById } from "@/utils/api utils/posts";
-import { getCurrentUser } from "@/actions/user";
+import { NextResponse } from "next/server";
 
 export async function GET(
 	request: Request,

@@ -1,12 +1,12 @@
 "use client";
-import useScroll from "@/hooks/useScroll";
-import ThemeSwitcher from "./ThemeSwitcher";
-import UserButton from "./UserButton";
-import { type Session } from "@/lib/auth-client";
 import LoginModal from "@/components/auth/LoginModal";
+import useScroll from "@/hooks/useScroll";
+import { type Session } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 import { SheetMenu } from "../sidebar/sheet-menu";
 import Background from "./Background";
-import { cn } from "@/lib/utils";
+import ThemeSwitcher from "./ThemeSwitcher";
+import UserButton from "./UserButton";
 
 export default function NavBar({ session }: { session: Session | null }) {
 	const scrolled = useScroll(50);

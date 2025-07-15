@@ -2,9 +2,9 @@
 import React from "react";
 import { Badge } from "../ui/badge";
 import CommentAddBox from "./CommentAddBox";
+import { CommentProvider, useCommentContext } from "./CommentContext";
 import { CommentList } from "./CommentList";
 import { CommentSortSelect } from "./CommentSortSelect";
-import { CommentProvider, useCommentContext } from "./CommentContext";
 
 type CommentContainerProps = {
 	postId: string;

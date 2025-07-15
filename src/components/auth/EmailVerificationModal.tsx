@@ -1,4 +1,5 @@
-import React, { FC, useState } from "react";
+import mailIcon from "@/assets/img/emailIcon.webp";
+import ButtonDark from "@/components/shared/ButtonDark";
 import {
 	Dialog,
 	DialogContent,
@@ -7,10 +8,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import ButtonDark from "@/components/shared/ButtonDark";
-import mailIcon from "@/assets/img/emailIcon.webp";
-import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
+import React, { FC, useState } from "react";
 
 interface EmailVerificationModalProps {
 	open: boolean;

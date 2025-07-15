@@ -1,11 +1,11 @@
 import {
+	boolean,
+	index,
 	pgTable,
+	text,
+	timestamp,
 	uuid,
 	varchar,
-	text,
-	boolean,
-	timestamp,
-	index,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 

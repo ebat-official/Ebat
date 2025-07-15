@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { BiTargetLock } from "react-icons/bi";
 import { DifficultyType } from "@/db/schema/enums";
 import { getDifficultyIconColor } from "@/utils/difficultyUtils";
+import { FC } from "react";
+import { BiTargetLock } from "react-icons/bi";
 
 interface DifficultyBadgeProps {
 	difficulty: DifficultyType;

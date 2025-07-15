@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -6,9 +5,10 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Edit, Trash2, Info } from "lucide-react";
-import { ChallengeTemplate } from "@/utils/types";
 import { TemplateFramework } from "@/db/schema/enums";
+import { ChallengeTemplate } from "@/utils/types";
+import { Edit, Info, Trash2 } from "lucide-react";
+import React from "react";
 import { FRAMEWORK_ICONS } from "../constants";
 import SavedTemplatesSkeleton from "./SavedTemplatesSkeleton";
 

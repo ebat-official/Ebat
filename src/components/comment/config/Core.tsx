@@ -6,26 +6,34 @@ declare global {
 	}
 }
 
-import React, {
-	useCallback,
-	useEffect,
-	useImperativeHandle,
-	useLayoutEffect,
-	useState,
-} from "react";
+import FloatingLinkEditorPlugin from "@/components/shared/Lexical Editor/plugins/FloatingLinkEditorPlugin";
+import { PLAYGROUND_TRANSFORMERS } from "@/components/shared/Lexical Editor/plugins/MarkdownTransformers";
+import {
+	MentionChangePlugin,
+	MentionData,
+} from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
+import {
+	MentionMenu,
+	MentionMenuItem,
+} from "@/components/shared/Lexical Editor/ui/MentionMenu/MentionMenu";
+import { insertHtmlIntoEditor } from "@/components/shared/Lexical Editor/utils/InsertHtmlIntoEditor";
+import { Toggle } from "@/components/ui/toggle";
+import { handleUserMentionSearch } from "@/utils/handleUserMentionSearch";
+import { $createCodeNode, $isCodeNode } from "@lexical/code";
+import {
+	$convertFromMarkdownString,
+	$convertToMarkdownString,
+} from "@lexical/markdown";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
+import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { LexicalOnChangePlugin } from "../../shared/Lexical Editor/lexical-on-change";
-import CodeHighlightPlugin from "../../shared/Lexical Editor/plugins/CodeHighlightPlugin";
-import ToolbarPlugin from "./Toolbar";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { mergeRegister } from "@lexical/utils";
 import {
 	$createTextNode,
@@ -35,26 +43,18 @@ import {
 	FOCUS_COMMAND,
 } from "lexical";
 import type { SerializedEditorState } from "lexical";
-import { Toggle } from "@/components/ui/toggle";
-import { $createCodeNode, $isCodeNode } from "@lexical/code";
-import {
-	$convertFromMarkdownString,
-	$convertToMarkdownString,
-} from "@lexical/markdown";
-import { PLAYGROUND_TRANSFORMERS } from "@/components/shared/Lexical Editor/plugins/MarkdownTransformers";
-import { BsMarkdown } from "react-icons/bs";
 import { BeautifulMentionsPlugin } from "lexical-beautiful-mentions";
-import {
-	MentionMenu,
-	MentionMenuItem,
-} from "@/components/shared/Lexical Editor/ui/MentionMenu/MentionMenu";
-import { handleUserMentionSearch } from "@/utils/handleUserMentionSearch";
-import {
-	MentionChangePlugin,
-	MentionData,
-} from "@/components/shared/Lexical Editor/plugins/MentionPlugin/MentionChangePlugin";
-import FloatingLinkEditorPlugin from "@/components/shared/Lexical Editor/plugins/FloatingLinkEditorPlugin";
-import { insertHtmlIntoEditor } from "@/components/shared/Lexical Editor/utils/InsertHtmlIntoEditor";
+import React, {
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useLayoutEffect,
+	useState,
+} from "react";
+import { BsMarkdown } from "react-icons/bs";
+import { LexicalOnChangePlugin } from "../../shared/Lexical Editor/lexical-on-change";
+import CodeHighlightPlugin from "../../shared/Lexical Editor/plugins/CodeHighlightPlugin";
+import ToolbarPlugin from "./Toolbar";
 
 interface CoreProps {
 	placeholder: string;

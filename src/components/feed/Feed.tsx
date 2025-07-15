@@ -1,11 +1,11 @@
 "use client";
 import React, { FC, useEffect, useRef, useCallback } from "react";
-import { useFeedContext } from "./FeedContext";
-import NoSearchResults from "./NoSearchResults";
-import FeedSearch from "./FeedSearch";
 import AddPostRoundButton from "./AddPostRoundButton";
 import { FeedCard } from "./FeedCard";
 import { FeedCardSkeleton } from "./FeedCardSkeleton";
+import { useFeedContext } from "./FeedContext";
+import FeedSearch from "./FeedSearch";
+import NoSearchResults from "./NoSearchResults";
 
 export const Feed: FC = () => {
 	const {

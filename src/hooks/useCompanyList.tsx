@@ -1,7 +1,7 @@
-// hooks/useCompanies.ts
-import { useMemo, useCallback, ReactElement, useState, useEffect } from "react";
-import { IconType } from "react-icons";
 import companiesData from "@/utils/companyListConfig";
+// hooks/useCompanies.ts
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import { IconType } from "react-icons";
 
 export interface Company {
 	label: string;

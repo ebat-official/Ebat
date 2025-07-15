@@ -18,65 +18,65 @@ import {
 	$createParagraphNode,
 	$getSelection,
 	$isRangeSelection,
-	createEditor,
 	type LexicalEditor,
 	type TextNode,
+	createEditor,
 } from "lexical";
-import { useCallback, useMemo, useState } from "react";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
 import {
 	Code2,
 	Columns2,
 	Columns3,
 	Columns4,
 	DraftingCompass,
-	ImageIcon,
-	ImagePlayIcon,
-	ListCheck,
-	OctagonX,
-	Pilcrow,
-	QuoteIcon,
-	SquarePenIcon,
-	StepForward,
-	Twitter,
-	Youtube,
 	Heading1,
 	Heading2,
 	Heading3,
-	Minus,
+	ImageIcon,
+	ImagePlayIcon,
 	List,
+	ListCheck,
 	ListOrdered,
-	Table,
+	Minus,
+	OctagonX,
+	Pilcrow,
+	QuoteIcon,
 	Sigma,
+	SquarePenIcon,
+	StepForward,
+	Table,
+	Twitter,
+	Youtube,
 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
-import { cn } from "@/lib/utils";
-import { INSERT_LAYOUT_COMMAND } from "../LayoutPlugin";
-import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
-import useModal from "../../ui/models/use-model";
 import {
 	Command,
+	CommandEmpty,
+	CommandInput,
 	CommandItem,
 	CommandList,
-	CommandInput,
-	CommandEmpty,
 	CommandShortcut,
 } from "@/components/ui/command";
-import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ImagePayload } from "../../nodes/ImageNode";
-import { INSERT_IMAGE_COMMAND } from "../ImagesPlugin";
-import { AutoEmbedDialog, YoutubeEmbedConfig } from "../AutoEmbedPlugin";
-import {
-	initialEditorState,
-	INSERT_STEPPER_COMMAND,
-} from "../../nodes/Stepper";
-import { INSERT_EXCALIDRAW_COMMAND } from "../ExcalidrawPlugin";
-import { useEditorContext } from "../../providers/EditorContext";
+import { cn } from "@/lib/utils";
+import { PluginConfigured, type pluginConfig } from "../../appSettings";
 import { PLUGIN_NAMES } from "../../constants";
-import { type pluginConfig, PluginConfigured } from "../../appSettings";
+import { INSERT_HINT_COMMAND } from "../../nodes/Hint";
+import type { ImagePayload } from "../../nodes/ImageNode";
+import {
+	INSERT_STEPPER_COMMAND,
+	initialEditorState,
+} from "../../nodes/Stepper";
+import { useEditorContext } from "../../providers/EditorContext";
+import useModal from "../../ui/models/use-model";
+import { AutoEmbedDialog, YoutubeEmbedConfig } from "../AutoEmbedPlugin";
+import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
+import { INSERT_EXCALIDRAW_COMMAND } from "../ExcalidrawPlugin";
+import { INSERT_IMAGE_COMMAND } from "../ImagesPlugin";
+import { INSERT_LAYOUT_COMMAND } from "../LayoutPlugin";
+import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 const InsertGif = React.lazy(() => import("../../ui/models/insert-gif"));
 const InsertMediaDialog = React.lazy(() =>
 	import("../../ui/models/insertMedia").then((module) => ({

@@ -1,11 +1,11 @@
-// utils/metadata.ts
-import { Metadata } from "next";
 import { Post } from "@/db/schema/zod-schemas";
 import {
 	ContentReturnType,
 	ContentType,
 	PostWithExtraDetails,
 } from "@/utils/types";
+// utils/metadata.ts
+import { Metadata } from "next";
 import { getMetaDescription } from "./getMetaDescription";
 
 export interface MetadataOptions {

@@ -1,7 +1,7 @@
+import type { TemplateFramework } from "@/db/schema/enums";
+import type { Template } from "../lib/types";
 import { useWebContainerStore } from "../store/webContainer";
 import { extractSrcFromTemplate } from "./templateUtils";
-import type { Template } from "../lib/types";
-import type { TemplateFramework } from "@/db/schema/enums";
 
 /**
  * Extract the current solution template from WebContainer
@@ -34,8 +34,8 @@ export const extractSolutionTemplate = async (): Promise<{
 			selectedTemplate,
 		);
 
-		// Convert template ID to framework enum (with safety uppercase)
-		const framework = selectedTemplate.id.toUpperCase() as TemplateFramework;
+		// Convert template ID to framework enum (with safety lowercase)
+		const framework = selectedTemplate.id.toLowerCase() as TemplateFramework;
 
 		return {
 			template: cleanTemplate,
@@ -61,7 +61,7 @@ export const getChallengeContext = () => {
 	}
 
 	const framework = selectedTemplate
-		? (selectedTemplate.id.toUpperCase() as TemplateFramework)
+		? (selectedTemplate.id.toLowerCase() as TemplateFramework)
 		: null;
 
 	return {

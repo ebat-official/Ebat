@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import LoginModal from "@/components/auth/LoginModal";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PostType } from "@/db/schema/enums";
+import useFileUpload from "@/hooks/useFileUpload";
+import { cn } from "@/lib/utils";
+import { UNAUTHENTICATED } from "@/utils/contants";
+import { ContentType, EditorContent } from "@/utils/types";
 import dynamic from "next/dynamic"; // Import dynamic from Next.js
+import React, { useEffect, useRef, useState } from "react";
+import { RiQuestionAnswerLine } from "react-icons/ri";
 import TextareaAutosize from "react-textarea-autosize";
 import { z } from "zod";
-import useFileUpload from "@/hooks/useFileUpload";
-import { UNAUTHENTICATED } from "@/utils/contants";
-import LoginModal from "@/components/auth/LoginModal";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
-import PostContentSkeleton from "./PostContentSkelton";
-import { ContentType, EditorContent } from "@/utils/types";
-import { PostType } from "@/db/schema/enums";
 import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
-import { Card, CardContent } from "@/components/ui/card";
-import { RiQuestionAnswerLine } from "react-icons/ri";
+import PostContentSkeleton from "./PostContentSkelton";
 
 // Dynamically import the Lexical Editor with SSR disabled
 const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {

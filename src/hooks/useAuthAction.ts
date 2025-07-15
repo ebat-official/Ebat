@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
-import { useSession } from "@/lib/auth-client";
-import { useState, useCallback, useEffect } from "react";
 import LoginModal from "@/components/auth/LoginModal";
+import { useSession } from "@/lib/auth-client";
+import React from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseAuthActionOptions {
 	onSuccess?: () => void;

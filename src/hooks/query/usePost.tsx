@@ -1,10 +1,10 @@
 import { fetchPostById } from "@/utils/api utils/apiUtils";
-import { postCreateOptions, PostWithContent } from "@/utils/types";
+import { PostWithContent, postCreateOptions } from "@/utils/types";
 import {
-	useQuery,
-	useQueryClient,
 	UseQueryOptions,
 	UseQueryResult,
+	useQuery,
+	useQueryClient,
 } from "@tanstack/react-query";
 
 // Hook for fetching a post by ID

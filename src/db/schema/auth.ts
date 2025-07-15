@@ -1,22 +1,22 @@
 import {
+	boolean,
+	index,
+	integer,
+	json,
 	pgTable,
 	text,
 	timestamp,
-	boolean,
-	integer,
+	uniqueIndex,
 	uuid,
 	varchar,
-	json,
-	index,
-	uniqueIndex,
 } from "drizzle-orm/pg-core";
 import {
-	userRoleEnum,
-	accountStatusEnum,
-	subscriptionPlanEnum,
-	UserRole,
 	AccountStatus,
 	SubscriptionPlan,
+	UserRole,
+	accountStatusEnum,
+	subscriptionPlanEnum,
+	userRoleEnum,
 } from "./enums";
 
 export const user = pgTable("user", {

@@ -1,6 +1,6 @@
-import { fetchVoteCountsFromAPI } from "@/utils/api utils/vote";
 import { VoteType } from "@/db/schema/enums";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { fetchVoteCountsFromAPI } from "@/utils/api utils/vote";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
 interface VoteCounts {
 	upVotes: number;

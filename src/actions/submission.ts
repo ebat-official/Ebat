@@ -2,27 +2,27 @@
 
 import { db } from "@/db";
 import { challengeSubmissions } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import {
+	SubmissionStatus,
+	TemplateFramework,
+	UserRole,
+} from "@/db/schema/enums";
 import { ChallengeSubmission } from "@/db/schema/zod-schemas";
 import { ChallengeSubmissionValidator } from "@/lib/validators/submission";
+import { ERROR, POST_ID_REQUIRED, SUCCESS } from "@/utils/contants";
 import { UNAUTHENTICATED_ERROR, ValidationErr } from "@/utils/errors";
-import { z } from "zod";
-import { GenerateActionReturnType } from "@/utils/types";
-import { validateUser, getCurrentUser } from "./user";
-import { ERROR, SUCCESS, POST_ID_REQUIRED } from "@/utils/contants";
 import {
-	FAILED_TO_SUBMIT_CHALLENGE_ERROR,
+	CHALLENGE_NOT_FOUND_ERROR,
 	FAILED_TO_DELETE_SUBMISSION_ERROR,
 	FAILED_TO_FETCH_SUBMISSIONS_ERROR,
-	CHALLENGE_NOT_FOUND_ERROR,
+	FAILED_TO_SUBMIT_CHALLENGE_ERROR,
 	SUBMISSION_NOT_FOUND_ERROR,
 	UNAUTHORIZED_ERROR,
 } from "@/utils/errors";
-import {
-	UserRole,
-	TemplateFramework,
-	SubmissionStatus,
-} from "@/db/schema/enums";
+import { GenerateActionReturnType } from "@/utils/types";
+import { and, eq } from "drizzle-orm";
+import { z } from "zod";
+import { getCurrentUser, validateUser } from "./user";
 
 // Submit Challenge Solution
 export async function submitChallengeSolution(

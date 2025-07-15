@@ -1,6 +1,6 @@
-import type { Template } from "../lib/types";
 import type { FileSystemTree } from "@webcontainer/api";
 import { debounce } from "lodash-es";
+import type { Template } from "../lib/types";
 
 // Storage interface for saved templates
 export interface SavedTemplate {

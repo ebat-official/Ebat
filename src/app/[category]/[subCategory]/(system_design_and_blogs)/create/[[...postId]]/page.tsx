@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
-import { useParams, notFound } from "next/navigation";
-import isValidCategory from "@/utils/isValidCategory";
-import { POST_ACTIONS } from "@/utils/contants";
-import { PostType } from "@/db/schema/enums";
 import PostCreateEdit from "@/components/post edit/PostCreateEdit";
+import { PostType, SubCategory } from "@/db/schema/enums";
+import { POST_ACTIONS } from "@/utils/contants";
+import isValidCategory from "@/utils/isValidCategory";
+import { notFound, useParams } from "next/navigation";
+import React from "react";
 
 function Page() {
 	const {
@@ -16,10 +16,10 @@ function Page() {
 
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
-	)?.toUpperCase();
+	)?.toLowerCase();
 	const postType = (
 		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
-	)?.toUpperCase();
+	)?.toLowerCase();
 
 	const postId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
 
@@ -36,7 +36,11 @@ function Page() {
 	return (
 		<PostCreateEdit
 			category={category}
-			subCategory={postType}
+			subCategory={
+				postType === PostType.BLOGS
+					? SubCategory.BLOGS
+					: SubCategory.SYSTEMDESIGN
+			}
 			postId={postId}
 			action={POST_ACTIONS.CREATE}
 			postType={postType}

@@ -1,6 +1,6 @@
-import React, { FC } from "react";
-import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
+import { CheckCircledIcon } from "@radix-ui/react-icons";
+import React, { FC } from "react";
 
 interface FormSuccessProps {
 	message?: string;

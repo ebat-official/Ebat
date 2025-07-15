@@ -1,6 +1,8 @@
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
-	createCommand,
-	createEditor,
+	$getSelection,
+	$isRangeSelection,
+	COMMAND_PRIORITY_LOW,
 	DecoratorNode,
 	LexicalCommand,
 	LexicalEditor,
@@ -9,12 +11,10 @@ import {
 	SerializedEditor,
 	SerializedLexicalNode,
 	Spread,
-	$getSelection,
-	$isRangeSelection,
-	COMMAND_PRIORITY_LOW,
+	createCommand,
+	createEditor,
 } from "lexical";
 import React, { Suspense, useEffect } from "react";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 const HintComponent = React.lazy(() => import("./HintComponet"));
 
 export type HintType = "success" | "warning" | "info" | "error" | "hint";

@@ -1,5 +1,5 @@
-import { DIRECTORY, FILE, SRC_FOLDER } from "./constants";
 import type { FileSystemTree } from "../../lib/types";
+import { DIRECTORY, FILE, SRC_FOLDER } from "./constants";
 import type { TreeElement } from "./types";
 
 export function convertAndSortTree(

@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
 import topicsData from "@/utils/subCategoryConfig";
 import { TopicCategory } from "@/utils/types";
+import { useCallback, useEffect, useState } from "react";
 
 const useTopics = (category: TopicCategory) => {
 	if (!category) return { topics: [], searchTopics };

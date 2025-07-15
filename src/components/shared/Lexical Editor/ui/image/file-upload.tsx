@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { Upload, Loader2, X, Image, UploadCloudIcon } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import useFileUpload from "@/hooks/useFileUpload";
-import { toast } from "sonner";
-import { zones } from "./constants";
-import { useEditorContext } from "../../providers/EditorContext";
-import { EditorFileUpload } from "@/utils/types";
 import { compressImage } from "@/utils/compressImage";
+import { EditorFileUpload } from "@/utils/types";
+import { AnimatePresence, motion } from "framer-motion";
+import { Image, Loader2, Upload, UploadCloudIcon, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { toast } from "sonner";
+import { useEditorContext } from "../../providers/EditorContext";
+import { zones } from "./constants";
 
 interface FileUploadZoneProps {
 	InsertMedia: (files: { url: string; alt: string }[]) => void;

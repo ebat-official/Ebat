@@ -1,10 +1,10 @@
+import { LexicalEditor } from "lexical";
 import { JSX, useEffect, useRef } from "react";
 import {
 	INSERT_IMAGE_COMMAND,
 	InsertImagePayload,
 } from "../../plugins/ImagesPlugin";
 import FileUploadZone from "../image/file-upload";
-import { LexicalEditor } from "lexical";
 
 export function InsertMediaDialog({
 	activeEditor,

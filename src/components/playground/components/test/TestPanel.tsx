@@ -1,9 +1,9 @@
 "use client";
 
+import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import React from "react";
-import { Clock, CheckCircle2, XCircle } from "lucide-react";
-import { TestResultItem } from "./TestResultAccordian";
 import { TestResult } from "../../types/test";
+import { TestResultItem } from "./TestResultAccordian";
 
 interface TestPanelProps {
 	results: TestResult | null;

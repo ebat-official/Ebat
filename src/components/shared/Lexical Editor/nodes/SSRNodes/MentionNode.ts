@@ -1,6 +1,6 @@
 import {
-	DecoratorNode,
 	DOMExportOutput,
+	DecoratorNode,
 	SerializedLexicalNode,
 	Spread,
 } from "lexical";

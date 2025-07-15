@@ -21,42 +21,42 @@ import {
 } from "lexical";
 import { BsMarkdown } from "react-icons/bs";
 
-import {
-	useToolbarState,
-	blockTypeToBlockName,
-} from "../../providers/ToolbarContext";
 import { cn } from "@/lib/utils";
+import {
+	blockTypeToBlockName,
+	useToolbarState,
+} from "../../providers/ToolbarContext";
 
 import { Bold, Code, Italic, Link, Redo, Underline, Undo } from "lucide-react";
 
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Toggle } from "@/components/ui/toggle";
+import { $createCodeNode, $isCodeNode, CODE_LANGUAGE_MAP } from "@lexical/code";
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { $isListNode, ListNode } from "@lexical/list";
+import {
+	$convertFromMarkdownString,
+	$convertToMarkdownString,
+} from "@lexical/markdown";
+import { $isHeadingNode } from "@lexical/rich-text";
+import {
+	$getSelectionStyleValueForProperty,
+	$isParentElementRTL,
+} from "@lexical/selection";
+import { $isTableNode, $isTableSelection } from "@lexical/table";
 import {
 	$findMatchingParent,
 	$getNearestNodeOfType,
 	$isEditorIsNestedEditor,
 	mergeRegister,
 } from "@lexical/utils";
-import {
-	$getSelectionStyleValueForProperty,
-	$isParentElementRTL,
-} from "@lexical/selection";
-import { getSelectedNode } from "../../utils/getSelectedNode";
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
-import { $isTableNode, $isTableSelection } from "@lexical/table";
-import { $isListNode, ListNode } from "@lexical/list";
-import { $isHeadingNode } from "@lexical/rich-text";
-import { $createCodeNode, $isCodeNode, CODE_LANGUAGE_MAP } from "@lexical/code";
 import dynamic from "next/dynamic";
-import { Toggle } from "@/components/ui/toggle";
-import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
-import { sanitizeUrl } from "../../utils/url";
 import CodeList from "../../ui/drop-downs/code";
-import {
-	$convertFromMarkdownString,
-	$convertToMarkdownString,
-} from "@lexical/markdown";
+import { getSelectedNode } from "../../utils/getSelectedNode";
+import { sanitizeUrl } from "../../utils/url";
 import { PLAYGROUND_TRANSFORMERS } from "../MarkdownTransformers";
+import { SHORTCUTS } from "../ShortcutsPlugin/shortcuts";
 const BlockFormatDropDown = dynamic(
 	() => import("../../ui/drop-downs/block-format"),
 );

@@ -1,10 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { FC } from "react";
-import { FiCheckCircle } from "react-icons/fi";
-import AuthorNudge from "./AuthorNudge";
-import { BiTargetLock } from "react-icons/bi";
 import { PostWithExtraDetails } from "@/utils/types";
+import { FC } from "react";
+import { BiTargetLock } from "react-icons/bi";
+import { FiCheckCircle } from "react-icons/fi";
 import { GiTwoCoins } from "react-icons/gi";
+import AuthorNudge from "./AuthorNudge";
 
 import {
 	Tooltip,

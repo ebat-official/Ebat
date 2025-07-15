@@ -1,9 +1,9 @@
 import { FeedProvider } from "@/components/feed/FeedContext";
-import { PostSortOrder } from "@/utils/types";
 import { FeedList } from "@/components/feed/FeedList";
 import { PostType, SubCategory, SubCategoryType } from "@/db/schema/enums";
-import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
+import { PostSortOrder } from "@/utils/types";
+import { notFound } from "next/navigation";
 
 type PageProps = Promise<{
 	category: string;
@@ -17,7 +17,7 @@ export default async function Page({ params }: { params: PageProps }) {
 
 	if (
 		!Object.values(SubCategory).includes(
-			awaitedParams.subCategory.toUpperCase() as SubCategoryType,
+			awaitedParams.subCategory.toLowerCase() as SubCategoryType,
 		)
 	) {
 		return notFound();

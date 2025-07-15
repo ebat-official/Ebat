@@ -9,8 +9,10 @@ import type { JSX } from "react";
 import { LinkNode } from "@lexical/link";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
@@ -24,7 +26,6 @@ import {
 	$setSelection,
 	CLICK_COMMAND,
 	COMMAND_PRIORITY_LOW,
-	createCommand,
 	DRAGSTART_COMMAND,
 	KEY_BACKSPACE_COMMAND,
 	KEY_DELETE_COMMAND,
@@ -35,18 +36,17 @@ import {
 	RootNode,
 	SELECTION_CHANGE_COMMAND,
 	TextNode,
+	createCommand,
 } from "lexical";
 import * as React from "react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { $isImageNode } from "../../nodes/ImageNode";
 import { useSharedHistoryContext } from "../../providers/SharedHistoryContext";
 import ErrorImage from "./error-image";
-import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import ImageResizer from "./image-resizer";
+import ImageToolBar from "./image-toolbar";
 import LazyImage from "./lazy-image";
 import LazyVideo from "./lazy-video";
-import ImageToolBar from "./image-toolbar";
 
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
 	createCommand("RIGHT_CLICK_IMAGE_COMMAND");

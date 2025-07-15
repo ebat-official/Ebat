@@ -1,6 +1,6 @@
 import Background from "@/components/shared/Background";
-import { SidebarProvider } from "@/context/SidebarContext";
 import SidePanelLayout from "@/components/sidebar/panelLayout";
+import { SidebarProvider } from "@/context/SidebarContext";
 
 export default function SidebarLayout({
 	children,

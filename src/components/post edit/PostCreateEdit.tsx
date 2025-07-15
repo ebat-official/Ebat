@@ -1,31 +1,31 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import RightPanelLayout from "@/components/shared/RightPanelLayout";
-import EditorContainer from "./EditorContainer";
-import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
-import { usePathname, useRouter } from "next/navigation";
-import { generateNanoId } from "@/lib/generateNanoid";
-import { toast } from "@/hooks/use-toast";
 import LoginModal from "@/components/auth/LoginModal";
-import {
-	CategoryType,
-	ContentType,
-	PostActions,
-	SubCategoryType,
-	PostWithContent,
-	ChallengeTemplate,
-} from "@/utils/types";
-import { handleError } from "@/utils/handleError";
-import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
-import { PostType, SubCategory } from "@/db/schema/enums";
+import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
+import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
+import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import StatusDialog from "@/components/shared/StatusDialog";
 import { Button } from "@/components/ui/button";
-import { usePostPublishManager } from "@/hooks/query/usePostPublishManager";
-import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
-import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
-import { POST_ACTIONS } from "@/utils/contants";
+import { PostType, SubCategory } from "@/db/schema/enums";
 import { usePostFetchManager } from "@/hooks/query/usePostFetchManager";
+import { usePostPublishManager } from "@/hooks/query/usePostPublishManager";
+import { toast } from "@/hooks/use-toast";
+import { generateNanoId } from "@/lib/generateNanoid";
+import { POST_ACTIONS } from "@/utils/contants";
+import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
+import { handleError } from "@/utils/handleError";
+import {
+	CategoryType,
+	ChallengeTemplate,
+	ContentType,
+	PostActions,
+	PostWithContent,
+	SubCategoryType,
+} from "@/utils/types";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import EditorContainer from "./EditorContainer";
 
 interface PostCreateEditProps {
 	category: CategoryType;

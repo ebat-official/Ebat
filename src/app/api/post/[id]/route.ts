@@ -1,13 +1,13 @@
 import { db } from "@/db";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { PostStatus, PostApprovalStatus } from "@/db/schema/enums";
+import { PostApprovalStatus, PostStatus } from "@/db/schema/enums";
+import { getPostById } from "@/utils/api utils/posts";
 import {
 	ID_NOT_EXIST_ERROR,
 	POST_NOT_EXIST_ERROR,
 	POST_NOT_PUBLISHED_ERROR,
 } from "@/utils/errors";
-import { getPostById } from "@/utils/api utils/posts";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(
 	request: NextRequest,

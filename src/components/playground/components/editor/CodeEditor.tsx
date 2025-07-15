@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
 import { useTheme } from "next-themes";
-import { defineMonacoThemes, EditorThemeId } from "../../constants";
+import React, { useEffect } from "react";
+import { EditorThemeId, defineMonacoThemes } from "../../constants";
 
 interface CodeEditorProps {
 	filePath: string;

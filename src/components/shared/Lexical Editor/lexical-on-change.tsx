@@ -1,7 +1,7 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import useLayoutEffectImpl from "./utils/useLayoutEffect";
-import { setNodePlaceholderFromSelection } from "./utils/setNodePlaceholderFromSelection/setNodePlaceholderFromSelection";
 import { SerializedEditorState } from "lexical";
+import { setNodePlaceholderFromSelection } from "./utils/setNodePlaceholderFromSelection/setNodePlaceholderFromSelection";
+import useLayoutEffectImpl from "./utils/useLayoutEffect";
 
 interface LexicalOnChangePluginProps {
 	onChangeHandler: (data: SerializedEditorState) => void; // Use SerializedEditorState

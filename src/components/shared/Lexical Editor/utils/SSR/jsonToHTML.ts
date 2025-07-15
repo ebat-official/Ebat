@@ -1,10 +1,10 @@
 "use server";
 
-import { parseHTML } from "linkedom";
 import { $generateHtmlFromNodes } from "@lexical/html";
+import { parseHTML } from "linkedom";
 
-import createHeadlessEditor from "./headless";
 import { SerializedEditorState } from "lexical";
+import createHeadlessEditor from "./headless";
 import { LexicalNodeType } from "./nodes";
 
 function setupDom() {

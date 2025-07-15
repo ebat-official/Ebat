@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { $isCodeNode } from "@lexical/code";
 import {
 	$getNearestNodeFromDOMNode,
@@ -5,10 +6,9 @@ import {
 	$setSelection,
 	LexicalEditor,
 } from "lexical";
+import { Check, Copy } from "lucide-react";
 import * as React from "react";
 import { useState } from "react";
-import { Copy, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface Props {
 	editor: LexicalEditor;

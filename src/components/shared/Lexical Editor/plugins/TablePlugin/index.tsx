@@ -3,8 +3,8 @@ import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { invariant } from "framer-motion";
 import { EditorThemeClasses, Klass, LexicalEditor, LexicalNode } from "lexical";
 import {
-	createContext,
 	JSX,
+	createContext,
 	useContext,
 	useEffect,
 	useMemo,

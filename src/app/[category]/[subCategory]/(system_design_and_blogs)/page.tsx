@@ -1,16 +1,16 @@
+import { Feed } from "@/components/feed/Feed";
 import { FeedProvider } from "@/components/feed/FeedContext";
-import { PostSortOrder } from "@/utils/types";
 import {
-	SubCategory,
 	PostCategory,
 	PostCategoryType,
+	SubCategory,
 	SubCategoryType,
 } from "@/db/schema/enums";
-import { notFound } from "next/navigation";
 import { fetchPostSearch } from "@/utils/api utils/posts";
-import { Feed } from "@/components/feed/Feed";
-import type { Metadata } from "next";
 import { generateCategoryMetadata } from "@/utils/categoryMetadata";
+import { PostSortOrder } from "@/utils/types";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 type PageProps = Promise<{
 	category: string;
@@ -27,8 +27,8 @@ export async function generateMetadata({
 	const { category: categoryRoute, subCategory: subCategoryRoute } =
 		awaitedParams;
 
-	const category = categoryRoute?.toUpperCase();
-	const subCategory = subCategoryRoute?.toUpperCase() || SubCategory.BLOGS;
+	const category = categoryRoute?.toLowerCase();
+	const subCategory = subCategoryRoute?.toLowerCase() || SubCategory.BLOGS;
 
 	// Validate parameters
 	if (
@@ -81,8 +81,8 @@ export default async function Page({ params }: { params: PageProps }) {
 	awaitedParams.subCategory = awaitedParams.subCategory || SubCategory.BLOGS;
 
 	if (
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.BLOGS &&
-		awaitedParams.subCategory.toUpperCase() !== SubCategory.SYSTEMDESIGN
+		awaitedParams.subCategory.toLowerCase() !== SubCategory.BLOGS &&
+		awaitedParams.subCategory.toLowerCase() !== SubCategory.SYSTEMDESIGN
 	) {
 		return notFound();
 	}

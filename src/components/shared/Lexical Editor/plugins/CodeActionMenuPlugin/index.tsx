@@ -8,17 +8,17 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import {
 	$getNearestNodeFromDOMNode,
 	$getNodeByKey,
-	isHTMLElement,
 	NodeKey,
+	isHTMLElement,
 } from "lexical";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-import { CopyButton } from "./components/CopyButton";
-import { canBePrettier, PrettierButton } from "./components/PrettierButton";
-import { useDebounce } from "./utils";
 import CodeList from "../../ui/drop-downs/code";
+import { CopyButton } from "./components/CopyButton";
+import { PrettierButton, canBePrettier } from "./components/PrettierButton";
+import { useDebounce } from "./utils";
 
 const CODE_PADDING = 8;
 

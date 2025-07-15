@@ -1,6 +1,6 @@
-import { useState } from "react";
-import axios from "axios";
 import { getSignedURL } from "@/actions/fileUpload";
+import axios from "axios";
+import { useState } from "react";
 
 const useFileUpload = () => {
 	const [progress, setProgress] = useState<number>(0); // Upload progress percentage

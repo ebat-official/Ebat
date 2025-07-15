@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { Folder, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { FileTree } from "./FileTree";
 import type { FileSystemTree } from "@webcontainer/api";
+import { Folder, Search } from "lucide-react";
+import React, { useState } from "react";
 import { useWebContainerStore } from "../../store/webContainer";
+import { FileTree } from "./FileTree";
 
 interface FileExplorerProps {
 	files: FileSystemTree;

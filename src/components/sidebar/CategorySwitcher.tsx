@@ -1,8 +1,8 @@
 "use client";
 
+import { ChevronsUpDown, Plus } from "lucide-react";
 import type React from "react";
 import { use, useEffect, useState } from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
 
 import {
 	DropdownMenu,
@@ -13,13 +13,13 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Card } from "../ui/card";
-import { cn } from "@/lib/utils";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import { useSidebar } from "@/context/SidebarContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { cn } from "@/lib/utils";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 
 export function CategorySwitcher() {
 	const { config } = useSidebar();

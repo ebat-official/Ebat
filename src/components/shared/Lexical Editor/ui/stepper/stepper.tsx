@@ -1,12 +1,12 @@
-import { Reorder, AnimatePresence } from "framer-motion";
-import Step from "./step";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { AnimatePresence, Reorder } from "framer-motion";
+import { $getNodeByKey, NodeKey, createEditor } from "lexical";
 import {
 	$isStepperNode,
-	initialEditorState,
 	StepsType,
+	initialEditorState,
 } from "../../nodes/Stepper";
-import { $getNodeByKey, createEditor, NodeKey } from "lexical";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import Step from "./step";
 
 export default function Stepper({
 	steps,

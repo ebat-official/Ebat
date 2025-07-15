@@ -1,4 +1,5 @@
 import { $createCodeNode } from "@lexical/code";
+import { $createHeadingNode } from "@lexical/rich-text";
 import {
 	$createParagraphNode,
 	$createRangeSelection,
@@ -7,13 +8,12 @@ import {
 	$getSelection,
 	$isRangeSelection,
 	$isTextNode,
-	createEditor,
 	ElementNode,
 	LexicalEditor,
 	LexicalNode,
 	TextNode,
+	createEditor,
 } from "lexical";
-import { $createHeadingNode } from "@lexical/rich-text";
 import { $createStepperNode, StepsType } from "../nodes/Stepper";
 
 function getWordsBeforeSelection(

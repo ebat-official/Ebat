@@ -1,15 +1,15 @@
+import CommentContainer from "@/components/comment/CommentContainer";
+import { Separator } from "@/components/ui/separator";
+import { recordPostView } from "@/lib/viewTracker";
+import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
 import React, { FC } from "react";
 import { EditorProvider } from "../shared/Lexical Editor/providers/EditorContext";
 import RightPanelLayout from "../shared/RightPanelLayout";
-import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
 import { Card, CardContent } from "../ui/card";
-import { PostStatsBadge } from "./PostStatsBadge";
-import { Separator } from "@/components/ui/separator";
-import PostDetailsAccordian from "./PostDetailsAccordian";
-import CommentContainer from "@/components/comment/CommentContainer";
 import { PostContentRender } from "./PostContentRender";
+import PostDetailsAccordian from "./PostDetailsAccordian";
 import PostLikeButton from "./PostLikeButton";
-import { recordPostView } from "@/lib/viewTracker";
+import { PostStatsBadge } from "./PostStatsBadge";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;

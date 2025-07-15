@@ -1,5 +1,5 @@
 "use client";
-import { getSidebarConfig, SidebarConfigType } from "@/lib/sidebarConfig";
+import { SidebarConfigType, getSidebarConfig } from "@/lib/sidebarConfig";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type SidebarSettings = { disabled: boolean; isHoverOpen: boolean };

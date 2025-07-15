@@ -1,4 +1,3 @@
-import { Plus, Folder, Trash2, MoreHorizontal, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -6,6 +5,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Folder, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 
 interface FileTreeItemActionsProps {
 	isDirectory: boolean;

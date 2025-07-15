@@ -1,9 +1,9 @@
 import { db } from "@/db";
 import { commentMentions } from "@/db/schema";
+import { COMMENT_ID_NOT_EXIST_ERROR } from "@/utils/errors";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { COMMENT_ID_NOT_EXIST_ERROR } from "@/utils/errors";
 
 export async function GET(
 	request: NextRequest,

@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import { z } from "zod";
-import { UNAUTHENTICATED } from "@/utils/contants";
 import LoginModal from "@/components/auth/LoginModal";
-import { Skeleton } from "@/components/ui/skeleton";
 import PostContentSkeleton from "@/components/post edit/PostContentSkelton";
-import { ContentType, EditorContent } from "@/utils/types";
-import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { UNAUTHENTICATED } from "@/utils/contants";
+import { ContentType, EditorContent } from "@/utils/types";
+import dynamic from "next/dynamic";
+import React, { useEffect, useRef, useState } from "react";
 import { RiQuestionAnswerLine } from "react-icons/ri";
+import { z } from "zod";
+import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
 
 // Dynamically import the Lexical Editor with SSR disabled
 const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {

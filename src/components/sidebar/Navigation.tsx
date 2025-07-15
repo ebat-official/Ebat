@@ -1,20 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import { Ellipsis, LogOut } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CollapseMenuButton } from "./collapse-menu-button";
 import {
 	Tooltip,
-	TooltipTrigger,
 	TooltipContent,
 	TooltipProvider,
+	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSidebar } from "@/context/SidebarContext";
+import { cn } from "@/lib/utils";
+import { CollapseMenuButton } from "./collapse-menu-button";
 
 interface NavigationProps {
 	isOpen: boolean | undefined;

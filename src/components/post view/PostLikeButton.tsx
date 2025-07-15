@@ -1,24 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-	HiThumbUp,
-	HiThumbDown,
-	HiOutlineThumbUp,
-	HiOutlineThumbDown,
-} from "react-icons/hi";
-import { VoteType } from "@/db/schema/enums";
 import { voteAction } from "@/actions/postVoting";
-import { handleError } from "@/utils/handleError";
-import { toast } from "@/hooks/use-toast";
-import LoginModal from "../auth/LoginModal";
-import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
-import { useSession } from "@/lib/auth-client";
-import { useServerAction } from "@/hooks/useServerAction";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { VoteType } from "@/db/schema/enums";
 import { useVotes } from "@/hooks/query/useVotes";
-import { formatNumInK } from "@/utils/formatNumInK";
+import { toast } from "@/hooks/use-toast";
+import { useServerAction } from "@/hooks/useServerAction";
+import { useSession } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 import { ERROR } from "@/utils/contants";
+import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { formatNumInK } from "@/utils/formatNumInK";
+import { handleError } from "@/utils/handleError";
+import React, { useEffect, useState } from "react";
+import {
+	HiOutlineThumbDown,
+	HiOutlineThumbUp,
+	HiThumbDown,
+	HiThumbUp,
+} from "react-icons/hi";
+import LoginModal from "../auth/LoginModal";
 
 function PostLikeButton({
 	postId,

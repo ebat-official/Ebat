@@ -1,13 +1,13 @@
-import { notFound } from "next/navigation";
-import type { Metadata } from "next";
-import { generatePageMetadata } from "@/utils/metadata";
+import DraggablePanel from "@/components/playground/DraggablePanel";
 import PostView from "@/components/post view/PostView";
+import StructuredMetaData from "@/components/shared/StructuredMetaData";
 import { getPostFromURL } from "@/utils/api utils/posts";
-import { PageParams } from "@/utils/types";
 import { getAllApprovedPosts } from "@/utils/api utils/posts";
 import { generatePostPathFromPostId } from "@/utils/generatePostPath";
-import StructuredMetaData from "@/components/shared/StructuredMetaData";
-import DraggablePanel from "@/components/playground/DraggablePanel";
+import { generatePageMetadata } from "@/utils/metadata";
+import { PageParams } from "@/utils/types";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 // incremental SSG,should be in the file
 export async function generateStaticParams() {

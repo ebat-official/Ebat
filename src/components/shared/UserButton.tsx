@@ -1,8 +1,8 @@
-import React, { FC } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import fallbackImg from "@/assets/img/avatarFallback.webp";
-import { signOut, type Session } from "@/lib/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { type Session, signOut } from "@/lib/auth-client";
 import Image from "next/image";
+import React, { FC } from "react";
 
 interface UserButtonProps {
 	session: Session | null;

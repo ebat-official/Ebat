@@ -4,11 +4,11 @@ import type { NodeKey } from "lexical";
 
 import "./index.css";
 
+import { cn } from "@/lib/utils";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from "@lexical/react/LexicalTableOfContentsPlugin";
 import { useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { cn } from "@/lib/utils";
 import { useEditorContext } from "../../providers/EditorContext";
 import { useScrollToNode } from "./useScrollToNode";
 

@@ -1,16 +1,16 @@
-import React from "react";
-import { Card, CardContent } from "../ui/card";
-import { PostStatsBadge } from "../post view/PostStatsBadge";
-import { Separator } from "@/components/ui/separator";
-import PostDetailsAccordian from "../post view/PostDetailsAccordian";
 import CommentContainer from "@/components/comment/CommentContainer";
-import { PostContentRender } from "../post view/PostContentRender";
-import PostLikeButton from "../post view/PostLikeButton";
-import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Lightbulb, MessageCircle, Upload } from "lucide-react";
-import { SubmissionsTable } from "../post edit/challenge/SubmissionsTable";
 import { useSession } from "@/lib/auth-client";
+import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
+import { FileText, Lightbulb, MessageCircle, Upload } from "lucide-react";
+import React from "react";
+import { SubmissionsTable } from "../post edit/challenge/SubmissionsTable";
+import { PostContentRender } from "../post view/PostContentRender";
+import PostDetailsAccordian from "../post view/PostDetailsAccordian";
+import PostLikeButton from "../post view/PostLikeButton";
+import { PostStatsBadge } from "../post view/PostStatsBadge";
+import { Card, CardContent } from "../ui/card";
 import CodeViewer from "./components/editor/CodeViewer";
 
 type ChallengeQuestionViewProps = {

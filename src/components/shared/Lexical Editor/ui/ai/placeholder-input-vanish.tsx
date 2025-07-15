@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 
 export function PlaceholdersAndVanishInput({
 	placeholders,
@@ -62,7 +62,9 @@ export function PlaceholdersAndVanishInput({
 		ctx.clearRect(0, 0, 800, 800);
 		const computedStyles = getComputedStyle(inputRef.current);
 
-		const fontSize = parseFloat(computedStyles.getPropertyValue("font-size"));
+		const fontSize = Number.parseFloat(
+			computedStyles.getPropertyValue("font-size"),
+		);
 		ctx.font = `${fontSize * 2}px ${computedStyles.fontFamily}`;
 		ctx.fillStyle = "#FFF";
 		ctx.fillText(value, 16, 40);
@@ -72,9 +74,9 @@ export function PlaceholdersAndVanishInput({
 		const newData: any[] = [];
 
 		for (let t = 0; t < 800; t++) {
-			let i = 4 * t * 800;
+			const i = 4 * t * 800;
 			for (let n = 0; n < 800; n++) {
-				let e = i + 4 * n;
+				const e = i + 4 * n;
 				if (
 					pixelData[e] !== 0 &&
 					pixelData[e + 1] !== 0 &&
@@ -107,7 +109,7 @@ export function PlaceholdersAndVanishInput({
 	}, [value, draw]);
 
 	const animate = (start: number) => {
-		const animateFrame = (pos: number = 0) => {
+		const animateFrame = (pos = 0) => {
 			requestAnimationFrame(() => {
 				const newArr = [];
 				for (let i = 0; i < newDataRef.current.length; i++) {
@@ -130,7 +132,7 @@ export function PlaceholdersAndVanishInput({
 				if (ctx) {
 					ctx.clearRect(pos, 0, 800, 800);
 					newDataRef.current.forEach((t) => {
-						const { x: n, y: i, r: s, color: color } = t;
+						const { x: n, y: i, r: s, color } = t;
 						if (n > pos) {
 							ctx.beginPath();
 							ctx.rect(n, i, s, s);

@@ -1,7 +1,7 @@
 import { usePost } from "@/hooks/query/usePost";
 import { usePostDraft } from "@/hooks/query/usePostDraft";
-import { PostWithContent } from "@/utils/types";
 import { POST_ACTIONS } from "@/utils/contants";
+import { PostWithContent } from "@/utils/types";
 import { usePostEdit } from "./usePostEdit";
 
 type PostFetchParams = {

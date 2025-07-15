@@ -1,6 +1,10 @@
-import { TooltipContent } from "@radix-ui/react-tooltip";
-import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Flame } from "lucide-react";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "../ui/tooltip";
 
 export const ViewsBadge = ({
 	views,

@@ -1,10 +1,10 @@
+import { $generateNodesFromDOM } from "@lexical/html";
 import {
 	$getRoot,
 	$getSelection,
 	LexicalEditor,
 	RangeSelection,
 } from "lexical";
-import { $generateNodesFromDOM } from "@lexical/html";
 
 /**
  * Replaces the root content of the Lexical editor with nodes generated from an HTML string.

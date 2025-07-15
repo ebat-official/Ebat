@@ -2,13 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { motion, AnimatePresence } from "framer-motion";
 
-import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -34,8 +32,10 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
-import PasswordChangeForm from "./password-change-form";
+import PasswordChangeForm from "./PasswordChangeForm";
 
 const languages = [
 	{ label: "English", value: "en" },

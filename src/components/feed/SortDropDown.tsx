@@ -1,5 +1,3 @@
-import React from "react";
-import { FaSortAmountDown } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -10,8 +8,10 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PostSortOrder } from "@/utils/types";
 import { cn } from "@/lib/utils";
+import { PostSortOrder } from "@/utils/types";
+import React from "react";
+import { FaSortAmountDown } from "react-icons/fa";
 
 interface SortDropdownProps {
 	value: PostSortOrder;

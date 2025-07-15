@@ -1,7 +1,7 @@
-import { CodeEditorState } from "@/components/playground/types";
 import { LANGUAGE_CONFIG } from "@/components/playground/constants";
-import { create } from "zustand";
+import { CodeEditorState } from "@/components/playground/types";
 import { editor } from "monaco-editor";
+import { create } from "zustand";
 
 const getInitialState = () => {
 	// if we're on the server, return default values

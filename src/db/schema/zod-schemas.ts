@@ -1,24 +1,24 @@
+import { type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { z } from "zod";
-import { type InferSelectModel, type InferInsertModel } from "drizzle-orm";
+import { account, session, user, verification } from "./auth";
 import {
-	users,
-	follows,
-	posts,
-	postViews,
-	postEdits,
-	postCollaborators,
-	comments,
-	commentVotes,
-	commentMentions,
-	votes,
 	bookmarks,
-	notifications,
-	reports,
-	completionStatuses,
-	challengeTemplates,
 	challengeSubmissions,
+	challengeTemplates,
+	commentMentions,
+	commentVotes,
+	comments,
+	completionStatuses,
+	follows,
+	notifications,
+	postCollaborators,
+	postEdits,
+	postViews,
+	posts,
+	reports,
+	users,
+	votes,
 } from "./index";
-import { user, session, account, verification } from "./auth";
 
 // Type exports using native Drizzle inference
 export type User = InferSelectModel<typeof user>;

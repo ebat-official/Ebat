@@ -1,13 +1,13 @@
-import { ZodError } from "zod";
 import { PostType } from "@/db/schema/enums";
-import { CustomErrorType, GenerateActionReturnType } from "./types";
+import { ZodError } from "zod";
 import { INVALID_DIFFICULTY } from "./contants";
+import { CustomErrorType, GenerateActionReturnType } from "./types";
 
 export const sanitizeErrorMessage = (
 	message: string,
 	postType?: PostType,
 ): string => {
-	if (postType === "QUESTION") {
+	if (postType === PostType.QUESTION) {
 		return message.replace(/\btitle\b/gi, "question");
 	}
 	return message;

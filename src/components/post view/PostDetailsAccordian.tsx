@@ -1,4 +1,3 @@
-import React, { FC } from "react";
 import {
 	Accordion,
 	AccordionContent,
@@ -6,30 +5,31 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Post } from "@/db/schema/zod-schemas";
 import { PostType } from "@/db/schema/enums";
+import { Post } from "@/db/schema/zod-schemas";
 import { normalizeCompaniesData } from "@/hooks/useCompanyList";
 import companiesData from "@/utils/companyListConfig";
+import React, { FC } from "react";
 import { AiOutlineTag } from "react-icons/ai";
-import { IoPeopleOutline } from "react-icons/io5";
 import { CiCircleList, CiViewList } from "react-icons/ci";
+import { IoPeopleOutline } from "react-icons/io5";
 
-import { RiBuilding2Line } from "react-icons/ri";
+import { TableOfContent } from "@/components/post view/TableOfContent";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
-import {
-	PostWithExtraDetails,
-	TableOfContent as TableOfContentType,
-} from "@/utils/types";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { TableOfContent } from "@/components/post view/TableOfContent";
-import { Card, CardContent } from "../ui/card";
+import {
+	PostWithExtraDetails,
+	TableOfContent as TableOfContentType,
+} from "@/utils/types";
+import Image from "next/image";
 import { FaListUl } from "react-icons/fa";
+import { RiBuilding2Line } from "react-icons/ri";
+import { Card, CardContent } from "../ui/card";
 
 type PostDetailsAccordianProps = {
 	post: PostWithExtraDetails;

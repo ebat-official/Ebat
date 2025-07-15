@@ -1,10 +1,10 @@
-import React, { FC } from "react";
 import ButtonBlue from "@/components/shared/ButtonBlue";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import type { TemplateStep } from "./StepIndicator";
+import React, { FC } from "react";
 import type { FileSystemTree, Template } from "../../playground/lib/types";
 import ProgressIndicators from "./ProgressIndicators";
+import type { TemplateStep } from "./StepIndicator";
 
 interface ActionButtonsProps {
 	currentStep: TemplateStep;

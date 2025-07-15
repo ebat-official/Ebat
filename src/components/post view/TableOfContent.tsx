@@ -1,7 +1,7 @@
 "use client";
+import { cn } from "@/lib/utils"; // Ensure you have the `cn` utility imported
 import { TableOfContent as TableOfContentType } from "@/utils/types";
 import React, { FC, useEffect, useState } from "react";
-import { cn } from "@/lib/utils"; // Ensure you have the `cn` utility imported
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
 interface TableOfContentProps {

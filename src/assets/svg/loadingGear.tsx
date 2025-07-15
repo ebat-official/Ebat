@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import React, { FC } from "react";
 
 interface LoadingGearProps {
-	className?: String;
+	className?: string;
 }
 
 const LoadingGear: FC<LoadingGearProps> = ({ className }) => {

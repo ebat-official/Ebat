@@ -1,5 +1,6 @@
 "use client";
-import React, { FC, useState } from "react";
+import ButtonDark from "@/components/shared/ButtonDark";
+import FormError from "@/components/shared/FormError";
 import {
 	Dialog,
 	DialogContent,
@@ -8,15 +9,14 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import ButtonDark from "@/components/shared/ButtonDark";
-import * as z from "zod";
-import { useForm, Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { ERROR, LOADING, SUCCESS } from "@/utils/contants";
-import { authClient } from "@/lib/auth-client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
-import FormError from "@/components/shared/FormError";
+import React, { FC, useState } from "react";
+import { Resolver, useForm } from "react-hook-form";
+import * as z from "zod";
 
 interface ForgotPasswordProps {
 	open: boolean;

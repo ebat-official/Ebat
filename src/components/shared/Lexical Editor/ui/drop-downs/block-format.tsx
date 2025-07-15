@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { LexicalEditor } from "lexical";
 import {
-	Pilcrow,
+	Braces,
 	Heading1,
 	Heading2,
 	Heading3,
@@ -8,11 +8,13 @@ import {
 	Heading5,
 	Heading6,
 	List,
-	ListTodo,
 	ListOrdered,
-	Braces,
+	ListTodo,
+	Pilcrow,
 	Quote,
 } from "lucide-react";
+import { useMemo } from "react";
+import { DropDown } from ".";
 import {
 	formatBulletList,
 	formatCheckList,
@@ -22,8 +24,6 @@ import {
 	formatParagraph,
 	formatQuote,
 } from "../../utils/editorFormatting";
-import { LexicalEditor } from "lexical";
-import { DropDown } from ".";
 
 const blockTypeToBlockName = {
 	paragraph: "Paragraph",

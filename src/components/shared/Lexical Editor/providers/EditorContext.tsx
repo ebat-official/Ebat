@@ -1,5 +1,7 @@
 "use client";
+import { EditorFileUpload } from "@/utils/types";
 import { TableOfContentsEntry } from "@lexical/react/LexicalTableOfContentsPlugin";
+import { $getRoot, LexicalEditor, NodeKey } from "lexical"; // Import LexicalEditor type
 import React, {
 	createContext,
 	useContext,
@@ -8,10 +10,8 @@ import React, {
 	useCallback,
 	useMemo,
 } from "react";
-import { $getRoot, LexicalEditor, NodeKey } from "lexical"; // Import LexicalEditor type
-import { PLUGIN_CONFIG, pluginConfig, PluginConfigured } from "../appSettings";
+import { PLUGIN_CONFIG, PluginConfigured, pluginConfig } from "../appSettings";
 import { PluginNames } from "../constants";
-import { EditorFileUpload } from "@/utils/types";
 
 interface EditorContextType {
 	id: string;

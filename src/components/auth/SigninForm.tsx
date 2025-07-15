@@ -1,23 +1,23 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
-import { useForm, Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { cn } from "@/lib/utils";
 import ButtonBlue from "@/components/shared/ButtonBlue";
+import { Input } from "@/components/ui/input";
 // import useLoginUser from '@/hooks/useLoginUser';
 import { useToast } from "@/hooks/use-toast";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 // Note: useSearchParams removed - no longer needed for email verification
 import { ERROR, LOADING, PASSWORD, SUCCESS, TEXT } from "@/utils/contants";
-import ForgotPassword from "./ForgotPassword";
-import EmailVerificationModal from "./EmailVerificationModal";
-import { authClient } from "@/lib/auth-client";
-import { Input } from "@/components/ui/input";
-import { isRedirectError } from "next/dist/client/components/redirect-error";
 import parseRedirectError from "@/utils/parseRedirectError";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import EyeButton from "./EyeButton";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import Link from "next/link";
+import React, { FC, useEffect, useState } from "react";
+import { Resolver, useForm } from "react-hook-form";
+import * as z from "zod";
+import EmailVerificationModal from "./EmailVerificationModal";
+import EyeButton from "./EyeButton";
+import ForgotPassword from "./ForgotPassword";
 
 type FormValues = {
 	email: string;

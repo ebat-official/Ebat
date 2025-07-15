@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import { RefreshCw, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ExternalLink, RefreshCw } from "lucide-react";
+import React from "react";
 
 interface PreviewControlsProps {
 	onRefresh: () => void;

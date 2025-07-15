@@ -10,8 +10,8 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { $insertNodeToNearestRoot } from "@lexical/utils";
 import {
 	COMMAND_PRIORITY_EDITOR,
-	createCommand,
 	LexicalCommand,
+	createCommand,
 } from "lexical";
 import { JSX, useEffect } from "react";
 import { $createYouTubeNode, YouTubeNode } from "../YouTubeNode";

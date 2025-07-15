@@ -1,27 +1,27 @@
 "use client";
-import React, { FC, useCallback, useMemo, useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { TemplateFramework } from "@/db/schema/enums";
+import React, { FC, useCallback, useMemo, useState, useEffect } from "react";
 import { OnlineIDE } from "../../playground/components/OnlineIde";
 import { BottomPanel } from "../../playground/components/ide/BottomPanel";
 import { PreviewPanel } from "../../playground/components/preview/PreviewPanel";
-import { useWebContainerStore } from "../../playground/store/webContainer";
-import { Card } from "@/components/ui/card";
-import { TemplateFramework } from "@/db/schema/enums";
-import { extractSrcFromTemplate } from "../../playground/utils/templateUtils";
+import { useTemplateManagement } from "../../playground/hooks";
 import type { Template } from "../../playground/lib/types";
+import { useWebContainerStore } from "../../playground/store/webContainer";
+import { extractSrcFromTemplate } from "../../playground/utils/templateUtils";
+import DefaultFileSelector from "./DefaultFileSelector";
 import {
-	StepIndicator,
-	StepDescription,
-	LoadingOverlay,
 	ActionButtons,
+	LoadingOverlay,
+	StepDescription,
+	StepIndicator,
 	TestValidationModal,
 } from "./index";
-import DefaultFileSelector from "./DefaultFileSelector";
-import { useTemplateManagement } from "../../playground/hooks";
 
 type TemplateStep = "answer" | "question";
 

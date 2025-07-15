@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
 import type { NodeKey } from "lexical";
+import { useEffect, useRef, useState } from "react";
 import { useEditorContext } from "../../providers/EditorContext";
 
 export function useScrollToNode() {

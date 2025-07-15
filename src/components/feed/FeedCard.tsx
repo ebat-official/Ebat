@@ -1,23 +1,23 @@
-import React from "react";
-import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { FiCheckCircle } from "react-icons/fi";
-import { cn } from "@/lib/utils";
-import { DifficultyBadge } from "../shared/DifficultyBadge";
-import { ViewsBadge } from "../shared/viewsBadge";
-import { FeedPost } from "@/utils/types";
 import { Difficulty } from "@/db/schema/enums";
-import { usePathname, useRouter } from "next/navigation";
-import { useFeedContext } from "./FeedContext";
+import { cn } from "@/lib/utils";
+import { FeedPost } from "@/utils/types";
 import Image from "next/image";
-import AuthorNudge from "../post view/AuthorNudge";
-import { Badge } from "../ui/badge";
-import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
-import { PostLikeDummyButton } from "./PostLikeButton";
-import { FaRegCommentDots } from "react-icons/fa";
-import { Button } from "../ui/button";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
 import { BsBookmarkHeart } from "react-icons/bs";
+import { FaRegCommentDots } from "react-icons/fa";
+import { FiCheckCircle } from "react-icons/fi";
 import { LuBookmarkPlus, LuShare2 } from "react-icons/lu";
+import AuthorNudge from "../post view/AuthorNudge";
+import { DifficultyBadge } from "../shared/DifficultyBadge";
+import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
+import { ViewsBadge } from "../shared/viewsBadge";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { useFeedContext } from "./FeedContext";
+import { PostLikeDummyButton } from "./PostLikeButton";
 
 interface FeedCardProps {
 	post: FeedPost;

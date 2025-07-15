@@ -1,5 +1,5 @@
-import Navbar from "./Navbar";
 import { useSession } from "@/lib/auth-client";
+import Navbar from "./Navbar";
 
 export default function Nav() {
 	const { data: session } = useSession();

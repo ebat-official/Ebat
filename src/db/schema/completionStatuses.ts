@@ -1,9 +1,9 @@
 import {
 	pgTable,
-	uuid,
-	varchar,
 	timestamp,
 	uniqueIndex,
+	uuid,
+	varchar,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { posts } from "./posts";

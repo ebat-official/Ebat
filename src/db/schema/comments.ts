@@ -1,18 +1,18 @@
 import {
-	pgTable,
-	uuid,
-	varchar,
-	text,
-	timestamp,
+	foreignKey,
+	index,
 	integer,
 	json,
+	pgTable,
+	text,
+	timestamp,
 	uniqueIndex,
-	index,
-	foreignKey,
+	uuid,
+	varchar,
 } from "drizzle-orm/pg-core";
 
-import { voteTypeEnum } from "./enums";
 import { user } from "./auth";
+import { voteTypeEnum } from "./enums";
 import { posts } from "./posts";
 
 import { bytea } from "@/db/database-types";

@@ -1,5 +1,7 @@
 import type { LexicalEditor } from "lexical";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
 	AutoEmbedOption,
 	EmbedConfig,
@@ -8,14 +10,12 @@ import {
 	URL_MATCHER,
 } from "@lexical/react/LexicalAutoEmbedPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { Twitter, Youtube } from "lucide-react";
 import { useMemo, useState } from "react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { INSERT_YOUTUBE_COMMAND } from "../YouTubePlugin";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Twitter, Youtube } from "lucide-react";
 import useModal from "../../ui/models/use-model";
+import { INSERT_YOUTUBE_COMMAND } from "../YouTubePlugin";
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
 	// Human readable name of the embeded content e.g. Tweet or Google Map.

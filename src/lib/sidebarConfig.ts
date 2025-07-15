@@ -1,12 +1,14 @@
 import {
-	Tag,
-	Users,
-	Settings,
-	LayoutGrid,
-	LucideIcon,
 	AudioWaveform,
 	Command,
+	LayoutGrid,
+	LucideIcon,
+	Settings,
+	Tag,
+	Users,
 } from "lucide-react";
+import { IconType } from "react-icons";
+import { DiJavascript1 } from "react-icons/di";
 import {
 	FaCss3,
 	FaHtml5,
@@ -14,10 +16,8 @@ import {
 	FaReact,
 	FaSitemap,
 } from "react-icons/fa";
-import { IconType } from "react-icons";
-import { IoLogoJavascript } from "react-icons/io";
-import { DiJavascript1 } from "react-icons/di";
 import { ImHtmlFive2 } from "react-icons/im";
+import { IoLogoJavascript } from "react-icons/io";
 type Submenu = {
 	href: string;
 	label: string;

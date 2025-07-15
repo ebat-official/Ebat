@@ -1,30 +1,30 @@
-import { blockTypeToBlockName } from "../../../providers/ToolbarContext";
+import { Separator } from "@/components/ui/separator";
+import { Toggle } from "@/components/ui/toggle";
+import { EditorBlockType } from "@/utils/types";
+import { TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { mergeRegister } from "@lexical/utils";
 import {
 	$getSelection,
 	COMMAND_PRIORITY_LOW,
 	FORMAT_TEXT_COMMAND,
-	getDOMSelection,
 	LexicalEditor,
 	SELECTION_CHANGE_COMMAND,
+	getDOMSelection,
 } from "lexical";
+import { Bold, Code, Italic, Link, UnderlineIcon } from "lucide-react";
 import { Dispatch, useCallback, useEffect, useRef } from "react";
-import { TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { useIsMobile } from "../../../hooks/use-mobile";
+import { SHORTCUTS } from "../../../plugins/ShortcutsPlugin/shortcuts";
+import { blockTypeToBlockName } from "../../../providers/ToolbarContext";
 import { getDOMRangeRect } from "../../../utils/getDOMRangeRect";
 import { setFloatingElemPosition } from "../../../utils/setFloatingElemPosition";
-import { mergeRegister } from "@lexical/utils";
-import { Separator } from "@/components/ui/separator";
-import BlockFormatDropDown from "../../drop-downs/block-format";
-import { useIsMobile } from "../../../hooks/use-mobile";
-import { Toggle } from "@/components/ui/toggle";
-import { SHORTCUTS } from "../../../plugins/ShortcutsPlugin/shortcuts";
-import { Bold, Code, Italic, Link, UnderlineIcon } from "lucide-react";
-import Color from "../../drop-downs/color";
 import { sanitizeUrl } from "../../../utils/url";
-import TextFormat from "../../drop-downs/text-format";
+import AiButton from "../../ai/ai-button";
+import BlockFormatDropDown from "../../drop-downs/block-format";
+import Color from "../../drop-downs/color";
 import Font from "../../drop-downs/font";
 import FontSize from "../../drop-downs/font-size";
-import AiButton from "../../ai/ai-button";
-import { EditorBlockType } from "@/utils/types";
+import TextFormat from "../../drop-downs/text-format";
 
 export default function TextFormatFloatingToolbar({
 	editor,
