@@ -6,6 +6,10 @@ import Image from "next/image";
 import React, { FC } from "react";
 import { FaGithub } from "react-icons/fa";
 import { Button } from "../ui/button";
+import { SiGithub } from "react-icons/si";
+
+import { VscGithub } from "react-icons/vsc";
+import { BsGithub } from "react-icons/bs";
 
 interface SocialAuthProps {
 	loadingHandler: (isLoading: boolean) => void;
@@ -33,22 +37,24 @@ const SocialAuth: FC<SocialAuthProps> = ({ loadingHandler }) => {
 			<Button
 				variant="outline"
 				onClick={() => SocialLoginHandler("github")}
-				className="flex relative items-center justify-center px-6 py-6 text-xs font-bold text-center text-gray-200 uppercase align-middle transition-all bg-transparent border border-gray-200 border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 hover:bg-transparent hover:opacity-75"
+				className=" w-18 h-full relative"
 			>
-				<FaGithub size={26} className="text-gray-900 dark:text-white" />
+				<div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+					<BsGithub className="text-gray-900 dark:text-white py-0 scale-150" />
+				</div>
 			</Button>
 
 			<Button
 				variant="outline"
+				className="p-6"
 				onClick={() => SocialLoginHandler("google")}
-				className="flex relative items-center justify-center  px-6 py-6 text-xs font-bold text-center text-gray-200 uppercase align-middle transition-all bg-transparent border border-gray-200 border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 hover:bg-transparent hover:opacity-75"
 			>
 				<Image priority src={googleIcon} alt="google signup" />
 			</Button>
 
 			<Button
 				variant="outline"
-				className="flex relative items-center justify-center  px-6 py-6 text-xs font-bold text-center text-gray-200 uppercase align-middle transition-all bg-transparent border border-gray-200 border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 hover:bg-transparent hover:opacity-75"
+				className="p-6 hover:bg-transparent hover:opacity-75"
 				onClick={() => SocialLoginHandler("linkedin")}
 			>
 				<Image priority src={linkedinIcon} alt="google signup" />
