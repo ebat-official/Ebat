@@ -2,7 +2,7 @@
 import { db } from "@/db";
 import { votes } from "@/db/schema";
 import { VoteType } from "@/db/schema/enums";
-import { SUCCESS } from "@/utils/contants";
+import { SUCCESS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR, ValidationErr } from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";

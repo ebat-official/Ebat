@@ -2,7 +2,7 @@
 
 import QuestionCreateEdit from "@/components/post edit/PostCreateEdit";
 import { PostType } from "@/db/schema/enums";
-import { POST_ACTIONS } from "@/utils/contants";
+import { POST_ACTIONS } from "@/utils/constants";
 import isValidCategory from "@/utils/isValidCategory";
 import isValidSubCategory from "@/utils/isValidSubCategory";
 import { notFound, useParams } from "next/navigation";

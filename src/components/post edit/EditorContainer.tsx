@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PostType, TemplateFramework } from "@/db/schema/enums";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
-import { POST_ACTIONS } from "@/utils/contants";
+import { POST_ACTIONS } from "@/utils/constants";
 import {
 	ChallengeTemplate,
 	ContentType,

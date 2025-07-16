@@ -1,6 +1,6 @@
 import { usePost } from "@/hooks/query/usePost";
 import { usePostDraft } from "@/hooks/query/usePostDraft";
-import { POST_ACTIONS } from "@/utils/contants";
+import { POST_ACTIONS } from "@/utils/constants";
 import { PostWithContent } from "@/utils/types";
 import { usePostEdit } from "./usePostEdit";
 

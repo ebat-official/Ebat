@@ -1,7 +1,7 @@
 // lib/hooks/useComments.ts
 
 import { fetchComments } from "@/utils/api utils/comment";
-import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import { COMMENT_SORT_OPTIONS } from "@/utils/constants";
 import type { CommentSortOption, PaginatedComments } from "@/utils/types"; // Replace with actual path
 import {
 	UseQueryResult,

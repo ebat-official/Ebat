@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import { useServerAction } from "@/hooks/useServerAction";
-import { SUCCESS } from "@/utils/contants";
+import { SUCCESS } from "@/utils/constants";
 // components/CommentActionButton.tsx
 import { useState } from "react";
 import { IoIosMore } from "react-icons/io";

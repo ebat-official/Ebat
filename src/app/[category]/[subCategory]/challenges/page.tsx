@@ -2,7 +2,7 @@ import { FeedProvider } from "@/components/feed/FeedContext";
 import { FeedList } from "@/components/feed/FeedList";
 import { PostType, SubCategory } from "@/db/schema/enums";
 import { fetchPostSearch } from "@/utils/api utils/posts";
-import { EndpointMap } from "@/utils/contants";
+import { EndpointMap } from "@/utils/constants";
 import { PostSearchResponse, PostSortOrder } from "@/utils/types";
 import { notFound } from "next/navigation";
 

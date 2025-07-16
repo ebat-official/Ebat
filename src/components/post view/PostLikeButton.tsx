@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import { useServerAction } from "@/hooks/useServerAction";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { ERROR } from "@/utils/contants";
+import { ERROR } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { formatNumInK } from "@/utils/formatNumInK";
 import { handleError } from "@/utils/handleError";

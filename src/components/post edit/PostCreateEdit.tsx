@@ -11,7 +11,7 @@ import { usePostFetchManager } from "@/hooks/query/usePostFetchManager";
 import { usePostPublishManager } from "@/hooks/query/usePostPublishManager";
 import { toast } from "@/hooks/use-toast";
 import { generateNanoId } from "@/lib/generateNanoid";
-import { POST_ACTIONS } from "@/utils/contants";
+import { POST_ACTIONS } from "@/utils/constants";
 import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
 import { handleError } from "@/utils/handleError";

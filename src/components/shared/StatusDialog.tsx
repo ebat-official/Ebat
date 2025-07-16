@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { SUCCESS } from "@/utils/contants";
+import { SUCCESS } from "@/utils/constants";
 import { ReactNode, useEffect, useRef } from "react";
 import { FaCheck, FaCross } from "react-icons/fa";
 import { FaSkullCrossbones } from "react-icons/fa";

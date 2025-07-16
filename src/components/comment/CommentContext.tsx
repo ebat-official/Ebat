@@ -1,6 +1,6 @@
 "use client";
 import { useComments } from "@/hooks/query/useComments";
-import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import { COMMENT_SORT_OPTIONS } from "@/utils/constants";
 import { CommentSortOption, CommentWithVotes } from "@/utils/types";
 import React, { createContext, useContext, useState, useEffect } from "react";
 

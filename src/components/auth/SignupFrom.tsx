@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { PASSWORD, TEXT } from "@/utils/contants";
+import { PASSWORD, TEXT } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { FC, useState, useMemo } from "react";
 import { Resolver, useForm } from "react-hook-form";

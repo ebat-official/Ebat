@@ -12,7 +12,7 @@ import { PostType } from "@/db/schema/enums";
 import { PostCategory, SubCategory } from "@/db/schema/enums";
 import { CommentMention } from "@/db/schema/zod-schemas";
 import { count, eq } from "drizzle-orm";
-import { UNKNOWN_ERROR } from "../contants";
+import { UNKNOWN_ERROR } from "../constants";
 import { ID_NOT_EXIST_ERROR } from "../errors";
 import { isValidCategoryCombo } from "../isValidCategoryCombo";
 import {

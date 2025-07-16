@@ -18,7 +18,7 @@ import { MentionData } from "../shared/Lexical Editor/plugins/MentionPlugin/Ment
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 
-import { ERROR } from "@/utils/contants";
+import { ERROR } from "@/utils/constants";
 const Editor = dynamic(() => import("./CommentEditor"), {
 	ssr: false,
 	loading: () => <Skeleton className="w-full h-28 " />,

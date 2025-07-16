@@ -9,7 +9,7 @@ import {
 } from "@/db/schema/enums";
 import { ChallengeSubmission } from "@/db/schema/zod-schemas";
 import { ChallengeSubmissionValidator } from "@/lib/validators/submission";
-import { ERROR, POST_ID_REQUIRED, SUCCESS } from "@/utils/contants";
+import { ERROR, POST_ID_REQUIRED, SUCCESS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR, ValidationErr } from "@/utils/errors";
 import {
 	CHALLENGE_NOT_FOUND_ERROR,

@@ -21,7 +21,7 @@ import {
 	UNAUTHORIZED,
 	UNKNOWN_ERROR as UNKNOWN_ERROR_MESSAGE,
 	USER_NOT_FOUND,
-} from "@/utils/contants";
+} from "@/utils/constants";
 import { ErrorType } from "./types";
 
 // Define errors with more user-friendly cause names

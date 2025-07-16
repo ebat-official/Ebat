@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/actions/user";
 import { redis } from "@/lib/redis";
 import { getCommentsWithVotes } from "@/utils/api utils/comment-server";
-import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import { COMMENT_SORT_OPTIONS } from "@/utils/constants";
 import { CommentSortOption } from "@/utils/types";
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";

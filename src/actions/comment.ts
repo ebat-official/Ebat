@@ -7,7 +7,7 @@ import { VoteType } from "@/db/schema/enums";
 import { Comment } from "@/db/schema/zod-schemas";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { compressContent, decompressContent } from "@/utils/compression";
-import { ERROR, SUCCESS } from "@/utils/contants";
+import { ERROR, SUCCESS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
 import { and, count, eq } from "drizzle-orm";

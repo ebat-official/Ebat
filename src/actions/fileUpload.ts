@@ -5,7 +5,7 @@ import {
 	MAX_POSTS_IMAGE_SIZE,
 	MAX_POSTS_VIDEO_SIZE,
 } from "@/config";
-import { SUCCESS } from "@/utils/contants";
+import { SUCCESS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";

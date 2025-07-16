@@ -26,7 +26,7 @@ import {
 	POST_ACTIONS,
 	POST_ROUTE_TYPE,
 	SUCCESS,
-} from "./contants";
+} from "./constants";
 
 // Challenge template type
 export interface ChallengeTemplate {
