@@ -1,20 +1,22 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-transition-progress/next";
 import { Difficulty } from "@/db/schema/enums";
 import { cn } from "@/lib/utils";
 import { FeedPost } from "@/utils/types";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useState, startTransition } from "react";
 import { BsBookmarkHeart } from "react-icons/bs";
 import { FaRegCommentDots } from "react-icons/fa";
 import { FiCheckCircle } from "react-icons/fi";
 import { LuBookmarkPlus, LuShare2 } from "react-icons/lu";
+import { useProgress } from "react-transition-progress";
 import AuthorNudge from "../post view/AuthorNudge";
 import { DifficultyBadge } from "../shared/DifficultyBadge";
 import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
 import { ViewsBadge } from "../shared/viewsBadge";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { useFeedContext } from "./FeedContext";
 import { PostLikeDummyButton } from "./PostLikeButton";
@@ -27,19 +29,30 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 	const { completionStatuses } = useFeedContext();
 	const pathname = usePathname();
 	const router = useRouter();
+	const startProgress = useProgress();
 
 	const getUrl = (post: FeedPost) => `${pathname}/${post.slug}-${post.id}`;
 
 	const handleCardClick = () => {
-		router.push(getUrl(post));
+		startTransition(async () => {
+			startProgress();
+			// Navigate to the post
+			router.push(getUrl(post));
+		});
+	};
+
+	const handleKeyDown = (event: React.KeyboardEvent) => {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			handleCardClick();
+		}
 	};
 
 	return (
 		<li
 			key={post.id}
-			role="button"
-			tabIndex={0}
 			onClick={handleCardClick}
+			onKeyDown={handleKeyDown}
 			className="cursor-pointer block overflow-hidden"
 		>
 			<Card className="relative pb-2">

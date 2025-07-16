@@ -10,8 +10,7 @@ import { FeedPost } from "@/utils/types";
 import { PostSearchResponse } from "@/utils/types";
 import { formatDistanceToNow } from "date-fns";
 import { Clock, Eye, MessageCircle, ThumbsUp, User } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link } from "react-transition-progress/next";
 import React, { FC } from "react";
 import { FiCheckCircle } from "react-icons/fi";
 import { DifficultyBadge } from "../shared/DifficultyBadge";
@@ -22,17 +21,12 @@ import { FeedPagination } from "./FeedPagination";
 import FeedSearch from "./FeedSearch";
 import NoSearchResults from "./NoSearchResults";
 import { QuestionSkeleton } from "./QuestionSkelton";
-
-interface QuestionsListProps {
-	posts: PostSearchResponse["posts"];
-	hasMore: boolean;
-	onLoadMore: () => void;
-	isLoading: boolean;
-}
+import { usePathname } from "next/navigation";
 
 const QuestionsList: FC = () => {
-	const { posts, isLoadingData, completionStatuses, context, pageSize } =
+	const { posts, isLoadingData, completionStatuses, pageSize } =
 		useFeedContext();
+
 	const pathname = usePathname();
 
 	const getUrl = (post: FeedPost) => `${pathname}/${post.slug}-${post.id}`;

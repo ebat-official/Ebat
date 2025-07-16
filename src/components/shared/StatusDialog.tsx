@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { SUCCESS } from "@/utils/contants";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { FaCheck, FaCross } from "react-icons/fa";
 import { FaSkullCrossbones } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
@@ -31,18 +31,29 @@ const StatusDialog: React.FC<StatusDialogProps> & StatusDialogSubComponents = ({
 	enableAnimation = true,
 }) => {
 	const isSuccess = type === SUCCESS;
+	const hasAnimated = useRef(false);
 	const { reward: confettiReward, isAnimating: isConfettiAnimating } =
 		useReward("rewardId", "confetti");
+
 	useEffect(() => {
-		if (isSuccess && enableAnimation) {
+		if (
+			isSuccess &&
+			enableAnimation &&
+			!isConfettiAnimating &&
+			!hasAnimated.current
+		) {
+			hasAnimated.current = true;
 			setTimeout(() => {
 				confettiReward();
 			});
 		}
-	}, [isSuccess, enableAnimation]);
+	}, [isSuccess, enableAnimation, confettiReward, isConfettiAnimating]);
 	return (
 		<Dialog modal={!allowOutsideClick} open onOpenChange={onClose}>
-			<DialogContent className="max-w-sm p-6 text-white border-none rounded-lg bg-linear-to-br from-gray-800 to-black ">
+			<DialogContent
+				showCloseButton={false}
+				className="max-w-sm p-6 text-white border-none rounded-lg bg-linear-to-br from-gray-800 to-black "
+			>
 				<DialogHeader
 					id="rewardId"
 					className="absolute top-0 flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 left-1/2"

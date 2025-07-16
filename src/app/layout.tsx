@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import QueryProvider from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ProgressBar, ProgressBarProvider } from "react-transition-progress";
 
 const inter = Inter({
 	variable: "--font-inter",
@@ -41,7 +42,10 @@ export default function RootLayout({
 				className={`${inter.variable} ${sourceCodePro.variable} ${sourceSerif4.variable} font-source-serif antialiased relative var(--background) overflow-x-hidden`}
 			>
 				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-					<QueryProvider>{children}</QueryProvider>
+					<ProgressBarProvider>
+						<ProgressBar className="fixed h-1 shadow-lg shadow-sky-500/20 bg-sky-500 top-0 z-50" />
+						<QueryProvider>{children}</QueryProvider>
+					</ProgressBarProvider>
 				</ThemeProvider>
 				<Toaster />
 				<Sonner />

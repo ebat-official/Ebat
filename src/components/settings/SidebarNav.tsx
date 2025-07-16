@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "react-transition-progress/next";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 	items: {

@@ -18,9 +18,17 @@ import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import React, { FC, useEffect, useRef, useState, Suspense } from "react";
+import React, {
+	FC,
+	useEffect,
+	useRef,
+	useState,
+	Suspense,
+	startTransition,
+} from "react";
 import { Resolver, useForm } from "react-hook-form";
 import * as z from "zod";
+import { useProgress } from "react-transition-progress";
 
 type FormValues = {
 	password: string;
@@ -47,6 +55,7 @@ const resolver: Resolver<FormValues> = zodResolver(schema);
 
 const ResetPassword: FC = () => {
 	const router = useRouter();
+	const startProgress = useProgress();
 	const searchParams = useSearchParams();
 	const verificationToken = searchParams.get(TOKEN);
 	const {
@@ -119,7 +128,10 @@ const ResetPassword: FC = () => {
 		if (intrvl.current) {
 			clearInterval(intrvl.current);
 		}
-		router.push("/");
+		startTransition(async () => {
+			startProgress();
+			router.push("/");
+		});
 	}
 
 	return (

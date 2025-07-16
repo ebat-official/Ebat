@@ -1,5 +1,5 @@
 import { MenuIcon, PanelsTopLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 
 import { Button } from "@/components/ui/button";
 import {

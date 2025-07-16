@@ -104,6 +104,7 @@
 		"react-spinners": "^0.15.0",
 		"react-syntax-highlighter": "15.6.1",
 		"react-textarea-autosize": "^8.5.7",
+		"react-transition-progress": "0.0.4",
 		"recharts": "^2.15.4",
 		"slugify": "^1.6.6",
 		"sonner": "^1.7.4",

@@ -1,7 +1,6 @@
 "use client";
 
 import { Ellipsis, LogOut } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import {
 import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import { CollapseMenuButton } from "./collapse-menu-button";
+import { Link } from "react-transition-progress/next";
 
 interface NavigationProps {
 	isOpen: boolean | undefined;
