@@ -4,7 +4,7 @@ import LoginModal from "@/components/auth/LoginModal";
 import PostContentSkeleton from "@/components/post edit/PostContentSkelton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UNAUTHENTICATED } from "@/utils/contants";
+import { UNAUTHENTICATED } from "@/utils/constants";
 import { ContentType, EditorContent } from "@/utils/types";
 import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";

@@ -5,7 +5,7 @@ import { VoteTypeType } from "@/db/schema/enums";
 import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
 import type { SerializedEditorState, SerializedLexicalNode } from "lexical";
 import { decompressContent } from "../compression";
-import { COMMENT_SORT_OPTIONS } from "../contants";
+import { COMMENT_SORT_OPTIONS } from "../constants";
 import {
 	AuthorData,
 	CommentServerRawResult,

@@ -2,7 +2,7 @@ import { db } from "@/db"; // your drizzle instance
 import { authSchema } from "@/db/schema/auth";
 import { generateUniqueUsername } from "@/lib/generateUniqueUsername";
 import mailer from "@/lib/mailer";
-import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
+import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/constants";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";

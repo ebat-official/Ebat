@@ -15,7 +15,7 @@ import {
 	INVALID_SUBCATEGORY,
 	POST_REQUIRED,
 	TITLE_MIN_LENGTH,
-} from "@/utils/contants";
+} from "@/utils/constants";
 import { EditorContent } from "@/utils/types";
 import { z } from "zod";
 

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostType, SubmissionStatus } from "@/db/schema/enums";
 import { useAuthAction } from "@/hooks/useAuthAction";
 import { useServerAction } from "@/hooks/useServerAction";
-import { ERROR } from "@/utils/contants";
+import { ERROR } from "@/utils/constants";
 import {
 	FlaskConical,
 	Loader2,

@@ -1,6 +1,6 @@
 import { PostType } from "@/db/schema/enums";
 import { ZodError } from "zod";
-import { INVALID_DIFFICULTY } from "./contants";
+import { INVALID_DIFFICULTY } from "./constants";
 import { CustomErrorType, GenerateActionReturnType } from "./types";
 
 export const sanitizeErrorMessage = (

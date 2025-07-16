@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PostType } from "@/db/schema/enums";
 import useFileUpload from "@/hooks/useFileUpload";
 import { cn } from "@/lib/utils";
-import { UNAUTHENTICATED } from "@/utils/contants";
+import { UNAUTHENTICATED } from "@/utils/constants";
 import { ContentType, EditorContent } from "@/utils/types";
 import dynamic from "next/dynamic"; // Import dynamic from Next.js
 import React, { useEffect, useRef, useState } from "react";

@@ -3,7 +3,7 @@ import { PostType, SubCategory } from "@/db/schema/enums";
 import { useServerAction } from "@/hooks/useServerAction";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
 import consolidatePostData from "@/utils/consolidatePostData";
-import { ERROR, POST_ACTIONS } from "@/utils/contants";
+import { ERROR, POST_ACTIONS } from "@/utils/constants";
 import {
 	CategoryType,
 	ContentType,

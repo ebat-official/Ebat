@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { commentVotes } from "@/db/schema";
 import { VoteType } from "@/db/schema/enums";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
-import { SUCCESS } from "@/utils/contants";
+import { SUCCESS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";

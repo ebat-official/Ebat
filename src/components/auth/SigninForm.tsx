@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 // Note: useSearchParams removed - no longer needed for email verification
-import { ERROR, LOADING, PASSWORD, SUCCESS, TEXT } from "@/utils/contants";
+import { ERROR, LOADING, PASSWORD, SUCCESS, TEXT } from "@/utils/constants";
 import parseRedirectError from "@/utils/parseRedirectError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";

@@ -19,6 +19,7 @@ import FormSuccess from "../shared/FormSuccess";
 import SignupForm from "./SignupFrom";
 import SocialAuth from "./SocialAuth";
 
+
 type LoginModalProps = {
 	isOpen?: boolean;
 	dialogTrigger?: boolean;

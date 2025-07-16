@@ -1,5 +1,5 @@
 import { Post } from "@/db/schema/zod-schemas";
-import { EndpointMap } from "@/utils/contants";
+import { EndpointMap } from "@/utils/constants";
 import {
 	PostSearchContext,
 	PostSearchResponse,

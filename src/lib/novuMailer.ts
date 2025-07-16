@@ -1,4 +1,4 @@
-import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/contants";
+import { EMAIL_VALIDATION, RESET_PASSWORD } from "@/utils/constants";
 import { Novu } from "@novu/api";
 
 async function novuMailer(toEmail: string, type: string, tokenOrUrl?: string) {

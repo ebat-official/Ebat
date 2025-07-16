@@ -1,6 +1,6 @@
 import type { Template } from "@/components/playground/lib/types";
 import { SubmissionStatus, TemplateFramework } from "@/db/schema/enums";
-import { INVALID_POST_ID } from "@/utils/contants";
+import { INVALID_POST_ID } from "@/utils/constants";
 import { z } from "zod";
 
 // Challenge submission schema

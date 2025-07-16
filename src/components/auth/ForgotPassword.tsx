@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { ERROR, LOADING, SUCCESS } from "@/utils/contants";
+import { ERROR, LOADING, SUCCESS } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import React, { FC, useState } from "react";

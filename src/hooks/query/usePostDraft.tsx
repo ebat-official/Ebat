@@ -1,5 +1,5 @@
 import { fetchPostById } from "@/utils/api utils/apiUtils";
-import { POST_ROUTE_TYPE, UNKNOWN_ERROR } from "@/utils/contants";
+import { POST_ROUTE_TYPE, UNKNOWN_ERROR } from "@/utils/constants";
 import { ID_NOT_EXIST_ERROR } from "@/utils/errors";
 import {
 	ContentType,

@@ -7,7 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import { COMMENT_SORT_OPTIONS } from "@/utils/constants";
 import { CommentSortOption } from "@/utils/types";
 
 interface CommentSortSelectProps {

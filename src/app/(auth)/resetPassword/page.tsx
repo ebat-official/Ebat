@@ -13,7 +13,7 @@ import {
 	TOKEN,
 	TOKEN_NOT_FOUND,
 	VERIFICATION_SUCCESSFULL,
-} from "@/utils/contants";
+} from "@/utils/constants";
 import { SOMETHING_WENT_WRONG_ERROR } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";

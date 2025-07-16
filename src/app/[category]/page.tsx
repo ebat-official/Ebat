@@ -3,7 +3,7 @@ import { FeedProvider } from "@/components/feed/FeedContext";
 import { PostCategory, SubCategory } from "@/db/schema/enums";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 import { generateCategoryMetadata } from "@/utils/categoryMetadata";
-import { EndpointMap } from "@/utils/contants";
+import { EndpointMap } from "@/utils/constants";
 import { PostSearchResponse, PostSortOrder } from "@/utils/types";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

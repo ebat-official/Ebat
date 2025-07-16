@@ -19,7 +19,7 @@ import {
 } from "@/db/schema/enums";
 import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
 import { decompressContent } from "../compression";
-import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../contants";
+import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../constants";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
 import { PostSearchResponse, PostSortOrder } from "../types";
 import {

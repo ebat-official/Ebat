@@ -11,7 +11,7 @@ import {
 import { InsertPost, InsertPostEdit } from "@/db/schema/zod-schemas";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
 import { compressContent } from "@/utils/compression";
-import { ERROR, POST_ID_REQUIRED, SUCCESS } from "@/utils/contants";
+import { ERROR, POST_ID_REQUIRED, SUCCESS } from "@/utils/constants";
 import {
 	FailedToEditPostErr,
 	LIVE_POST_EDIT_ERROR,

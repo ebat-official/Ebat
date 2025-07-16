@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/actions/user";
 import { db } from "@/db";
 import { challengeSubmissions } from "@/db/schema";
-import { FAILED_TO_FETCH_SUBMISSIONS } from "@/utils/contants";
+import { FAILED_TO_FETCH_SUBMISSIONS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { and, desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,4 +1,4 @@
-import { COMMENT_SORT_OPTIONS } from "@/utils/contants";
+import { COMMENT_SORT_OPTIONS } from "@/utils/constants";
 import { redis } from "./redis";
 
 export const invalidateCommentsCache = async (postId: string) => {
