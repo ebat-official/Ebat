@@ -1,8 +1,8 @@
 import NoSearchResultsImg from "@/assets/img/NoResultFound.webp";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 import { usePathname } from "next/navigation";
 import React from "react";
 

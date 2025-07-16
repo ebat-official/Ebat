@@ -24,7 +24,8 @@ import {
 	SubCategoryType,
 } from "@/utils/types";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, startTransition } from "react";
+import { useProgress } from "react-transition-progress";
 import EditorContainer from "./EditorContainer";
 
 interface PostCreateEditProps {
@@ -44,6 +45,7 @@ function PostCreateEdit({
 }: PostCreateEditProps) {
 	const [sidebarData, setSidebarData] = useState({});
 	const router = useRouter();
+	const startProgress = useProgress();
 	const [postId, setPostId] = useState<string>(initialPostId || "");
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
@@ -163,7 +165,12 @@ function PostCreateEdit({
 				<StatusDialog.Footer>
 					<Button
 						className="w-[90%] blue-gradient text-white"
-						onClick={() => router.push("/")}
+						onClick={() => {
+							startTransition(async () => {
+								startProgress();
+								router.push("/");
+							});
+						}}
 					>
 						Go back to home
 					</Button>
@@ -183,7 +190,12 @@ function PostCreateEdit({
 				<StatusDialog.Footer>
 					<Button
 						className="w-[90%] blue-gradient text-white"
-						onClick={() => router.push("/")}
+						onClick={() => {
+							startTransition(async () => {
+								startProgress();
+								router.push("/");
+							});
+						}}
 					>
 						Go back to home
 					</Button>

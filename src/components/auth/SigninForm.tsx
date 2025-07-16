@@ -11,13 +11,19 @@ import parseRedirectError from "@/utils/parseRedirectError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 import React, { FC, useEffect, useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import * as z from "zod";
 import EmailVerificationModal from "./EmailVerificationModal";
 import EyeButton from "./EyeButton";
 import ForgotPassword from "./ForgotPassword";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { useSession } from "@/lib/auth-client";
+import { FaGoogle } from "react-icons/fa";
+import { IoLogoGithub } from "react-icons/io";
+import ButtonDark from "@/components/shared/ButtonDark";
 
 type FormValues = {
 	identifier: string;

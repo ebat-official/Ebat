@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown, Dot, LucideIcon } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ import {
 import { IconTypes } from "@/lib/sidebarConfig";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { Link } from "react-transition-progress/next";
 
 type Submenu = {
 	href: string;

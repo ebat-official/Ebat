@@ -4,7 +4,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import { cn } from "@/lib/utils";
 import { useMobileSidebar } from "@/utils/routeUtils";
 import { PanelsTopLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "react-transition-progress/next";
 import { CategorySwitcher } from "./CategorySwitcher";
 import { Menu } from "./menu";
 import { SidebarToggle } from "./sidebar-toggle";

@@ -15,7 +15,15 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { FC, useEffect, useRef, useState, Suspense } from "react";
+import React, {
+	FC,
+	useEffect,
+	useRef,
+	useState,
+	Suspense,
+	startTransition,
+} from "react";
+import { useProgress } from "react-transition-progress";
 import { MoonLoader } from "react-spinners";
 
 const UserVerification: FC = () => {
@@ -29,6 +37,7 @@ const UserVerification: FC = () => {
 	const [timer, setTimer] = useState(3);
 	const intrvl = useRef<NodeJS.Timeout | null>(null);
 	const router = useRouter();
+	const startProgress = useProgress();
 	const searchParams = useSearchParams();
 	const error = searchParams.get("error");
 
@@ -48,7 +57,10 @@ const UserVerification: FC = () => {
 			});
 			// Redirect immediately since autoSignInAfterVerification is enabled
 			setTimeout(() => {
-				router.push("/");
+				startTransition(async () => {
+					startProgress();
+					router.push("/");
+				});
 			}, 1000);
 		}
 	}, [error, router]);
@@ -66,7 +78,10 @@ const UserVerification: FC = () => {
 
 	if (timer === 0) {
 		if (intrvl.current) clearInterval(intrvl.current);
-		router.push("/");
+		startTransition(async () => {
+			startProgress();
+			router.push("/");
+		});
 	}
 
 	return (
@@ -106,7 +121,15 @@ const UserVerification: FC = () => {
 							You will be redirected to login in {timer} seconds
 						</p>
 					)}
-					<Button variant="link" onClick={() => router.push("/")}>
+					<Button
+						variant="link"
+						onClick={() => {
+							startTransition(async () => {
+								startProgress();
+								router.push("/");
+							});
+						}}
+					>
 						Back to login
 					</Button>
 				</CardFooter>
