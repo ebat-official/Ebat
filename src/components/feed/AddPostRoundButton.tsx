@@ -6,14 +6,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-transition-progress/next";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { SubCategory } from "@/db/schema/enums";
-import React from "react";
+import React, { startTransition } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { useProgress } from "react-transition-progress";
 
 const AddPostRoundButton: React.FC = () => {
 	const pathname = usePathname();
 	const params = useParams();
+	const router = useRouter();
+	const startProgress = useProgress();
 
 	// Get subcategory from params, default to 'blogs' if not present
 	const subCategory = params.subCategory || SubCategory.BLOGS;
@@ -24,18 +27,25 @@ const AddPostRoundButton: React.FC = () => {
 		? `${pathname}/create`
 		: `${pathname}/${subCategory}/create`;
 
+	// Alternative approach using manual navigation with progress
+	const handleClick = () => {
+		startTransition(async () => {
+			startProgress();
+			router.push(createPath);
+		});
+	};
+
 	return (
 		<Tooltip>
 			<TooltipTrigger asChild>
-				<Link href={createPath}>
-					<button
-						type="button"
-						className="h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 shadow-md hover:scale-105 transition-transform cursor-pointer"
-						aria-label="Add Post"
-					>
-						<IoMdAdd className="w-7 h-7 text-white" />
-					</button>
-				</Link>
+				<button
+					type="button"
+					className="h-10 w-10 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 shadow-md hover:scale-105 transition-transform cursor-pointer"
+					aria-label="Add Post"
+					onClick={handleClick}
+				>
+					<IoMdAdd className="w-7 h-7 text-white" />
+				</button>
 			</TooltipTrigger>
 			<TooltipContent>Create a post</TooltipContent>
 		</Tooltip>

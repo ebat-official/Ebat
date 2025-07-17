@@ -2,11 +2,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-transition-progress/next";
-import { Difficulty } from "@/db/schema/enums";
+import { Difficulty, SubCategory } from "@/db/schema/enums";
 import { cn } from "@/lib/utils";
 import { FeedPost } from "@/utils/types";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useState, startTransition } from "react";
 import { BsBookmarkHeart } from "react-icons/bs";
 import { FaRegCommentDots } from "react-icons/fa";
@@ -30,8 +30,19 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 	const pathname = usePathname();
 	const router = useRouter();
 	const startProgress = useProgress();
+	const params = useParams();
 
-	const getUrl = (post: FeedPost) => `${pathname}/${post.slug}-${post.id}`;
+	// Get subcategory from params, default to 'blogs' if not present
+	const subCategory = params.subCategory || SubCategory.BLOGS;
+
+	// If we have a subcategory in the URL, use the current path + post slug
+	// If we don't have a subcategory, append the default subcategory + post slug
+	const getUrl = (post: FeedPost) => {
+		const postPath = `${post.slug}-${post.id}`;
+		return params.subCategory
+			? `${pathname}/${postPath}`
+			: `${pathname}/${subCategory}/${postPath}`;
+	};
 
 	const handleCardClick = () => {
 		startTransition(async () => {
