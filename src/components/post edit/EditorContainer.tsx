@@ -105,6 +105,7 @@ function EditorContainer({
 
 	const handleInsertMedia = async (file: { url: string; alt: string }) => {
 		const payload = getPayload();
+		setShowThumbnailUpload(false);
 		await publishHandler({
 			...payload,
 			thumbnail: file.url || payload.thumbnail,
@@ -114,7 +115,6 @@ function EditorContainer({
 		if (postType === PostType.CHALLENGE) {
 			setLocalStorage(challengeTemplatesKey, undefined);
 		}
-		setShowThumbnailUpload(false);
 	};
 
 	const handlePublish = async () => {

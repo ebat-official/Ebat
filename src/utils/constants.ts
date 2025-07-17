@@ -24,6 +24,7 @@ export const POST_ID_REQUIRED = "Post ID is required";
 export const TITLE_MIN_LENGTH = "Title must be at least 3 characters";
 export const ANSWER_REQUIRED = "Answer content is required for questions";
 export const POST_REQUIRED = "Post content is required";
+export const TOPICS_REQUIRED = "Please select at least one topic";
 export const INVALID_CREDENTIALS = "Invalid Credential";
 export const EMAIL_ALREADY_EXISTS = "Email Already Exists";
 export const USER_NOT_FOUND = "User Not Found";

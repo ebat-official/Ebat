@@ -15,6 +15,7 @@ import {
 	INVALID_SUBCATEGORY,
 	POST_REQUIRED,
 	TITLE_MIN_LENGTH,
+	TOPICS_REQUIRED,
 } from "@/utils/constants";
 import { EditorContent } from "@/utils/types";
 import { z } from "zod";
@@ -101,7 +102,7 @@ const BasePostValidator = z
 			.optional(), // Initially optional, will enforce validation conditionally
 		companies: z.array(z.string()).optional(),
 		completionDuration: z.number().int().positive().optional(),
-		topics: z.array(z.string()).optional(),
+		topics: z.array(z.string()).min(1, TOPICS_REQUIRED),
 		category: z.nativeEnum(PostCategory, {
 			errorMap: () => ({ message: INVALID_CATEGORY }),
 		}),

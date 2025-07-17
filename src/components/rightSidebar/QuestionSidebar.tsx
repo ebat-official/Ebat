@@ -105,13 +105,9 @@ function QuestionSidebar({
 	function consolidateData(): QuestionSidebarData {
 		const data: QuestionSidebarData = {};
 
-		if (selectedCompanies.length > 0) {
-			data.companies = selectedCompanies.map((opt) => opt.label);
-		}
+		data.companies = selectedCompanies.map((opt) => opt.label);
 
-		if (selectedTopics.length > 0) {
-			data.topics = selectedTopics.map((opt) => opt.label);
-		}
+		data.topics = selectedTopics.map((opt) => opt.label);
 
 		if (difficulty) {
 			data.difficulty = difficulty;
