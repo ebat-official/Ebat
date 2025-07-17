@@ -3,7 +3,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	images: {
-		domains: ["storage.ebat.dev"],
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "**",
+			},
+			{
+				protocol: "http",
+				hostname: "**",
+			},
+		],
 	},
 	experimental: {
 		reactCompiler: true,

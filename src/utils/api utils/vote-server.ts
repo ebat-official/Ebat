@@ -12,11 +12,11 @@ export async function fetchVoteCounts(postId: string, userId?: string) {
 		// Get vote counts using proper aggregation
 		const voteCountsQuery = db
 			.select({
-				upVotes: sum(sql`CASE WHEN ${votes.type} = 'UP' THEN 1 ELSE 0 END`).as(
+				upVotes: sum(sql`CASE WHEN ${votes.type} = 'up' THEN 1 ELSE 0 END`).as(
 					"upVotes",
 				),
 				downVotes: sum(
-					sql`CASE WHEN ${votes.type} = 'DOWN' THEN 1 ELSE 0 END`,
+					sql`CASE WHEN ${votes.type} = 'down' THEN 1 ELSE 0 END`,
 				).as("downVotes"),
 			})
 			.from(votes)

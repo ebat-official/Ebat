@@ -46,7 +46,8 @@ const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 				>
 					{(post.type === PostType.BLOGS ||
 						post.type === PostType.SYSTEMDESIGN) &&
-						post.tableOfContent?.length && (
+						post.tableOfContent &&
+						post.tableOfContent?.length > 0 && (
 							<TableOfContentAccordion tableOfContent={post.tableOfContent} />
 						)}
 					{((post.type !== PostType.BLOGS &&

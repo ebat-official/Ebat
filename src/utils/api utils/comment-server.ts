@@ -399,7 +399,7 @@ export async function getCommentsWithVotesAlternative(
 			${
 				sort === COMMENT_SORT_OPTIONS.TOP && minScore > 0
 					? sql`
-				HAVING COALESCE(SUM(CASE WHEN cv.type = 'UP' THEN 1 WHEN cv.type = 'DOWN' THEN -1 ELSE 0 END), 0) >= ${minScore}
+				HAVING COALESCE(SUM(CASE WHEN cv.type = 'up' THEN 1 WHEN cv.type = 'down' THEN -1 ELSE 0 END), 0) >= ${minScore}
 			`
 					: sql``
 			}

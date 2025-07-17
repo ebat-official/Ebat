@@ -41,7 +41,7 @@ export async function voteAction(
 				),
 			);
 	} else {
-		// Upsert the vote if type is "UP" or "DOWN"
+		// Upsert the vote if type is "up" or "down"
 		await db
 			.insert(votes)
 			.values({
