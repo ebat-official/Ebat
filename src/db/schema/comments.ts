@@ -9,6 +9,7 @@ import {
 	uniqueIndex,
 	uuid,
 	varchar,
+	AnyPgColumn,
 } from "drizzle-orm/pg-core";
 
 import { user } from "./auth";
@@ -32,7 +33,9 @@ export const comments = pgTable(
 		postId: varchar("post_id", { length: 21 })
 			.notNull()
 			.references(() => posts.id, { onDelete: "cascade" }),
-		parentId: uuid("parent_id"),
+		parentId: uuid("parent_id").references((): AnyPgColumn => comments.id, {
+			onDelete: "cascade",
+		}),
 	},
 	(table) => [
 		index("comment_postId_parentId_idx").on(table.postId, table.parentId),
