@@ -40,13 +40,13 @@ const SocialAuth: FC<SocialAuthProps> = ({ loadingHandler }) => {
 				className=" w-18 h-full relative"
 			>
 				<div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-					<BsGithub className="text-gray-900 dark:text-white py-0 scale-150" />
+					<BsGithub className=" py-0 scale-150 hover:bg-transparent hover:opacity-75" />
 				</div>
 			</Button>
 
 			<Button
 				variant="outline"
-				className="p-6"
+				className="p-6 hover:bg-transparent hover:opacity-75"
 				onClick={() => SocialLoginHandler("google")}
 			>
 				<Image priority src={googleIcon} alt="google signup" />
