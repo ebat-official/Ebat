@@ -16,10 +16,10 @@ function Page() {
 
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
-	)?.toUpperCase();
+	)?.toLowerCase();
 	const postType = (
 		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
-	)?.toUpperCase();
+	)?.toLowerCase();
 
 	const postId = Array.isArray(postIdParam) ? postIdParam[0] : postIdParam;
 

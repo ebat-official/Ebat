@@ -178,11 +178,11 @@ export async function createPost(
 	//return true if post not exists or owner is current user
 	const isOwner = await checkPostOwnership(data.id, user.id);
 	if (!isOwner) {
-		if (!(data.type === PostType.BLOGS)) return UNAUTHENTICATED_ERROR;
+		if (!(data.type === PostType.BLOGS)) return UNAUTHORIZED_ERROR;
 		createPostEdit(data);
 	}
-	const { isLivePost } = await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status
-	if (isLivePost) {
+	const { isLivePost } = await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status except for blogs
+	if (isLivePost && data.type !== PostType.BLOGS) {
 		return LIVE_POST_EDIT_ERROR;
 	}
 
