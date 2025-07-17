@@ -52,8 +52,8 @@ const FileSystemTreeSchema = z.record(z.string(), FileSystemNodeSchema);
 // Challenge template schema
 const ChallengeTemplateSchema = z.object({
 	framework: z.nativeEnum(TemplateFramework),
-	questionTemplate: FileSystemTreeSchema,
-	answerTemplate: FileSystemTreeSchema,
+	questionTemplate: z.any(),
+	answerTemplate: z.any(),
 });
 
 export const PostDraftValidator = z.object({
