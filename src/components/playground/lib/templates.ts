@@ -9,13 +9,13 @@ import type { Template } from "./types";
 
 // Template registry - this will be replaced with API calls later
 export const templateRegistry: Record<string, Template> = {
-	REACT: reactViteTemplate,
-	NEXTJS: nextjsTemplate,
-	VANILLAJS: vanillaJsTemplate,
-	VUE: vueTemplate,
-	ANGULAR: angularTemplate,
-	SVELTEKIT: sveltekitTemplate,
-	JAVASCRIPT: javascriptTemplate,
+	react: reactViteTemplate,
+	nextjs: nextjsTemplate,
+	vanillajs: vanillaJsTemplate,
+	vue: vueTemplate,
+	angular: angularTemplate,
+	sveltekit: sveltekitTemplate,
+	javascript: javascriptTemplate,
 };
 
 // Export templates as an array for backward compatibility

@@ -59,8 +59,8 @@ function TemplateCreatorComponent({
 	const handleFrameworkSelect = async (selectedValue: string) => {
 		setValue(selectedValue);
 		if (selectedValue && selectedValue !== value) {
-			await handleTemplateSelect(selectedValue.toUpperCase());
 			setShowModal(true);
+			await handleTemplateSelect(selectedValue);
 		}
 	};
 
