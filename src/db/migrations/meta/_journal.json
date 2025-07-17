@@ -5,15 +5,8 @@
 		{
 			"idx": 0,
 			"version": "7",
-			"when": 1752584344047,
-			"tag": "0000_nosy_wilson_fisk",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1752588099174,
-			"tag": "0001_happy_green_goblin",
+			"when": 1752744042325,
+			"tag": "0000_certain_champions",
 			"breakpoints": true
 		}
 	]

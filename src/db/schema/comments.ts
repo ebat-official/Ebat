@@ -48,10 +48,6 @@ export const comments = pgTable(
 			desc(table.createdAt),
 		),
 		index("comment_post_parent_covering_idx").on(table.postId, table.parentId),
-		foreignKey({
-			columns: [table.parentId],
-			foreignColumns: [table.id],
-		}),
 	],
 );
 
