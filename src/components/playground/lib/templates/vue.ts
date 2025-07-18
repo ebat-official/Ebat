@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const vueTemplate: Template = {
-	id: "VUE",
+	id: "vue",
 	name: "Vue.js",
 	description: "Vue 3 with JavaScript, Vite, and Toggle Component",
 	icon: "vue",

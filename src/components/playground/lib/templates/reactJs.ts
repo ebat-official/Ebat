@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const reactViteTemplate: Template = {
-	id: "REACT",
+	id: "react",
 	name: "React",
 	description: "React 18 with Vite, JSX, and Vitest",
 	icon: "react",

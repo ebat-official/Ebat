@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const angularTemplate: Template = {
-	id: "ANGULAR",
+	id: "angular",
 	name: "Angular",
 	description: "Modern Angular 17 with TypeScript and Jest",
 	icon: "angular",

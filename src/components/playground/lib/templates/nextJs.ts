@@ -1,7 +1,7 @@
 import type { Template } from "../types";
 
 export const nextjsTemplate: Template = {
-	id: "NEXTJS",
+	id: "nextjs",
 	name: "Next.js",
 	description:
 		"Next.js 14 with App Router, TypeScript, Tailwind CSS v4, and Vitest",
