@@ -1,6 +1,6 @@
 "use client";
-import { getCompletionStatusesForPosts } from "@/actions/completionStatus";
 import { usePostSearch } from "@/hooks/query/usePostSearch";
+import { useCompletionStatus } from "@/hooks/useCompletionStatus";
 import {
 	PostSearchContext,
 	PostSearchResponse,
@@ -145,22 +145,16 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 		setAccumulatedPosts((prev) => [...prev, ...data.posts]);
 	}, [data?.posts]);
 
+	const postIds = data?.posts?.map((post) => post.id);
+	const { statuses } = useCompletionStatus(postIds);
+
 	useEffect(() => {
-		const fetchStatuses = async () => {
-			if (!data?.posts?.length) {
-				setCompletionStatuses({});
-				return;
-			}
-			const postIds = data.posts.map((post) => post.id);
-			const statuses = await getCompletionStatusesForPosts(postIds);
-			const statusMap: Record<string, boolean> = {};
-			statuses.forEach((status) => {
-				statusMap[status.postId] = true;
-			});
-			setCompletionStatuses(statusMap);
-		};
-		fetchStatuses();
-	}, [data?.posts]);
+		const statusMap: Record<string, boolean> = {};
+		for (const postId in statuses) {
+			statusMap[postId] = true;
+		}
+		setCompletionStatuses(statusMap);
+	}, [statuses]);
 
 	return (
 		<FeedContext.Provider

@@ -1,28 +1,10 @@
-import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
-import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
-import { POST_ID_LENGTH } from "@/config";
-import { db } from "@/db";
-import {
-	challengeTemplates,
-	completionStatuses,
-	postViews,
-	posts,
-} from "@/db/schema";
-import { PostType } from "@/db/schema/enums";
-import { PostCategory, SubCategory } from "@/db/schema/enums";
-import { CommentMention } from "@/db/schema/zod-schemas";
-import { count, eq } from "drizzle-orm";
+import { CompletionStatus } from "@/db/schema/zod-schemas";
 import { UNKNOWN_ERROR } from "../constants";
 import { ID_NOT_EXIST_ERROR } from "../errors";
-import { isValidCategoryCombo } from "../isValidCategoryCombo";
 import {
-	ChallengeTemplate,
-	ContentReturnType,
 	ContentType,
 	PostRouteType,
 	PostWithContent,
-	PostWithExtraDetails,
-	TableOfContent,
 	UserSearchResult,
 } from "../types";
 
@@ -83,6 +65,30 @@ export async function fetchCommentUsersByUserName(
 
 	if (!response.ok) {
 		let errorMessage = "Failed to fetch mentions.";
+		try {
+			const errorData = await response.json();
+			errorMessage = errorData.error || errorMessage;
+		} catch {
+			// Ignore JSON parsing errors and use the default error message
+		}
+		throw new Error(errorMessage);
+	}
+
+	return response.json();
+}
+
+export async function fetchCompletionStatuses(
+	postIds: string[],
+): Promise<CompletionStatus[]> {
+	if (!postIds.length) return [];
+
+	const postIdsParam = postIds.join(",");
+	const response = await fetch(
+		`/api/completionstatuses?postIds=${postIdsParam}`,
+	);
+
+	if (!response.ok) {
+		let errorMessage = "Failed to fetch completion statuses.";
 		try {
 			const errorData = await response.json();
 			errorMessage = errorData.error || errorMessage;

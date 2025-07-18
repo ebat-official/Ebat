@@ -12,6 +12,7 @@ import PostLikeButton from "../post view/PostLikeButton";
 import { PostStatsBadge } from "../post view/PostStatsBadge";
 import { Card, CardContent } from "../ui/card";
 import CodeViewer from "./components/editor/CodeViewer";
+import { CompletionButton } from "../post view/CompletionButton";
 
 type ChallengeQuestionViewProps = {
 	post: PostWithExtraDetails;
@@ -59,6 +60,7 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 								</div>
 							</div>
 							<Separator />
+							<CompletionButton postId={post.id} className="self-end" />
 							<PostContentRender post={content.post} />
 							<Separator />
 							<PostDetailsAccordian post={post} />

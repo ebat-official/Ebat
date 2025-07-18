@@ -28,3 +28,52 @@ export async function getCompletionStatusesForPosts(
 		),
 	});
 }
+
+// Create a completion status for a post
+export async function createCompletionStatus(
+	postId: CompletionStatusPostId,
+): Promise<CompletionStatus> {
+	const user = await validateUser();
+	if (!user) throw new Error("User not authenticated");
+
+	// Check if completion status already exists
+	const existing = await db.query.completionStatuses.findFirst({
+		where: and(
+			eq(completionStatuses.userId, user.id),
+			eq(completionStatuses.postId, postId),
+		),
+	});
+
+	if (existing) {
+		return existing;
+	}
+
+	// Create new completion status
+	const [newStatus] = await db
+		.insert(completionStatuses)
+		.values({
+			userId: user.id,
+			postId,
+			completedAt: new Date(),
+		})
+		.returning();
+
+	return newStatus;
+}
+
+// Delete a completion status for a post
+export async function deleteCompletionStatus(
+	postId: CompletionStatusPostId,
+): Promise<void> {
+	const user = await validateUser();
+	if (!user) throw new Error("User not authenticated");
+
+	await db
+		.delete(completionStatuses)
+		.where(
+			and(
+				eq(completionStatuses.userId, user.id),
+				eq(completionStatuses.postId, postId),
+			),
+		);
+}
