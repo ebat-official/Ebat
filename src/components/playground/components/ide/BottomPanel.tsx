@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostType, SubmissionStatus } from "@/db/schema/enums";
 import { useAuthAction } from "@/hooks/useAuthAction";
 import { useServerAction } from "@/hooks/useServerAction";
+import { useCompletionStatusStore } from "@/store/useCompletionStatusStore";
 import { ERROR } from "@/utils/constants";
 import {
 	FlaskConical,
@@ -33,6 +34,8 @@ export function BottomPanel() {
 		executeTests,
 		post,
 	} = useWebContainerStore();
+
+	const { updateCompletionStatus } = useCompletionStatusStore();
 
 	const [results, setResults] = useState<TestResult | null>(null);
 	const [isRunning, setIsRunning] = useState(false);
@@ -184,6 +187,8 @@ export function BottomPanel() {
 
 				// Show appropriate modal based on test results
 				if (submissionStatus === SubmissionStatus.ACCEPTED) {
+					// Mark the challenge as completed when submission is successful
+					updateCompletionStatus(post.id, true);
 					setShowSuccessModal(true);
 				} else {
 					setShowFailureModal(true);
