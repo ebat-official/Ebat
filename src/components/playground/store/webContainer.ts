@@ -277,7 +277,6 @@ export const useWebContainerStore = create<WebContainerState>()((set, get) => ({
 			cleanupContainer,
 			selectedTemplate,
 		} = get();
-		debugger;
 		// Check if we're switching to a different template
 		const isDifferentTemplate =
 			selectedTemplate && selectedTemplate.id !== template.id;
