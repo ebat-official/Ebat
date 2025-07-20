@@ -17,7 +17,17 @@ import {
 	PostType,
 	SubCategory,
 } from "@/db/schema/enums";
-import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
+import {
+	and,
+	asc,
+	count,
+	desc,
+	eq,
+	ilike,
+	inArray,
+	or,
+	sql,
+} from "drizzle-orm";
 import { decompressContent } from "../compression";
 import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../constants";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
@@ -107,9 +117,20 @@ export async function getPostFromURL(params: {
 	const id = titleSlug.slice(-POST_ID_LENGTH);
 	if (!id) return null;
 
+	// Get current user for authorization check
+	const user = await validateUser();
+
 	try {
+		// Build authorization condition: either approved or user is the author
+		const authorizationCondition = user
+			? or(
+					eq(posts.approvalStatus, PostApprovalStatus.APPROVED),
+					eq(posts.authorId, user.id),
+				)
+			: eq(posts.approvalStatus, PostApprovalStatus.APPROVED);
+
 		const post = await db.query.posts.findFirst({
-			where: eq(posts.id, id),
+			where: and(eq(posts.id, id), authorizationCondition),
 			with: {
 				author: {
 					columns: {

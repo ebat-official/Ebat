@@ -30,7 +30,7 @@ export const CompletionButton = ({
 			{completed ? (
 				<Button
 					variant="outline"
-					className="text-green-600 border-green-600 hover:bg-green-50"
+					className="text-green-600 border-green-600"
 					onClick={handleToggleCompletion}
 				>
 					<CheckIcon className="w-4 h-4" />
