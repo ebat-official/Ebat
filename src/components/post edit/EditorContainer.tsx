@@ -287,7 +287,7 @@ function EditorContainer({
 												) : (
 													<Code />
 												)}
-												<span className="invisible md:visible">Preview</span>
+												<span className="hidden md:visible">Preview</span>
 											</Button>
 										</TooltipTrigger>
 										<TooltipContent>
@@ -309,7 +309,7 @@ function EditorContainer({
 												) : (
 													<CiSaveDown2 />
 												)}
-												<span className="invisible md:visible">Save</span>
+												<span className="hidden md:visible">Save</span>
 											</Button>
 										</TooltipTrigger>
 										<TooltipContent>
