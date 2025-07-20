@@ -12,6 +12,7 @@ import PostDetailsAccordian from "./PostDetailsAccordian";
 import PostLikeButton from "./PostLikeButton";
 import { PostStatsBadge } from "./PostStatsBadge";
 import { CompletionButton } from "./CompletionButton";
+import { ContentRenderer } from "./ContentRenderer";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -39,10 +40,10 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 							</div>
 							<Separator />
 							<CompletionButton postId={post.id} className="self-end" />
-							<QuestionAnswerRender
-								post={content.post}
-								answer={content.answer}
-							/>
+							<div className="max-w-3xl w-full">
+								<ContentRenderer html={content.post} />
+								<QuestionAnswerRender answer={content.answer} />
+							</div>
 						</CardContent>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
 							<Separator className=" my-6 " />
