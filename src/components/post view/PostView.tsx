@@ -28,7 +28,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel className="flex flex-col gap-2">
 					<Card className="relative items-center">
-						<CardContent className="flex flex-col h-full items-center px-4 md:px-8 w-full gap-2">
+						<CardContent className="flex flex-col h-full px-4 md:px-8 w-full gap-2 max-w-3xl">
 							<div className="flex gap-6 -ml-12">
 								<PostLikeButton className="mt-2" postId={post.id} />
 								<div className="flex flex-col justify-center">
@@ -40,10 +40,8 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 							</div>
 							<Separator />
 							<CompletionButton postId={post.id} className="self-end" />
-							<div className="max-w-3xl w-full">
-								<ContentRenderer html={content.post} />
-								<QuestionAnswerRender answer={content.answer} />
-							</div>
+							<ContentRenderer html={content.post} />
+							<QuestionAnswerRender answer={content.answer} />
 						</CardContent>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
 							<Separator className=" my-6 " />

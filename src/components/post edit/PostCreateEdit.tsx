@@ -226,6 +226,8 @@ function PostCreateEdit({
 							defaultContent={postData?.content}
 							action={action}
 							challengeTemplates={postData?.challengeTemplates}
+							category={category}
+							subCategory={subCategory}
 						/>
 					</RightPanelLayout.MainPanel>
 					<RightPanelLayout.SidePanel className="sticky">

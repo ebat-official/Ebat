@@ -49,7 +49,7 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 
 				<div className="w-full h-full overflow-y-auto overflow-x-hidden px-4 md:px-8 max-w-4xl">
 					<TabsContent value="description">
-						<CardContent className="flex flex-col h-full justify-center gap-4 w-full">
+						<CardContent className="flex flex-col h-full gap-4 w-full max-w-3xl">
 							<div className="flex gap-6 -ml-12">
 								<PostLikeButton postId={post.id} />
 								<div>
