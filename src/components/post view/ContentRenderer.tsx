@@ -1,19 +1,15 @@
-import { ContentReturnType } from "@/utils/types";
 import DOMPurify from "isomorphic-dompurify";
 import React from "react";
 // src/components/shared/Lexical Editor/themes/theme.css
 import "../shared/Lexical Editor/themes/theme.css";
-import { cn } from "@/lib/utils";
 
-interface PostContentRenderProps {
-	post?: string;
-	answer?: string;
+interface ContentRendererProps {
+	html?: string;
 	className?: string;
 }
 
-export const PostContentRender: React.FC<PostContentRenderProps> = ({
-	post,
-	answer,
+export const ContentRenderer: React.FC<ContentRendererProps> = ({
+	html,
 	className = "",
 }) => {
 	// Safely render HTML content by sanitizing it first
@@ -31,11 +27,5 @@ export const PostContentRender: React.FC<PostContentRenderProps> = ({
 		);
 	};
 
-	return (
-		<div className={cn("post-content-container", className)}>
-			{post && <div className="post-section ">{renderHtml(post)}</div>}
-
-			{answer && <div className="answer-section">{renderHtml(answer)}</div>}
-		</div>
-	);
+	return renderHtml(html);
 };

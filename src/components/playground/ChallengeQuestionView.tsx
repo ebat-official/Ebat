@@ -6,7 +6,7 @@ import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
 import { FileText, Lightbulb, MessageCircle, Upload } from "lucide-react";
 import React from "react";
 import { SubmissionsTable } from "../post edit/challenge/SubmissionsTable";
-import { PostContentRender } from "../post view/PostContentRender";
+import { ContentRenderer } from "../post view/ContentRenderer";
 import PostDetailsAccordian from "../post view/PostDetailsAccordian";
 import PostLikeButton from "../post view/PostLikeButton";
 import { PostStatsBadge } from "../post view/PostStatsBadge";
@@ -61,14 +61,17 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 							</div>
 							<Separator />
 							<CompletionButton postId={post.id} className="self-end" />
-							<PostContentRender post={content.post} />
+
+							<ContentRenderer html={content.post} />
+
 							<Separator />
 							<PostDetailsAccordian post={post} />
 						</CardContent>
 					</TabsContent>
 
 					<TabsContent value="solution" className="flex flex-col gap-8">
-						<PostContentRender answer={content.answer} />
+						<ContentRenderer html={content.answer} />
+
 						{challengeTemplates.length > 0 && (
 							<CodeViewer challengeTemplates={challengeTemplates} />
 						)}

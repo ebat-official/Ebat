@@ -3,10 +3,11 @@ import { Separator } from "@/components/ui/separator";
 import { recordPostView } from "@/lib/viewTracker";
 import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
 import React, { FC } from "react";
+
 import { EditorProvider } from "../shared/Lexical Editor/providers/EditorContext";
 import RightPanelLayout from "../shared/RightPanelLayout";
 import { Card, CardContent } from "../ui/card";
-import { PostContentRender } from "./PostContentRender";
+import { QuestionAnswerRender } from "./QuestionAnswerRender";
 import PostDetailsAccordian from "./PostDetailsAccordian";
 import PostLikeButton from "./PostLikeButton";
 import { PostStatsBadge } from "./PostStatsBadge";
@@ -38,8 +39,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 							</div>
 							<Separator />
 							<CompletionButton postId={post.id} className="self-end" />
-							<PostContentRender
-								className="max-w-3xl w-full"
+							<QuestionAnswerRender
 								post={content.post}
 								answer={content.answer}
 							/>
