@@ -79,6 +79,10 @@ export enum SubmissionStatus {
 	ACCEPTED = "accepted",
 	REJECTED = "rejected",
 }
+export enum FollowAction {
+	FOLLOW = "follow",
+	UNFOLLOW = "unfollow",
+}
 
 // pgEnum definitions for database schema
 export const userRoleEnum = pgEnum("user_role", UserRole);

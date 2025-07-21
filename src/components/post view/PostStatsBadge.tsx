@@ -37,6 +37,7 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 				{post.author.name && (
 					<AuthorNudge
 						author={{
+							id: post.author.id,
 							name: post.author.name,
 							image: post.author.image,
 							companyName: post.author.companyName,

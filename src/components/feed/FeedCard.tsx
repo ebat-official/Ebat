@@ -74,6 +74,7 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 					{post.author?.name && (
 						<AuthorNudge
 							author={{
+								id: post.author.id,
 								name: post.author.name,
 								image: post.author.image,
 								companyName: post.author.companyName,
