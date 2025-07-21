@@ -6,7 +6,7 @@
 // 	SerializedLexicalNode,
 // 	Spread,
 // } from "lexical";
-// import { excalidrawToSvg } from "../../utils/SSR/excalidrawToSvg";
+// import excalidrawToSvg from "excalidraw-to-svg";
 
 // export type SerializedExcalidrawNode = Spread<
 // 	{

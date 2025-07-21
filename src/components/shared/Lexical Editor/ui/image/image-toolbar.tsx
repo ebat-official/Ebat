@@ -133,7 +133,7 @@ export default function ImageToolBar({
 	return (
 		<div className="absolute z-50 flex flex-row items-center transition-all duration-500 opacity-0 gap-x-2 top-1 left-1 group-hover:opacity-100">
 			<div className="flex flex-row items-center justify-between p-1 rounded-sm bg-background/40">
-				<div className="flex flex-row items-center">
+				{/* <div className="flex flex-row items-center">
 					<Button
 						onClick={toggleResizeInput}
 						variant={"ghost"}
@@ -183,7 +183,7 @@ export default function ImageToolBar({
 						/>
 					</div>
 				</div>
-				<Separator orientation="vertical" className="h-5 mx-1" />
+				<Separator orientation="vertical" className="h-5 mx-1" /> */}
 				<div className="flex flex-row items-center gap-x-1">
 					<Button
 						onClick={ChangeSideToLeft}

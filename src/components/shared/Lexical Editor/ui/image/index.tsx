@@ -348,7 +348,7 @@ export default function ImageComponent({
 					)}
 				</div>
 				{showCaption && (
-					<div>
+					<div className="relative">
 						<LexicalNestedComposer
 							initialEditor={caption}
 							initialNodes={[
@@ -369,15 +369,15 @@ export default function ImageComponent({
 										placeholder={() => (
 											<span
 												className="
-                        color-[#999] text-xs overflow-hidden absolute  text-ellipsis
+                         text-xs overflow-hidden absolute left-1/2 -translate-x-full top-0   text-ellipsis
                         select-none text-nowrap inline-block pointer-events-none
-                         transform -translate-x-1/2 -translate-y-1/2 bottom-[-8px]
+                         
                         "
 											>
 												Enter a caption...
 											</span>
 										)}
-										className="relative text-xs text-center outline-hidden text-muted-foreground"
+										className="text-xs text-center outline-hidden text-muted-foreground"
 									/>
 								}
 								ErrorBoundary={LexicalErrorBoundary}

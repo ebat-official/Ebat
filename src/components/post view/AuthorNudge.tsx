@@ -3,6 +3,7 @@ import { User } from "@/db/schema/zod-schemas";
 import Image from "next/image";
 import { truncateText } from "../shared/Lexical Editor/utils/truncateText";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { SlUserFollow } from "react-icons/sl";
 
 interface AuthorNudgeProps {
 	author: Pick<User, "name" | "companyName" | "image">;
@@ -31,9 +32,12 @@ const AuthorNudge = ({ author, onlyAvatar = false }: AuthorNudgeProps) => {
 			{/* Info Section */}
 			{!onlyAvatar && (
 				<div className="flex flex-col justify-center flex-shrink overflow-hidden w-28">
-					<span className="text-sm font-bold capitalize line-clamp-1 text-ellipsis">
-						{author.name?.toLowerCase() || "Anonymous Author"}
-					</span>
+					<div className="flex items-center gap-1">
+						<span className="text-sm font-bold capitalize line-clamp-1 text-ellipsis">
+							{author.name?.toLowerCase() || "Anonymous Author"}
+						</span>
+						<SlUserFollow className="w-3 h-3" />
+					</div>
 					<span className="hidden sm:block text-sm opacity-80 font-medium capitalize text-ellipsis overflow-hidden text-nowrap">
 						{author.companyName?.toLowerCase()}
 					</span>
