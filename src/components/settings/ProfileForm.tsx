@@ -87,7 +87,7 @@ export function ProfileForm() {
 		mode: "onChange",
 	});
 
-	const { fields, append } = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		name: "urls",
 		control: form.control,
 	});
@@ -141,22 +141,23 @@ export function ProfileForm() {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-				{userLoading ? (
-					<div>Loading profile...</div>
-				) : (
-					<>
-						<ProfileBasicInfo form={form} />
-						<ProfileCompanyInfo
-							form={form}
-							companies={companies}
-							handleInputChange={handleInputChange}
-						/>
-						<ProfileUrlsSection form={form} fields={fields} append={append} />
-						<Button type="submit" disabled={isUpdating}>
-							{isUpdating ? "Updating..." : "Update profile"}
-						</Button>
-					</>
-				)}
+				<ProfileBasicInfo form={form} isLoading={userLoading} />
+				<ProfileCompanyInfo
+					form={form}
+					companies={companies}
+					handleInputChange={handleInputChange}
+					isLoading={userLoading}
+				/>
+				<ProfileUrlsSection
+					form={form}
+					fields={fields}
+					append={append}
+					remove={remove}
+					isLoading={userLoading}
+				/>
+				<Button type="submit" disabled={isUpdating || userLoading}>
+					{isUpdating ? "Updating..." : "Update profile"}
+				</Button>
 			</form>
 		</Form>
 	);

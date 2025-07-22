@@ -11,12 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
+import { Skeleton } from "../ui/skeleton";
 
 interface ProfileBasicInfoProps {
 	form: UseFormReturn<any>;
+	isLoading: boolean;
 }
 
-export function ProfileBasicInfo({ form }: ProfileBasicInfoProps) {
+export function ProfileBasicInfo({ form, isLoading }: ProfileBasicInfoProps) {
 	return (
 		<>
 			<FormField
@@ -26,7 +28,11 @@ export function ProfileBasicInfo({ form }: ProfileBasicInfoProps) {
 					<FormItem>
 						<FormLabel>Name</FormLabel>
 						<FormControl>
-							<Input placeholder="Your name" {...field} />
+							{isLoading ? (
+								<Skeleton className="h-10 w-full" />
+							) : (
+								<Input placeholder="Your name" {...field} />
+							)}
 						</FormControl>
 						<FormDescription>
 							This is the name that will be displayed on your profile and in
@@ -43,16 +49,15 @@ export function ProfileBasicInfo({ form }: ProfileBasicInfoProps) {
 					<FormItem>
 						<FormLabel>Email</FormLabel>
 						<FormControl>
-							<Input
-								placeholder="Your email"
-								{...field}
-								readOnly
-								className=" cursor-not-allowed"
-							/>
+							{isLoading ? (
+								<Skeleton className="h-10 w-full" />
+							) : (
+								<Input placeholder="Your email" {...field} disabled />
+							)}
 						</FormControl>
+
 						<FormDescription>
-							This is the email address you used to log in. It cannot be changed
-							here.
+							You can manage verified email addresses in your email settings.
 						</FormDescription>
 						<FormMessage />
 					</FormItem>
@@ -65,14 +70,18 @@ export function ProfileBasicInfo({ form }: ProfileBasicInfoProps) {
 					<FormItem>
 						<FormLabel>Bio</FormLabel>
 						<FormControl>
-							<Textarea
-								placeholder="Tell us a little bit about yourself"
-								className="resize-none"
-								{...field}
-							/>
+							{isLoading ? (
+								<Skeleton className="h-24 w-full" />
+							) : (
+								<Textarea
+									placeholder="Tell us a little bit about yourself"
+									className="resize-none"
+									{...field}
+								/>
+							)}
 						</FormControl>
 						<FormDescription>
-							This will be shown on your profile.
+							This will be shown on your public profile.
 						</FormDescription>
 						<FormMessage />
 					</FormItem>
