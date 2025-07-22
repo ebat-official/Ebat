@@ -116,12 +116,11 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 				--bg-color: transparent;
 				--stroke-color: #1e1e1e;
 				--arrow-color: #1a1a1a;
-				/* Subtle border with 50% opacity */
-				border: 1px solid rgba(229, 231, 235, 0.5) !important;
+				/* No border */
+				border: none !important;
 				background: transparent !important;
 				outline: none !important;
 				box-shadow: none !important;
-				border-radius: 8px;
 			}
 			
 			.dark .excalidraw-container {
@@ -129,12 +128,11 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 				--bg-color: transparent;
 				--stroke-color: #e5e7eb;
 				--arrow-color: #ffffff;
-				/* Subtle border with 50% opacity for dark mode */
-				border: 1px solid rgba(55, 65, 81, 0.5) !important;
+				/* No border */
+				border: none !important;
 				background: transparent !important;
 				outline: none !important;
 				box-shadow: none !important;
-				border-radius: 8px;
 			}
 			
 			.excalidraw-container svg {
@@ -177,6 +175,13 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 			/* Arrow marker styling */
 			.excalidraw-container svg marker polygon {
 				fill: var(--arrow-color) !important;
+			}
+			
+			/* Freedraw-specific styling for more natural hand-drawn look */
+			.excalidraw-container svg .excalidraw-freedraw {
+				filter: url(#freedraw-filter);
+				stroke-linecap: round !important;
+				stroke-linejoin: round !important;
 			}
 			
 			/* Error styling */
@@ -226,24 +231,8 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 			box-shadow: none !important;
 		`;
 
-		// Set background - make it transparent
-		if (
-			appState?.viewBackgroundColor &&
-			appState.viewBackgroundColor !== "transparent"
-		) {
-			const background = document.createElementNS(
-				"http://www.w3.org/2000/svg",
-				"rect",
-			);
-			background.setAttribute("x", (bounds.minX - padding).toString());
-			background.setAttribute("y", (bounds.minY - padding).toString());
-			background.setAttribute("width", width.toString());
-			background.setAttribute("height", height.toString());
-			background.setAttribute("fill", appState.viewBackgroundColor as string);
-			background.setAttribute("class", "excalidraw-bg");
-			svg.appendChild(background);
-		}
-		// No background rect for transparent background
+		// Always make background transparent - no background rect
+		// This ensures the SVG blends seamlessly with the page background
 
 		// Add defs for markers and filters
 		const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
@@ -270,8 +259,26 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 		marker.appendChild(polygon);
 		defs.appendChild(marker);
 
-		// Remove dark mode filter as it might interfere with arrow markers
-		// We'll handle colors directly in the element rendering
+		// Add filter for freedraw to give it a more natural hand-drawn look
+		const freedrawFilter = document.createElementNS(
+			"http://www.w3.org/2000/svg",
+			"filter",
+		);
+		freedrawFilter.setAttribute("id", "freedraw-filter");
+		freedrawFilter.setAttribute("x", "-50%");
+		freedrawFilter.setAttribute("y", "-50%");
+		freedrawFilter.setAttribute("width", "200%");
+		freedrawFilter.setAttribute("height", "200%");
+
+		// Add a slight blur to simulate natural hand-drawn lines
+		const blur = document.createElementNS(
+			"http://www.w3.org/2000/svg",
+			"feGaussianBlur",
+		);
+		blur.setAttribute("stdDeviation", "0.5");
+		freedrawFilter.appendChild(blur);
+
+		defs.appendChild(freedrawFilter);
 
 		svg.appendChild(defs);
 
@@ -516,10 +523,17 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 						"path",
 					);
 					const points = el.points as number[][];
+					const baseX = el.x as number;
+					const baseY = el.y as number;
 					if (points && points.length > 0) {
-						let d = `M ${points[0][0]} ${points[0][1]}`;
+						// For freedraw, points are relative to baseX/baseY
+						const startX = baseX + points[0][0];
+						const startY = baseY + points[0][1];
+						let d = `M ${startX} ${startY}`;
 						for (let i = 1; i < points.length; i++) {
-							d += ` L ${points[i][0]} ${points[i][1]}`;
+							const x = baseX + points[i][0];
+							const y = baseY + points[i][1];
+							d += ` L ${x} ${y}`;
 						}
 						path.setAttribute("d", d);
 						path.setAttribute("fill", "none");
@@ -527,12 +541,33 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 							"stroke",
 							(el.strokeColor as string) || "var(--stroke-color, #1e1e1e)",
 						);
-						path.setAttribute(
-							"stroke-width",
-							((el.strokeWidth as number) || 2).toString(),
+
+						// Use roughness for stroke width variation (Excalidraw feature)
+						const roughness = (el.roughness as number) || 1;
+						const baseStrokeWidth = (el.strokeWidth as number) || 2;
+						const strokeWidth = Math.max(
+							1,
+							baseStrokeWidth * (0.8 + roughness * 0.4),
 						);
+						path.setAttribute("stroke-width", strokeWidth.toString());
+
+						// Set stroke style based on Excalidraw's strokeStyle
+						const strokeStyle = el.strokeStyle as string;
+						if (strokeStyle === "dashed") {
+							path.setAttribute("stroke-dasharray", "8,4");
+						} else if (strokeStyle === "dotted") {
+							path.setAttribute("stroke-dasharray", "2,2");
+						}
+
 						path.setAttribute("stroke-linecap", "round");
 						path.setAttribute("stroke-linejoin", "round");
+
+						// Add opacity support
+						const opacity = (el.opacity as number) || 100;
+						if (opacity < 100) {
+							path.setAttribute("opacity", (opacity / 100).toString());
+						}
+
 						path.setAttribute("class", "excalidraw-freedraw");
 						svg.appendChild(path);
 					}
@@ -597,15 +632,15 @@ export class ExcalidrawNode extends DecoratorNode<React.ReactNode> {
 				maxY = Math.max(maxY, y + height);
 			}
 
-			// Handle arrows and lines that use points instead of x/y/width/height
-			if (type === "arrow" || type === "line") {
+			// Handle arrows, lines, and freedraw that use points instead of x/y/width/height
+			if (type === "arrow" || type === "line" || type === "freedraw") {
 				const points = el.points as number[][];
 				const baseX = el.x as number;
 				const baseY = el.y as number;
 				if (points && points.length > 0) {
 					for (const point of points) {
 						if (point && point.length >= 2) {
-							// For arrows and lines, points are relative to baseX/baseY
+							// For arrows, lines, and freedraw, points are relative to baseX/baseY
 							const absoluteX = baseX + point[0];
 							const absoluteY = baseY + point[1];
 							minX = Math.min(minX, absoluteX);

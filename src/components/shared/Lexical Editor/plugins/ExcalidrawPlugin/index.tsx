@@ -59,7 +59,7 @@ export default function ExcalidrawPlugin(): JSX.Element | null {
 		files: BinaryFiles,
 	) => {
 		editor.update(() => {
-			const excalidrawNode = $createExcalidrawNode();
+			const excalidrawNode = $createExcalidrawNode("[]", "inherit", 400);
 			excalidrawNode.setData(
 				JSON.stringify({
 					appState,
