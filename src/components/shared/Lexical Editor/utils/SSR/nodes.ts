@@ -21,7 +21,7 @@ import { ImageNode } from "../../nodes/SSRNodes/ImageNode";
 import { MentionNode } from "../../nodes/SSRNodes/MentionNode";
 import { YouTubeNode } from "../../nodes/SSRNodes/YoutubeNode";
 import { StepperNode } from "../../nodes/Stepper";
-// import { ExcalidrawNode } from "../../nodes/SSRNodes/ExcalidrawNode";
+import { ExcalidrawNode } from "../../nodes/SSRNodes/ExcalidrawNode";
 
 export type LexicalNodeType = Klass<LexicalNode> | LexicalNodeReplacement;
 const nodes: LexicalNodeType[] = [
@@ -50,7 +50,7 @@ const nodes: LexicalNodeType[] = [
 	YouTubeNode,
 	ImageNode,
 	LayoutContainerNode,
-	// ExcalidrawNode
+	ExcalidrawNode,
 ];
 
 export const commentNodes: LexicalNodeType[] = [
