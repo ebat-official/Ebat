@@ -67,3 +67,4 @@ export enum EndpointMap {
 	PostSearch = "/api/post/search",
 	// Add more endpoints as needed
 }
+export const CREDENTIAL_ACCOUNT_NOT_FOUND = "Credential account not found";

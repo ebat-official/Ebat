@@ -126,12 +126,6 @@ export function AdminUserTable({
 	const [selectedColumns, setSelectedColumns] =
 		useState<string[]>(defaultColumns);
 
-	// Debug logging
-	console.log("AdminUserTable received users:", users);
-	if (users.length > 0) {
-		console.log("First user in table:", users[0]);
-	}
-
 	const handleSort = (field: keyof User) => {
 		if (userSortField === field) {
 			setUserSortOrder(userSortOrder === "asc" ? "desc" : "asc");

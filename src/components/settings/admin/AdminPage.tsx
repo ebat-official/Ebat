@@ -130,10 +130,7 @@ export function AdminPage() {
 
 			// Handle the response data structure
 			if ("data" in response && response.data) {
-				console.log("Users API response:", response.data);
-				console.log("Users array:", response.data.users);
 				if (response.data.users && response.data.users.length > 0) {
-					console.log("First user data:", response.data.users[0]);
 				}
 				// Cast the users array to our User interface
 				setUsers((response.data.users || []) as User[]);
@@ -258,11 +255,6 @@ export function AdminPage() {
 			const response = await authClient.admin.listUserSessions({ userId });
 			if ("data" in response && response.data) {
 				const sessions = response.data.sessions || [];
-				console.log("Loaded sessions:", sessions.length, sessions);
-				console.log(
-					"Session tokens:",
-					sessions.map((s) => s.token),
-				);
 				setUserSessions(sessions as Session[]);
 				setSelectedUser(users.find((u) => u.id === userId) || null);
 				setShowSessions(true);
@@ -275,14 +267,12 @@ export function AdminPage() {
 
 	const handleRevokeSession = async (sessionToken: string) => {
 		try {
-			console.log("Revoking session:", sessionToken);
 			await authClient.admin.revokeUserSession({ sessionToken });
 			toast.success("Session revoked successfully");
 			// Add a small delay to ensure the backend has processed the revocation
 			await new Promise((resolve) => setTimeout(resolve, 500));
 			// Reload sessions for the currently selected user
 			if (selectedUser) {
-				console.log("Reloading sessions for user:", selectedUser.id);
 				await handleLoadSessions(selectedUser.id);
 			}
 		} catch (error) {

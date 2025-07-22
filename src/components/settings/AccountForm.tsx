@@ -28,8 +28,8 @@ import { authClient } from "@/lib/auth-client";
 const accountFormSchema = z.object({
 	username: z
 		.string()
-		.min(2, {
-			message: "Username must be at least 2 characters.",
+		.min(4, {
+			message: "Username must be at least 4 characters.",
 		})
 		.max(30, {
 			message: "Username must not be longer than 30 characters.",
@@ -38,13 +38,6 @@ const accountFormSchema = z.object({
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
-
-interface UsernamePlugin {
-	updateUser: (data: { username: string }) => Promise<{
-		data?: unknown;
-		error?: { message?: string };
-	}>;
-}
 
 export function AccountForm() {
 	const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -68,15 +61,13 @@ export function AccountForm() {
 		}
 	}, [user, form]);
 
-	const handleUpdateUsername = async () => {
-		const username = form.getValues("username");
+	const handleUpdateUsername = async (values: AccountFormValues) => {
+		const username = values.username;
 		if (!username || username === user?.username) return;
 		setIsUpdating(true);
 		try {
 			const safeUsername: string = typeof username === "string" ? username : "";
-			const response = await (
-				authClient as unknown as UsernamePlugin
-			).updateUser({ username: safeUsername });
+			const response = await authClient.updateUser({ username: safeUsername });
 			if (response?.data) {
 				toast({
 					title: "Success",
@@ -102,44 +93,45 @@ export function AccountForm() {
 	return (
 		<Form {...form}>
 			<div className="space-y-8">
-				<FormField
-					control={form.control}
-					name="username"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Username</FormLabel>
-							<div className="flex items-center gap-2">
-								<FormControl>
-									{userLoading ? (
-										<Skeleton className="h-10 w-full" />
-									) : (
-										<Input placeholder="Your username" {...field} />
-									)}
-								</FormControl>
-								<Button
-									type="button"
-									disabled={
-										userLoading ||
-										isUpdating ||
-										!field.value ||
-										field.value === user?.username
-									}
-									onClick={handleUpdateUsername}
-								>
-									{isUpdating ? (
-										<span className="animate-spin mr-2 w-4 h-4 border-2 border-t-transparent border-white rounded-full inline-block" />
-									) : null}
-									Update
-								</Button>
-							</div>
-							<FormDescription>
-								This is your public display name. It can be your real name or a
-								pseudonym. You can only change this once every 30 days.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+				<form onSubmit={form.handleSubmit(handleUpdateUsername)}>
+					<FormField
+						control={form.control}
+						name="username"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Username</FormLabel>
+								<div className="flex items-center gap-2">
+									<FormControl>
+										{userLoading ? (
+											<Skeleton className="h-10 w-full" />
+										) : (
+											<Input placeholder="Your username" {...field} />
+										)}
+									</FormControl>
+									<Button
+										type="submit"
+										disabled={
+											userLoading ||
+											isUpdating ||
+											!field.value ||
+											field.value === user?.username
+										}
+									>
+										{isUpdating ? (
+											<span className="animate-spin mr-2 w-4 h-4 border-2 border-t-transparent border-white rounded-full inline-block" />
+										) : null}
+										Update
+									</Button>
+								</div>
+								<FormDescription>
+									This is your public display name. It can be your real name or
+									a pseudonym. You can only change this once every 30 days.
+								</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</form>
 				<FormField
 					control={form.control}
 					name="email"

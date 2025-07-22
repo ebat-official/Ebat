@@ -59,7 +59,6 @@ export function junitParser(chunks: string[]): TapParseResult {
 	});
 
 	const parsed = parser.parse(xml);
-	console.log(parsed, "parsed pran");
 	const testsuites = parsed.testsuites;
 	const testcases = Array.isArray(testsuites.testcase)
 		? testsuites.testcase

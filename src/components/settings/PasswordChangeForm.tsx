@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { authClient } from "@/lib/auth-client";
+import { CREDENTIAL_ACCOUNT_NOT_FOUND } from "@/utils/constants";
 
 const passwordChangeSchema = z
 	.object({
@@ -66,9 +68,44 @@ export default function PasswordChangeForm({
 	});
 
 	async function onSubmit(data: PasswordChangeValues) {
-		console.log(data, "data");
-
-		console.log("hiiii");
+		setIsLoading(true);
+		try {
+			const response = await authClient.changePassword({
+				currentPassword: data.currentPassword,
+				newPassword: data.newPassword,
+				revokeOtherSessions: true,
+			});
+			if (response?.data) {
+				toast({
+					title: "Success",
+					description: "Password updated successfully.",
+				});
+				form.reset();
+				if (onSuccess) onSuccess();
+			} else {
+				throw new Error(
+					response?.error?.message || "Failed to update password",
+				);
+			}
+		} catch (err: unknown) {
+			const errorMsg = err instanceof Error ? err.message : String(err);
+			if (errorMsg === CREDENTIAL_ACCOUNT_NOT_FOUND) {
+				toast({
+					title: "Social account detected",
+					description:
+						"You signed up using a social account. To set up a password, use 'Forgot password' from the login page.",
+					variant: "destructive",
+				});
+			} else {
+				toast({
+					title: "Error",
+					description: errorMsg || "Failed to update password",
+					variant: "destructive",
+				});
+			}
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	return (
