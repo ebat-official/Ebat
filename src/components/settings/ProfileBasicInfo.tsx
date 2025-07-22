@@ -44,27 +44,6 @@ export function ProfileBasicInfo({ form, isLoading }: ProfileBasicInfoProps) {
 			/>
 			<FormField
 				control={form.control}
-				name="email"
-				render={({ field }) => (
-					<FormItem>
-						<FormLabel>Email</FormLabel>
-						<FormControl>
-							{isLoading ? (
-								<Skeleton className="h-10 w-full" />
-							) : (
-								<Input placeholder="Your email" {...field} disabled />
-							)}
-						</FormControl>
-
-						<FormDescription>
-							You can manage verified email addresses in your email settings.
-						</FormDescription>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
-			<FormField
-				control={form.control}
 				name="bio"
 				render={({ field }) => (
 					<FormItem>
