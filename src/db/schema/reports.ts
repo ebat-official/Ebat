@@ -16,7 +16,9 @@ export const reports = pgTable("report", {
 		onDelete: "cascade",
 	}),
 	reason: text("reason").notNull(),
-	createdAt: timestamp("created_at").notNull().defaultNow(),
+	createdAt: timestamp("created_at", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
 });
 
 // Relations

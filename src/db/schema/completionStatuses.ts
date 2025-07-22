@@ -19,7 +19,9 @@ export const completionStatuses = pgTable(
 		postId: varchar("post_id", { length: 21 })
 			.notNull()
 			.references(() => posts.id, { onDelete: "cascade" }),
-		completedAt: timestamp("completed_at").notNull().defaultNow(),
+		completedAt: timestamp("completed_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 	},
 	(table) => [
 		uniqueIndex("completionStatus_userId_postId_idx").on(

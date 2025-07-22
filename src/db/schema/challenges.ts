@@ -27,8 +27,12 @@ export const challengeTemplates = pgTable(
 		framework: templateFrameworkEnum("framework").notNull(),
 		questionTemplate: json("question_template").notNull(),
 		answerTemplate: json("answer_template").notNull(),
-		createdAt: timestamp("created_at").notNull().defaultNow(),
-		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 	},
 	(table) => [
 		uniqueIndex("challengeTemplate_postId_framework_idx").on(
@@ -56,7 +60,9 @@ export const challengeSubmissions = pgTable(
 		status: submissionStatusEnum("status")
 			.notNull()
 			.default(SubmissionStatus.REJECTED),
-		submittedAt: timestamp("submitted_at").notNull().defaultNow(),
+		submittedAt: timestamp("submitted_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 	},
 	(table) => [
 		index("challengeSubmission_postId_userId_idx").on(

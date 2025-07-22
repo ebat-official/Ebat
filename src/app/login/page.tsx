@@ -44,6 +44,7 @@ function LoginPageInner() {
 						// If user closes modal without logging in, redirect to home
 						router.replace("/");
 					}}
+					showCloseButton={false}
 				/>
 			</div>
 		);

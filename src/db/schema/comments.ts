@@ -25,8 +25,12 @@ export const comments = pgTable(
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		content: bytea("content"),
-		createdAt: timestamp("created_at").notNull().defaultNow(),
-		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 		authorId: uuid("author_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
@@ -84,7 +88,9 @@ export const commentMentions = pgTable(
 		commentId: uuid("comment_id")
 			.notNull()
 			.references(() => comments.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at").notNull().defaultNow(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 	},
 	(table) => [
 		uniqueIndex("commentMention_userId_commentId_idx").on(

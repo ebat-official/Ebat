@@ -37,8 +37,12 @@ export const posts = pgTable(
 		slug: varchar("slug", { length: 255 }),
 		thumbnail: varchar("thumbnail", { length: 500 }),
 		content: bytea("content"), // Binary field for compressed content (pako compressed)
-		createdAt: timestamp("created_at").notNull().defaultNow(),
-		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 		authorId: uuid("author_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
@@ -76,7 +80,9 @@ export const postViews = pgTable("postViews", {
 		.primaryKey()
 		.references(() => posts.id, { onDelete: "cascade" }),
 	count: integer("count").notNull().default(0),
-	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
 });
 
 // Post edits table
@@ -95,8 +101,12 @@ export const postEdits = pgTable(
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
 		approvalLogs: json("approval_logs"), // Array of approval/rejection logs
-		createdAt: timestamp("created_at").notNull().defaultNow(),
-		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 		title: varchar("title", { length: 500 }),
 		type: postTypeEnum("type").notNull(),
 		difficulty: difficultyEnum("difficulty"),

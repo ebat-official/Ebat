@@ -18,7 +18,9 @@ export const follows = pgTable(
 		followedId: uuid("followed_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at").notNull().defaultNow(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 	},
 	(table) => [
 		uniqueIndex("follow_followerId_followedId_idx").on(

@@ -24,12 +24,14 @@ type LoginModalProps = {
 	dialogTrigger?: boolean;
 	closeHandler?: () => void;
 	message?: string;
+	showCloseButton?: boolean;
 };
 
 const LoginModal: FC<LoginModalProps> = ({
 	dialogTrigger = false,
 	closeHandler = () => {},
 	message,
+	showCloseButton = true,
 }) => {
 	const [isLoginForm, setIsLoginForm] = useState<boolean>(true);
 	const [open, setOpen] = useState(!dialogTrigger);
@@ -52,7 +54,10 @@ const LoginModal: FC<LoginModalProps> = ({
 					</Button>
 				</DialogTrigger>
 			)}
-			<DialogContent className="p-8 border rounded-xl sm:rounded-3xl !max-w-md">
+			<DialogContent
+				showCloseButton={showCloseButton}
+				className="p-8 border rounded-xl sm:rounded-3xl !max-w-md"
+			>
 				{loading && (
 					<div className="absolute inset-0 z-50 flex items-center justify-center w-full h-full bg-white bg-opacity-50 dark:bg-black dark:bg-opacity-50 backdrop-blur-md rounded-3xl">
 						<Loader />

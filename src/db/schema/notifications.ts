@@ -20,7 +20,9 @@ export const notifications = pgTable(
 		type: varchar("type", { length: 100 }).notNull(),
 		message: text("message").notNull(),
 		isRead: boolean("is_read").notNull().default(false),
-		createdAt: timestamp("created_at").notNull().defaultNow(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 		link: varchar("link", { length: 500 }),
 		relatedId: varchar("related_id", { length: 255 }),
 	},
