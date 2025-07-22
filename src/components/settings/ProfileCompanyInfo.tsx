@@ -17,6 +17,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
+import { useState } from "react";
 
 interface ProfileCompanyInfoProps {
 	form: UseFormReturn<any>;
@@ -32,6 +33,8 @@ export function ProfileCompanyInfo({
 	companies,
 	handleInputChange,
 }: ProfileCompanyInfoProps) {
+	const [showDropdown, setShowDropdown] = useState(false);
+
 	return (
 		<>
 			<FormField
@@ -46,18 +49,28 @@ export function ProfileCompanyInfo({
 									type="search"
 									placeholder="Search for your company"
 									value={field.value || ""}
-									onChange={(e) => handleInputChange(e, field.onChange)}
+									onChange={(e) => {
+										handleInputChange(e, field.onChange);
+										setShowDropdown(true);
+									}}
+									onBlur={() => {
+										// Delay hiding to allow click on dropdown items
+										setTimeout(() => setShowDropdown(false), 200);
+									}}
 									autoComplete="off"
 								/>
 
-								{companies.length > 0 && field.value && (
-									<div className="mt-2 border rounded">
+								{companies.length > 0 && field.value && showDropdown && (
+									<div className="mt-2 border rounded-md max-h-[300px] overflow-y-auto bg-background shadow-sm">
 										{companies.map((company) => (
 											<button
 												type="button"
 												key={company.label}
-												className="flex items-center gap-2 px-4 py-2 cursor-pointer w-full text-left"
-												onClick={() => field.onChange(company.label)}
+												className="flex items-center gap-2 px-4 py-2 hover:bg-muted cursor-pointer w-full text-left transition-colors"
+												onClick={() => {
+													field.onChange(company.label);
+													setShowDropdown(false);
+												}}
 											>
 												{company.icon}
 												<span className="capitalize">{company.label}</span>
@@ -98,23 +111,29 @@ export function ProfileCompanyInfo({
 				render={({ field }) => (
 					<FormItem>
 						<FormLabel>Experience</FormLabel>
-						<Select onValueChange={field.onChange} defaultValue={field.value}>
+						<Select
+							onValueChange={(value) => field.onChange(Number.parseInt(value))}
+							defaultValue={field.value?.toString()}
+						>
 							<FormControl>
 								<SelectTrigger>
 									<SelectValue placeholder="Select experience" />
 								</SelectTrigger>
 							</FormControl>
 							<SelectContent>
-								<SelectItem value="1+">1+ years</SelectItem>
-								<SelectItem value="2+">2+ years</SelectItem>
-								<SelectItem value="3+">3+ years</SelectItem>
-								<SelectItem value="4+">4+ years</SelectItem>
-								<SelectItem value="5+">5+ years</SelectItem>
-								<SelectItem value="6+">6+ years</SelectItem>
-								<SelectItem value="7+">7+ years</SelectItem>
-								<SelectItem value="8+">8+ years</SelectItem>
-								<SelectItem value="9+">9+ years</SelectItem>
-								<SelectItem value="10+">10+ years</SelectItem>
+								<SelectItem value="0">Fresher</SelectItem>
+								<SelectItem value="1">1+ years</SelectItem>
+								<SelectItem value="2">2+ years</SelectItem>
+								<SelectItem value="3">3+ years</SelectItem>
+								<SelectItem value="4">4+ years</SelectItem>
+								<SelectItem value="5">5+ years</SelectItem>
+								<SelectItem value="6">6+ years</SelectItem>
+								<SelectItem value="7">7+ years</SelectItem>
+								<SelectItem value="8">8+ years</SelectItem>
+								<SelectItem value="9">9+ years</SelectItem>
+								<SelectItem value="10">10+ years</SelectItem>
+								<SelectItem value="15">15+ years</SelectItem>
+								<SelectItem value="20">20+ years</SelectItem>
 							</SelectContent>
 						</Select>
 						<FormDescription>

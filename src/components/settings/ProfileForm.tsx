@@ -5,38 +5,19 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
+
 import { toast } from "@/hooks/use-toast";
 import useCompanies from "@/hooks/useCompanyList";
-import { useRef, useState } from "react";
-import {
-	FaCamera,
-	FaGithub,
-	FaLink,
-	FaLinkedinIn,
-	FaPlus,
-	FaTrash,
-} from "react-icons/fa";
+import { useServerAction } from "@/hooks/useServerAction";
+import { useUser } from "@/hooks/query/useUser";
+import { useEffect } from "react";
 import { ProfileBasicInfo } from "./ProfileBasicInfo";
 import { ProfileCompanyInfo } from "./ProfileCompanyInfo";
 import { ProfileUrlsSection } from "./ProfileUrlsSection";
+import { updateUserProfile } from "@/actions/user";
+import type { ProfileFormValues } from "@/actions/user";
+import { useQueryClient } from "@tanstack/react-query";
 
 const profileFormSchema = z.object({
 	name: z
@@ -46,28 +27,44 @@ const profileFormSchema = z.object({
 		})
 		.max(30, {
 			message: "Name must not be longer than 30 characters.",
-		}),
-
+		})
+		.optional(),
 	email: z
 		.string({
 			required_error: "Please select an email to display.",
 		})
-		.email(),
-	bio: z.string().max(160).min(4),
+		.email()
+		.optional(),
+	bio: z.string().max(160).optional(),
 	urls: z
 		.array(
 			z.object({
-				value: z.string().url({ message: "Please enter a valid URL." }),
+				value: z.string().refine(
+					(value) => {
+						if (!value) return true; // Allow empty values
+						// Check if it's a valid URL with or without protocol
+						try {
+							// If it doesn't start with http/https, add https://
+							const urlToTest =
+								value.startsWith("http://") || value.startsWith("https://")
+									? value
+									: `https://${value}`;
+							new URL(urlToTest);
+							return true;
+						} catch {
+							return false;
+						}
+					},
+					{ message: "Please enter a valid URL (protocol optional)." },
+				),
 				type: z.string().optional(),
 			}),
 		)
 		.optional(),
 	company: z.string().optional(),
 	currentPosition: z.string().optional(),
-	experience: z.string().optional(),
+	experience: z.number().min(0).optional(),
 });
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
@@ -80,6 +77,9 @@ const defaultValues: Partial<ProfileFormValues> = {
 
 export function ProfileForm() {
 	const { companies, searchCompanies } = useCompanies();
+	const { data: user, isLoading: userLoading } = useUser();
+	const [updateProfileAction, isUpdating] = useServerAction(updateUserProfile);
+	const queryClient = useQueryClient();
 
 	const form = useForm<ProfileFormValues>({
 		resolver: zodResolver(profileFormSchema),
@@ -92,15 +92,41 @@ export function ProfileForm() {
 		control: form.control,
 	});
 
+	// Hydrate form with user profile data
+	useEffect(() => {
+		if (user) {
+			form.reset({
+				name: user.name || "",
+				email: user.email || "",
+				bio: user.description || "",
+				company: user.companyName || "",
+				currentPosition: user.jobTitle || "",
+				experience: user.experience || 0,
+				urls: Array.isArray(user.externalLinks)
+					? user.externalLinks
+					: defaultValues.urls,
+			});
+		}
+	}, [user, form]);
+
 	function onSubmit(data: ProfileFormValues) {
-		toast({
-			title: "You submitted the following values:",
-			description: (
-				<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-					<code className="text-white">{JSON.stringify(data, null, 2)}</code>
-				</pre>
-			),
-		});
+		updateProfileAction(data)
+			.then(() => {
+				// Invalidate and refetch user data to show updated profile
+				queryClient.invalidateQueries({ queryKey: ["user"] });
+				toast({
+					title: "Profile updated!",
+					description: "Your profile has been updated successfully.",
+				});
+			})
+			.catch((error) => {
+				toast({
+					title: "Failed to update profile",
+					description:
+						error instanceof Error ? error.message : "An error occurred",
+					variant: "destructive",
+				});
+			});
 	}
 
 	const handleInputChange = (
@@ -115,14 +141,22 @@ export function ProfileForm() {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-				<ProfileBasicInfo form={form} />
-				<ProfileCompanyInfo
-					form={form}
-					companies={companies}
-					handleInputChange={handleInputChange}
-				/>
-				<ProfileUrlsSection form={form} fields={fields} append={append} />
-				<Button type="submit">Update profile</Button>
+				{userLoading ? (
+					<div>Loading profile...</div>
+				) : (
+					<>
+						<ProfileBasicInfo form={form} />
+						<ProfileCompanyInfo
+							form={form}
+							companies={companies}
+							handleInputChange={handleInputChange}
+						/>
+						<ProfileUrlsSection form={form} fields={fields} append={append} />
+						<Button type="submit" disabled={isUpdating}>
+							{isUpdating ? "Updating..." : "Update profile"}
+						</Button>
+					</>
+				)}
 			</form>
 		</Form>
 	);

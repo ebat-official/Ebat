@@ -25,11 +25,11 @@ export function ProfileUrlsSection({
 	const getPlaceholder = (type: string) => {
 		switch (type) {
 			case "linkedin":
-				return "LinkedIn URL";
+				return "linkedin.com/in/username";
 			case "github":
-				return "GitHub URL";
+				return "github.com/username";
 			default:
-				return "Add URL";
+				return "example.com";
 		}
 	};
 

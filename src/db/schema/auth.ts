@@ -53,6 +53,7 @@ export const user = pgTable("user", {
 		.notNull()
 		.default(SubscriptionPlan.BASIC),
 	externalLinks: json("external_links"),
+	experience: integer("experience"),
 });
 
 export const session = pgTable("session", {

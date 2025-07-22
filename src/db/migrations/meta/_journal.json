@@ -8,6 +8,13 @@
 			"when": 1752744042325,
 			"tag": "0000_certain_champions",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1753161444428,
+			"tag": "0001_serious_lady_bullseye",
+			"breakpoints": true
 		}
 	]
 }

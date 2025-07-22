@@ -72,8 +72,7 @@ export function ProfileBasicInfo({ form }: ProfileBasicInfoProps) {
 							/>
 						</FormControl>
 						<FormDescription>
-							You can <span>@mention</span> other users and organizations to
-							link to them.
+							This will be shown on your profile.
 						</FormDescription>
 						<FormMessage />
 					</FormItem>
