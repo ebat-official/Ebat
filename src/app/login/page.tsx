@@ -1,11 +1,19 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSession } from "@/lib/auth-client";
 import LoginModal from "@/components/auth/LoginModal";
 
 export default function LoginPage() {
+	return (
+		<Suspense>
+			<LoginPageInner />
+		</Suspense>
+	);
+}
+
+function LoginPageInner() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const { data: session, isPending } = useSession();
