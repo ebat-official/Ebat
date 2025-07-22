@@ -14,6 +14,7 @@ import {
 	NonDeleted,
 } from "@excalidraw/excalidraw/element/types";
 import { AppState, BinaryFiles } from "@excalidraw/excalidraw/types";
+import { useTheme } from "next-themes";
 import * as React from "react";
 import { useEffect, useState } from "react";
 
@@ -93,11 +94,20 @@ export default function ExcalidrawImage({
 	height = "inherit",
 }: Props): JSX.Element {
 	const [Svg, setSvg] = useState<SVGElement | null>(null);
+	const { theme } = useTheme();
+	const isDarkMode = theme === "dark";
 
 	useEffect(() => {
 		const setContent = async () => {
+			// Use current theme instead of saved appState for dynamic theme support
+			const currentAppState = {
+				...appState,
+				exportWithDarkMode: isDarkMode,
+				theme: isDarkMode ? "dark" : "light",
+			};
+
 			const svg: SVGElement = await exportToSvg({
-				appState,
+				appState: currentAppState,
 				elements,
 				files,
 			});
@@ -110,7 +120,7 @@ export default function ExcalidrawImage({
 			setSvg(svg);
 		};
 		setContent();
-	}, [elements, files, appState]);
+	}, [elements, files, appState, isDarkMode]);
 
 	const containerStyle: React.CSSProperties = {};
 	if (width !== "inherit") {
