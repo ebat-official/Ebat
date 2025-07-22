@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,10 +18,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PasswordChangeForm from "./PasswordChangeForm";
 import { useUser } from "@/hooks/query/useUser";
 import { Skeleton } from "../ui/skeleton";
+import { debounce } from "lodash-es";
+import { authClient } from "@/lib/auth-client";
 
 const accountFormSchema = z.object({
 	username: z
@@ -36,9 +39,17 @@ const accountFormSchema = z.object({
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
+interface UsernamePlugin {
+	updateUser: (data: { username: string }) => Promise<{
+		data?: unknown;
+		error?: { message?: string };
+	}>;
+}
+
 export function AccountForm() {
 	const [showPasswordForm, setShowPasswordForm] = useState(false);
 	const { data: user, isLoading: userLoading } = useUser();
+	const [isUpdating, setIsUpdating] = useState(false);
 
 	const form = useForm<AccountFormValues>({
 		resolver: zodResolver(accountFormSchema),
@@ -57,6 +68,37 @@ export function AccountForm() {
 		}
 	}, [user, form]);
 
+	const handleUpdateUsername = async () => {
+		const username = form.getValues("username");
+		if (!username || username === user?.username) return;
+		setIsUpdating(true);
+		try {
+			const safeUsername: string = typeof username === "string" ? username : "";
+			const response = await (
+				authClient as unknown as UsernamePlugin
+			).updateUser({ username: safeUsername });
+			if (response?.data) {
+				toast({
+					title: "Success",
+					description: "Username updated successfully.",
+				});
+			} else {
+				throw new Error(
+					response?.error?.message || "Failed to update username",
+				);
+			}
+		} catch (err: unknown) {
+			const errorMsg = err instanceof Error ? err.message : String(err);
+			toast({
+				title: "Error",
+				description: errorMsg || "Failed to update username",
+				variant: "destructive",
+			});
+		} finally {
+			setIsUpdating(false);
+		}
+	};
+
 	return (
 		<Form {...form}>
 			<div className="space-y-8">
@@ -74,7 +116,21 @@ export function AccountForm() {
 										<Input placeholder="Your username" {...field} />
 									)}
 								</FormControl>
-								<Button type="button">Update</Button>
+								<Button
+									type="button"
+									disabled={
+										userLoading ||
+										isUpdating ||
+										!field.value ||
+										field.value === user?.username
+									}
+									onClick={handleUpdateUsername}
+								>
+									{isUpdating ? (
+										<span className="animate-spin mr-2 w-4 h-4 border-2 border-t-transparent border-white rounded-full inline-block" />
+									) : null}
+									Update
+								</Button>
 							</div>
 							<FormDescription>
 								This is your public display name. It can be your real name or a
