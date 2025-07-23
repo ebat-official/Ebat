@@ -7,6 +7,13 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { admin, openAPI, username } from "better-auth/plugins";
+import {
+	ac,
+	admin as adminRole,
+	user,
+	editor,
+	moderator,
+} from "@/auth/permissions";
 import { AccountStatus, UserRole } from "./db/schema";
 
 export const auth = betterAuth({
@@ -111,7 +118,20 @@ export const auth = betterAuth({
 			clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
 		},
 	},
-	plugins: [openAPI(), admin(), username(), nextCookies()],
+	plugins: [
+		openAPI(),
+		admin({
+			ac,
+			roles: {
+				admin: adminRole,
+				user,
+				editor,
+				moderator,
+			},
+		}),
+		username(),
+		nextCookies(),
+	],
 	trustedOrigins:
 		process.env.NODE_ENV === "production"
 			? ["*.ebat.dev", "*.ebat.vercel.app"]
