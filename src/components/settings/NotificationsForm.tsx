@@ -61,6 +61,7 @@ export function NotificationsForm() {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				{/* Hidden for now - Notify me about section
 				<FormField
 					control={form.control}
 					name="type"
@@ -101,6 +102,7 @@ export function NotificationsForm() {
 						</FormItem>
 					)}
 				/>
+				*/}
 				<div>
 					<h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
 					<div className="space-y-4">
@@ -192,30 +194,6 @@ export function NotificationsForm() {
 						/>
 					</div>
 				</div>
-				<FormField
-					control={form.control}
-					name="mobile"
-					render={({ field }) => (
-						<FormItem className="flex flex-row items-start space-x-3 space-y-0">
-							<FormControl>
-								<Checkbox
-									checked={field.value}
-									onCheckedChange={field.onChange}
-								/>
-							</FormControl>
-							<div className="space-y-1 leading-none">
-								<FormLabel>
-									Use different settings for my mobile devices
-								</FormLabel>
-								<FormDescription>
-									You can manage your mobile notifications in the{" "}
-									<Link href="/examples/forms">mobile settings</Link> page.
-								</FormDescription>
-							</div>
-						</FormItem>
-					)}
-				/>
-				<Button type="submit">Update notifications</Button>
 			</form>
 		</Form>
 	);
