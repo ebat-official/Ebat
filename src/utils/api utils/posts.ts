@@ -250,6 +250,9 @@ function buildWhereConditions({
 }) {
 	const conditions = [];
 
+	// Add approval status condition to only return approved posts
+	conditions.push(eq(posts.approvalStatus, PostApprovalStatus.APPROVED));
+
 	if (category) conditions.push(eq(posts.category, category));
 	if (subCategory) conditions.push(eq(posts.subCategory, subCategory));
 	if (type) conditions.push(eq(posts.type, type));
