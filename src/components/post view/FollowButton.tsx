@@ -68,20 +68,19 @@ const FollowButton: React.FC<FollowButtonProps> = ({
 		<TooltipProvider>
 			<Tooltip>
 				<TooltipTrigger asChild>
-					<Button
-						variant="ghost"
-						size="icon"
+					<button
+						type="button"
 						onClick={handleClick}
 						disabled={loading}
 						aria-label={isFollowingState ? "Unfollow" : "Follow"}
-						className="p-1"
+						className="cursor-pointer"
 					>
 						{isFollowingState ? (
 							<SlUserFollowing className="w-4 h-4 text-blue-500" />
 						) : (
 							<SlUserFollow className="w-4 h-4 text-gray-500" />
 						)}
-					</Button>
+					</button>
 				</TooltipTrigger>
 				<TooltipContent side="top">
 					{isFollowingState ? "Following" : "Follow"}
