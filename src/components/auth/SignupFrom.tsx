@@ -102,7 +102,6 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
 				email: userData.email,
 				password: userData.password,
 				name: userData.name,
-				username: generateUniqueUsername(userData.email),
 			});
 
 			setIsLoading(false);
