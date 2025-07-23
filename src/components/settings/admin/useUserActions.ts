@@ -20,6 +20,7 @@ export function useUserActions({ onUsersChange }: UseUserActionsProps) {
 		await authClient.admin.setRole(
 			{
 				userId,
+				// @ts-ignore
 				role,
 			},
 			{

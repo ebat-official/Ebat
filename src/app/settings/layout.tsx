@@ -40,10 +40,6 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 			title: "Notifications",
 			href: "/settings/notifications",
 		},
-		{
-			title: "Display",
-			href: "/settings/display",
-		},
 		// Only show admin tab for admin users
 		...(isAdmin
 			? [

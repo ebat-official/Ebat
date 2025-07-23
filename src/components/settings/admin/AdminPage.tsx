@@ -149,6 +149,7 @@ export function AdminPage() {
 
 	const handleCreateUser = async (data: CreateUserFormValues) => {
 		try {
+			//@ts-ignore
 			await authClient.admin.createUser(data);
 			toast.success("User created successfully");
 			setShowCreateUser(false);
@@ -195,6 +196,7 @@ export function AdminPage() {
 		try {
 			await authClient.admin.setRole({
 				userId: pendingAction.userId,
+				//@ts-ignore
 				role: pendingAction.role,
 			});
 			toast.success("User role updated successfully");

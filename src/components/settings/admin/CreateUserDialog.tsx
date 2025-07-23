@@ -31,7 +31,8 @@ export function CreateUserDialog({ onSuccess }: CreateUserDialogProps) {
 				email: data.email,
 				password: data.password || "",
 				name: data.name,
-				role: data.role as UserRole,
+				// @ts-ignore
+				role: data.role,
 			},
 			{
 				onRequest: () => {
