@@ -286,20 +286,21 @@ export async function createPostEdit(
 		return await createPost(data);
 	}
 
-	// Build the post edit data
+	const baseData = buildBasePostData(user, data, PostStatus.PUBLISHED);
 	const postEditData: InsertPostEdit = {
 		postId: data.id,
-		authorId: user.id,
-		title: data.title,
-		content: data.content ? compressContent(data.content) : null,
-		type: data.type,
-		difficulty: data.difficulty,
-		companies: data.companies?.map((company) => company.toLowerCase()) || [],
-		completionDuration: data.completionDuration || null,
-		topics: data.topics?.map((topic) => topic.toLowerCase()) || [],
+		authorId: baseData.authorId,
+		title: baseData.title,
+		content: baseData.content,
+		type: baseData.type,
+		difficulty: baseData.difficulty,
+		companies: baseData.companies,
+		completionDuration: baseData.completionDuration,
+		topics: baseData.topics,
+		thumbnail: baseData.thumbnail,
+		category: baseData.category,
+		subCategory: baseData.subCategory,
 		approvalLogs: [],
-		category: data.category,
-		subCategory: data.subCategory,
 	};
 
 	const postEdit = await db

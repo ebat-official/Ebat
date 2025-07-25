@@ -56,12 +56,10 @@ export async function getPostById(postId: string) {
 	};
 }
 
-export async function getEditPostByPostId(postId: string) {
-	const user = await validateUser();
-
-	if (!user) return null;
+// Fetch a post edit by its postId
+export async function getEditPostByPostId(postId: string, userId: string) {
 	const postEdit = await db.query.postEdits.findFirst({
-		where: and(eq(postEdits.postId, postId), eq(postEdits.authorId, user.id)),
+		where: and(eq(postEdits.postId, postId), eq(postEdits.authorId, userId)),
 		columns: {
 			id: true,
 			postId: true,

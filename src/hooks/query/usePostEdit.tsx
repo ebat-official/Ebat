@@ -14,7 +14,7 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 
-// Fetch a post by its ID
+// Fetch a post  from postEdits by its ID , if it doesn't exist, fetch a post from posts
 
 const fetchPost = async (postId: string): Promise<PostWithContent> => {
 	try {
