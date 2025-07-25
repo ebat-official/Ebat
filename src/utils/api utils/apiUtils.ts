@@ -11,12 +11,22 @@ import {
 export const fetchPostById = async (
 	postId: string,
 	PostrouteType?: PostRouteType,
+	queryParams?: Record<string, string | number | boolean>,
 ): Promise<PostWithContent> => {
 	if (!postId) throw ID_NOT_EXIST_ERROR;
 
-	const res = await fetch(
-		`/api/post/${PostrouteType ? `${PostrouteType}/` : ""}${postId}`,
-	);
+	let url = `/api/post/${PostrouteType ? `${PostrouteType}/` : ""}${postId}`;
+
+	// Add query parameters if provided
+	if (queryParams && Object.keys(queryParams).length > 0) {
+		const searchParams = new URLSearchParams();
+		for (const [key, value] of Object.entries(queryParams)) {
+			searchParams.append(key, String(value));
+		}
+		url += `?${searchParams.toString()}`;
+	}
+
+	const res = await fetch(url);
 
 	if (!res.ok) {
 		let errorMessage = UNKNOWN_ERROR;
