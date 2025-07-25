@@ -49,6 +49,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRole } from "@/db/schema/enums";
 import { authClient } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import {
 	ArrowUpDown,
 	Ban,
@@ -72,7 +73,7 @@ import { CreateUserForm } from "./CreateUserForm";
 import type { CreateUserFormValues } from "./CreateUserForm";
 
 export function AdminPage() {
-	const router = useRouter();
+	const { data: session } = useSession();
 	const [users, setUsers] = useState<User[]>([]);
 	const [totalUsers, setTotalUsers] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -359,6 +360,7 @@ export function AdminPage() {
 						userSortOrder={userSortOrder}
 						setUserSortField={(field: keyof User) => setUserSortField(field)}
 						setUserSortOrder={setUserSortOrder}
+						currentUserRole={session?.user?.role as UserRole}
 					/>
 
 					{totalPages > 1 && (

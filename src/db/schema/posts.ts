@@ -113,6 +113,8 @@ export const postEdits = pgTable(
 		companies: varchar("companies", { length: 255 }).array().default([]),
 		completionDuration: integer("completion_duration"),
 		topics: varchar("topics", { length: 255 }).array().default([]),
+		category: postCategoryEnum("category").notNull(),
+		subCategory: subCategoryEnum("sub_category").notNull(),
 	},
 	(table) => [
 		index("postEdit_postId_idx").on(table.postId),

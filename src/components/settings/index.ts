@@ -7,4 +7,5 @@ export { AccountForm } from "./AccountForm";
 // PasswordChangeForm is imported directly where needed
 export { AppearanceForm } from "./AppearanceForm";
 export { NotificationsForm } from "./NotificationsForm";
+export { ApprovalsPage } from "./ApprovalsPage";
 export { AdminPage } from "./admin/AdminPage";

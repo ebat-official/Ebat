@@ -67,6 +67,8 @@ import {
 } from "lucide-react";
 import { categoryColumns, columnConfig, defaultColumns } from "../constants";
 import type { User } from "../types";
+import { TableWithScroll } from "@/components/shared/TableWithScroll";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AdminUserTableProps {
 	users: User[];
@@ -84,6 +86,7 @@ interface AdminUserTableProps {
 	userSortOrder: "asc" | "desc";
 	setUserSortField: (field: keyof User) => void;
 	setUserSortOrder: (order: "asc" | "desc") => void;
+	currentUserRole?: UserRole;
 }
 
 function formatDate(date: Date | undefined) {
@@ -122,6 +125,7 @@ export function AdminUserTable({
 	userSortOrder,
 	setUserSortField,
 	setUserSortOrder,
+	currentUserRole,
 }: AdminUserTableProps) {
 	const [selectedColumns, setSelectedColumns] =
 		useState<string[]>(defaultColumns);
@@ -236,24 +240,57 @@ export function AdminUserTable({
 		const config = columnConfig[columnId as keyof typeof columnConfig];
 		if (!config) return columnId;
 
-		if (
-			columnId === "user" ||
-			columnId === "status" ||
-			columnId === "actions"
-		) {
-			return config.label;
+		// Define which columns are sortable
+		const sortableColumns = [
+			"user",
+			"role",
+			"createdAt",
+			"status",
+			"username",
+			"emailVerified",
+			"updatedAt",
+			"accountStatus",
+			"karmaPoints",
+			"coins",
+			"subscriptionPlan",
+			"jobTitle",
+			"companyName",
+			"location",
+			"description",
+		];
+
+		if (sortableColumns.includes(columnId)) {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => handleSort(columnId as keyof User)}
+					className="h-auto p-0 font-semibold"
+				>
+					{config.label}
+					{userSortField === columnId && <SortIcon order={userSortOrder} />}
+				</Button>
+			);
 		}
 
-		return (
-			<Button
-				variant="ghost"
-				onClick={() => handleSort(columnId as keyof User)}
-				className="h-auto p-0 font-normal"
-			>
-				{config.label}
-				{userSortField === columnId && <SortIcon order={userSortOrder} />}
-			</Button>
-		);
+		return config.label;
+	};
+
+	const renderSkeletonRows = () => {
+		return Array.from({ length: 5 }).map((_, index) => (
+			<TableRow key={`skeleton-${index}`}>
+				{selectedColumns.map((columnId) => (
+					<TableCell key={columnId}>
+						<Skeleton className="h-4 w-full rounded" />
+					</TableCell>
+				))}
+				<TableCell className="text-right">
+					<div className="flex gap-2 justify-end">
+						<Skeleton className="h-8 w-8 rounded" />
+						<Skeleton className="h-8 w-8 rounded" />
+					</div>
+				</TableCell>
+			</TableRow>
+		));
 	};
 
 	return (
@@ -460,7 +497,7 @@ export function AdminUserTable({
 			</div>
 
 			<div className="rounded-md border">
-				<Table>
+				<TableWithScroll>
 					<TableHeader>
 						<TableRow>
 							{selectedColumns.map((columnId) => (
@@ -471,14 +508,7 @@ export function AdminUserTable({
 					</TableHeader>
 					<TableBody>
 						{loading ? (
-							<TableRow>
-								<TableCell
-									colSpan={selectedColumns.length + 1}
-									className="text-center"
-								>
-									Loading users...
-								</TableCell>
-							</TableRow>
+							renderSkeletonRows()
 						) : users.length === 0 ? (
 							<TableRow>
 								<TableCell
@@ -539,14 +569,17 @@ export function AdminUserTable({
 															Ban User
 														</DropdownMenuItem>
 													)}
-													{user.role === UserRole.USER && (
-														<DropdownMenuItem
-															onClick={() => onSetRole(user.id, UserRole.ADMIN)}
-														>
-															<Shield className="mr-2 h-4 w-4" />
-															Make Admin
-														</DropdownMenuItem>
-													)}
+													{user.role !== UserRole.ADMIN &&
+														currentUserRole === UserRole.ADMIN && (
+															<DropdownMenuItem
+																onClick={() =>
+																	onSetRole(user.id, UserRole.ADMIN)
+																}
+															>
+																<Shield className="mr-2 h-4 w-4" />
+																Make Admin
+															</DropdownMenuItem>
+														)}
 													{user.role === UserRole.ADMIN && (
 														<DropdownMenuItem
 															onClick={() => onSetRole(user.id, UserRole.USER)}
@@ -570,7 +603,7 @@ export function AdminUserTable({
 							))
 						)}
 					</TableBody>
-				</Table>
+				</TableWithScroll>
 			</div>
 		</div>
 	);

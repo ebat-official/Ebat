@@ -1,5 +1,10 @@
 import { AccountStatus, SubscriptionPlan, UserRole } from "@/db/schema/enums";
-import type { AuthSession, User as DbUser } from "@/db/schema/zod-schemas";
+import type {
+	AuthSession,
+	User as DbUser,
+	Post,
+	PostEdit,
+} from "@/db/schema/zod-schemas";
 
 // Re-export database types for convenience
 export type User = DbUser;
@@ -31,4 +36,29 @@ export interface CategoryColumns {
 	profile: string[];
 	engagement: string[];
 	professional: string[];
+}
+
+// Approval-related types
+export interface PostWithAuthor extends Post {
+	author: Pick<User, "id" | "name" | "username" | "email">;
+}
+
+export interface PostEditWithAuthor extends PostEdit {
+	author: Pick<User, "id" | "name" | "username" | "email">;
+}
+
+export interface ApprovalFilters {
+	category: string;
+	subcategory: string;
+	type: string;
+	difficulty: string;
+	companies: string[];
+	topics: string[];
+}
+
+export interface ApprovalTableState {
+	searchQuery: string;
+	sortField: string;
+	sortOrder: SortOrder;
+	filters: Record<string, string>;
 }

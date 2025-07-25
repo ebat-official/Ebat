@@ -271,7 +271,7 @@ export async function createPostEdit(
 	if (!validation.success) return { status: ERROR, data: validation.error };
 
 	const { isLivePost, existingPost } = await checkPostLiveStatus(data.id);
-	// Only allow updates if the post is not in LIVE status
+	// Only allow updates if the post is in LIVE status
 	if (!existingPost) {
 		return FailedToEditPostErr("The post does not exist.");
 	}
@@ -295,6 +295,8 @@ export async function createPostEdit(
 		completionDuration: data.completionDuration || null,
 		topics: data.topics?.map((topic) => topic.toLowerCase()) || [],
 		approvalLogs: [],
+		category: data.category,
+		subCategory: data.subCategory,
 	};
 
 	const postEdit = await db

@@ -40,6 +40,10 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 			title: "Notifications",
 			href: "/settings/notifications",
 		},
+		{
+			title: "Approvals",
+			href: "/settings/approvals",
+		},
 		// Only show admin tab for admin users
 		...(isAdmin
 			? [
@@ -54,7 +58,7 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 	return (
 		<Card className="m-2 bg-transparent">
 			<CardContent>
-				<div className="hidden space-y-6 p-10 pb-16 md:block">
+				<div className="space-y-6 px-10 md:block">
 					<div className="space-y-0.5">
 						<h2 className="text-2xl font-bold tracking-tight">Settings</h2>
 						<p className="text-muted-foreground">
@@ -66,7 +70,9 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 						<aside className=" lg:w-1/5">
 							<SidebarNav items={sidebarNavItems} />
 						</aside>
-						<div className="flex-1  bg-card/50 p-4 rounded-md">{children}</div>
+						<div className="flex-1  bg-card/50 p-4 rounded-md min-h-[70vh]">
+							{children}
+						</div>
 					</div>
 				</div>
 			</CardContent>
