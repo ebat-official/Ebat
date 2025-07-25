@@ -177,10 +177,8 @@ export async function createPost(
 	if (!data.id) return ValidationErr(POST_ID_REQUIRED);
 	//return true if post not exists or owner is current user
 	const isOwner = await checkPostOwnership(data.id, user.id);
-	if (!isOwner) {
-		if (!(data.type === PostType.BLOGS)) return UNAUTHORIZED_ERROR;
-		createPostEdit(data);
-	}
+	if (!isOwner) return UNAUTHORIZED_ERROR;
+
 	const { isLivePost } = await checkPostLiveStatus(data.id); // Only allow updates if the post is not in LIVE status except for blogs
 	if (isLivePost && data.type !== PostType.BLOGS) {
 		return LIVE_POST_EDIT_ERROR;
@@ -282,6 +280,11 @@ export async function createPostEdit(
 
 	const user = await validateUser();
 	if (!user) return UNAUTHENTICATED_ERROR;
+
+	// Special case: For BLOGS posts, if the user is the author, call createPost instead
+	if (data.type === PostType.BLOGS && existingPost.authorId === user.id) {
+		return await createPost(data);
+	}
 
 	// Build the post edit data
 	const postEditData: InsertPostEdit = {

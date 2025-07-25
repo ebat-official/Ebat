@@ -28,9 +28,7 @@ export const usePostPublishManager = (
 	// Separate loading states for draft and publish actions
 	const [createDraft, isDrafting] = useServerAction(createDraftPost);
 	const publishingAction =
-		action === POST_ACTIONS.CREATE || subCategory === SubCategory.BLOGS
-			? createPost
-			: createPostEdit;
+		action === POST_ACTIONS.CREATE ? createPost : createPostEdit;
 	const [publishPost, isPublishing] = useServerAction(publishingAction);
 
 	const [error, setError] = useState<unknown | null>(null);
