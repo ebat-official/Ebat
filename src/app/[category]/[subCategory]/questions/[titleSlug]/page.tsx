@@ -26,7 +26,7 @@ export async function generateMetadata({
 	params: PageParams;
 }): Promise<Metadata> {
 	const awaitedParams = await params;
-	const post = await getPostFromURL(awaitedParams);
+	const post = await getPostFromURL(awaitedParams.titleSlug);
 	if (!post) return {};
 
 	return generatePageMetadata(post, {
@@ -37,7 +37,7 @@ export async function generateMetadata({
 // Main page component updated for Next.js 15
 export default async function PostPage({ params }: { params: PageParams }) {
 	const awaitedParams = await params;
-	const post = await getPostFromURL(awaitedParams);
+	const post = await getPostFromURL(awaitedParams.titleSlug);
 	if (!post) return notFound();
 	return (
 		<>

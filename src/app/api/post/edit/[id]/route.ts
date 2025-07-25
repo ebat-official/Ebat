@@ -46,12 +46,12 @@ export async function GET(
 		// Check if the effective user is the owner of the post
 		const isOwner = post.authorId === user.id;
 
-		// If not the owner, check if user has "edit-read" permission
+		// If not the owner, check if user has "edit-edit" permission
 		if (!isOwner) {
 			const hasEditReadPermission = await auth.api.userHasPermission({
 				body: {
 					userId: user.id,
-					permission: { post: ["edit-read"] },
+					permission: { post: ["edit-edit"] },
 				},
 			});
 			if (!hasEditReadPermission?.success) {

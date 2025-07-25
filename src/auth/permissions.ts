@@ -3,7 +3,7 @@ import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
 
 export const statement = {
 	...defaultStatements,
-	post: ["create", "update", "delete", "edit-read"],
+	post: ["create", "update", "delete", "edit-read", "edit-edit"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -22,5 +22,5 @@ export const moderator = ac.newRole({
 
 export const admin = ac.newRole({
 	...adminAc.statements,
-	post: ["create", "update", "delete", "edit-read"],
+	post: ["create", "update", "delete", "edit-read", "edit-edit"],
 });

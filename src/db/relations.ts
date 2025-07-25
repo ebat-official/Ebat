@@ -80,7 +80,7 @@ export const postViewsRelations = relations(postViews, ({ one }) => ({
 	}),
 }));
 
-export const postEditsRelations = relations(postEdits, ({ one }) => ({
+export const postEditsRelations = relations(postEdits, ({ one, many }) => ({
 	post: one(posts, {
 		fields: [postEdits.postId],
 		references: [posts.id],
@@ -89,6 +89,7 @@ export const postEditsRelations = relations(postEdits, ({ one }) => ({
 		fields: [postEdits.authorId],
 		references: [user.id],
 	}),
+	challengeTemplates: many(challengeTemplates),
 }));
 
 export const postCollaboratorsRelations = relations(
@@ -221,6 +222,10 @@ export const challengeTemplatesRelations = relations(
 		post: one(posts, {
 			fields: [challengeTemplates.postId],
 			references: [posts.id],
+		}),
+		postEdit: one(postEdits, {
+			fields: [challengeTemplates.postEditId],
+			references: [postEdits.id],
 		}),
 		submissions: many(challengeSubmissions, {
 			relationName: "ChallengeSubmissions",

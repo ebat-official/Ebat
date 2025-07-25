@@ -87,6 +87,7 @@ export type postCreateOptions = Partial<
 	UseQueryOptions<PostWithContent, Error>
 > & {
 	action?: PostActions;
+	queryParams?: Record<string, string | number | boolean>;
 };
 
 export type PostActions = (typeof POST_ACTIONS)[keyof typeof POST_ACTIONS];

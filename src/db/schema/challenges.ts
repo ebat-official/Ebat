@@ -14,7 +14,7 @@ import {
 	submissionStatusEnum,
 	templateFrameworkEnum,
 } from "./enums";
-import { posts } from "./posts";
+import { posts, postEdits } from "./posts";
 
 // ChallengeTemplate table
 export const challengeTemplates = pgTable(
@@ -33,13 +33,18 @@ export const challengeTemplates = pgTable(
 		updatedAt: timestamp("updated_at", { withTimezone: true })
 			.notNull()
 			.defaultNow(),
+		postEditId: uuid("post_edit_id").references(() => postEdits.id, {
+			onDelete: "cascade",
+		}),
 	},
 	(table) => [
 		uniqueIndex("challengeTemplate_postId_framework_idx").on(
 			table.postId,
 			table.framework,
+			table.postEditId,
 		),
 		index("challengeTemplate_postId_idx").on(table.postId),
+		index("challengeTemplate_postEditId_idx").on(table.postEditId),
 	],
 );
 

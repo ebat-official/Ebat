@@ -1,4 +1,5 @@
 import { validateUser } from "@/actions/user";
+import { auth } from "@/auth";
 import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/utils/SSR/extractTOCAndEnhanceHTML";
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { POST_ID_LENGTH } from "@/config";
@@ -14,6 +15,7 @@ import {
 	Difficulty,
 	PostApprovalStatus,
 	PostCategory,
+	PostStatus,
 	PostType,
 	SubCategory,
 } from "@/db/schema/enums";
@@ -30,6 +32,7 @@ import {
 } from "drizzle-orm";
 import { decompressContent } from "../compression";
 import { EndpointMap, INVALID_PAGE, INVALID_PAGE_SIZE } from "../constants";
+import { UNAUTHORIZED_ERROR } from "../errors";
 import { sanitizeSearchQuery } from "../sanitizeSearchQuery";
 import { PostSearchResponse, PostSortOrder } from "../types";
 import {
@@ -60,20 +63,8 @@ export async function getPostById(postId: string) {
 export async function getEditPostByPostId(postId: string, userId: string) {
 	const postEdit = await db.query.postEdits.findFirst({
 		where: and(eq(postEdits.postId, postId), eq(postEdits.authorId, userId)),
-		columns: {
-			id: true,
-			postId: true,
-			authorId: true,
-			title: true,
-			content: true,
-			approvalStatus: true,
-			createdAt: true,
-			updatedAt: true,
-			type: true,
-			difficulty: true,
-			companies: true,
-			completionDuration: true,
-			topics: true,
+		with: {
+			challengeTemplates: true,
 		},
 	});
 
@@ -83,6 +74,161 @@ export async function getEditPostByPostId(postId: string, userId: string) {
 		...postEdit,
 		content: postEdit.content ? decompressContent(postEdit.content) : null,
 	};
+}
+
+// Server-side function for fetching post edits with authorization
+export async function getPostEditFromId(
+	postId: string,
+	queryParams?: Record<string, string | number | boolean>,
+): Promise<PostWithExtraDetails | null> {
+	// Get current user for authorization check
+	const user = await validateUser();
+
+	try {
+		// Build authorization condition: user is the author or has permissions
+		if (!user) {
+			// No user, no access
+			return null;
+		}
+
+		// Get the target userId (from query params or current user)
+		const targetUserId = (queryParams?.user as string) || user.id;
+
+		// Fetch postEdit for the target user
+		const postEdit = await db.query.postEdits.findFirst({
+			where: and(
+				eq(postEdits.postId, postId),
+				eq(postEdits.authorId, targetUserId),
+			),
+			with: {
+				author: {
+					columns: {
+						id: true,
+						username: true,
+						name: true,
+						image: true,
+						companyName: true,
+					},
+				},
+				challengeTemplates: true,
+			},
+		});
+
+		if (!postEdit) return null;
+
+		// Check authorization: current user must be the author or have permission
+		if (user.id !== postEdit.authorId) {
+			const hasEditReadPermission = await auth.api.userHasPermission({
+				body: {
+					userId: user.id,
+					permission: { post: ["edit-read"] },
+				},
+			});
+
+			if (!hasEditReadPermission?.success) {
+				return null;
+			}
+		}
+
+		const originalPost = await db.query.posts.findFirst({
+			where: eq(posts.id, postId),
+			with: {
+				author: {
+					columns: {
+						id: true,
+						username: true,
+						name: true,
+						image: true,
+						companyName: true,
+					},
+				},
+				collaborators: {
+					with: {
+						user: {
+							columns: {
+								id: true,
+								username: true,
+								name: true,
+								image: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		if (!originalPost) return null;
+
+		const ContentHtml: ContentReturnType = {
+			post: "",
+			answer: "",
+		};
+		let tableOfContent: TableOfContent = [];
+
+		if (postEdit.content) {
+			// Decompress content using utility
+			const decompressedContent = decompressContent(postEdit.content);
+			const parsedContent = decompressedContent as ContentType;
+
+			if (parsedContent.post?.blocks) {
+				const postHtml = await getHtml(parsedContent.post.blocks);
+				const { toc, htmlWithAnchors } = extractTOCAndEnhanceHTML(postHtml);
+				ContentHtml.post = htmlWithAnchors;
+				tableOfContent = toc;
+			}
+			if (parsedContent.answer?.blocks) {
+				const answerHtml = await getHtml(parsedContent.answer.blocks);
+				ContentHtml.answer = answerHtml;
+			}
+		}
+
+		// Build collaborators: original collaborators + postEdit author (if not already present and not original author)
+		const collaborators = [
+			...(originalPost.collaborators?.map((collaborator) => ({
+				id: collaborator.user.id,
+				username: collaborator.user.username,
+				name: collaborator.user.name,
+				image: collaborator.user.image,
+			})) || []),
+		];
+		const isAlreadyCollaborator = collaborators.some(
+			(c) => c.id === postEdit.author?.id,
+		);
+		const isOriginalAuthor = originalPost.author?.id === postEdit.author?.id;
+		if (postEdit.author && !isAlreadyCollaborator && !isOriginalAuthor) {
+			collaborators.push({
+				id: postEdit.author.id,
+				username: postEdit.author.username,
+				name: postEdit.author.name,
+				image: postEdit.author.image,
+			});
+		}
+
+		const result = {
+			...postEdit,
+			id: postEdit.postId,
+			slug: originalPost.slug,
+			coins: originalPost.coins,
+			status: originalPost.status,
+			content: ContentHtml,
+			completionCount: 0,
+			tableOfContent,
+			views: { count: 0, updatedAt: new Date() },
+			challengeTemplates: postEdit.challengeTemplates,
+			author: {
+				id: originalPost.author?.id || "",
+				username: originalPost.author?.username,
+				name: originalPost.author?.name || null,
+				image: originalPost.author?.image || null,
+				companyName: originalPost.author?.companyName || null,
+			},
+			collaborators,
+		};
+
+		return result as PostWithExtraDetails;
+	} catch (error) {
+		console.error("Error fetching post edit:", error);
+		return null;
+	}
 }
 
 export async function getAllApprovedPosts() {
@@ -105,30 +251,18 @@ export async function getAllApprovedPosts() {
 }
 
 // Server-side function for static pages with enriched data
-export async function getPostFromURL(params: {
-	category: string;
-	subCategory: string;
-	titleSlug: string;
-}): Promise<PostWithExtraDetails | null> {
-	const { titleSlug, category, subCategory } = params;
-
+export async function getPostFromURL(
+	titleSlug: string,
+): Promise<PostWithExtraDetails | null> {
 	const id = titleSlug.slice(-POST_ID_LENGTH);
 	if (!id) return null;
-
 	// Get current user for authorization check
 	const user = await validateUser();
 
 	try {
-		// Build authorization condition: either approved or user is the author
-		const authorizationCondition = user
-			? or(
-					eq(posts.approvalStatus, PostApprovalStatus.APPROVED),
-					eq(posts.authorId, user.id),
-				)
-			: eq(posts.approvalStatus, PostApprovalStatus.APPROVED);
-
+		// Fetch the post by id
 		const post = await db.query.posts.findFirst({
-			where: and(eq(posts.id, id), authorizationCondition),
+			where: eq(posts.id, id),
 			with: {
 				author: {
 					columns: {
@@ -157,15 +291,32 @@ export async function getPostFromURL(params: {
 
 		if (!post) return null;
 
-		// Get completion count
+		// Authorization logic
+		let authorized = false;
+		if (post.approvalStatus === PostApprovalStatus.APPROVED) {
+			authorized = true;
+		} else if (user && post.authorId === user.id) {
+			authorized = true;
+		} else if (user) {
+			const hasEditReadPermission = await auth.api.userHasPermission({
+				body: {
+					userId: user.id,
+					permission: { post: ["edit-read"] },
+				},
+			});
+			if (hasEditReadPermission?.success) {
+				authorized = true;
+			}
+		}
+		if (!authorized) return null;
+
+		// Build result object
 		const completionCountResult = await db
 			.select({ count: count() })
 			.from(completionStatuses)
 			.where(eq(completionStatuses.postId, id));
-
 		const completionCount = completionCountResult[0]?.count || 0;
 
-		// Get views
 		const viewsResult = await db.query.postViews.findFirst({
 			where: eq(postViews.postId, id),
 			columns: {
@@ -181,7 +332,6 @@ export async function getPostFromURL(params: {
 		let tableOfContent: TableOfContent = [];
 
 		if (post.content) {
-			// Decompress content using utility
 			const decompressedContent = decompressContent(post.content);
 			const parsedContent = decompressedContent as ContentType;
 
