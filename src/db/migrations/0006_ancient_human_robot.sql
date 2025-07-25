@@ -1,0 +1,1 @@
+ALTER TABLE "postEdit" ADD COLUMN "thumbnail" varchar(500);

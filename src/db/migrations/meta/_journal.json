@@ -43,6 +43,13 @@
 			"when": 1753427654145,
 			"tag": "0005_clean_lily_hollister",
 			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "7",
+			"when": 1753443990258,
+			"tag": "0006_ancient_human_robot",
+			"breakpoints": true
 		}
 	]
 }
