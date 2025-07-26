@@ -70,7 +70,7 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 						<aside className=" lg:w-1/5">
 							<SidebarNav items={sidebarNavItems} />
 						</aside>
-						<div className="flex-1  bg-card/50 p-4 rounded-md min-h-[70vh]">
+						<div className="flex-1  bg-card/50 p-4 pb-0 rounded-md min-h-[70vh]">
 							{children}
 						</div>
 					</div>

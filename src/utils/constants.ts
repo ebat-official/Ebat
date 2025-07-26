@@ -68,3 +68,12 @@ export enum EndpointMap {
 	// Add more endpoints as needed
 }
 export const CREDENTIAL_ACCOUNT_NOT_FOUND = "Credential account not found";
+
+// Username availability status constants
+export const USERNAME_STATUS = {
+	IDLE: "idle",
+	CHECKING: "checking",
+	AVAILABLE: "available",
+	UNAVAILABLE: "unavailable",
+	ERROR: "error",
+} as const;
