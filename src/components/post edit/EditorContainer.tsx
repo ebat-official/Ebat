@@ -7,9 +7,15 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PostType, TemplateFramework } from "@/db/schema/enums";
+import {
+	PostStatus,
+	PostStatusType,
+	PostType,
+	TemplateFramework,
+} from "@/db/schema/enums";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import { POST_ACTIONS } from "@/utils/constants";
+import { generatePreviewUrl } from "@/utils/generatePreviewUrl";
 import {
 	CategoryType,
 	ChallengeTemplate,
@@ -34,14 +40,24 @@ import { LexicalEditorWrapper } from "./Editor";
 import { ThumbnailUpload } from "./ThumbnailUpload";
 import { SavedTemplatesList } from "./challenge/SavedTemplatesList";
 import { TemplateCreator } from "./challenge/TemplateCreator";
+import { Post } from "@/db/schema/zod-schemas";
+
+type HandlerReturnType = {
+	data?: unknown;
+	error?: unknown;
+	isLoading?: boolean;
+};
 
 interface EditorContainerProps {
 	postId: string;
 	postType: PostType;
 	defaultContent?: ContentType;
 	dataLoading?: boolean;
-	saveHandler: (data: ContentType) => Promise<void>;
-	publishHandler: (data: ContentType) => void;
+	saveHandler: (data: ContentType) => Promise<HandlerReturnType>;
+	publishHandler: (
+		data: ContentType,
+		postStatus?: PostStatusType,
+	) => Promise<HandlerReturnType>;
 	actionDraftLoading?: boolean;
 	actionPublishLoading?: boolean;
 	action?: PostActions;
@@ -148,15 +164,34 @@ function EditorContainer({
 	};
 
 	const handlePreview = async () => {
-		const payload = getPayload();
-		await saveHandler(payload);
-		// Open preview URL in new window
-		const postTypePath =
-			postType === PostType.CHALLENGE || postType === PostType.QUESTION
-				? `${postType}s/`
-				: "";
-		const previewUrl = `/${category}/${subCategory}/${postTypePath}preview-${postId}`;
-		window.open(previewUrl, "_blank");
+		// If action is edit, publish the post as draft mode
+		if (action === POST_ACTIONS.EDIT) {
+			const res = await publishHandler(getPayload(), PostStatus.DRAFT);
+			// Open preview URL in new window
+			if (res.data) {
+				const previewUrl = generatePreviewUrl({
+					category,
+					subCategory,
+					postType,
+					postId,
+					edited: true,
+				});
+				window.open(previewUrl, "_blank");
+			}
+		} else {
+			const payload = getPayload();
+			await saveHandler(payload);
+			const res = await saveHandler(getPayload());
+			if (res.data) {
+				const previewUrl = generatePreviewUrl({
+					category,
+					subCategory,
+					postType,
+					postId,
+				});
+				window.open(previewUrl, "_blank");
+			}
+		}
 	};
 
 	const handleTemplatesSave = useCallback((templates: ChallengeTemplate) => {
@@ -271,53 +306,51 @@ function EditorContainer({
 					)}
 
 					<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 z-50 right-0 -translate-y-full ">
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										variant="outline"
+										className="justify-center items-center flex ga-2"
+										onClick={handlePreview}
+										disabled={actionDraftLoading || actionPublishLoading}
+									>
+										{actionDraftLoading ? (
+											<Loader2 className="animate-spin" />
+										) : (
+											<Code />
+										)}
+										<span className="hidden md:block">Preview</span>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Preview post</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
 						{action !== POST_ACTIONS.EDIT && (
-							<>
-								<TooltipProvider>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Button
-												variant="outline"
-												className="justify-center items-center flex ga-2"
-												onClick={handlePreview}
-												disabled={actionDraftLoading || actionPublishLoading}
-											>
-												{actionDraftLoading ? (
-													<Loader2 className="animate-spin" />
-												) : (
-													<Code />
-												)}
-												<span className="hidden md:block">Preview</span>
-											</Button>
-										</TooltipTrigger>
-										<TooltipContent>
-											<p>Preview post</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
-								<TooltipProvider>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Button
-												variant="outline"
-												className="justify-center items-center flex ga-2"
-												onClick={handleSave}
-												disabled={actionDraftLoading || actionPublishLoading}
-											>
-												{actionDraftLoading ? (
-													<Loader2 className="animate-spin" />
-												) : (
-													<CiSaveDown2 />
-												)}
-												<span className="hidden md:block">Save</span>
-											</Button>
-										</TooltipTrigger>
-										<TooltipContent>
-											<p>Save as draft</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
-							</>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											variant="outline"
+											className="justify-center items-center flex ga-2"
+											onClick={handleSave}
+											disabled={actionDraftLoading || actionPublishLoading}
+										>
+											{actionDraftLoading ? (
+												<Loader2 className="animate-spin" />
+											) : (
+												<CiSaveDown2 />
+											)}
+											<span className="hidden md:block">Save</span>
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Save as draft</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						)}
 						<Button
 							disabled={actionDraftLoading || actionPublishLoading}

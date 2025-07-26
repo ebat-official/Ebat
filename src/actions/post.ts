@@ -28,7 +28,11 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { validateUser } from "./user";
-
+type PostReturnType = {
+	id: string;
+	slug: string | null;
+	approvalStatus: PostApprovalStatus;
+};
 const getPostDetails = async (postId: string) => {
 	return await db.query.posts.findFirst({
 		where: eq(posts.id, postId),
@@ -67,7 +71,7 @@ const revalidatePostPath = (post: typeof posts.$inferSelect) => {
 const buildBasePostData = (
 	user: { id: string },
 	data: z.infer<typeof PostDraftValidator> | z.infer<typeof PostValidator>,
-	status: PostStatusType,
+	status: PostStatusType = PostStatus.PUBLISHED,
 ): InsertPost => ({
 	id: data.id,
 	authorId: user.id,
@@ -87,7 +91,7 @@ const buildBasePostData = (
 // Draft Post Creation
 export async function createDraftPost(
 	data: z.infer<typeof PostDraftValidator>,
-): Promise<GenerateActionReturnType<string>> {
+): Promise<GenerateActionReturnType<PostReturnType>> {
 	const validation = PostDraftValidator.safeParse(data);
 	if (!validation.success) return { status: ERROR, data: validation.error };
 
@@ -142,7 +146,14 @@ export async function createDraftPost(
 				return post[0];
 			});
 
-			return { status: SUCCESS, data: result.id };
+			return {
+				status: SUCCESS,
+				data: {
+					id: result.id,
+					slug: null,
+					approvalStatus: result.approvalStatus,
+				},
+			};
 		} catch (e) {
 			return {
 				status: ERROR,
@@ -159,15 +170,21 @@ export async function createDraftPost(
 				set: postData,
 			})
 			.returning();
-		return { status: SUCCESS, data: post[0].id };
+		return {
+			status: SUCCESS,
+			data: {
+				id: post[0].id,
+				slug: null,
+				approvalStatus: post[0].approvalStatus,
+			},
+		};
 	}
 }
 
-type CreatePostReturnType = { id: string; slug: string | null };
 // Published Post Creation
 export async function createPost(
 	data: z.infer<typeof PostValidator>,
-): Promise<GenerateActionReturnType<CreatePostReturnType>> {
+): Promise<GenerateActionReturnType<PostReturnType>> {
 	const validation = PostValidator.safeParse(data);
 	if (!validation.success) return { status: ERROR, data: validation.error };
 
@@ -185,7 +202,7 @@ export async function createPost(
 	}
 
 	const postData = {
-		...buildBasePostData(user, data, PostStatus.PUBLISHED),
+		...buildBasePostData(user, data),
 		title: data.title,
 		completionDuration: getCompletionDuration(data),
 		coins: getDefaultCoins(data),
@@ -237,7 +254,14 @@ export async function createPost(
 
 			// Trigger revalidation for the post's path
 			revalidatePostPath(result);
-			return { status: SUCCESS, data: { id: result.id, slug: result.slug } };
+			return {
+				status: SUCCESS,
+				data: {
+					id: result.id,
+					slug: result.slug,
+					approvalStatus: result.approvalStatus,
+				},
+			};
 		} catch (e) {
 			return {
 				status: ERROR,
@@ -257,13 +281,21 @@ export async function createPost(
 
 		// Trigger revalidation for the post's path
 		revalidatePostPath(post[0]);
-		return { status: SUCCESS, data: { id: post[0].id, slug: post[0].slug } };
+		return {
+			status: SUCCESS,
+			data: {
+				id: post[0].id,
+				slug: post[0].slug,
+				approvalStatus: post[0].approvalStatus,
+			},
+		};
 	}
 }
 
 export async function createPostEdit(
 	data: z.infer<typeof PostValidator>,
-): Promise<GenerateActionReturnType<CreatePostReturnType>> {
+	postStatus: PostStatusType = PostStatus.PUBLISHED,
+): Promise<GenerateActionReturnType<PostReturnType>> {
 	// Validate the input data
 	const validation = PostValidator.safeParse(data);
 	if (!validation.success) return { status: ERROR, data: validation.error };
@@ -281,12 +313,7 @@ export async function createPostEdit(
 	const user = await validateUser();
 	if (!user) return UNAUTHENTICATED_ERROR;
 
-	// Special case: For BLOGS posts, if the user is the author, call createPost instead
-	if (data.type === PostType.BLOGS && existingPost.authorId === user.id) {
-		return await createPost(data);
-	}
-
-	const baseData = buildBasePostData(user, data, PostStatus.PUBLISHED);
+	const baseData = buildBasePostData(user, data, postStatus);
 	const postEditData: InsertPostEdit = {
 		postId: data.id,
 		authorId: baseData.authorId,
@@ -341,7 +368,14 @@ export async function createPostEdit(
 				return postEdit[0];
 			});
 
-			return { status: SUCCESS, data: { id: result.postId, slug: "" } };
+			return {
+				status: SUCCESS,
+				data: {
+					id: result.postId,
+					slug: "",
+					approvalStatus: result.approvalStatus,
+				},
+			};
 		} catch (e) {
 			return {
 				status: ERROR,
@@ -361,6 +395,17 @@ export async function createPostEdit(
 			})
 			.returning();
 
-		return { status: SUCCESS, data: { id: postEdit[0].postId, slug: "" } };
+		return {
+			status: SUCCESS,
+			data: {
+				id: postEdit[0].postId,
+				slug: "",
+				approvalStatus: postEdit[0].approvalStatus,
+			},
+		};
 	}
+	// Todo: // Special case: For BLOGS posts, if the user is the author, call approveflow automatically
+	// if (data.type === PostType.BLOGS && existingPost.authorId === user.id && postStatus===Published) {
+	// 	await approveFlow(postEdit[0].id);
+	// }
 }

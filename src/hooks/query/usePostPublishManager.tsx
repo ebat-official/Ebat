@@ -1,5 +1,5 @@
 import { createDraftPost, createPost, createPostEdit } from "@/actions/post";
-import { PostType, SubCategory } from "@/db/schema/enums";
+import { PostStatusType, PostType, SubCategory } from "@/db/schema/enums";
 import { useServerAction } from "@/hooks/useServerAction";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
 import consolidatePostData from "@/utils/consolidatePostData";
@@ -87,12 +87,12 @@ export const usePostPublishManager = (
 	/**
 	 * Handles publishing a post.
 	 */
-	const publish = async (params: PostParams) => {
+	const publish = async (params: PostParams, postStatus?: PostStatusType) => {
 		const validated = validateData(params);
 		if (validated.error) return { error: validated.error, isLoading: false };
 
 		try {
-			const data = await publishPost(validated.data);
+			const data = await publishPost(validated.data, postStatus);
 			if (data.status === ERROR) throw data;
 			setError(null);
 			return { data: data.data, error: null, isLoading: false };

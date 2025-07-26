@@ -6,7 +6,12 @@ import { EditorProvider } from "@/components/shared/Lexical Editor/providers/Edi
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import StatusDialog from "@/components/shared/StatusDialog";
 import { Button } from "@/components/ui/button";
-import { PostType, SubCategory } from "@/db/schema/enums";
+import {
+	PostApprovalStatus,
+	PostStatusType,
+	PostType,
+	SubCategory,
+} from "@/db/schema/enums";
 import { usePostFetchManager } from "@/hooks/query/usePostFetchManager";
 import { usePostPublishManager } from "@/hooks/query/usePostPublishManager";
 import { toast } from "@/hooks/use-toast";
@@ -141,9 +146,13 @@ function PostCreateEdit({
 				variant: "default",
 			});
 		}
+		return result;
 	};
 
-	const publishHandler = async (postContent: ContentType) => {
+	const publishHandler = async (
+		postContent: ContentType,
+		postStatus?: PostStatusType,
+	) => {
 		const data = getPostData(postContent);
 		if (
 			(postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) &&
@@ -151,10 +160,11 @@ function PostCreateEdit({
 		) {
 			//thumbnail is required for blogs and system design
 		}
-		const result = await publish(data);
-		if (result.data) {
+		const result = await publish(data, postStatus);
+		if (result.data?.approvalStatus === PostApprovalStatus.APPROVED) {
 			setPostPublished(result.data.slug || true);
 		}
+		return result;
 	};
 
 	if (blockUserAccess) {
