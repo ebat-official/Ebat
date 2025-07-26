@@ -303,14 +303,65 @@ export async function createPostEdit(
 		approvalLogs: [],
 	};
 
-	const postEdit = await db
-		.insert(postEdits)
-		.values(postEditData)
-		.onConflictDoUpdate({
-			target: [postEdits.postId, postEdits.authorId],
-			set: postEditData,
-		})
-		.returning();
+	// Handle challenge templates for post edits
+	if (
+		data.type === PostType.CHALLENGE &&
+		data.challengeTemplates &&
+		data.challengeTemplates.length > 0
+	) {
+		try {
+			const result = await db.transaction(async (tx) => {
+				// Create the post edit
+				const postEdit = await tx
+					.insert(postEdits)
+					.values(postEditData)
+					.onConflictDoUpdate({
+						target: [postEdits.postId, postEdits.authorId],
+						set: postEditData,
+					})
+					.returning();
 
-	return { status: SUCCESS, data: { id: postEdit[0].postId, slug: "" } };
+				// Delete all existing templates for this post edit
+				await tx
+					.delete(challengeTemplates)
+					.where(eq(challengeTemplates.postEditId, postEdit[0].id));
+
+				// Create all new templates with postEditId mapping
+				if (data.challengeTemplates) {
+					for (const template of data.challengeTemplates) {
+						await tx.insert(challengeTemplates).values({
+							postId: data.id, // Original post ID
+							postEditId: postEdit[0].id, // New post edit ID
+							framework: template.framework,
+							questionTemplate: template.questionTemplate,
+							answerTemplate: template.answerTemplate,
+						});
+					}
+				}
+
+				return postEdit[0];
+			});
+
+			return { status: SUCCESS, data: { id: result.postId, slug: "" } };
+		} catch (e) {
+			return {
+				status: ERROR,
+				data: {
+					message: "Failed to create challenge post edit with templates",
+				},
+			};
+		}
+	} else {
+		// Regular post edit creation without challenge templates
+		const postEdit = await db
+			.insert(postEdits)
+			.values(postEditData)
+			.onConflictDoUpdate({
+				target: [postEdits.postId, postEdits.authorId],
+				set: postEditData,
+			})
+			.returning();
+
+		return { status: SUCCESS, data: { id: postEdit[0].postId, slug: "" } };
+	}
 }
