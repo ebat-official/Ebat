@@ -3,8 +3,42 @@ import { db } from "@/db";
 import { bookmarks } from "@/db/schema";
 import { posts } from "@/db/schema";
 import { user } from "@/db/schema/auth";
-import { and, eq } from "drizzle-orm";
+import {
+	PostCategory,
+	PostType,
+	SubCategory,
+	Difficulty,
+} from "@/db/schema/enums";
+import { and, eq, desc, asc, Column, like, count } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+
+const BOOKMARK_SORT_FIELDS = [
+	"createdAt",
+	"title",
+	"category",
+	"subcategory",
+	"type",
+	"difficulty",
+] as const;
+
+type BookmarkSortField = (typeof BOOKMARK_SORT_FIELDS)[number];
+
+const bookmarkSortColumns: Record<BookmarkSortField, Column> = {
+	createdAt: bookmarks.createdAt,
+	title: posts.title,
+	category: posts.category,
+	subcategory: posts.subCategory,
+	type: posts.type,
+	difficulty: posts.difficulty,
+};
+
+// Helper function to validate enum values
+function isValidEnumValue<T extends Record<string, string>>(
+	enumObj: T,
+	value: string,
+): value is T[keyof T] {
+	return Object.values(enumObj).includes(value as T[keyof T]);
+}
 
 export async function GET(request: NextRequest) {
 	try {
@@ -14,6 +48,13 @@ export async function GET(request: NextRequest) {
 		}
 
 		const { searchParams } = new URL(request.url);
+		const sortFieldParam = searchParams.get("sortField");
+		const sortField = (
+			BOOKMARK_SORT_FIELDS.includes(sortFieldParam as BookmarkSortField)
+				? sortFieldParam
+				: "createdAt"
+		) as BookmarkSortField;
+		const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
 		const search = searchParams.get("search") || "";
 		const category = searchParams.get("category");
 		const subcategory = searchParams.get("subcategory");
@@ -25,94 +66,79 @@ export async function GET(request: NextRequest) {
 		const pageSize = Number.parseInt(searchParams.get("pageSize") || "10");
 		const offset = (page - 1) * pageSize;
 
-		// Get user bookmarks
-		const userBookmarks = await db
-			.select({
-				id: bookmarks.id,
-				postId: bookmarks.postId,
-				createdAt: bookmarks.id,
-			})
-			.from(bookmarks)
-			.where(eq(bookmarks.userId, currentUser.id));
+		// Build where conditions for bookmarks
+		const bookmarkConditions = [eq(bookmarks.userId, currentUser.id)];
 
-		// Get post details for each bookmark
-		const bookmarksWithDetails = await Promise.all(
-			userBookmarks.map(async (bookmark) => {
-				const post = await db
-					.select({
-						title: posts.title,
-						category: posts.category,
-						subcategory: posts.subCategory,
-						type: posts.type,
-						difficulty: posts.difficulty,
-						coins: posts.coins,
-						authorId: posts.authorId,
-					})
-					.from(posts)
-					.where(eq(posts.id, bookmark.postId))
-					.limit(1);
+		// Add search condition if provided
+		if (search) {
+			bookmarkConditions.push(like(posts.title, `%${search}%`));
+		}
 
-				if (post.length === 0) {
-					return {
-						...bookmark,
-						title: "Post not found",
-						category: null,
-						subcategory: null,
-						type: null,
-						difficulty: null,
-						coins: 0,
-						authorName: "Unknown",
-					};
-				}
-
-				const postData = post[0];
-
-				// Get author name
-				const author = await db
-					.select({ name: user.name })
-					.from(user)
-					.where(eq(user.id, postData.authorId))
-					.limit(1);
-
-				return {
-					...bookmark,
-					...postData,
-					authorName: author.length > 0 ? author[0].name : "Unknown",
-				};
-			}),
-		);
-
-		// Apply filters
-		let filteredBookmarks = bookmarksWithDetails.filter((bookmark) => {
-			const matchesSearch =
-				bookmark.title?.toLowerCase().includes(search.toLowerCase()) ||
-				bookmark.authorName?.toLowerCase().includes(search.toLowerCase());
-
-			const matchesCategory = !category || bookmark.category === category;
-			const matchesSubcategory =
-				!subcategory || bookmark.subcategory === subcategory;
-			const matchesType = !type || bookmark.type === type;
-			const matchesDifficulty =
-				!difficulty || bookmark.difficulty === difficulty;
-
-			return (
-				matchesSearch &&
-				matchesCategory &&
-				matchesSubcategory &&
-				matchesType &&
-				matchesDifficulty
+		// Add filter conditions with proper validation
+		if (category && isValidEnumValue(PostCategory, category)) {
+			bookmarkConditions.push(eq(posts.category, category as PostCategory));
+		}
+		if (subcategory && isValidEnumValue(SubCategory, subcategory)) {
+			bookmarkConditions.push(
+				eq(posts.subCategory, subcategory as SubCategory),
 			);
+		}
+		if (type && isValidEnumValue(PostType, type)) {
+			bookmarkConditions.push(eq(posts.type, type as PostType));
+		}
+		if (difficulty && isValidEnumValue(Difficulty, difficulty)) {
+			bookmarkConditions.push(eq(posts.difficulty, difficulty as Difficulty));
+		}
+
+		// Determine sort order
+		const bookmarkSort = bookmarkSortColumns[sortField]
+			? sortOrder === "asc"
+				? asc(bookmarkSortColumns[sortField])
+				: desc(bookmarkSortColumns[sortField])
+			: desc(bookmarks.createdAt);
+
+		// Get total count for pagination
+		const bookmarksCountResult = await db
+			.select({ count: count() })
+			.from(bookmarks)
+			.innerJoin(posts, eq(bookmarks.postId, posts.id))
+			.where(and(...bookmarkConditions));
+
+		const totalBookmarks = Number(bookmarksCountResult[0]?.count || 0);
+
+		// Get bookmarks with post and author details using relations
+		const bookmarksWithDetails = await db.query.bookmarks.findMany({
+			where: and(...bookmarkConditions),
+			with: {
+				post: {
+					columns: {
+						id: true,
+						title: true,
+						slug: true,
+						category: true,
+						subCategory: true,
+						type: true,
+						difficulty: true,
+						// Only include fields actually used in the UI
+					},
+					with: {
+						author: {
+							columns: {
+								id: true,
+								name: true,
+								username: true,
+							},
+						},
+					},
+				},
+			},
+			orderBy: [bookmarkSort],
+			limit: pageSize,
+			offset,
 		});
 
-		// Apply pagination
-		const totalBookmarks = filteredBookmarks.length;
-		const paginatedBookmarks = filteredBookmarks.slice(
-			offset,
-			offset + pageSize,
-		);
-
 		return NextResponse.json({
-			bookmarks: paginatedBookmarks,
+			bookmarks: bookmarksWithDetails,
 			pagination: {
 				page,
 				pageSize,

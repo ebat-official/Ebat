@@ -1,165 +1,36 @@
 "use client";
 
+import { bookmarkAction } from "@/actions/bookmark";
+import { DataTable } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/shared/DataTable";
-import { useState } from "react";
-import { bookmarkAction } from "@/actions/bookmark";
-import { useBookmarks } from "@/hooks/query/useBookmarks";
-import { LuBookmarkMinus, LuBookmarkPlus, LuBookmark } from "react-icons/lu";
-import { Eye } from "lucide-react";
-import { Link } from "react-transition-progress/next";
-import { cn } from "@/lib/utils";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
 import {
+	Difficulty,
 	PostCategory,
 	PostType,
 	SubCategory,
-	Difficulty,
 } from "@/db/schema/enums";
-
-interface BookmarkItem {
-	id: string;
-	postId: string;
-	createdAt: string;
-	title?: string;
-	category?: string;
-	subcategory?: string;
-	type?: string;
-	difficulty?: string;
-	coins?: number;
-	authorName?: string;
-}
-
-// Column configuration for bookmarks table (same as approvals)
-const bookmarkColumnConfig = [
-	{
-		id: "title",
-		label: "Title",
-		description: "Post title",
-		category: "basic",
-		sortable: false,
-		filterable: false,
-	},
-	{
-		id: "author",
-		label: "Author",
-		description: "Post author",
-		category: "basic",
-		sortable: false,
-		filterable: false,
-	},
-	{
-		id: "category",
-		label: "Category",
-		description: "Post category",
-		category: "basic",
-		sortable: false,
-		filterable: true,
-		filterOptions: [
-			{ value: PostCategory.FRONTEND, label: "Frontend" },
-			{ value: PostCategory.BACKEND, label: "Backend" },
-			{ value: PostCategory.ANDROID, label: "Android" },
-		],
-	},
-	{
-		id: "subcategory",
-		label: "Subcategory",
-		description: "Post subcategory",
-		category: "basic",
-		sortable: false,
-		filterable: true,
-		filterOptions: [
-			{ value: SubCategory.JAVASCRIPT, label: "JavaScript" },
-			{ value: SubCategory.HTML, label: "HTML" },
-			{ value: SubCategory.CSS, label: "CSS" },
-			{ value: SubCategory.REACT, label: "React" },
-			{ value: SubCategory.BLOGS, label: "Blogs" },
-			{ value: SubCategory.SYSTEMDESIGN, label: "System Design" },
-			{ value: SubCategory.VUE, label: "Vue" },
-			{ value: SubCategory.ANGULAR, label: "Angular" },
-			{ value: SubCategory.SVELTEKIT, label: "SvelteKit" },
-			{ value: SubCategory.VANILLAJS, label: "Vanilla JS" },
-			{ value: SubCategory.NEXTJS, label: "Next.js" },
-		],
-	},
-	{
-		id: "type",
-		label: "Type",
-		description: "Post type (question, challenge, etc.)",
-		category: "basic",
-		sortable: false,
-		filterable: true,
-		filterOptions: [
-			{ value: PostType.QUESTION, label: "Question" },
-			{ value: PostType.CHALLENGE, label: "Challenge" },
-			{ value: PostType.BLOGS, label: "Blog" },
-			{ value: PostType.SYSTEMDESIGN, label: "System Design" },
-		],
-	},
-	{
-		id: "difficulty",
-		label: "Difficulty",
-		description: "Post difficulty level",
-		category: "basic",
-		sortable: false,
-		filterable: true,
-		filterOptions: [
-			{ value: Difficulty.EASY, label: "Easy" },
-			{ value: Difficulty.MEDIUM, label: "Medium" },
-			{ value: Difficulty.HARD, label: "Hard" },
-		],
-	},
-	{
-		id: "actions",
-		label: "Actions",
-		description: "Available actions",
-		category: "actions",
-		sortable: false,
-		filterable: false,
-	},
-];
-
-const bookmarkCategoryColumns = {
-	basic: ["title", "author", "category", "subcategory", "type", "difficulty"],
-	actions: ["actions"],
-};
-
-const bookmarkDefaultColumns = [
-	"title",
-	"author",
-	"category",
-	"subcategory",
-	"type",
-	"difficulty",
-	"actions",
-];
-
-// Constants for bookmarks
-const BOOKMARK_CONSTANTS = {
-	TITLES: {
-		BOOKMARKS: "My Bookmarks",
-	},
-	EMPTY_MESSAGES: {
-		NO_BOOKMARKS:
-			"No bookmarks found. Start bookmarking posts to see them here!",
-	},
-	LOADING_MESSAGES: {
-		BOOKMARKS: "Loading bookmarks...",
-	},
-	SEARCH_PLACEHOLDERS: {
-		BOOKMARKS: "Search bookmarks...",
-	},
-	BADGE_LABELS: {
-		BOOKMARKED: "Bookmarked",
-	},
-} as const;
+import { useBookmarks } from "@/hooks/query/useBookmarks";
+import { cn } from "@/lib/utils";
+import { generatePostPath } from "@/utils/generatePostPath";
+import { Eye } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import { LuBookmark, LuBookmarkMinus, LuBookmarkPlus } from "react-icons/lu";
+import { Link } from "react-transition-progress/next";
+import type { BookmarkWithPost } from "./types";
+import {
+	BOOKMARK_CONSTANTS,
+	bookmarkColumnConfig,
+	bookmarkCategoryColumns,
+	bookmarkDefaultColumns,
+} from "./bookmarkConstants";
 
 export function BookmarksPage() {
 	// State for search and pagination
@@ -167,6 +38,14 @@ export function BookmarksPage() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize] = useState(10);
 	const [filters, setFilters] = useState<Record<string, string>>({});
+
+	// Convert string filters to typed filters for the hook
+	const typedFilters = {
+		category: filters.category as PostCategory | undefined,
+		subcategory: filters.subcategory as SubCategory | undefined,
+		type: filters.type as PostType | undefined,
+		difficulty: filters.difficulty as Difficulty | undefined,
+	};
 
 	// Use the new useBookmarks hook
 	const {
@@ -176,12 +55,7 @@ export function BookmarksPage() {
 		refetch,
 	} = useBookmarks({
 		searchQuery,
-		filters: {
-			category: filters.category || "",
-			subcategory: filters.subcategory || "",
-			type: filters.type || "",
-			difficulty: filters.difficulty || "",
-		},
+		filters: typedFilters,
 		page: currentPage,
 		pageSize,
 	});
@@ -212,7 +86,7 @@ export function BookmarksPage() {
 		}
 	};
 
-	const renderBookmarkActions = (bookmark: BookmarkItem) => (
+	const renderBookmarkActions = (bookmark: BookmarkWithPost) => (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="ghost" className="h-8 w-8 p-0">
@@ -222,7 +96,16 @@ export function BookmarksPage() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem asChild>
-					<Link href={`/post/${bookmark.postId}`} className="flex items-center">
+					<Link
+						href={generatePostPath({
+							category: bookmark.post?.category || PostCategory.FRONTEND,
+							subCategory: bookmark.post?.subCategory || SubCategory.JAVASCRIPT,
+							slug: bookmark.post?.slug || "",
+							id: bookmark.postId,
+							postType: bookmark.post?.type || PostType.QUESTION,
+						})}
+						className="flex items-center"
+					>
 						<Eye className="mr-2 h-4 w-4" />
 						View Post
 					</Link>
@@ -238,40 +121,45 @@ export function BookmarksPage() {
 		</DropdownMenu>
 	);
 
-	const renderBookmarkCell = (item: unknown, columnId: string) => {
-		const bookmark = item as BookmarkItem;
+	const renderBookmarkCell = (item: BookmarkWithPost, columnId: string) => {
 		switch (columnId) {
 			case "title":
 				return (
 					<Link
-						href={`/post/${bookmark.postId}`}
+						href={generatePostPath({
+							category: item.post.category,
+							subCategory: item.post.subCategory,
+							slug: item.post.slug || "",
+							id: item.postId,
+							postType: item.post.type,
+						})}
 						className="font-medium hover:underline"
 					>
-						{bookmark.title || `Post ${bookmark.postId}`}
+						{item.post.title || `Post ${item.postId}`}
 					</Link>
 				);
 			case "author":
 				return (
 					<span className="font-medium">
-						{bookmark.authorName || "Unknown"}
+						{item.post?.author?.name || BOOKMARK_CONSTANTS.BADGE_LABELS.UNKNOWN}
 					</span>
 				);
 			case "category":
 				return (
 					<Badge variant="outline" className="text-xs">
-						{bookmark.category || "Unknown"}
+						{item.post?.category || BOOKMARK_CONSTANTS.BADGE_LABELS.UNKNOWN}
 					</Badge>
 				);
 			case "subcategory":
 				return (
 					<Badge variant="outline" className="text-xs">
-						{bookmark.subcategory || "Unknown"}
+						{item.post?.subCategory || BOOKMARK_CONSTANTS.BADGE_LABELS.UNKNOWN}
 					</Badge>
 				);
 			case "type":
 				return (
 					<Badge variant="outline" className="text-xs">
-						{bookmark.type || "Unknown"}
+						{item.post?.type || BOOKMARK_CONSTANTS.BADGE_LABELS.UNKNOWN}
 					</Badge>
 				);
 			case "difficulty":
@@ -280,20 +168,23 @@ export function BookmarksPage() {
 						variant="outline"
 						className={cn(
 							"text-xs",
-							bookmark.difficulty === "Easy" &&
+							item.post?.difficulty === Difficulty.EASY &&
 								"text-green-600 border-green-600",
-							bookmark.difficulty === "Medium" &&
+							item.post?.difficulty === Difficulty.MEDIUM &&
 								"text-yellow-600 border-yellow-600",
-							bookmark.difficulty === "Hard" && "text-red-600 border-red-600",
+							item.post?.difficulty === Difficulty.HARD &&
+								"text-red-600 border-red-600",
 						)}
 					>
-						{bookmark.difficulty || "Unknown"}
+						{item.post?.difficulty || BOOKMARK_CONSTANTS.BADGE_LABELS.UNKNOWN}
 					</Badge>
 				);
 			case "actions":
-				return renderBookmarkActions(bookmark);
+				return renderBookmarkActions(item);
 			default:
-				return bookmark[columnId as keyof BookmarkItem] || "";
+				return (
+					<span>{String(item[columnId as keyof BookmarkWithPost] || "")}</span>
+				);
 		}
 	};
 

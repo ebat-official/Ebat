@@ -34,15 +34,13 @@ export async function bookmarkAction(
 				.values({ userId: user.id, postId })
 				.onConflictDoNothing();
 			return { status: SUCCESS, data: "Bookmarked" };
-		} else {
-			// Remove bookmark
-			await db
-				.delete(bookmarks)
-				.where(
-					and(eq(bookmarks.userId, user.id), eq(bookmarks.postId, postId)),
-				);
-			return { status: SUCCESS, data: "Removed bookmark" };
 		}
+
+		// Remove bookmark
+		await db
+			.delete(bookmarks)
+			.where(and(eq(bookmarks.userId, user.id), eq(bookmarks.postId, postId)));
+		return { status: SUCCESS, data: "Removed bookmark" };
 	} catch (error) {
 		console.error("Bookmark action failed:", error);
 		return {
@@ -87,40 +85,5 @@ export async function hasUserBookmarks(): Promise<boolean> {
 	} catch (error) {
 		console.error("Failed to check user bookmarks:", error);
 		return false;
-	}
-}
-
-// Get user bookmarks with post details
-export async function getUserBookmarksWithDetails() {
-	const user = await validateUser();
-	if (!user) return [];
-
-	try {
-		// Get bookmarks with basic info
-		const userBookmarks = await db
-			.select({
-				id: bookmarks.id,
-				postId: bookmarks.postId,
-				createdAt: bookmarks.id, // Using id as proxy for createdAt
-			})
-			.from(bookmarks)
-			.where(eq(bookmarks.userId, user.id));
-
-		// For now, return basic bookmark info
-		// In a production environment, you would implement proper joins or separate queries
-		// to get post details for each bookmark
-		return userBookmarks.map((bookmark) => ({
-			...bookmark,
-			title: `Post ${bookmark.postId}`, // Will be replaced with real data
-			authorName: "Author", // Will be replaced with real data
-			category: "Frontend", // Will be replaced with real data
-			subcategory: "React", // Will be replaced with real data
-			type: "Question", // Will be replaced with real data
-			difficulty: "Medium", // Will be replaced with real data
-			coins: 10, // Will be replaced with real data
-		}));
-	} catch (error) {
-		console.error("Failed to get user bookmarks with details:", error);
-		return [];
 	}
 }

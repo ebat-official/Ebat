@@ -10,7 +10,6 @@ import {
 import { cn } from "@/lib/utils";
 import { LuBookmarkPlus, LuBookmarkMinus } from "react-icons/lu";
 import { FC } from "react";
-import { useState } from "react";
 
 interface BookmarkBadgeProps {
 	postId: string;
@@ -21,31 +20,13 @@ export const BookmarkBadge: FC<BookmarkBadgeProps> = ({
 	postId,
 	className,
 }) => {
-	// Fallback state in case the hook fails to load
-	const [fallbackState, setFallbackState] = useState({
-		isBookmarked: false,
-		isLoading: false,
-		isUpdating: false,
-		toggleBookmark: () => {},
-	});
-
-	let bookmarkHook;
-	try {
-		bookmarkHook = useBookmark(postId);
-	} catch (error) {
-		console.error("Failed to load bookmark hook:", error);
-		bookmarkHook = fallbackState;
-	}
-
 	const { isBookmarked, isLoading, isUpdating, toggleBookmark } =
-		bookmarkHook || fallbackState;
+		useBookmark(postId);
 
 	const handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-		if (toggleBookmark) {
-			toggleBookmark();
-		}
+		toggleBookmark();
 	};
 
 	if (isLoading) {

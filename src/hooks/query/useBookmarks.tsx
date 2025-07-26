@@ -1,17 +1,11 @@
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
-
-interface BookmarkItem {
-	id: string;
-	postId: string;
-	createdAt: string;
-	title?: string;
-	category?: string;
-	subcategory?: string;
-	type?: string;
-	difficulty?: string;
-	coins?: number;
-	authorName?: string;
-}
+import type { BookmarkWithPost } from "@/components/settings/types";
+import {
+	PostCategory,
+	PostType,
+	SubCategory,
+	Difficulty,
+} from "@/db/schema/enums";
 
 interface PaginationData {
 	page: number;
@@ -21,17 +15,17 @@ interface PaginationData {
 }
 
 interface BookmarksResponse {
-	bookmarks: BookmarkItem[];
+	bookmarks: BookmarkWithPost[];
 	pagination: PaginationData;
 }
 
 interface UseBookmarksParams {
 	searchQuery?: string;
 	filters?: {
-		category?: string;
-		subcategory?: string;
-		type?: string;
-		difficulty?: string;
+		category?: PostCategory;
+		subcategory?: SubCategory;
+		type?: PostType;
+		difficulty?: Difficulty;
 	};
 	page?: number;
 	pageSize?: number;
