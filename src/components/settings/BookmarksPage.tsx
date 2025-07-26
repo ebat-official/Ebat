@@ -297,20 +297,7 @@ export function BookmarksPage() {
 		}
 	};
 
-	if (isLoading) {
-		return (
-			<div className="flex items-center justify-center p-8">
-				<div className="text-center">
-					<LuBookmark className="mx-auto h-8 w-8 text-muted-foreground mb-4" />
-					<p className="text-muted-foreground">
-						{BOOKMARK_CONSTANTS.LOADING_MESSAGES.BOOKMARKS}
-					</p>
-				</div>
-			</div>
-		);
-	}
-
-	if (bookmarks.length === 0) {
+	if (!isLoading && bookmarks.length === 0) {
 		return (
 			<div className="flex items-center justify-center p-8">
 				<div className="text-center">
@@ -363,6 +350,8 @@ export function BookmarksPage() {
 				renderCell={renderBookmarkCell}
 				filters={filters}
 				setFilters={setFilters}
+				loadingMessage={BOOKMARK_CONSTANTS.LOADING_MESSAGES.BOOKMARKS}
+				emptyMessage={BOOKMARK_CONSTANTS.EMPTY_MESSAGES.NO_BOOKMARKS}
 			/>
 		</div>
 	);

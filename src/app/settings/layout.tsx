@@ -47,15 +47,12 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 			title: "Approvals",
 			href: "/settings/approvals",
 		},
-		// Only show bookmarks tab if user has bookmarks
-		...(hasBookmarks
-			? [
-					{
-						title: "Bookmarks",
-						href: "/settings/bookmarks",
-					},
-				]
-			: []),
+
+		{
+			title: "Bookmarks",
+			href: "/settings/bookmarks",
+		},
+
 		// Only show admin tab for admin users
 		...(isAdmin
 			? [

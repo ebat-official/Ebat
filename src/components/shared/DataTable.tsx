@@ -253,7 +253,7 @@ export function DataTable<T>({
 			<TableRow key={`skeleton-${index}`}>
 				{selectedColumns.map((columnId) => (
 					<TableCell key={columnId}>
-						<Skeleton className="h-4 w-full rounded" />
+						<Skeleton className="h-6 w-full rounded py-2" />
 					</TableCell>
 				))}
 				{renderActions && (
