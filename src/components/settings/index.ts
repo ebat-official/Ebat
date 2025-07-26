@@ -9,3 +9,4 @@ export { AppearanceForm } from "./AppearanceForm";
 export { NotificationsForm } from "./NotificationsForm";
 export { ApprovalsPage } from "./ApprovalsPage";
 export { AdminPage } from "./admin/AdminPage";
+export { BookmarksPage } from "./BookmarksPage";

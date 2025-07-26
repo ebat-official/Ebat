@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -148,6 +148,11 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
 	const [selectedColumns, setSelectedColumns] =
 		useState<string[]>(defaultColumns);
+
+	// Update selectedColumns when defaultColumns changes
+	useEffect(() => {
+		setSelectedColumns(defaultColumns);
+	}, [defaultColumns]);
 
 	const handleSort = (field: string) => {
 		if (setSortField) {

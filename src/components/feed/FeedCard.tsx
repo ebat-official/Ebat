@@ -20,6 +20,7 @@ import { ViewsBadge } from "../shared/viewsBadge";
 import { Button } from "../ui/button";
 import { useFeedContext } from "./FeedContext";
 import { PostLikeDummyButton } from "./PostLikeButton";
+import { BookmarkBadge } from "../shared/BookmarkBadge";
 
 interface FeedCardProps {
 	post: FeedPost;
@@ -127,9 +128,7 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 								<span>{post.comments || 0}</span>
 							</Link>
 						</Button>
-						<Button className="rounded-full" variant="ghost" size="icon">
-							<LuBookmarkPlus />
-						</Button>
+						<BookmarkBadge postId={post.id} />
 						<Button className="rounded-full" variant="ghost" size="icon">
 							<LuShare2 size={18} />
 						</Button>

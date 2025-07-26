@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import Image from "next/image";
 
-import { validateUser } from "@/actions/user";
+import { getCurrentUser } from "@/actions/user";
+import { hasUserBookmarks } from "@/actions/bookmark";
 import { SidebarNav } from "@/components/settings";
 import Background from "@/components/shared/Background";
 import SidePanelLayout from "@/components/sidebar/panelLayout";
@@ -20,9 +21,11 @@ interface SettingsLayoutProps {
 }
 
 async function SettingsLayout({ children }: SettingsLayoutProps) {
-	const user = await validateUser();
+	const user = await getCurrentUser();
 	const userRole = user?.role;
 	const isAdmin = userRole === UserRole.ADMIN;
+	const hasBookmarks = await hasUserBookmarks();
+	
 	const sidebarNavItems = [
 		{
 			title: "Profile",
@@ -44,6 +47,15 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 			title: "Approvals",
 			href: "/settings/approvals",
 		},
+		// Only show bookmarks tab if user has bookmarks
+		...(hasBookmarks
+			? [
+					{
+						title: "Bookmarks",
+						href: "/settings/bookmarks",
+					},
+				]
+			: []),
 		// Only show admin tab for admin users
 		...(isAdmin
 			? [
