@@ -21,9 +21,9 @@ export const challengeTemplates = pgTable(
 	"challengeTemplate",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
-		postId: varchar("post_id", { length: 21 })
-			.notNull()
-			.references(() => posts.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 }).references(() => posts.id, {
+			onDelete: "cascade",
+		}),
 		framework: templateFrameworkEnum("framework").notNull(),
 		questionTemplate: json("question_template").notNull(),
 		answerTemplate: json("answer_template").notNull(),

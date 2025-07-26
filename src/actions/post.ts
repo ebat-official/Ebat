@@ -330,7 +330,6 @@ export async function createPostEdit(
 				if (data.challengeTemplates) {
 					for (const template of data.challengeTemplates) {
 						await tx.insert(challengeTemplates).values({
-							postId: data.id, // Original post ID
 							postEditId: postEdit[0].id, // New post edit ID
 							framework: template.framework,
 							questionTemplate: template.questionTemplate,
