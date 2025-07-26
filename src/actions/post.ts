@@ -105,7 +105,7 @@ export async function createDraftPost(
 	const postData = {
 		...buildBasePostData(user, data, PostStatus.DRAFT),
 		approvalStatus: PostApprovalStatus.PENDING,
-		approvalLogs: [],
+		rejectionLog: [],
 	};
 
 	// Handle challenge templates for drafts (optional)
@@ -210,7 +210,7 @@ export async function createPost(
 			data.type === PostType.BLOGS
 				? PostApprovalStatus.APPROVED
 				: PostApprovalStatus.PENDING,
-		approvalLogs: [],
+		rejectionLog: [],
 		slug: generateTitleSlug(data.title),
 	};
 
@@ -327,7 +327,7 @@ export async function createPostEdit(
 		thumbnail: baseData.thumbnail,
 		category: baseData.category,
 		subCategory: baseData.subCategory,
-		approvalLogs: [],
+		rejectionLog: [],
 		status: baseData.status,
 	};
 

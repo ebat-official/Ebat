@@ -58,7 +58,7 @@ export const posts = pgTable(
 		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		approvalLogs: json("approval_logs"), // Array of approval/rejection logs
+		rejectionLog: json("rejection_log"), // Array of rejection logs
 	},
 	(table) => [
 		index("post_authorId_idx").on(table.authorId),
@@ -68,9 +68,7 @@ export const posts = pgTable(
 		index("post_subCategory_idx").on(table.subCategory),
 		index("post_status_idx").on(table.status),
 		index("post_approvalStatus_idx").on(table.approvalStatus),
-		index("post_createdAt_idx").on(table.createdAt),
-		// Composite unique constraint
-		uniqueIndex("postIdSlug").on(table.id, table.slug),
+		uniqueIndex("post_slug_unique").on(table.slug),
 	],
 );
 
@@ -100,7 +98,7 @@ export const postEdits = pgTable(
 		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		approvalLogs: json("approval_logs"), // Array of approval/rejection logs
+		rejectionLog: json("rejection_log"), // Array of rejection logs
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()
 			.defaultNow(),
