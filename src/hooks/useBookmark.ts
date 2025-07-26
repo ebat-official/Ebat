@@ -1,5 +1,6 @@
 "use client";
 import { bookmarkAction, checkBookmarkStatus } from "@/actions/bookmark";
+import { BOOKMARK_ACTIONS } from "@/utils/constants";
 import { useState, useEffect, useCallback } from "react";
 
 export function useBookmark(postId: string) {
@@ -34,7 +35,7 @@ export function useBookmark(postId: string) {
 		setIsBookmarked(newStatus);
 
 		try {
-			const action = newStatus ? "add" : "remove";
+			const action = newStatus ? BOOKMARK_ACTIONS.ADD : BOOKMARK_ACTIONS.REMOVE;
 			const result = await bookmarkAction({ postId, action });
 
 			if (result.status === "error") {

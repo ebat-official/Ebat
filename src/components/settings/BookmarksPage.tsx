@@ -1,6 +1,7 @@
 "use client";
 
 import { bookmarkAction } from "@/actions/bookmark";
+import { BOOKMARK_ACTIONS } from "@/utils/constants";
 import { DataTable } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -78,7 +79,7 @@ export function BookmarksPage() {
 
 	const handleRemoveBookmark = async (postId: string) => {
 		try {
-			await bookmarkAction({ postId, action: "remove" });
+			await bookmarkAction({ postId, action: BOOKMARK_ACTIONS.REMOVE });
 			// Refetch bookmarks after removal
 			refetch();
 		} catch (error) {

@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { bookmarks } from "@/db/schema";
 import { posts } from "@/db/schema";
 import { user } from "@/db/schema/auth";
-import { SUCCESS } from "@/utils/constants";
+import { SUCCESS, BOOKMARK_ACTIONS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
@@ -12,7 +12,7 @@ import { validateUser } from "./user";
 
 const BookmarkValidator = z.object({
 	postId: z.string(),
-	action: z.enum(["add", "remove"]),
+	action: z.enum([BOOKMARK_ACTIONS.ADD, BOOKMARK_ACTIONS.REMOVE]),
 });
 
 export async function bookmarkAction(
@@ -27,7 +27,7 @@ export async function bookmarkAction(
 	const { postId, action } = validatedData.data;
 
 	try {
-		if (action === "add") {
+		if (action === BOOKMARK_ACTIONS.ADD) {
 			// Add bookmark
 			await db
 				.insert(bookmarks)
