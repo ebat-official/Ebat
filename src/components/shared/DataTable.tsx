@@ -270,9 +270,9 @@ export function DataTable<T>({
 
 	return (
 		<div className="space-y-4">
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-end">
 				{title && (
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center space-x-2 mr-auto">
 						<h2 className="text-lg font-semibold">{title}</h2>
 					</div>
 				)}
