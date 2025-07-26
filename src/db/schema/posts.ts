@@ -116,6 +116,7 @@ export const postEdits = pgTable(
 		thumbnail: varchar("thumbnail", { length: 500 }),
 		category: postCategoryEnum("category").notNull(),
 		subCategory: subCategoryEnum("sub_category").notNull(),
+		status: postStatusEnum("status").notNull().default(PostStatus.DRAFT),
 	},
 	(table) => [
 		index("postEdit_postId_idx").on(table.postId),

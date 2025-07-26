@@ -158,9 +158,14 @@ function EditorContainer({
 		setShowThumbnailUpload(false);
 	}, []);
 
-	const handleSave = () => {
+	const handleSave = async () => {
 		const payload = getPayload();
-		saveHandler(payload);
+		// If action is edit, publish the post as draft mode
+		if (action === POST_ACTIONS.EDIT) {
+			await publishHandler(getPayload(), PostStatus.DRAFT);
+		} else {
+			saveHandler(payload);
+		}
 	};
 
 	const handlePreview = async () => {
@@ -328,30 +333,30 @@ function EditorContainer({
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
-						{action !== POST_ACTIONS.EDIT && (
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<Button
-											variant="outline"
-											className="justify-center items-center flex ga-2"
-											onClick={handleSave}
-											disabled={actionDraftLoading || actionPublishLoading}
-										>
-											{actionDraftLoading ? (
-												<Loader2 className="animate-spin" />
-											) : (
-												<CiSaveDown2 />
-											)}
-											<span className="hidden md:block">Save</span>
-										</Button>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Save as draft</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
-						)}
+
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										variant="outline"
+										className="justify-center items-center flex ga-2"
+										onClick={handleSave}
+										disabled={actionDraftLoading || actionPublishLoading}
+									>
+										{actionDraftLoading ? (
+											<Loader2 className="animate-spin" />
+										) : (
+											<CiSaveDown2 />
+										)}
+										<span className="hidden md:block">Save</span>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Save as draft</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+
 						<Button
 							disabled={actionDraftLoading || actionPublishLoading}
 							onClick={handlePublish}

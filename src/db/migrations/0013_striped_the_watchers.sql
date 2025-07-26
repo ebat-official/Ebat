@@ -1,0 +1,1 @@
+ALTER TABLE "postEdit" ADD COLUMN "status" "post_status" DEFAULT 'draft' NOT NULL;

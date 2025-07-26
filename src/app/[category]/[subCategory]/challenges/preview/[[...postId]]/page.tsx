@@ -26,6 +26,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 			user: user || "",
 			edited: "true",
 		});
+		console.log("post prr", post);
 	} else {
 		post = await getPostFromURL(postId);
 	}

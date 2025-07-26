@@ -328,6 +328,7 @@ export async function createPostEdit(
 		category: baseData.category,
 		subCategory: baseData.subCategory,
 		approvalLogs: [],
+		status: baseData.status,
 	};
 
 	// Handle challenge templates for post edits
