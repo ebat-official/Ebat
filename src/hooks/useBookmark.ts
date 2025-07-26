@@ -57,4 +57,4 @@ export function useBookmark(postId: string) {
 		isUpdating,
 		toggleBookmark,
 	};
-} 
+}

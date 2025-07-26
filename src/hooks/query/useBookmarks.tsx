@@ -48,13 +48,7 @@ export function useBookmarks(
 	} = params || {};
 
 	return useQuery<BookmarksResponse, Error>({
-		queryKey: [
-			"bookmarks",
-			searchQuery,
-			filters,
-			page,
-			pageSize,
-		],
+		queryKey: ["bookmarks", searchQuery, filters, page, pageSize],
 		queryFn: async (): Promise<BookmarksResponse> => {
 			const url = new URL("/api/bookmarks", window.location.origin);
 
@@ -88,4 +82,4 @@ export function useBookmarks(
 			return response.json();
 		},
 	});
-} 
+}

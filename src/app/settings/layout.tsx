@@ -25,7 +25,7 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 	const userRole = user?.role;
 	const isAdmin = userRole === UserRole.ADMIN;
 	const hasBookmarks = await hasUserBookmarks();
-	
+
 	const sidebarNavItems = [
 		{
 			title: "Profile",

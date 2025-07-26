@@ -17,7 +17,12 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { PostCategory, PostType, SubCategory, Difficulty } from "@/db/schema/enums";
+import {
+	PostCategory,
+	PostType,
+	SubCategory,
+	Difficulty,
+} from "@/db/schema/enums";
 
 interface BookmarkItem {
 	id: string;
@@ -126,7 +131,15 @@ const bookmarkCategoryColumns = {
 	actions: ["actions"],
 };
 
-const bookmarkDefaultColumns = ["title", "author", "category", "subcategory", "type", "difficulty", "actions"];
+const bookmarkDefaultColumns = [
+	"title",
+	"author",
+	"category",
+	"subcategory",
+	"type",
+	"difficulty",
+	"actions",
+];
 
 // Constants for bookmarks
 const BOOKMARK_CONSTANTS = {
@@ -134,7 +147,8 @@ const BOOKMARK_CONSTANTS = {
 		BOOKMARKS: "My Bookmarks",
 	},
 	EMPTY_MESSAGES: {
-		NO_BOOKMARKS: "No bookmarks found. Start bookmarking posts to see them here!",
+		NO_BOOKMARKS:
+			"No bookmarks found. Start bookmarking posts to see them here!",
 	},
 	LOADING_MESSAGES: {
 		BOOKMARKS: "Loading bookmarks...",
@@ -180,7 +194,8 @@ export function BookmarksPage() {
 		);
 	}
 
-	const { bookmarks = [], pagination: bookmarksPagination } = bookmarksData || {};
+	const { bookmarks = [], pagination: bookmarksPagination } =
+		bookmarksData || {};
 	const { totalBookmarks = 0, totalPages = 1 } = bookmarksPagination || {};
 
 	const handlePageChange = (page: number) => {
@@ -261,12 +276,14 @@ export function BookmarksPage() {
 				);
 			case "difficulty":
 				return (
-					<Badge 
-						variant="outline" 
+					<Badge
+						variant="outline"
 						className={cn(
 							"text-xs",
-							bookmark.difficulty === "Easy" && "text-green-600 border-green-600",
-							bookmark.difficulty === "Medium" && "text-yellow-600 border-yellow-600",
+							bookmark.difficulty === "Easy" &&
+								"text-green-600 border-green-600",
+							bookmark.difficulty === "Medium" &&
+								"text-yellow-600 border-yellow-600",
 							bookmark.difficulty === "Hard" && "text-red-600 border-red-600",
 						)}
 					>
@@ -285,7 +302,9 @@ export function BookmarksPage() {
 			<div className="flex items-center justify-center p-8">
 				<div className="text-center">
 					<LuBookmark className="mx-auto h-8 w-8 text-muted-foreground mb-4" />
-					<p className="text-muted-foreground">{BOOKMARK_CONSTANTS.LOADING_MESSAGES.BOOKMARKS}</p>
+					<p className="text-muted-foreground">
+						{BOOKMARK_CONSTANTS.LOADING_MESSAGES.BOOKMARKS}
+					</p>
 				</div>
 			</div>
 		);
@@ -297,7 +316,9 @@ export function BookmarksPage() {
 				<div className="text-center">
 					<LuBookmark className="mx-auto h-8 w-8 text-muted-foreground mb-4" />
 					<h3 className="text-lg font-semibold mb-2">No Bookmarks</h3>
-					<p className="text-muted-foreground">{BOOKMARK_CONSTANTS.EMPTY_MESSAGES.NO_BOOKMARKS}</p>
+					<p className="text-muted-foreground">
+						{BOOKMARK_CONSTANTS.EMPTY_MESSAGES.NO_BOOKMARKS}
+					</p>
 				</div>
 			</div>
 		);
@@ -307,7 +328,9 @@ export function BookmarksPage() {
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 className="text-2xl font-bold tracking-tight">{BOOKMARK_CONSTANTS.TITLES.BOOKMARKS}</h2>
+					<h2 className="text-2xl font-bold tracking-tight">
+						{BOOKMARK_CONSTANTS.TITLES.BOOKMARKS}
+					</h2>
 					<p className="text-muted-foreground">
 						Manage your bookmarked posts ({totalBookmarks} total)
 					</p>
@@ -343,4 +366,4 @@ export function BookmarksPage() {
 			/>
 		</div>
 	);
-} 
+}

@@ -20,10 +20,10 @@ export async function bookmarkAction(
 ): Promise<GenerateActionReturnType<string>> {
 	const validatedData = BookmarkValidator.safeParse(data);
 	if (!validatedData.success) return VALIDATION_ERROR;
-	
+
 	const user = await validateUser();
 	if (!user) return UNAUTHENTICATED_ERROR;
-	
+
 	const { postId, action } = validatedData.data;
 
 	try {
@@ -39,10 +39,7 @@ export async function bookmarkAction(
 			await db
 				.delete(bookmarks)
 				.where(
-					and(
-						eq(bookmarks.userId, user.id),
-						eq(bookmarks.postId, postId),
-					),
+					and(eq(bookmarks.userId, user.id), eq(bookmarks.postId, postId)),
 				);
 			return { status: SUCCESS, data: "Removed bookmark" };
 		}
@@ -64,12 +61,7 @@ export async function checkBookmarkStatus(postId: string): Promise<boolean> {
 		const bookmark = await db
 			.select()
 			.from(bookmarks)
-			.where(
-				and(
-					eq(bookmarks.userId, user.id),
-					eq(bookmarks.postId, postId),
-				),
-			)
+			.where(and(eq(bookmarks.userId, user.id), eq(bookmarks.postId, postId)))
 			.limit(1);
 
 		return bookmark.length > 0;
@@ -117,7 +109,7 @@ export async function getUserBookmarksWithDetails() {
 		// For now, return basic bookmark info
 		// In a production environment, you would implement proper joins or separate queries
 		// to get post details for each bookmark
-		return userBookmarks.map(bookmark => ({
+		return userBookmarks.map((bookmark) => ({
 			...bookmark,
 			title: `Post ${bookmark.postId}`, // Will be replaced with real data
 			authorName: "Author", // Will be replaced with real data
@@ -131,4 +123,4 @@ export async function getUserBookmarksWithDetails() {
 		console.error("Failed to get user bookmarks with details:", error);
 		return [];
 	}
-} 
+}

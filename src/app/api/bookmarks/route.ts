@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
 				}
 
 				const postData = post[0];
-				
+
 				// Get author name
 				const author = await db
 					.select({ name: user.name })
@@ -79,26 +79,37 @@ export async function GET(request: NextRequest) {
 					...postData,
 					authorName: author.length > 0 ? author[0].name : "Unknown",
 				};
-			})
+			}),
 		);
 
 		// Apply filters
 		let filteredBookmarks = bookmarksWithDetails.filter((bookmark) => {
-			const matchesSearch = 
+			const matchesSearch =
 				bookmark.title?.toLowerCase().includes(search.toLowerCase()) ||
 				bookmark.authorName?.toLowerCase().includes(search.toLowerCase());
-			
-			const matchesCategory = !category || bookmark.category === category;
-			const matchesSubcategory = !subcategory || bookmark.subcategory === subcategory;
-			const matchesType = !type || bookmark.type === type;
-			const matchesDifficulty = !difficulty || bookmark.difficulty === difficulty;
 
-			return matchesSearch && matchesCategory && matchesSubcategory && matchesType && matchesDifficulty;
+			const matchesCategory = !category || bookmark.category === category;
+			const matchesSubcategory =
+				!subcategory || bookmark.subcategory === subcategory;
+			const matchesType = !type || bookmark.type === type;
+			const matchesDifficulty =
+				!difficulty || bookmark.difficulty === difficulty;
+
+			return (
+				matchesSearch &&
+				matchesCategory &&
+				matchesSubcategory &&
+				matchesType &&
+				matchesDifficulty
+			);
 		});
 
 		// Apply pagination
 		const totalBookmarks = filteredBookmarks.length;
-		const paginatedBookmarks = filteredBookmarks.slice(offset, offset + pageSize);
+		const paginatedBookmarks = filteredBookmarks.slice(
+			offset,
+			offset + pageSize,
+		);
 
 		return NextResponse.json({
 			bookmarks: paginatedBookmarks,
@@ -116,4 +127,4 @@ export async function GET(request: NextRequest) {
 			{ status: 500 },
 		);
 	}
-} 
+}

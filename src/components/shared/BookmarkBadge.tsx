@@ -17,7 +17,10 @@ interface BookmarkBadgeProps {
 	className?: string;
 }
 
-export const BookmarkBadge: FC<BookmarkBadgeProps> = ({ postId, className }) => {
+export const BookmarkBadge: FC<BookmarkBadgeProps> = ({
+	postId,
+	className,
+}) => {
 	// Fallback state in case the hook fails to load
 	const [fallbackState, setFallbackState] = useState({
 		isBookmarked: false,
@@ -34,7 +37,8 @@ export const BookmarkBadge: FC<BookmarkBadgeProps> = ({ postId, className }) => 
 		bookmarkHook = fallbackState;
 	}
 
-	const { isBookmarked, isLoading, isUpdating, toggleBookmark } = bookmarkHook || fallbackState;
+	const { isBookmarked, isLoading, isUpdating, toggleBookmark } =
+		bookmarkHook || fallbackState;
 
 	const handleClick = (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -68,7 +72,7 @@ export const BookmarkBadge: FC<BookmarkBadgeProps> = ({ postId, className }) => 
 							"rounded-full transition-colors",
 							isBookmarked && "text-blue-500 hover:text-blue-600",
 							isUpdating && "animate-pulse",
-							className
+							className,
 						)}
 						onClick={handleClick}
 						disabled={isUpdating}
@@ -88,4 +92,4 @@ export const BookmarkBadge: FC<BookmarkBadgeProps> = ({ postId, className }) => 
 			</Tooltip>
 		</TooltipProvider>
 	);
-}; 
+};
