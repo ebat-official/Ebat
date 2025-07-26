@@ -68,7 +68,6 @@ export const posts = pgTable(
 		index("post_subCategory_idx").on(table.subCategory),
 		index("post_status_idx").on(table.status),
 		index("post_approvalStatus_idx").on(table.approvalStatus),
-		uniqueIndex("post_slug_unique").on(table.slug),
 	],
 );
 
