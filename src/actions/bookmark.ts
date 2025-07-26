@@ -68,22 +68,3 @@ export async function checkBookmarkStatus(postId: string): Promise<boolean> {
 		return false;
 	}
 }
-
-// Check if user has any bookmarks
-export async function hasUserBookmarks(): Promise<boolean> {
-	const user = await validateUser();
-	if (!user) return false;
-
-	try {
-		const userBookmarks = await db
-			.select()
-			.from(bookmarks)
-			.where(eq(bookmarks.userId, user.id))
-			.limit(1);
-
-		return userBookmarks.length > 0;
-	} catch (error) {
-		console.error("Failed to check user bookmarks:", error);
-		return false;
-	}
-}
