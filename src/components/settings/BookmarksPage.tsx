@@ -105,6 +105,8 @@ export function BookmarksPage() {
 							postType: bookmark.post?.type || PostType.QUESTION,
 						})}
 						className="flex items-center"
+						target="_blank"
+						rel="noopener noreferrer"
 					>
 						<Eye className="mr-2 h-4 w-4" />
 						View Post
@@ -134,6 +136,8 @@ export function BookmarksPage() {
 							postType: item.post.type,
 						})}
 						className="font-medium hover:underline"
+						target="_blank"
+						rel="noopener noreferrer"
 					>
 						{item.post.title || `Post ${item.postId}`}
 					</Link>
