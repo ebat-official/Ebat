@@ -1,3 +1,4 @@
+"use client";
 import { ChallengeTemplate } from "@/utils/types";
 import { Copy, RefreshCw } from "lucide-react";
 import { useTheme } from "next-themes";

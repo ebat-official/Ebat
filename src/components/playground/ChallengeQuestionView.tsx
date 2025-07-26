@@ -1,7 +1,7 @@
 import CommentContainer from "@/components/comment/CommentContainer";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSession } from "@/lib/auth-client";
+import { validateUser } from "@/actions/user";
 import { ContentReturnType, PostWithExtraDetails } from "@/utils/types";
 import { FileText, Lightbulb, MessageCircle, Upload } from "lucide-react";
 import React from "react";
@@ -18,10 +18,10 @@ type ChallengeQuestionViewProps = {
 	post: PostWithExtraDetails;
 };
 
-const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
+const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = async ({
 	post,
 }) => {
-	const { data: session } = useSession();
+	const user = await validateUser();
 
 	const content = post.content as ContentReturnType;
 	const challengeTemplates = post.challengeTemplates || [];
@@ -82,10 +82,7 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = ({
 					</TabsContent>
 
 					<TabsContent value="submissions">
-						<SubmissionsTable
-							postId={post.id}
-							currentUserId={session?.user?.id}
-						/>
+						<SubmissionsTable postId={post.id} currentUserId={user?.id} />
 					</TabsContent>
 				</div>
 			</Card>
