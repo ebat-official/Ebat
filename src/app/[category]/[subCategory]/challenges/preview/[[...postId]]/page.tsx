@@ -1,7 +1,7 @@
 import { getPostFromURL, getPostEditFromId } from "@/utils/api utils/posts";
 import { notFound } from "next/navigation";
-import PostView from "@/components/post view/PostView";
 import { PostWithExtraDetails } from "@/utils/types";
+import DraggablePanel from "@/components/playground/DraggablePanel";
 
 interface PageProps {
 	params: Promise<{ postId: string[] }>;
@@ -36,7 +36,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
 	return (
 		<article>
-			<PostView post={post} />
+			<DraggablePanel post={post} />
 		</article>
 	);
 }
