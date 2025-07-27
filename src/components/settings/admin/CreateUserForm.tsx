@@ -19,6 +19,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { UserRole } from "@/db/schema/enums";
+import { getAvailableRoles } from "@/auth/roleUtils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -42,12 +43,14 @@ interface CreateUserFormProps {
 	onSubmit: (data: CreateUserFormValues) => void;
 	onCancel: () => void;
 	loading?: boolean;
+	currentUserRole?: UserRole;
 }
 
 export function CreateUserForm({
 	onSubmit,
 	onCancel,
 	loading = false,
+	currentUserRole,
 }: CreateUserFormProps) {
 	const form = useForm<CreateUserFormValues>({
 		resolver: zodResolver(createUserSchema),
@@ -115,28 +118,45 @@ export function CreateUserForm({
 				<FormField
 					control={form.control}
 					name="role"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Role</FormLabel>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="Select role" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									<SelectItem value={UserRole.USER}>User</SelectItem>
-									<SelectItem value={UserRole.EDITOR}>Editor</SelectItem>
-									<SelectItem value={UserRole.MODERATOR}>Moderator</SelectItem>
-									<SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
-									<SelectItem value={UserRole.SUPER_ADMIN}>
-										Super Admin
-									</SelectItem>
-								</SelectContent>
-							</Select>
-							<FormMessage />
-						</FormItem>
-					)}
+					render={({ field }) => {
+						// Get available roles based on current user's role
+						const availableRoles = currentUserRole
+							? getAvailableRoles(currentUserRole)
+							: [UserRole.USER]; // Default to only USER if no current role
+
+						// Update form value if current selection is not available
+						if (currentUserRole && !availableRoles.includes(field.value)) {
+							field.onChange(UserRole.USER);
+						}
+
+						return (
+							<FormItem>
+								<FormLabel>Role</FormLabel>
+								<Select
+									onValueChange={field.onChange}
+									defaultValue={field.value}
+								>
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder="Select role" />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{availableRoles.map((role) => (
+											<SelectItem key={role} value={role}>
+												{role === UserRole.USER && "User"}
+												{role === UserRole.EDITOR && "Editor"}
+												{role === UserRole.MODERATOR && "Moderator"}
+												{role === UserRole.ADMIN && "Admin"}
+												{role === UserRole.SUPER_ADMIN && "Super Admin"}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								<FormMessage />
+							</FormItem>
+						);
+					}}
 				/>
 
 				<div className="flex justify-end space-x-2">

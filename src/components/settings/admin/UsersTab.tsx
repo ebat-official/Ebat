@@ -9,6 +9,7 @@ import {
 	PaginationPrevious,
 } from "@/components/ui/pagination";
 import { UserRole } from "@/db/schema/enums";
+import { useSession } from "@/lib/auth-client";
 import { useState } from "react";
 import type { Session, User } from "../types";
 import { AdminSessionsTable } from "./AdminSessionsTable";
@@ -25,6 +26,7 @@ interface UsersTabProps {
 }
 
 export function UsersTab({ onLoadSessions }: UsersTabProps) {
+	const { data: session } = useSession();
 	const {
 		users,
 		currentPage,
@@ -128,7 +130,10 @@ export function UsersTab({ onLoadSessions }: UsersTabProps) {
 		<div className="space-y-4">
 			<div className="flex justify-between items-center">
 				<h2 className="text-2xl font-bold">Users Management</h2>
-				<CreateUserDialog onSuccess={loadUsers} />
+				<CreateUserDialog
+					onSuccess={loadUsers}
+					currentUserRole={session?.user?.role as UserRole}
+				/>
 			</div>
 
 			<AdminUserTable

@@ -328,6 +328,7 @@ export function AdminPage() {
 						<CreateUserForm
 							onSubmit={handleCreateUser}
 							onCancel={() => setShowCreateUser(false)}
+							currentUserRole={session?.user?.role as UserRole}
 						/>
 					</DialogContent>
 				</Dialog>

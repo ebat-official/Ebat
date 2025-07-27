@@ -19,9 +19,13 @@ import { useLoadingState } from "./useLoadingState";
 
 interface CreateUserDialogProps {
 	onSuccess: () => void;
+	currentUserRole?: UserRole;
 }
 
-export function CreateUserDialog({ onSuccess }: CreateUserDialogProps) {
+export function CreateUserDialog({
+	onSuccess,
+	currentUserRole,
+}: CreateUserDialogProps) {
 	const [open, setOpen] = useState(false);
 	const { loading, setLoading } = useLoadingState();
 
@@ -79,6 +83,7 @@ export function CreateUserDialog({ onSuccess }: CreateUserDialogProps) {
 					onSubmit={handleCreateUser}
 					onCancel={handleCancel}
 					loading={loading}
+					currentUserRole={currentUserRole}
 				/>
 			</DialogContent>
 		</Dialog>
