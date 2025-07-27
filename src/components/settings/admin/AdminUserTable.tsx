@@ -65,10 +65,54 @@ import {
 	Users,
 	XCircle,
 } from "lucide-react";
-import { categoryColumns, columnConfig, defaultColumns } from "../constants";
+import {
+	categoryColumns,
+	columnConfig,
+	defaultColumns,
+	userRoleOptions,
+} from "../constants";
 import type { User } from "../types";
 import { TableWithScroll } from "@/components/shared/TableWithScroll";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RoleDropdown } from "./RoleDropdown";
+
+// Role hierarchy function - higher index means higher privileges
+const getRoleHierarchy = (role: UserRole): number => {
+	switch (role) {
+		case UserRole.USER:
+			return 0;
+		case UserRole.EDITOR:
+			return 1;
+		case UserRole.MODERATOR:
+			return 2;
+		case UserRole.ADMIN:
+			return 3;
+		default:
+			return 0;
+	}
+};
+
+// Check if current user can modify target user's role
+const canModifyRole = (
+	currentUserRole: UserRole,
+	targetUserRole: UserRole,
+): boolean => {
+	const currentHierarchy = getRoleHierarchy(currentUserRole);
+	const targetHierarchy = getRoleHierarchy(targetUserRole);
+
+	// Can only modify users with lower hierarchy
+	return currentHierarchy > targetHierarchy;
+};
+
+// Get available roles that current user can assign
+const getAvailableRoles = (currentUserRole: UserRole): UserRole[] => {
+	const currentHierarchy = getRoleHierarchy(currentUserRole);
+
+	return Object.values(UserRole).filter((role) => {
+		const roleHierarchy = getRoleHierarchy(role);
+		return roleHierarchy < currentHierarchy;
+	});
+};
 
 interface AdminUserTableProps {
 	users: User[];
@@ -164,11 +208,16 @@ export function AdminUserTable({
 				);
 			case "role":
 				return (
-					<Badge
-						variant={user.role === UserRole.ADMIN ? "default" : "secondary"}
-					>
-						{user.role}
-					</Badge>
+					<RoleDropdown
+						value={user.role}
+						onChange={(newRole) => onSetRole(user.id, newRole)}
+						disabled={
+							!currentUserRole || !canModifyRole(currentUserRole, user.role)
+						}
+						availableRoles={
+							currentUserRole ? getAvailableRoles(currentUserRole) : undefined
+						}
+					/>
 				);
 			case "createdAt":
 				return formatDate(user.createdAt);
@@ -569,25 +618,7 @@ export function AdminUserTable({
 															Ban User
 														</DropdownMenuItem>
 													)}
-													{user.role !== UserRole.ADMIN &&
-														currentUserRole === UserRole.ADMIN && (
-															<DropdownMenuItem
-																onClick={() =>
-																	onSetRole(user.id, UserRole.ADMIN)
-																}
-															>
-																<Shield className="mr-2 h-4 w-4" />
-																Make Admin
-															</DropdownMenuItem>
-														)}
-													{user.role === UserRole.ADMIN && (
-														<DropdownMenuItem
-															onClick={() => onSetRole(user.id, UserRole.USER)}
-														>
-															<UserPlus className="mr-2 h-4 w-4" />
-															Make User
-														</DropdownMenuItem>
-													)}
+
 													<DropdownMenuItem
 														onClick={() => onDeleteUser(user.id)}
 														className="text-destructive"

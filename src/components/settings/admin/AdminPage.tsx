@@ -513,14 +513,36 @@ export function AdminPage() {
 					<AlertDialogHeader>
 						<AlertDialogTitle>Change User Role</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to change this user's role to{" "}
-							{pendingAction?.role}?
+							{(() => {
+								const user = users.find((u) => u.id === pendingAction?.userId);
+								const currentRole = user?.role;
+								const newRole = pendingAction?.role;
+
+								return (
+									<div className="space-y-2">
+										<p>
+											Are you sure you want to change{" "}
+											<strong>{user?.name}</strong>'s role?
+										</p>
+										<div className="flex items-center gap-2 text-sm">
+											<span>From:</span>
+											<Badge variant="secondary">{currentRole}</Badge>
+											<span>To:</span>
+											<Badge variant="default">{newRole}</Badge>
+										</div>
+										<p className="text-xs text-muted-foreground mt-2">
+											This will immediately update the user's permissions and
+											access levels.
+										</p>
+									</div>
+								);
+							})()}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction onClick={confirmSetRole}>
-							Confirm
+							Confirm Role Change
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

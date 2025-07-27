@@ -107,6 +107,8 @@ export const defaultColumns = ["user", "role", "createdAt", "status"];
 // User role options for forms
 export const userRoleOptions = [
 	{ value: UserRole.USER, label: "User" },
+	{ value: UserRole.EDITOR, label: "Editor" },
+	{ value: UserRole.MODERATOR, label: "Moderator" },
 	{ value: UserRole.ADMIN, label: "Admin" },
 ];
 
