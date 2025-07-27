@@ -130,6 +130,8 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 	useEffect(() => {
 		setPage(1);
 		setAccumulatedPosts([]);
+		// These dependencies are necessary to reset pagination and accumulated posts
+		// when any search/filter criteria changes
 	}, [
 		searchQuery,
 		difficulty,
@@ -142,8 +144,15 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 
 	useEffect(() => {
 		if (!data?.posts) return;
-		setAccumulatedPosts((prev) => [...prev, ...data.posts]);
-	}, [data?.posts]);
+
+		// If page is 1, replace posts (new search/filter)
+		// If page > 1, append posts (pagination)
+		if (data.context.page === 1) {
+			setAccumulatedPosts(data.posts);
+		} else {
+			setAccumulatedPosts((prev) => [...prev, ...data.posts]);
+		}
+	}, [data?.posts, data?.context?.page]);
 
 	const postIds = data?.posts?.map((post) => post.id);
 	const { statuses } = useCompletionStatus(postIds);
