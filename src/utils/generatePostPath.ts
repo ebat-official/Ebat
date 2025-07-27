@@ -22,14 +22,15 @@ export function generatePostPath({
 	id,
 	postType,
 }: GeneratePostPathParams): string {
-	// Determine the post type path
-	const postTypePath =
-		postType === PostType.CHALLENGE || postType === PostType.QUESTION
-			? `${postType}s/`
-			: "";
+	// Determine the post type path - include for all types
+	const postTypePath = `${postType}s/`;
 
-	// Build the base URL
-	const postUrl = `/${category.toLowerCase()}/${subCategory?.toLowerCase() || ""}/${postTypePath}${slug}-${id}`;
+	// Build the base URL with proper handling of null subCategory
+	const categoryPath = category.toLowerCase();
+	const subCategoryPath = subCategory ? `/${subCategory.toLowerCase()}` : "";
+	const postTypePathSegment = `/${postTypePath}`;
+
+	const postUrl = `/${categoryPath}${subCategoryPath}${postTypePathSegment}${slug}-${id}`;
 
 	return postUrl;
 }
