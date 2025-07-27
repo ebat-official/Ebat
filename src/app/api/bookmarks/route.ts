@@ -9,7 +9,7 @@ import {
 	SubCategory,
 	Difficulty,
 } from "@/db/schema/enums";
-import { and, eq, desc, asc, Column, like, count } from "drizzle-orm";
+import { and, eq, desc, asc, Column, ilike, count } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 const BOOKMARK_SORT_FIELDS = [
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
 
 		// Add search condition if provided
 		if (search) {
-			bookmarkConditions.push(like(posts.title, `%${search}%`));
+			bookmarkConditions.push(ilike(posts.title, `%${search}%`));
 		}
 
 		// Add filter conditions with proper validation

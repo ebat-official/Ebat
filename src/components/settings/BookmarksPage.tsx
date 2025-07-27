@@ -193,20 +193,6 @@ export function BookmarksPage() {
 		}
 	};
 
-	if (!isLoading && bookmarks.length === 0) {
-		return (
-			<div className="flex items-center justify-center p-8">
-				<div className="text-center">
-					<LuBookmark className="mx-auto h-8 w-8 text-muted-foreground mb-4" />
-					<h3 className="text-lg font-semibold mb-2">No Bookmarks</h3>
-					<p className="text-muted-foreground">
-						{BOOKMARK_CONSTANTS.EMPTY_MESSAGES.NO_BOOKMARKS}
-					</p>
-				</div>
-			</div>
-		);
-	}
-
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
