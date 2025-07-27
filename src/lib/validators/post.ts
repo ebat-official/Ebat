@@ -181,7 +181,6 @@ export const PostValidator = BasePostValidator.superRefine((data, ctx) => {
 	const { type, content } = data;
 
 	if (type === PostType.QUESTION) {
-		// @ts-ignore
 		if (
 			!content.answer?.blocks ||
 			isLexicalEditorEmpty(content.answer.blocks)

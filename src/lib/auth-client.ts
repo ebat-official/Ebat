@@ -11,9 +11,7 @@ import {
 export const authClient = createAuthClient({
 	baseURL: process.env.BETTER_AUTH_URL, // Optional: BetterAuth can auto-detect in most cases
 	plugins: [
-		adminClient(),
-		usernameClient(),
-		admin({
+		adminClient({
 			ac,
 			roles: {
 				admin: adminRole,
@@ -22,6 +20,7 @@ export const authClient = createAuthClient({
 				moderator,
 			},
 		}),
+		usernameClient(),
 	],
 });
 
