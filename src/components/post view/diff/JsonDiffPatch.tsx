@@ -15,11 +15,9 @@ export const JsonDiffPatch = ({
 	left,
 	right,
 	diffOptions,
-	hideUnchangedValues,
 }: JsonDiffPatchProps) => {
 	// Memoize expensive diff computation
 	const htmlDiff = useMemo(() => {
-		const jsondiffpatch = create(diffOptions || {});
 		const delta = diff(left, right);
 		return delta ? format(delta, left) : "";
 	}, [left, right, diffOptions]);
