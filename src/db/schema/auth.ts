@@ -2,7 +2,7 @@ import {
 	boolean,
 	index,
 	integer,
-	json,
+	jsonb,
 	pgTable,
 	text,
 	timestamp,
@@ -52,7 +52,7 @@ export const user = pgTable("user", {
 	subscriptionPlan: subscriptionPlanEnum("subscription_plan")
 		.notNull()
 		.default(SubscriptionPlan.BASIC),
-	externalLinks: json("external_links"),
+	externalLinks: jsonb("external_links"),
 	experience: integer("experience"),
 });
 

@@ -404,8 +404,18 @@ function buildWhereConditions({
 	if (category) conditions.push(eq(posts.category, category));
 	if (subCategory) conditions.push(eq(posts.subCategory, subCategory));
 	if (type) conditions.push(eq(posts.type, type));
-	if (searchQuerySanitized)
-		conditions.push(ilike(posts.title, `%${searchQuerySanitized}%`));
+
+	// Use full-text search with GIN index for optimal performance
+	if (searchQuerySanitized) {
+		conditions.push(
+			sql`(
+				setweight(to_tsvector('english', ${posts.title}), 'A') ||
+				setweight(to_tsvector('english', array_to_string(${posts.companies}, ' ')), 'B') ||
+				setweight(to_tsvector('english', array_to_string(${posts.topics}, ' ')), 'C')
+			) @@ websearch_to_tsquery('english', ${searchQuerySanitized})`,
+		);
+	}
+
 	if (difficulty.length > 0)
 		conditions.push(inArray(posts.difficulty, difficulty));
 	if (topics.length > 0) conditions.push(sql`${posts.topics} && ${topics}`);
@@ -461,9 +471,17 @@ export async function searchPosts({
 		companies: safeCompanies,
 	});
 
-	// Determine order by direction
-	const orderByDirection =
-		sortOrder === PostSortOrder.Oldest
+	// Determine order by direction with relevance ranking for search
+	const orderByDirection = searchQuerySanitized
+		? desc(sql`ts_rank(
+		(
+			setweight(to_tsvector('english', ${posts.title}), 'A') ||
+			setweight(to_tsvector('english', array_to_string(${posts.companies}, ' ')), 'B') ||
+			setweight(to_tsvector('english', array_to_string(${posts.topics}, ' ')), 'C')
+		),
+		websearch_to_tsquery('english', ${searchQuerySanitized})
+	)`)
+		: sortOrder === PostSortOrder.Oldest
 			? asc(posts.createdAt)
 			: desc(posts.createdAt);
 
