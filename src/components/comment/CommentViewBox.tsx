@@ -13,12 +13,14 @@ import { CommentActionButton } from "./CommentActionButton";
 import CommentAddBox from "./CommentAddBox";
 import { useCommentContext } from "./CommentContext";
 import CommentLikeButton from "./CommentLikeButton";
+import { HtmlRenderer } from "../shared/HtmlRenderer";
 
 type CommentViewBoxProps = {
 	comment: CommentWithVotes;
 	postId: string;
 	depth?: number;
 };
+
 export function CommentViewBox({
 	comment,
 	postId,
@@ -38,6 +40,7 @@ export function CommentViewBox({
 	const { updateComment, addComment } = useCommentContext();
 	const { data: session } = useSession();
 	const isAuthor = session?.user?.id === author?.id;
+
 	const toggleReplies = () => {
 		setAreRepliesExpanded((prev) => !prev);
 	};
@@ -113,11 +116,9 @@ export function CommentViewBox({
 								editHtml={content || ""}
 							/>
 						) : (
-							<div
-								className="text-sm first-letter:capitalize lexicalContentView"
-								// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-								dangerouslySetInnerHTML={{ __html: content || "" }}
-							/>
+							<div className="text-sm first-letter:capitalize lexicalContentView">
+								<HtmlRenderer html={content || ""} />
+							</div>
 						)}
 
 						{/* Action buttons */}
