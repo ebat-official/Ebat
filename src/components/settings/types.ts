@@ -4,6 +4,8 @@ import type {
 	User as DbUser,
 	Post,
 	PostEdit,
+	Bookmark,
+	User as DbUserType,
 } from "@/db/schema/zod-schemas";
 
 // Re-export database types for convenience
@@ -40,11 +42,18 @@ export interface CategoryColumns {
 
 // Approval-related types
 export interface PostWithAuthor extends Post {
-	author: Pick<User, "id" | "name" | "username" | "email">;
+	author: Pick<DbUserType, "id" | "name" | "username" | "email">;
 }
 
 export interface PostEditWithAuthor extends PostEdit {
-	author: Pick<User, "id" | "name" | "username" | "email">;
+	author: Pick<DbUserType, "id" | "name" | "username" | "email">;
+}
+
+// Bookmark-related types
+export interface BookmarkWithPost extends Bookmark {
+	post: Post & {
+		author: Pick<DbUserType, "id" | "name" | "username">;
+	};
 }
 
 export interface ApprovalFilters {

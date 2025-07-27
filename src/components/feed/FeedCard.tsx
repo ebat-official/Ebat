@@ -128,9 +128,6 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 							</Link>
 						</Button>
 						<Button className="rounded-full" variant="ghost" size="icon">
-							<LuBookmarkPlus />
-						</Button>
-						<Button className="rounded-full" variant="ghost" size="icon">
 							<LuShare2 size={18} />
 						</Button>
 					</div>

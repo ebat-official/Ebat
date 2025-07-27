@@ -69,6 +69,12 @@ export enum EndpointMap {
 }
 export const CREDENTIAL_ACCOUNT_NOT_FOUND = "Credential account not found";
 
+// Bookmark action types
+export const BOOKMARK_ACTIONS = {
+	ADD: "add",
+	REMOVE: "remove",
+} as const;
+
 // Username availability status constants
 export const USERNAME_STATUS = {
 	IDLE: "idle",

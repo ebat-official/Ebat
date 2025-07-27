@@ -1,7 +1,7 @@
 import {
 	index,
 	integer,
-	json,
+	jsonb,
 	pgTable,
 	timestamp,
 	uniqueIndex,
@@ -25,8 +25,8 @@ export const challengeTemplates = pgTable(
 			onDelete: "cascade",
 		}),
 		framework: templateFrameworkEnum("framework").notNull(),
-		questionTemplate: json("question_template").notNull(),
-		answerTemplate: json("answer_template").notNull(),
+		questionTemplate: jsonb("question_template").notNull(),
+		answerTemplate: jsonb("answer_template").notNull(),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()
 			.defaultNow(),
@@ -60,7 +60,7 @@ export const challengeSubmissions = pgTable(
 			.notNull()
 			.references(() => posts.id, { onDelete: "cascade" }),
 		framework: templateFrameworkEnum("framework").notNull(),
-		answerTemplate: json("answer_template").notNull(),
+		answerTemplate: jsonb("answer_template").notNull(),
 		runTime: integer("run_time").notNull().default(0),
 		status: submissionStatusEnum("status")
 			.notNull()

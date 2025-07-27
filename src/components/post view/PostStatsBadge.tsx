@@ -15,6 +15,7 @@ import {
 import { formatNumInK } from "@/utils/formatNumInK";
 import { DifficultyBadge } from "../shared/DifficultyBadge";
 import { ViewsBadge } from "../shared/viewsBadge";
+import { BookmarkBadge } from "../shared/BookmarkBadge";
 
 // Interfaces
 interface PostStatsBadgeProps {
@@ -48,6 +49,7 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 				<CoinsBadge coins={post.coins || 0} />
 				<CompletionBadge completionCount={post.completionCount || 0} />
 				<ViewsBadge views={post?.views?.count || 0} />
+				<BookmarkBadge postId={post.id} />
 			</CardContent>
 		</Card>
 	);

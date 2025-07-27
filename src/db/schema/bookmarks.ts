@@ -1,4 +1,10 @@
-import { pgTable, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+	pgTable,
+	uniqueIndex,
+	uuid,
+	varchar,
+	timestamp,
+} from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { posts } from "./posts";
 
@@ -13,6 +19,7 @@ export const bookmarks = pgTable(
 		postId: varchar("post_id", { length: 21 })
 			.notNull()
 			.references(() => posts.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
 	},
 	(table) => [
 		uniqueIndex("bookmark_userId_postId_idx").on(table.userId, table.postId),

@@ -9,7 +9,7 @@ import {
 	SubCategory,
 	Difficulty,
 } from "@/db/schema/enums";
-import { and, desc, eq, asc, Column, like, ne, count } from "drizzle-orm";
+import { and, desc, eq, asc, Column, ilike, ne, count } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 const POST_EDIT_SORT_FIELDS = [
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
 			ne(postEdits.authorId, currentUser.id),
 		];
 		if (search) {
-			editConditions.push(like(postEdits.title, `%${search}%`));
+			editConditions.push(ilike(postEdits.title, `%${search}%`));
 		}
 		if (category) {
 			editConditions.push(eq(postEdits.category, category as PostCategory));
@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
 			editConditions.push(eq(postEdits.difficulty, difficulty as Difficulty));
 		}
 		if (companies && companies.length > 0) {
-			editConditions.push(like(postEdits.companies, `%${companies[0]}%`));
+			editConditions.push(ilike(postEdits.companies, `%${companies[0]}%`));
 		}
 		if (topics && topics.length > 0) {
-			editConditions.push(like(postEdits.topics, `%${topics[0]}%`));
+			editConditions.push(ilike(postEdits.topics, `%${topics[0]}%`));
 		}
 
 		const editSort = postEditSortColumns[sortField]

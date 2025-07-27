@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -149,6 +149,11 @@ export function DataTable<T>({
 	const [selectedColumns, setSelectedColumns] =
 		useState<string[]>(defaultColumns);
 
+	// Update selectedColumns when defaultColumns changes
+	useEffect(() => {
+		setSelectedColumns(defaultColumns);
+	}, [defaultColumns]);
+
 	const handleSort = (field: string) => {
 		if (setSortField) {
 			if (sortField === field) {
@@ -248,7 +253,7 @@ export function DataTable<T>({
 			<TableRow key={`skeleton-${index}`}>
 				{selectedColumns.map((columnId) => (
 					<TableCell key={columnId}>
-						<Skeleton className="h-4 w-full rounded" />
+						<Skeleton className="h-6 w-full rounded py-2" />
 					</TableCell>
 				))}
 				{renderActions && (
@@ -265,9 +270,9 @@ export function DataTable<T>({
 
 	return (
 		<div className="space-y-4">
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-end">
 				{title && (
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center space-x-2 mr-auto">
 						<h2 className="text-lg font-semibold">{title}</h2>
 					</div>
 				)}

@@ -2,7 +2,7 @@ import {
 	boolean,
 	index,
 	integer,
-	json,
+	jsonb,
 	pgTable,
 	text,
 	timestamp,
@@ -10,6 +10,7 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 import { bytea } from "@/db/database-types";
 import { user } from "./auth";
@@ -58,7 +59,7 @@ export const posts = pgTable(
 		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		rejectionLog: json("rejection_log"), // Array of rejection logs
+		logs: jsonb("logs"), // Array of logs
 	},
 	(table) => [
 		index("post_authorId_idx").on(table.authorId),
@@ -68,6 +69,13 @@ export const posts = pgTable(
 		index("post_subCategory_idx").on(table.subCategory),
 		index("post_status_idx").on(table.status),
 		index("post_approvalStatus_idx").on(table.approvalStatus),
+		// Add the GIN index for full-text search
+		index("post_full_search_idx").using(
+			"gin",
+			sql`(
+				setweight(to_tsvector('english', ${table.title}), 'A')
+			)`,
+		),
 	],
 );
 
@@ -97,7 +105,7 @@ export const postEdits = pgTable(
 		approvalStatus: postApprovalStatusEnum("approval_status")
 			.notNull()
 			.default(PostApprovalStatus.PENDING),
-		rejectionLog: json("rejection_log"), // Array of rejection logs
+		logs: jsonb("logs"), // Array of logs
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()
 			.defaultNow(),

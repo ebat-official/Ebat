@@ -15,7 +15,7 @@ import {
 	eq,
 	asc,
 	Column,
-	like,
+	ilike,
 	inArray,
 	ne,
 	count,
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
 			ne(posts.authorId, currentUser.id),
 		];
 		if (search) {
-			postConditions.push(like(posts.title, `%${search}%`));
+			postConditions.push(ilike(posts.title, `%${search}%`));
 		}
 		if (category) {
 			postConditions.push(eq(posts.category, category as PostCategory));
@@ -95,10 +95,10 @@ export async function GET(request: NextRequest) {
 			postConditions.push(eq(posts.difficulty, difficulty as Difficulty));
 		}
 		if (companies && companies.length > 0) {
-			postConditions.push(like(posts.companies, `%${companies[0]}%`));
+			postConditions.push(ilike(posts.companies, `%${companies[0]}%`));
 		}
 		if (topics && topics.length > 0) {
-			postConditions.push(like(posts.topics, `%${topics[0]}%`));
+			postConditions.push(ilike(posts.topics, `%${topics[0]}%`));
 		}
 
 		const postSort = postSortColumns[sortField]

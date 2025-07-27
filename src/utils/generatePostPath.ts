@@ -1,28 +1,39 @@
 import {
 	PostCategoryType,
+	PostType,
 	PostTypeType,
 	SubCategoryType,
 } from "@/db/schema/enums";
 import { Post } from "@/db/schema/zod-schemas";
 import { PostWithExtraDetails } from "@/utils/types";
 
-export const generatePostPath = ({
-	category,
-	subCategory,
-	slug,
-	id,
-	postType,
-}: {
+interface GeneratePostPathParams {
 	category: PostCategoryType;
 	subCategory: SubCategoryType | null;
 	slug: string;
 	id: string;
 	postType: PostTypeType;
-}) => {
-	return `/${category.toLowerCase()}/${
-		subCategory ? `${subCategory.toLowerCase()}/` : ""
-	}${postType?.toLowerCase()}/${slug}-${id}`;
-};
+}
+
+export function generatePostPath({
+	category,
+	subCategory,
+	slug,
+	id,
+	postType,
+}: GeneratePostPathParams): string {
+	// Determine the post type path - include for all types
+	const postTypePath = `${postType}s/`;
+
+	// Build the base URL with proper handling of null subCategory
+	const categoryPath = category.toLowerCase();
+	const subCategoryPath = subCategory ? `/${subCategory.toLowerCase()}` : "";
+	const postTypePathSegment = `/${postTypePath}`;
+
+	const postUrl = `/${categoryPath}${subCategoryPath}${postTypePathSegment}${slug}-${id}`;
+
+	return postUrl;
+}
 
 export const generatePostPathFromPostId = (
 	post: Post | PostWithExtraDetails,
