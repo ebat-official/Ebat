@@ -73,9 +73,7 @@ export const posts = pgTable(
 		index("post_full_search_idx").using(
 			"gin",
 			sql`(
-				setweight(to_tsvector('english', ${table.title}), 'A') ||
-				setweight(to_tsvector('english', array_to_string(${table.companies}, ' ')), 'B') ||
-				setweight(to_tsvector('english', array_to_string(${table.topics}, ' ')), 'C')
+				setweight(to_tsvector('english', ${table.title}), 'A')
 			)`,
 		),
 	],
