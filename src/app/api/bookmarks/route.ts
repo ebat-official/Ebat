@@ -106,39 +106,49 @@ export async function GET(request: NextRequest) {
 
 		const totalBookmarks = Number(bookmarksCountResult[0]?.count || 0);
 
-		// Get bookmarks with post and author details using relations
-		const bookmarksWithDetails = await db.query.bookmarks.findMany({
-			where: and(...bookmarkConditions),
-			with: {
-				post: {
-					columns: {
-						id: true,
-						title: true,
-						slug: true,
-						category: true,
-						subCategory: true,
-						type: true,
-						difficulty: true,
-						// Only include fields actually used in the UI
-					},
-					with: {
-						author: {
-							columns: {
-								id: true,
-								name: true,
-								username: true,
-							},
-						},
-					},
+		// Get bookmarks with post and author details using explicit joins
+		const bookmarksWithDetails = await db
+			.select({
+				bookmark: {
+					id: bookmarks.id,
+					userId: bookmarks.userId,
+					postId: bookmarks.postId,
+					createdAt: bookmarks.createdAt,
 				},
+				post: {
+					id: posts.id,
+					title: posts.title,
+					slug: posts.slug,
+					category: posts.category,
+					subCategory: posts.subCategory,
+					type: posts.type,
+					difficulty: posts.difficulty,
+				},
+				author: {
+					id: user.id,
+					name: user.name,
+					username: user.username,
+				},
+			})
+			.from(bookmarks)
+			.innerJoin(posts, eq(bookmarks.postId, posts.id))
+			.innerJoin(user, eq(posts.authorId, user.id))
+			.where(and(...bookmarkConditions))
+			.orderBy(bookmarkSort)
+			.limit(pageSize)
+			.offset(offset);
+
+		// Transform the result to match the expected format
+		const transformedBookmarks = bookmarksWithDetails.map((item) => ({
+			...item.bookmark,
+			post: {
+				...item.post,
+				author: item.author,
 			},
-			orderBy: [bookmarkSort],
-			limit: pageSize,
-			offset,
-		});
+		}));
 
 		return NextResponse.json({
-			bookmarks: bookmarksWithDetails,
+			bookmarks: transformedBookmarks,
 			pagination: {
 				page,
 				pageSize,
