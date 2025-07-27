@@ -50,6 +50,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRole } from "@/db/schema/enums";
 import { authClient } from "@/lib/auth-client";
 import { useSession } from "@/lib/auth-client";
+import { hasAdminAccess } from "@/auth/roleUtils";
 import {
 	ArrowUpDown,
 	Ban,
@@ -455,7 +456,7 @@ export function AdminPage() {
 									</CardHeader>
 									<CardContent>
 										<div className="text-2xl font-bold">
-											{users.filter((u) => u.role === UserRole.ADMIN).length}
+											{users.filter((u) => hasAdminAccess(u.role)).length}
 										</div>
 									</CardContent>
 								</Card>

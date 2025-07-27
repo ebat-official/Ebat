@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { UserRole } from "@/db/schema/enums";
 import { userRoleOptions } from "../constants";
-import { Shield, User, Edit, ShieldCheck } from "lucide-react";
+import { Shield, User, Edit, ShieldCheck, Crown } from "lucide-react";
 
 interface RoleDropdownProps {
 	value: UserRole;
@@ -20,6 +20,7 @@ interface RoleDropdownProps {
 }
 
 const roleIcons = {
+	[UserRole.SUPER_ADMIN]: Crown,
 	[UserRole.ADMIN]: Shield,
 	[UserRole.USER]: User,
 	[UserRole.EDITOR]: Edit,

@@ -126,7 +126,12 @@ export function CreateUserForm({
 								</FormControl>
 								<SelectContent>
 									<SelectItem value={UserRole.USER}>User</SelectItem>
+									<SelectItem value={UserRole.EDITOR}>Editor</SelectItem>
+									<SelectItem value={UserRole.MODERATOR}>Moderator</SelectItem>
 									<SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
+									<SelectItem value={UserRole.SUPER_ADMIN}>
+										Super Admin
+									</SelectItem>
 								</SelectContent>
 							</Select>
 							<FormMessage />

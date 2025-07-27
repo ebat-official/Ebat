@@ -1,6 +1,7 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
 export enum UserRole {
+	SUPER_ADMIN = "superadmin",
 	ADMIN = "admin",
 	USER = "user",
 	EDITOR = "editor",

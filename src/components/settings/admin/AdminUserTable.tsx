@@ -75,44 +75,7 @@ import type { User } from "../types";
 import { TableWithScroll } from "@/components/shared/TableWithScroll";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RoleDropdown } from "./RoleDropdown";
-
-// Role hierarchy function - higher index means higher privileges
-const getRoleHierarchy = (role: UserRole): number => {
-	switch (role) {
-		case UserRole.USER:
-			return 0;
-		case UserRole.EDITOR:
-			return 1;
-		case UserRole.MODERATOR:
-			return 2;
-		case UserRole.ADMIN:
-			return 3;
-		default:
-			return 0;
-	}
-};
-
-// Check if current user can modify target user's role
-const canModifyRole = (
-	currentUserRole: UserRole,
-	targetUserRole: UserRole,
-): boolean => {
-	const currentHierarchy = getRoleHierarchy(currentUserRole);
-	const targetHierarchy = getRoleHierarchy(targetUserRole);
-
-	// Can only modify users with lower hierarchy
-	return currentHierarchy > targetHierarchy;
-};
-
-// Get available roles that current user can assign
-const getAvailableRoles = (currentUserRole: UserRole): UserRole[] => {
-	const currentHierarchy = getRoleHierarchy(currentUserRole);
-
-	return Object.values(UserRole).filter((role) => {
-		const roleHierarchy = getRoleHierarchy(role);
-		return roleHierarchy < currentHierarchy;
-	});
-};
+import { canModifyRole, getAvailableRoles } from "@/auth/roleUtils";
 
 interface AdminUserTableProps {
 	users: User[];

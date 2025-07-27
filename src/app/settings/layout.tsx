@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { UserRole } from "@/db/schema/enums";
+import { hasAdminAccess } from "@/auth/roleUtils";
 
 export const metadata: Metadata = {
 	title: "Forms",
@@ -22,7 +23,7 @@ interface SettingsLayoutProps {
 async function SettingsLayout({ children }: SettingsLayoutProps) {
 	const user = await getCurrentUser();
 	const userRole = user?.role;
-	const isAdmin = userRole === UserRole.ADMIN;
+	const isAdmin = hasAdminAccess(userRole);
 
 	const sidebarNavItems = [
 		{

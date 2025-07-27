@@ -7,6 +7,7 @@ import {
 	user,
 	editor,
 	moderator,
+	superadmin,
 } from "@/auth/permissions";
 export const authClient = createAuthClient({
 	baseURL: process.env.BETTER_AUTH_URL, // Optional: BetterAuth can auto-detect in most cases
@@ -15,6 +16,7 @@ export const authClient = createAuthClient({
 			ac,
 			roles: {
 				admin: adminRole,
+				superadmin,
 				user,
 				editor,
 				moderator,

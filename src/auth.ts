@@ -13,6 +13,7 @@ import {
 	user,
 	editor,
 	moderator,
+	superadmin,
 } from "@/auth/permissions";
 import { AccountStatus, UserRole } from "./db/schema";
 

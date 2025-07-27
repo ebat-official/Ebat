@@ -24,3 +24,9 @@ export const admin = ac.newRole({
 	...adminAc.statements,
 	post: ["create", "update", "delete", "edit-read", "edit-edit"],
 });
+
+export const superadmin = ac.newRole({
+	...adminAc.statements,
+	post: ["create", "update", "delete", "edit-read", "edit-edit"],
+	// Super admin has all permissions
+});

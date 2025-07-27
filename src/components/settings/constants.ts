@@ -110,6 +110,7 @@ export const userRoleOptions = [
 	{ value: UserRole.EDITOR, label: "Editor" },
 	{ value: UserRole.MODERATOR, label: "Moderator" },
 	{ value: UserRole.ADMIN, label: "Admin" },
+	{ value: UserRole.SUPER_ADMIN, label: "Super Admin" },
 ];
 
 // Account status options

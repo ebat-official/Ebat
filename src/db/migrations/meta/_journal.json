@@ -120,6 +120,13 @@
 			"when": 1753599046565,
 			"tag": "0016_supreme_alice",
 			"breakpoints": true
+		},
+		{
+			"idx": 17,
+			"version": "7",
+			"when": 1753604376121,
+			"tag": "0017_smart_hydra",
+			"breakpoints": true
 		}
 	]
 }
