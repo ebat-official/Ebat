@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect, startTransition } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import HtmlDiff from "htmldiff-js";
 import { PostWithExtraDetails } from "@/utils/types";
@@ -22,28 +22,43 @@ const HtmlDiffClient: React.FC<HtmlDiffClientProps> = ({
 }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [diffHTML, setDiffHTML] = useState<string>("");
 
-	// Memoize expensive HTML generation and diff computation
-	const diffHTML = useMemo(() => {
-		try {
-			setIsLoading(true);
-			setError(null);
+	useEffect(() => {
+		const generateDiff = async () => {
+			try {
+				setIsLoading(true);
+				setError(null);
 
-			const originalHTML = renderToStaticMarkup(
-				componentRenderer(originalPost),
-			);
-			const modifiedHTML = renderToStaticMarkup(
-				componentRenderer(modifiedPost),
-			);
-			const result = HtmlDiff.execute(originalHTML, modifiedHTML);
+				// Use startTransition to prevent suspension issues
+				startTransition(() => {
+					try {
+						const originalHTML = renderToStaticMarkup(
+							componentRenderer(originalPost),
+						);
+						const modifiedHTML = renderToStaticMarkup(
+							componentRenderer(modifiedPost),
+						);
+						const result = HtmlDiff.execute(originalHTML, modifiedHTML);
 
-			setIsLoading(false);
-			return result;
-		} catch (err) {
-			setError(err instanceof Error ? err.message : "Failed to generate diff");
-			setIsLoading(false);
-			return "";
-		}
+						setDiffHTML(result);
+						setIsLoading(false);
+					} catch (err) {
+						setError(
+							err instanceof Error ? err.message : "Failed to generate diff",
+						);
+						setIsLoading(false);
+					}
+				});
+			} catch (err) {
+				setError(
+					err instanceof Error ? err.message : "Failed to generate diff",
+				);
+				setIsLoading(false);
+			}
+		};
+
+		generateDiff();
 	}, [originalPost, modifiedPost, componentRenderer]);
 
 	if (isLoading) {
@@ -93,4 +108,4 @@ const HtmlDiffClient: React.FC<HtmlDiffClientProps> = ({
 	);
 };
 
-export default React.memo(HtmlDiffClient);
+export default HtmlDiffClient;

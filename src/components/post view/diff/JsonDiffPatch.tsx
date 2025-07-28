@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { create, diff } from "jsondiffpatch";
 import { format } from "jsondiffpatch/formatters/html";
 import "jsondiffpatch/formatters/styles/html.css";
@@ -16,10 +16,17 @@ export const JsonDiffPatch = ({
 	right,
 	diffOptions,
 }: JsonDiffPatchProps) => {
-	// Memoize expensive diff computation
-	const htmlDiff = useMemo(() => {
-		const delta = diff(left, right);
-		return delta ? format(delta, left) : "";
+	const [htmlDiff, setHtmlDiff] = useState<string>("");
+
+	useEffect(() => {
+		try {
+			const delta = diff(left, right);
+			const result = delta ? format(delta, left) : "";
+			setHtmlDiff(result || "");
+		} catch (error) {
+			console.error("Error generating JSON diff:", error);
+			setHtmlDiff("");
+		}
 	}, [left, right, diffOptions]);
 
 	return (
