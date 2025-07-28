@@ -1,11 +1,12 @@
 import { getPostFromURL, getPostEditFromId } from "@/utils/api utils/posts";
 import { notFound } from "next/navigation";
-import { PostWithExtraDetails } from "@/utils/types";
+import UnifiedPreview from "@/components/post view/diff/UnifiedPreview";
 import DraggablePanel from "@/components/playground/DraggablePanel";
+import { PostWithExtraDetails } from "@/utils/types";
 
 interface PageProps {
 	params: Promise<{ postId: string[] }>;
-	searchParams: Promise<{ user?: string; edited?: string }>;
+	searchParams: Promise<{ user?: string; edited?: string; diffview?: string }>;
 }
 
 export default async function Page({ params, searchParams }: PageProps) {
@@ -17,8 +18,10 @@ export default async function Page({ params, searchParams }: PageProps) {
 
 	const user = awaitedSearchParams.user;
 	const edited = awaitedSearchParams.edited;
+	const diffview = awaitedSearchParams.diffview;
 
 	let post: PostWithExtraDetails | null = null;
+	let originalPost: PostWithExtraDetails | null = null;
 
 	// If the other user is verifying edit
 	if (edited === "true") {
@@ -26,7 +29,10 @@ export default async function Page({ params, searchParams }: PageProps) {
 			user: user || "",
 			edited: "true",
 		});
-		console.log("post prr", post);
+		// Get the original post for comparison only if diff view is requested
+		if (diffview === "true") {
+			originalPost = await getPostFromURL(postId);
+		}
 	} else {
 		post = await getPostFromURL(postId);
 	}
@@ -36,8 +42,14 @@ export default async function Page({ params, searchParams }: PageProps) {
 	}
 
 	return (
-		<article>
-			<DraggablePanel post={post} />
-		</article>
+		<UnifiedPreview
+			post={post}
+			originalPost={originalPost}
+			postId={postId}
+			isEdited={edited === "true"}
+			showDiff={diffview === "true"}
+			componentSlot={<DraggablePanel post={post} />}
+			componentType="challenge"
+		/>
 	);
 }

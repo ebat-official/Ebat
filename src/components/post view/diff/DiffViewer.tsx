@@ -3,16 +3,18 @@ import { PostWithExtraDetails } from "@/utils/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import HtmlDiffClient from "./HtmlDiffClient";
 import JsonDiffClient from "./JsonDiffClient";
-import PostViewForDiff from "../PostViewForDiff";
+import { ReactNode } from "react";
 
 interface DiffViewerProps {
 	originalPost: PostWithExtraDetails;
 	modifiedPost: PostWithExtraDetails;
+	componentRenderer: (post: PostWithExtraDetails) => ReactNode;
 }
 
 const DiffViewer: React.FC<DiffViewerProps> = ({
 	originalPost,
 	modifiedPost,
+	componentRenderer,
 }) => {
 	return (
 		<Tabs defaultValue="html" className="w-full">
@@ -26,18 +28,15 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
 				<HtmlDiffClient
 					originalPost={originalPost}
 					modifiedPost={modifiedPost}
+					componentRenderer={componentRenderer}
 				/>
 			</TabsContent>
 
 			<TabsContent value="bothViews">
 				<div className="flex flex-col gap-6">
-					<div>
-						<PostViewForDiff post={originalPost} />
-					</div>
+					<div>{componentRenderer(originalPost)}</div>
 
-					<div>
-						<PostViewForDiff post={modifiedPost} />
-					</div>
+					<div>{componentRenderer(modifiedPost)}</div>
 				</div>
 			</TabsContent>
 

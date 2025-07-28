@@ -4,19 +4,21 @@ import React, { useMemo, useState, useEffect } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import HtmlDiff from "htmldiff-js";
 import { PostWithExtraDetails } from "@/utils/types";
-import PostViewForDiff from "../PostViewForDiff";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Info } from "lucide-react";
 import { HtmlRenderer } from "../../shared/HtmlRenderer";
+import { ReactNode } from "react";
 
 interface HtmlDiffClientProps {
 	originalPost: PostWithExtraDetails;
 	modifiedPost: PostWithExtraDetails;
+	componentRenderer: (post: PostWithExtraDetails) => ReactNode;
 }
 
 const HtmlDiffClient: React.FC<HtmlDiffClientProps> = ({
 	originalPost,
 	modifiedPost,
+	componentRenderer,
 }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -28,10 +30,10 @@ const HtmlDiffClient: React.FC<HtmlDiffClientProps> = ({
 			setError(null);
 
 			const originalHTML = renderToStaticMarkup(
-				<PostViewForDiff post={originalPost} />,
+				componentRenderer(originalPost),
 			);
 			const modifiedHTML = renderToStaticMarkup(
-				<PostViewForDiff post={modifiedPost} />,
+				componentRenderer(modifiedPost),
 			);
 			const result = HtmlDiff.execute(originalHTML, modifiedHTML);
 
@@ -42,7 +44,7 @@ const HtmlDiffClient: React.FC<HtmlDiffClientProps> = ({
 			setIsLoading(false);
 			return "";
 		}
-	}, [originalPost, modifiedPost]);
+	}, [originalPost, modifiedPost, componentRenderer]);
 
 	if (isLoading) {
 		return (

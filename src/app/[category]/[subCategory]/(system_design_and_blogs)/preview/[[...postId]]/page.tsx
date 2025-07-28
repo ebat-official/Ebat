@@ -1,8 +1,7 @@
 import { getPostFromURL, getPostEditFromId } from "@/utils/api utils/posts";
 import { notFound } from "next/navigation";
+import UnifiedPreview from "@/components/post view/diff/UnifiedPreview";
 import PostView from "@/components/post view/PostView";
-import DiffViewer from "@/components/post view/diff/DiffViewer";
-import DiffToggleButton from "@/components/post view/diff/DiffToggleButton";
 import { PostWithExtraDetails } from "@/utils/types";
 
 interface PageProps {
@@ -42,26 +41,15 @@ export default async function Page({ params, searchParams }: PageProps) {
 		return notFound();
 	}
 
-	// Show diff view if requested and we have both original and modified posts
-	if (diffview === "true" && edited === "true" && originalPost) {
-		return (
-			<article>
-				<div className="flex justify-end mb-4">
-					<DiffToggleButton postId={postId} />
-				</div>
-				<DiffViewer originalPost={originalPost} modifiedPost={post} />
-			</article>
-		);
-	}
-
 	return (
-		<article>
-			{edited === "true" && (
-				<div className="flex justify-end mb-4 ">
-					<DiffToggleButton postId={postId} />
-				</div>
-			)}
-			<PostView post={post} />
-		</article>
+		<UnifiedPreview
+			post={post}
+			originalPost={originalPost}
+			postId={postId}
+			isEdited={edited === "true"}
+			showDiff={diffview === "true"}
+			componentSlot={<PostView post={post} />}
+			componentType="post"
+		/>
 	);
 }
