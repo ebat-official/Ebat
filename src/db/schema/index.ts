@@ -24,7 +24,7 @@ import { completionStatuses } from "./completionStatuses";
 // Import all tables for type safety
 import { follows } from "./follows";
 import { notifications } from "./notifications";
-import { postCollaborators, postEdits, postViews, posts } from "./posts";
+import { postContributors, postEdits, postViews, posts } from "./posts";
 import { reports } from "./reports";
 import { votes } from "./votes";
 
@@ -38,7 +38,7 @@ export const schema = {
 	posts,
 	postViews,
 	postEdits,
-	postCollaborators,
+	postContributors,
 	comments,
 	commentVotes,
 	commentMentions,

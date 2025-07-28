@@ -105,7 +105,7 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	completionCount?: number;
 	tableOfContent?: TableOfContent;
 	challengeTemplates?: ChallengeTemplate[];
-	collaborators: Array<Pick<User, "id" | "username" | "name" | "image">>;
+	contributors: Array<Pick<User, "id" | "username" | "name" | "image">>;
 	author: Pick<User, "id" | "username" | "name" | "image" | "companyName">;
 	views?: {
 		count: number;

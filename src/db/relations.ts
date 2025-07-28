@@ -8,7 +8,7 @@ import { commentMentions, commentVotes, comments } from "./schema/comments";
 import { completionStatuses } from "./schema/completionStatuses";
 import { follows } from "./schema/follows";
 import { notifications } from "./schema/notifications";
-import { postCollaborators, postEdits, postViews, posts } from "./schema/posts";
+import { postContributors, postEdits, postViews, posts } from "./schema/posts";
 import { reports } from "./schema/reports";
 import { votes } from "./schema/votes";
 
@@ -31,7 +31,7 @@ export const userRelations = relations(user, ({ many }) => ({
 	followers: many(follows, { relationName: "Following" }),
 
 	// Collaboration
-	collaborators: many(postCollaborators),
+	contributors: many(postContributors),
 
 	// Moderation
 	reports: many(reports),
@@ -69,7 +69,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
 	challengeTemplates: many(challengeTemplates),
 	challengeSubmissions: many(challengeSubmissions),
 	postEdits: many(postEdits),
-	collaborators: many(postCollaborators),
+	contributors: many(postContributors),
 	reports: many(reports),
 }));
 
@@ -92,15 +92,15 @@ export const postEditsRelations = relations(postEdits, ({ one, many }) => ({
 	challengeTemplates: many(challengeTemplates),
 }));
 
-export const postCollaboratorsRelations = relations(
-	postCollaborators,
+export const postContributorsRelations = relations(
+	postContributors,
 	({ one }) => ({
 		post: one(posts, {
-			fields: [postCollaborators.postId],
+			fields: [postContributors.postId],
 			references: [posts.id],
 		}),
 		user: one(user, {
-			fields: [postCollaborators.userId],
+			fields: [postContributors.userId],
 			references: [user.id],
 		}),
 	}),

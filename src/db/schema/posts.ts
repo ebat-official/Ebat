@@ -132,9 +132,9 @@ export const postEdits = pgTable(
 	],
 );
 
-// Post collaborators (many-to-many relationship)
-export const postCollaborators = pgTable(
-	"postCollaborators",
+// Post contributors (many-to-many relationship)
+export const postContributors = pgTable(
+	"postContributors",
 	{
 		postId: varchar("post_id", { length: 21 })
 			.notNull()
@@ -144,12 +144,12 @@ export const postCollaborators = pgTable(
 			.references(() => user.id, { onDelete: "cascade" }),
 	},
 	(table) => [
-		uniqueIndex("postCollaborators_postId_userId_idx").on(
+		uniqueIndex("postContributors_postId_userId_idx").on(
 			table.postId,
 			table.userId,
 		),
-		index("postCollaborators_postId_idx").on(table.postId),
-		index("postCollaborators_userId_idx").on(table.userId),
+		index("postContributors_postId_idx").on(table.postId),
+		index("postContributors_userId_idx").on(table.userId),
 	],
 );
 

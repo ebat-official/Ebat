@@ -120,7 +120,6 @@ export function ApprovalsPage() {
 			postType: post.type,
 			postId: post.id,
 			userId: post.author?.id,
-			diffview: true,
 		});
 
 		return (

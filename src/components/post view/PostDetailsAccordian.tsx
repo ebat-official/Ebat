@@ -57,7 +57,7 @@ const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 					)}
 
 					<TopicsAccordion topics={post.topics || []} />
-					<CollaboratorsAccordion collaborators={post.collaborators} />
+					<ContributorsAccordion contributors={post.contributors} />
 				</Accordion>
 			</CardContent>
 		</Card>
@@ -134,35 +134,35 @@ const CompaniesAccordion: FC<{ companies: string[] }> = ({ companies }) => {
 	);
 };
 
-// Collaborators Accordion
-const CollaboratorsAccordion: FC<{
-	collaborators: {
+// Contributors Accordion
+const ContributorsAccordion: FC<{
+	contributors: {
 		id: string;
 		username: string;
 		name: string | null;
 		image: string | null;
 	}[];
-}> = ({ collaborators }) => {
+}> = ({ contributors }) => {
 	return (
-		<AccordionItem value="collaborators">
+		<AccordionItem value="contributors">
 			<AccordionTrigger>
 				<div className="flex gap-2 items-center">
 					<IoPeopleOutline size={16} />
-					<span>Collaborators</span>
+					<span>Contributors</span>
 				</div>
 			</AccordionTrigger>
 			<AccordionContent className="mt-2">
 				<div className="flex flex-wrap gap-2">
-					{collaborators?.length > 0 ? (
-						collaborators.map((collaborator) => {
-							const { name, username, image } = collaborator;
+					{contributors?.length > 0 ? (
+						contributors.map((contributor) => {
+							const { name, username, image } = contributor;
 							const profileName = name?.split(" ")[0] || username || "Unknown";
 							const profileImage = image || undefined;
 
 							return (
 								<Badge
 									variant="outline"
-									key={collaborator.id}
+									key={contributor.id}
 									className="flex items-center gap-2 px-2 py-1"
 								>
 									<Avatar className="flex-shrink-0">
@@ -183,7 +183,7 @@ const CollaboratorsAccordion: FC<{
 						})
 					) : (
 						<p className="text-sm text-muted-foreground">
-							No collaborators available.
+							No contributors available.
 						</p>
 					)}
 				</div>

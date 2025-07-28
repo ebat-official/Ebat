@@ -11,7 +11,7 @@ import {
 	completionStatuses,
 	follows,
 	notifications,
-	postCollaborators,
+	postContributors,
 	postEdits,
 	postViews,
 	posts,
@@ -29,7 +29,7 @@ export type Follow = InferSelectModel<typeof follows>;
 export type Post = InferSelectModel<typeof posts>;
 export type PostViews = InferSelectModel<typeof postViews>;
 export type PostEdit = InferSelectModel<typeof postEdits>;
-export type PostCollaborators = InferSelectModel<typeof postCollaborators>;
+export type PostContributors = InferSelectModel<typeof postContributors>;
 export type Comment = InferSelectModel<typeof comments>;
 export type CommentVote = InferSelectModel<typeof commentVotes>;
 export type CommentMention = InferSelectModel<typeof commentMentions>;
@@ -50,9 +50,7 @@ export type InsertFollow = InferInsertModel<typeof follows>;
 export type InsertPost = InferInsertModel<typeof posts>;
 export type InsertPostViews = InferInsertModel<typeof postViews>;
 export type InsertPostEdit = InferInsertModel<typeof postEdits>;
-export type InsertPostCollaborators = InferInsertModel<
-	typeof postCollaborators
->;
+export type InsertPostContributors = InferInsertModel<typeof postContributors>;
 export type InsertComment = InferInsertModel<typeof comments>;
 export type InsertCommentVote = InferInsertModel<typeof commentVotes>;
 export type InsertCommentMention = InferInsertModel<typeof commentMentions>;

@@ -142,7 +142,7 @@ export async function getPostEditFromId(
 						companyName: true,
 					},
 				},
-				collaborators: {
+				contributors: {
 					with: {
 						user: {
 							columns: {
@@ -181,21 +181,21 @@ export async function getPostEditFromId(
 			}
 		}
 
-		// Build collaborators: original collaborators + postEdit author (if not already present and not original author)
-		const collaborators = [
-			...(originalPost.collaborators?.map((collaborator) => ({
-				id: collaborator.user.id,
-				username: collaborator.user.username,
-				name: collaborator.user.name,
-				image: collaborator.user.image,
+		// Build contributors: original contributors + postEdit author (if not already present and not original author)
+		const contributors = [
+			...(originalPost.contributors?.map((contributor) => ({
+				id: contributor.user.id,
+				username: contributor.user.username,
+				name: contributor.user.name,
+				image: contributor.user.image,
 			})) || []),
 		];
-		const isAlreadyCollaborator = collaborators.some(
+		const isAlreadyContributor = contributors.some(
 			(c) => c.id === postEdit.author?.id,
 		);
 		const isOriginalAuthor = originalPost.author?.id === postEdit.author?.id;
-		if (postEdit.author && !isAlreadyCollaborator && !isOriginalAuthor) {
-			collaborators.push({
+		if (postEdit.author && !isAlreadyContributor && !isOriginalAuthor) {
+			contributors.push({
 				id: postEdit.author.id,
 				username: postEdit.author.username,
 				name: postEdit.author.name,
@@ -221,7 +221,7 @@ export async function getPostEditFromId(
 				image: originalPost.author?.image || null,
 				companyName: originalPost.author?.companyName || null,
 			},
-			collaborators,
+			contributors,
 		};
 
 		return result as PostWithExtraDetails;
@@ -274,7 +274,7 @@ export async function getPostFromURL(
 					},
 				},
 				challengeTemplates: true,
-				collaborators: {
+				contributors: {
 					with: {
 						user: {
 							columns: {
@@ -362,12 +362,12 @@ export async function getPostFromURL(
 				image: post.author?.image || null,
 				companyName: post.author?.companyName || null,
 			},
-			collaborators:
-				post.collaborators?.map((collaborator) => ({
-					id: collaborator.user.id,
-					username: collaborator.user.username,
-					name: collaborator.user.name,
-					image: collaborator.user.image,
+			contributors:
+				post.contributors?.map((contributor) => ({
+					id: contributor.user.id,
+					username: contributor.user.username,
+					name: contributor.user.name,
+					image: contributor.user.image,
 				})) || [],
 		};
 
