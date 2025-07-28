@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDraftApproval } from "@/hooks/query/useApprovalPosts";
 import { useEditApproval } from "@/hooks/query/useEditApproval";
-import { FileText, Edit, Eye, MoreHorizontal } from "lucide-react";
+import { FileText, Edit, Eye, MoreHorizontal, Check, X } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
 import {
 	approvalColumnConfig,
@@ -20,11 +20,39 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import type { PostWithAuthor, PostEditWithAuthor } from "./types";
 import { renderPostCell, renderEditCell } from "./approvalUtils";
 import { generatePreviewUrl } from "@/utils/generatePreviewUrl";
+import { useSession } from "@/lib/auth-client";
+import { hasModeratorAccess } from "@/auth/roleUtils";
+import { UserRole } from "@/db/schema/enums";
+import { approvePostEdit, rejectPostEdit } from "@/actions/approval";
+import { toast } from "sonner";
 
 export function ApprovalsPage() {
+	const { data: session } = useSession();
+	const canApproveReject =
+		session && hasModeratorAccess(session.user.role as UserRole);
+
 	// Separate state for posts tab
 	const [postsSearchQuery, setPostsSearchQuery] = useState("");
 	const [postsSortField, setPostsSortField] = useState<string>("createdAt");
@@ -41,11 +69,20 @@ export function ApprovalsPage() {
 	const [editsCurrentPage, setEditsCurrentPage] = useState(1);
 	const [editsPageSize] = useState(10);
 
+	// Approve/Reject state
+	const [approveDialogOpen, setApproveDialogOpen] = useState(false);
+	const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+	const [rejectReasonDialogOpen, setRejectReasonDialogOpen] = useState(false);
+	const [rejectReason, setRejectReason] = useState("");
+	const [selectedEditId, setSelectedEditId] = useState<string | null>(null);
+	const [isProcessing, setIsProcessing] = useState(false);
+
 	// Separate queries for each tab
 	const {
 		data: postsData,
 		isLoading: postsLoading,
 		error: postsError,
+		refetch: refetchPosts,
 	} = useDraftApproval({
 		searchQuery: postsSearchQuery,
 		sortField: postsSortField as string,
@@ -66,6 +103,7 @@ export function ApprovalsPage() {
 		data: editsData,
 		isLoading: editsLoading,
 		error: editsError,
+		refetch: refetchEdits,
 	} = useEditApproval({
 		searchQuery: editsSearchQuery,
 		sortField: editsSortField as string,
@@ -111,6 +149,63 @@ export function ApprovalsPage() {
 
 	const handleEditsPageChange = (page: number) => {
 		setEditsCurrentPage(page);
+	};
+
+	// Approve/Reject handlers
+	const handleApprove = async () => {
+		if (!selectedEditId) return;
+
+		setIsProcessing(true);
+		try {
+			const result = await approvePostEdit(selectedEditId);
+			if (result.status === "success") {
+				toast.success("Post edit approved successfully!");
+				// Refetch data instead of full page reload
+				await Promise.all([refetchPosts(), refetchEdits()]);
+			} else {
+				toast.error(result.data.message || "Failed to approve post edit");
+			}
+		} catch (error) {
+			toast.error("An error occurred while approving the post edit");
+		} finally {
+			setIsProcessing(false);
+			setApproveDialogOpen(false);
+			setSelectedEditId(null);
+		}
+	};
+
+	const handleReject = async () => {
+		if (!selectedEditId) return;
+
+		setIsProcessing(true);
+		try {
+			const result = await rejectPostEdit(selectedEditId, rejectReason);
+			if (result.status === "success") {
+				toast.success("Post edit rejected successfully!");
+				// Refetch data instead of full page reload
+				await Promise.all([refetchPosts(), refetchEdits()]);
+			} else {
+				toast.error(result.data.message || "Failed to reject post edit");
+			}
+		} catch (error) {
+			toast.error("An error occurred while rejecting the post edit");
+		} finally {
+			setIsProcessing(false);
+			setRejectDialogOpen(false);
+			setRejectReasonDialogOpen(false);
+			setRejectReason("");
+			setSelectedEditId(null);
+		}
+	};
+
+	const openApproveDialog = (editId: string) => {
+		setSelectedEditId(editId);
+		setApproveDialogOpen(true);
+	};
+
+	const openRejectDialog = (editId: string) => {
+		setSelectedEditId(editId);
+		setRejectReasonDialogOpen(true);
 	};
 
 	const renderPostActions = (post: PostWithAuthor) => {
@@ -168,19 +263,25 @@ export function ApprovalsPage() {
 				>
 					<Eye className="h-4 w-4" />
 				</Button>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" size="sm">
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuItem>
-							<Edit className="mr-2 h-4 w-4" />
-							Edit
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				{canApproveReject && (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button size="sm" variant="outline">
+								<MoreHorizontal className="h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem onClick={() => openApproveDialog(edit.id)}>
+								<Check className="h-4 w-4 mr-2" />
+								Approve
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => openRejectDialog(edit.id)}>
+								<X className="h-4 w-4 mr-2" />
+								Reject
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)}
 			</div>
 		);
 	};
@@ -281,6 +382,107 @@ export function ApprovalsPage() {
 					/>
 				</TabsContent>
 			</Tabs>
+
+			{/* Approve Confirmation Dialog */}
+			<AlertDialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Approve Post Edit</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to approve this post edit? This will update
+							the original post with the edited content and add the edit author
+							as a contributor.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isProcessing}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleApprove}
+							disabled={isProcessing}
+							className="bg-green-600 hover:bg-green-700"
+						>
+							{isProcessing ? "Approving..." : "Approve"}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+
+			{/* Reject Confirmation Dialog */}
+			<AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Reject Post Edit</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to reject this post edit? This action cannot
+							be undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isProcessing}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleReject}
+							disabled={isProcessing}
+							className="bg-red-600 hover:bg-red-700"
+						>
+							{isProcessing ? "Rejecting..." : "Reject"}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+
+			{/* Reject Reason Dialog */}
+			<Dialog
+				open={rejectReasonDialogOpen}
+				onOpenChange={setRejectReasonDialogOpen}
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Reject Post Edit</DialogTitle>
+						<DialogDescription>
+							Please provide a reason for rejecting this post edit. This will be
+							shown to the user for improving the edits and publishing again.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="py-4">
+						<Textarea
+							placeholder="Enter rejection reason..."
+							value={rejectReason}
+							onChange={(e) => setRejectReason(e.target.value.slice(0, 300))}
+							className="min-h-[100px]"
+							maxLength={300}
+						/>
+						<div className="flex justify-between items-center mt-2 text-sm text-muted-foreground">
+							<span>{rejectReason.length}/300 characters</span>
+							<span>
+								{rejectReason.length < 4 ? "atleast 4 characters" : ""}
+							</span>
+						</div>
+					</div>
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onClick={() => {
+								setRejectReasonDialogOpen(false);
+								setRejectReason("");
+							}}
+							disabled={isProcessing}
+						>
+							Cancel
+						</Button>
+						<Button
+							variant="destructive"
+							onClick={handleReject}
+							disabled={isProcessing || rejectReason.length < 4}
+						>
+							{isProcessing ? "Rejecting..." : "Reject"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
