@@ -17,15 +17,14 @@ export function generatePreviewUrl({
 	edited = false,
 	userId,
 }: GeneratePreviewUrlParams): string {
-	// Determine the post type path - include for all types
-	const postTypePath = `${postType}s/`;
+	// Determine the post type path
+	const postTypePath =
+		postType === PostType.CHALLENGE || postType === PostType.QUESTION
+			? `${postType}s/`
+			: "";
 
-	// Build the base URL with proper handling of undefined subCategory
-	const categoryPath = category.toLowerCase();
-	const subCategoryPath = subCategory ? `/${subCategory.toLowerCase()}` : "";
-	const postTypePathSegment = `/${postTypePath}`;
-
-	let previewUrl = `/${categoryPath}${subCategoryPath}${postTypePathSegment}preview/${postId}`;
+	// Build the base URL
+	let previewUrl = `/${category}/${subCategory || ""}/${postTypePath}preview/${postId}`;
 
 	// Add query parameters if needed
 	const queryParams = new URLSearchParams();
