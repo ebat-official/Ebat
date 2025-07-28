@@ -63,7 +63,8 @@ export async function GET(request: NextRequest) {
 		// Build where conditions for post edits
 		const editConditions = [
 			eq(postEdits.approvalStatus, PostApprovalStatus.PENDING),
-			eq(postEdits.status, PostStatus.PUBLISHED),
+			// Remove the status filter - postEdits can be pending approval regardless of status
+			// eq(postEdits.status, PostStatus.PUBLISHED),
 			// Exclude current user's post edits - show only other users' edits
 			ne(postEdits.authorId, currentUser.id),
 		];

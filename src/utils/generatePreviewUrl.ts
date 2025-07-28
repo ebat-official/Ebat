@@ -7,6 +7,7 @@ interface GeneratePreviewUrlParams {
 	postId: string;
 	edited?: boolean;
 	userId?: string;
+	diffview?: boolean;
 }
 
 export function generatePreviewUrl({
@@ -16,6 +17,7 @@ export function generatePreviewUrl({
 	postId,
 	edited = false,
 	userId,
+	diffview = false,
 }: GeneratePreviewUrlParams): string {
 	// Determine the post type path
 	const postTypePath =
@@ -35,6 +37,10 @@ export function generatePreviewUrl({
 
 	if (userId) {
 		queryParams.append("user", userId);
+	}
+
+	if (diffview) {
+		queryParams.append("diffview", "true");
 	}
 
 	// Append query parameters if any exist

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { PostWithAuthor, PostEditWithAuthor } from "./types";
 import { renderPostCell, renderEditCell } from "./approvalUtils";
+import { generatePreviewUrl } from "@/utils/generatePreviewUrl";
 
 export function ApprovalsPage() {
 	// Separate state for posts tab
@@ -112,47 +113,78 @@ export function ApprovalsPage() {
 		setEditsCurrentPage(page);
 	};
 
-	const renderPostActions = (post: PostWithAuthor) => (
-		<div className="flex gap-2">
-			<Button size="sm" variant="outline">
-				<Eye className="h-4 w-4" />
-			</Button>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" size="sm">
-						<MoreHorizontal className="h-4 w-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuItem>
-						<Edit className="mr-2 h-4 w-4" />
-						Edit
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</div>
-	);
+	const renderPostActions = (post: PostWithAuthor) => {
+		const previewUrl = generatePreviewUrl({
+			category: post.category,
+			subCategory: post.subCategory,
+			postType: post.type,
+			postId: post.id,
+			userId: post.author?.id,
+			diffview: true,
+		});
 
-	const renderEditActions = (edit: PostEditWithAuthor) => (
-		<div className="flex gap-2">
-			<Button size="sm" variant="outline">
-				<Eye className="h-4 w-4" />
-			</Button>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" size="sm">
-						<MoreHorizontal className="h-4 w-4" />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end">
-					<DropdownMenuItem>
-						<Edit className="mr-2 h-4 w-4" />
-						Edit
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</div>
-	);
+		return (
+			<div className="flex gap-2">
+				<Button
+					size="sm"
+					variant="outline"
+					onClick={() => window.open(previewUrl, "_blank")}
+				>
+					<Eye className="h-4 w-4" />
+				</Button>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" size="sm">
+							<MoreHorizontal className="h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuItem>
+							<Edit className="mr-2 h-4 w-4" />
+							Edit
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</div>
+		);
+	};
+
+	const renderEditActions = (edit: PostEditWithAuthor) => {
+		const previewUrl = generatePreviewUrl({
+			category: edit.category,
+			subCategory: edit.subCategory,
+			postType: edit.type,
+			postId: edit.postId,
+			edited: true,
+			userId: edit.author?.id,
+			diffview: true,
+		});
+
+		return (
+			<div className="flex gap-2">
+				<Button
+					size="sm"
+					variant="outline"
+					onClick={() => window.open(previewUrl, "_blank")}
+				>
+					<Eye className="h-4 w-4" />
+				</Button>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" size="sm">
+							<MoreHorizontal className="h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuItem>
+							<Edit className="mr-2 h-4 w-4" />
+							Edit
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</div>
+		);
+	};
 
 	return (
 		<div className="space-y-4">
