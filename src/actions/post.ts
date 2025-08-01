@@ -331,6 +331,8 @@ export async function createPostEdit(
 		status: baseData.status,
 	};
 
+	let createdPostEdit: typeof postEdits.$inferSelect;
+
 	// Handle challenge templates for post edits
 	if (
 		data.type === PostType.CHALLENGE &&
@@ -369,14 +371,7 @@ export async function createPostEdit(
 				return postEdit[0];
 			});
 
-			return {
-				status: SUCCESS,
-				data: {
-					id: result.postId,
-					slug: "",
-					approvalStatus: result.approvalStatus,
-				},
-			};
+			createdPostEdit = result;
 		} catch (e) {
 			return {
 				status: ERROR,
@@ -396,17 +391,26 @@ export async function createPostEdit(
 			})
 			.returning();
 
-		return {
-			status: SUCCESS,
-			data: {
-				id: postEdit[0].postId,
-				slug: "",
-				approvalStatus: postEdit[0].approvalStatus,
-			},
-		};
+		createdPostEdit = postEdit[0];
 	}
-	// Todo: // Special case: For BLOGS posts, if the user is the author, call approveflow automatically
-	// if (data.type === PostType.BLOGS && existingPost.authorId === user.id && postStatus===Published) {
-	// 	await approveFlow(postEdit[0].id);
-	// }
+
+	// Special case: For BLOGS posts, if the user is the author, auto-approve the edit
+	if (
+		data.type === PostType.BLOGS &&
+		existingPost.authorId === user.id &&
+		postStatus === PostStatus.PUBLISHED
+	) {
+		// Import the auto-approval function
+		const { autoApprovePostEdit } = await import("./approval");
+		await autoApprovePostEdit(createdPostEdit.id);
+	}
+
+	return {
+		status: SUCCESS,
+		data: {
+			id: createdPostEdit.postId,
+			slug: "",
+			approvalStatus: createdPostEdit.approvalStatus,
+		},
+	};
 }

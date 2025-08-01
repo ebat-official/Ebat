@@ -33,13 +33,14 @@ const revalidatePostPath = (post: typeof posts.$inferSelect) => {
 // Approve Post Edit Action
 export async function approvePostEdit(
 	postEditId: string,
+	isAutoApproval = false,
 ): Promise<GenerateActionReturnType<{ success: boolean }>> {
 	try {
 		const user = await validateUser();
 		if (!user) return UNAUTHENTICATED_ERROR;
 
-		// Check if user has edit-read permission (admin/moderator only)
-		if (!hasModeratorAccess(user.role as UserRole)) {
+		// For manual approval, check if user has edit-read permission (admin/moderator only)
+		if (!isAutoApproval && !hasModeratorAccess(user.role as UserRole)) {
 			return UNAUTHORIZED_ERROR;
 		}
 
@@ -91,6 +92,16 @@ export async function approvePostEdit(
 			return {
 				status: ERROR,
 				data: { message: "Only approved posts can be edited" },
+			};
+		}
+
+		// For auto-approval, verify the user is the author of the original post
+		if (isAutoApproval && postEdit.authorId !== originalPost.authorId) {
+			return {
+				status: ERROR,
+				data: {
+					message: "Only the original author can auto-approve their own edits",
+				},
 			};
 		}
 
@@ -180,6 +191,11 @@ export async function approvePostEdit(
 			data: { message: "Failed to approve post edit" },
 		};
 	}
+}
+
+// Auto-approve Post Edit Action (for authors editing their own BLOGS posts)
+export async function autoApprovePostEdit(postEditId: string) {
+	return approvePostEdit(postEditId, true);
 }
 
 // Reject Post Edit Action
