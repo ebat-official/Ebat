@@ -1,7 +1,12 @@
 "use server";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { challengeTemplates, postEdits, posts } from "@/db/schema";
+import {
+	challengeTemplates,
+	postEdits,
+	posts,
+	postContributors,
+} from "@/db/schema";
 import {
 	PostApprovalStatus,
 	PostStatus,
@@ -413,4 +418,129 @@ export async function createPostEdit(
 			approvalStatus: createdPostEdit.approvalStatus,
 		},
 	};
+}
+
+// Delete Post Action
+export async function deletePost(
+	postId: string,
+): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	try {
+		const user = await validateUser();
+		if (!user) return UNAUTHENTICATED_ERROR;
+
+		// Get post details to check ownership
+		const post = await db.query.posts.findFirst({
+			where: eq(posts.id, postId),
+		});
+
+		if (!post) {
+			return {
+				status: ERROR,
+				data: { message: "Post not found" },
+			};
+		}
+
+		// Check if user is the author
+		const isAuthor = post.authorId === user.id;
+
+		// If not the owner, check if user has "delete" permission
+		if (!isAuthor) {
+			const hasDeletePermission = await auth.api.userHasPermission({
+				body: {
+					userId: user.id,
+					permission: { post: ["delete"] },
+				},
+			});
+			if (!hasDeletePermission?.success) {
+				return UNAUTHORIZED_ERROR;
+			}
+		}
+
+		// Delete the post and all related data in a transaction
+		await db.transaction(async (tx) => {
+			// Delete challenge templates only if post type is challenge
+			if (post.type === PostType.CHALLENGE) {
+				await tx
+					.delete(challengeTemplates)
+					.where(eq(challengeTemplates.postId, postId));
+			}
+
+			// Delete the post (cascade will handle postEdits, postContributors, postViews, etc.)
+			await tx.delete(posts).where(eq(posts.id, postId));
+		});
+
+		// Revalidate the post path for cache
+		revalidatePostPath(post);
+
+		return {
+			status: SUCCESS,
+			data: { success: true },
+		};
+	} catch (error) {
+		console.error("Error deleting post:", error);
+		return {
+			status: ERROR,
+			data: { message: "Failed to delete post" },
+		};
+	}
+}
+
+// Delete Post Edit Action
+export async function deletePostEdit(
+	postEditId: string,
+): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	try {
+		const user = await validateUser();
+		if (!user) return UNAUTHENTICATED_ERROR;
+
+		// Get post edit details to check ownership
+		const postEdit = await db.query.postEdits.findFirst({
+			where: eq(postEdits.id, postEditId),
+		});
+
+		if (!postEdit) {
+			return {
+				status: ERROR,
+				data: { message: "Post edit not found" },
+			};
+		}
+
+		// Check if user is the author or has delete permission
+		const isAuthor = postEdit.authorId === user.id;
+
+		// If not the owner, check if user has "delete" permission
+		if (!isAuthor) {
+			const hasDeletePermission = await auth.api.userHasPermission({
+				body: {
+					userId: user.id,
+					permission: { post: ["delete"] },
+				},
+			});
+			if (!hasDeletePermission?.success) {
+				return UNAUTHORIZED_ERROR;
+			}
+		}
+
+		// Delete the post edit and related data in a transaction
+		await db.transaction(async (tx) => {
+			// Delete challenge templates for this post edit
+			await tx
+				.delete(challengeTemplates)
+				.where(eq(challengeTemplates.postEditId, postEditId));
+
+			// Delete the post edit
+			await tx.delete(postEdits).where(eq(postEdits.id, postEditId));
+		});
+
+		return {
+			status: SUCCESS,
+			data: { success: true },
+		};
+	} catch (error) {
+		console.error("Error deleting post edit:", error);
+		return {
+			status: ERROR,
+			data: { message: "Failed to delete post edit" },
+		};
+	}
 }

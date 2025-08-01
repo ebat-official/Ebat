@@ -46,7 +46,10 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 			title: "Approvals",
 			href: "/settings/approvals",
 		},
-
+		{
+			title: "Posts",
+			href: "/settings/posts",
+		},
 		{
 			title: "Bookmarks",
 			href: "/settings/bookmarks",

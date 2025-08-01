@@ -9,15 +9,15 @@ export const statement = {
 export const ac = createAccessControl(statement);
 
 export const user = ac.newRole({
-	post: ["create", "update", "delete"],
+	post: ["create"],
 });
 
 export const editor = ac.newRole({
-	post: ["create", "update", "delete", "edit-read"],
+	post: ["create", "edit-read"],
 });
 
 export const moderator = ac.newRole({
-	post: ["create", "update", "delete", "edit-read"],
+	post: ["create", "update", "edit-read"],
 });
 
 export const admin = ac.newRole({
