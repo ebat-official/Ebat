@@ -8,8 +8,6 @@ import { Link } from "react-transition-progress/next";
 import { CategorySwitcher } from "./CategorySwitcher";
 import { Menu } from "./menu";
 import { SidebarToggle } from "./sidebar-toggle";
-
-import { FaReact } from "react-icons/fa";
 import { Navigation } from "./Navigation";
 
 export function Sidebar() {
