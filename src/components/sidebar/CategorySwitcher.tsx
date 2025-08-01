@@ -17,12 +17,13 @@ import { useSidebar } from "@/context/SidebarContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { cn } from "@/lib/utils";
+import { PostCategory } from "@/db/schema/enums";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 
 export function CategorySwitcher() {
-	const { config } = useSidebar();
+	const { config, setCurrentCategory } = useSidebar();
 	const { categories } = config;
 	const isMobile = useIsMobile();
 	const router = useRouter();
@@ -30,16 +31,58 @@ export function CategorySwitcher() {
 	const [activeCategoryLocalIndex, setActiveCategoryLocalIndex] =
 		useLocalStorage<number>("categoryIndex", 0);
 	const { isOpen } = useSidebar();
-	const [activeCategory, setActiveCategory] = useState(
-		() =>
-			categories.find((category) => pathname.startsWith(category.route)) ||
-			categories[activeCategoryLocalIndex],
-	);
+	const [activeCategory, setActiveCategory] = useState(() => {
+		// First try to find a category that matches the current pathname
+		const categoryFromPath = categories.find((category) =>
+			pathname.startsWith(category.route),
+		);
+		if (
+			categoryFromPath &&
+			!categoryFromPath.hide &&
+			!categoryFromPath.disabled
+		) {
+			return categoryFromPath;
+		}
 
-	// useEffect(() => {
-	// 	if (pathname.startsWith(activeCategory.route)) return;
-	// 	router.push(activeCategory.route);
-	// }, [activeCategory]);
+		// If no valid category from path, try to get from local storage index
+		const categoryFromIndex = categories[activeCategoryLocalIndex];
+		if (
+			categoryFromIndex &&
+			!categoryFromIndex.hide &&
+			!categoryFromIndex.disabled
+		) {
+			return categoryFromIndex;
+		}
+
+		// If both are hidden/disabled, find the first available category
+		const firstAvailableCategory = categories.find(
+			(category) => !category.hide && !category.disabled,
+		);
+		return firstAvailableCategory || categories[0];
+	});
+
+	// Update category based on pathname
+	useEffect(() => {
+		const categoryFromPath = categories.find((category) =>
+			pathname.startsWith(category.route),
+		);
+		if (
+			categoryFromPath &&
+			!categoryFromPath.hide &&
+			!categoryFromPath.disabled &&
+			categoryFromPath !== activeCategory
+		) {
+			setActiveCategory(categoryFromPath);
+			// Update the sidebar config based on the pathname
+			if (pathname.startsWith(`/${PostCategory.FRONTEND}`)) {
+				setCurrentCategory(PostCategory.FRONTEND);
+			} else if (pathname.startsWith(`/${PostCategory.BACKEND}`)) {
+				setCurrentCategory(PostCategory.BACKEND);
+			} else if (pathname.startsWith(`/${PostCategory.ANDROID}`)) {
+				setCurrentCategory(PostCategory.ANDROID);
+			}
+		}
+	}, [pathname, categories, activeCategory, setCurrentCategory]);
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -130,22 +173,44 @@ export function CategorySwitcher() {
 				<DropdownMenuLabel className="text-xs text-muted-foreground">
 					categories
 				</DropdownMenuLabel>
-				{categories.map((team, index) => (
-					<DropdownMenuItem
-						key={team.name}
-						onClick={() => {
-							setActiveCategory(team);
-							setActiveCategoryLocalIndex(index);
-						}}
-						className="gap-2 p-2"
-					>
-						<div className="flex items-center justify-center border rounded-sm size-6">
-							<team.logo className="size-4 shrink-0" />
-						</div>
-						{team.name}
-						<DropdownMenuShortcut>⌥ + {index + 1}</DropdownMenuShortcut>
-					</DropdownMenuItem>
-				))}
+				{categories
+					.filter((team) => !team.hide) // Filter out hidden categories
+					.map((team, index) => (
+						<DropdownMenuItem
+							key={team.name}
+							onClick={() => {
+								// Don't allow selection of disabled categories
+								if (team.disabled) return;
+
+								setActiveCategory(team);
+								setActiveCategoryLocalIndex(index);
+								// Update the sidebar config based on the selected category
+								if (team.route === `/${PostCategory.FRONTEND}`) {
+									setCurrentCategory(PostCategory.FRONTEND);
+								} else if (team.route === `/${PostCategory.BACKEND}`) {
+									setCurrentCategory(PostCategory.BACKEND);
+								} else if (team.route === `/${PostCategory.ANDROID}`) {
+									setCurrentCategory(PostCategory.ANDROID);
+								}
+							}}
+							className={cn(
+								"gap-2 p-2",
+								team.disabled && "opacity-50 cursor-not-allowed",
+							)}
+							disabled={team.disabled}
+						>
+							<div className="flex items-center justify-center border rounded-sm size-6">
+								<team.logo
+									className={cn(
+										"size-4 shrink-0",
+										team.disabled && "opacity-50",
+									)}
+								/>
+							</div>
+							{team.name}
+							<DropdownMenuShortcut>⌥ + {index + 1}</DropdownMenuShortcut>
+						</DropdownMenuItem>
+					))}
 				<DropdownMenuSeparator />
 				<DropdownMenuItem className="gap-2 p-2">
 					<div className="flex items-center justify-center border rounded-md size-6 bg-background">

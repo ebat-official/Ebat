@@ -28,7 +28,7 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 	const sidebarNavItems = [
 		{
 			title: "Profile",
-			href: "/settings",
+			href: "/settings/profile",
 		},
 		{
 			title: "Account",

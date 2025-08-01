@@ -1,5 +1,6 @@
 "use client";
 import { SidebarConfigType, getSidebarConfig } from "@/lib/sidebarConfig";
+import { PostCategory } from "@/db/schema/enums";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type SidebarSettings = { disabled: boolean; isHoverOpen: boolean };
@@ -8,10 +9,12 @@ type SidebarContextType = {
 	isHover: boolean;
 	mobileNav: boolean;
 	settings: SidebarSettings;
+	currentCategory: PostCategory;
 	toggleOpen: () => void;
 	setIsOpen: (isOpen: boolean) => void;
 	setIsHover: (isHover: boolean) => void;
 	setMobileNav: (open: boolean) => void;
+	setCurrentCategory: (category: PostCategory) => void;
 	getOpenState: () => boolean;
 	setSettings: (settings: Partial<SidebarSettings>) => void;
 	config: SidebarConfigType;
@@ -30,8 +33,11 @@ export const SidebarProvider = ({
 		disabled: false,
 		isHoverOpen: false,
 	});
+	const [currentCategory, setCurrentCategory] = useState<PostCategory>(
+		PostCategory.FRONTEND,
+	);
 	const [sideBarConfig, setSideBarConfig] = useState<SidebarConfigType>(
-		getSidebarConfig(),
+		getSidebarConfig(currentCategory),
 	);
 
 	const toggleOpen = () => {
@@ -46,6 +52,11 @@ export const SidebarProvider = ({
 		setSettings((prevSettings) => ({ ...prevSettings, ...newSettings }));
 	};
 
+	const updateCurrentCategory = (category: PostCategory) => {
+		setCurrentCategory(category);
+		setSideBarConfig(getSidebarConfig(category));
+	};
+
 	return (
 		<SidebarContext.Provider
 			value={{
@@ -53,10 +64,12 @@ export const SidebarProvider = ({
 				isHover,
 				mobileNav,
 				settings,
+				currentCategory,
 				toggleOpen,
 				setIsOpen,
 				setIsHover,
 				setMobileNav,
+				setCurrentCategory: updateCurrentCategory,
 				getOpenState,
 				setSettings: updateSettings,
 				config: sideBarConfig,
