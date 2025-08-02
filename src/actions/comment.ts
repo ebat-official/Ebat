@@ -14,6 +14,7 @@ import { and, count, eq } from "drizzle-orm";
 import { SerializedEditorState } from "lexical";
 import { z } from "zod";
 import { validateUser } from "./user";
+import { rateLimit, ContentActions, RateLimitCategory } from "@/lib/rateLimit";
 
 // Type for comment with relations
 type CommentWithRelations = Comment & {
@@ -124,6 +125,18 @@ async function formatCommentWithVotes(
 export async function createEditComment(
 	data: z.infer<typeof CommentValidator>,
 ): Promise<GenerateActionReturnType<CommentWithVotes>> {
+	// Rate limiting
+	const action = data.id
+		? ContentActions.EDIT_COMMENT
+		: ContentActions.CREATE_COMMENT;
+	const rateLimitResult = await rateLimit(RateLimitCategory.CONTENT, action);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	// Validate the input data
 	const validation = CommentValidator.safeParse(data);
 	if (!validation.success) return VALIDATION_ERROR;
@@ -259,6 +272,17 @@ export async function deleteComment(
 	commentId: string,
 	postId: string,
 ): Promise<GenerateActionReturnType<string>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.DELETE_CONTENT,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
 	// Validate the user
 	const user = await validateUser();
 

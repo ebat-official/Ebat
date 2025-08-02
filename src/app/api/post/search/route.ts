@@ -8,8 +8,18 @@ import { redis } from "@/lib/redis";
 import { searchPosts } from "@/utils/api utils/posts";
 import { PostSortOrder } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, ApiActions, RateLimitCategory } from "@/lib/rateLimit";
 
 export async function GET(request: NextRequest) {
+	// Rate limiting
+	const rateLimitCheck = await checkRateLimit(
+		RateLimitCategory.API,
+		ApiActions.SEARCH,
+	);
+	if (!rateLimitCheck.success) {
+		return NextResponse.json({ error: rateLimitCheck.error }, { status: 429 });
+	}
+
 	try {
 		const searchParams = request.nextUrl.searchParams;
 		const searchQuery = decodeURIComponent(

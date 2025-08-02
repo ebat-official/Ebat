@@ -5,11 +5,21 @@ import { COMMENT_SORT_OPTIONS } from "@/utils/constants";
 import { CommentSortOption } from "@/utils/types";
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, ApiActions, RateLimitCategory } from "@/lib/rateLimit";
 
 export async function GET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ postId: string }> },
 ) {
+	// Rate limiting
+	const rateLimitCheck = await checkRateLimit(
+		RateLimitCategory.API,
+		ApiActions.COMMENTS,
+	);
+	if (!rateLimitCheck.success) {
+		return NextResponse.json({ error: rateLimitCheck.error }, { status: 429 });
+	}
+
 	try {
 		const { postId } = await params;
 		if (!postId) {

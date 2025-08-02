@@ -11,6 +11,7 @@ import { GenerateActionReturnType } from "@/utils/types";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { getCurrentUser } from "./user";
+import { rateLimit, UploadActions, RateLimitCategory } from "@/lib/rateLimit";
 
 type ResponseData = { url: string; fileKey: string };
 
@@ -42,6 +43,18 @@ export async function getSignedURL({
 	checksum,
 	metadata,
 }: GetSignedURLParams): Promise<GenerateActionReturnType<ResponseData>> {
+	// Rate limiting
+	const action = fileType.startsWith("image")
+		? UploadActions.IMAGE_UPLOAD
+		: UploadActions.FILE_UPLOAD;
+	const rateLimitResult = await rateLimit(RateLimitCategory.UPLOADS, action);
+	if (!rateLimitResult.success) {
+		return {
+			status: "ERROR",
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	const user = await getCurrentUser();
 	if (!user) {
 		return UNAUTHENTICATED_ERROR;

@@ -1,8 +1,18 @@
 import { getCompletionStatusesForPosts } from "@/actions/completionStatus";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { checkRateLimit, ApiActions, RateLimitCategory } from "@/lib/rateLimit";
 
 export async function GET(request: NextRequest) {
+	// Rate limiting
+	const rateLimitCheck = await checkRateLimit(
+		RateLimitCategory.API,
+		ApiActions.POSTS,
+	);
+	if (!rateLimitCheck.success) {
+		return NextResponse.json({ error: rateLimitCheck.error }, { status: 429 });
+	}
+
 	try {
 		const { searchParams } = new URL(request.url);
 		const postIdsParam = searchParams.get("postIds");

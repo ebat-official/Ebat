@@ -11,6 +11,7 @@ import {
 } from "@/db/schema/enums";
 import { and, eq, desc, asc, Column, ilike, count } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, ApiActions, RateLimitCategory } from "@/lib/rateLimit";
 
 const BOOKMARK_SORT_FIELDS = [
 	"createdAt",
@@ -41,6 +42,15 @@ function isValidEnumValue<T extends Record<string, string>>(
 }
 
 export async function GET(request: NextRequest) {
+	// Rate limiting
+	const rateLimitCheck = await checkRateLimit(
+		RateLimitCategory.API,
+		ApiActions.POSTS,
+	);
+	if (!rateLimitCheck.success) {
+		return NextResponse.json({ error: rateLimitCheck.error }, { status: 429 });
+	}
+
 	try {
 		const currentUser = await getCurrentUser();
 		if (!currentUser) {

@@ -5,11 +5,21 @@ import { FAILED_TO_FETCH_SUBMISSIONS } from "@/utils/constants";
 import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import { and, desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, ApiActions, RateLimitCategory } from "@/lib/rateLimit";
 
 export async function GET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ postId: string }> },
 ) {
+	// Rate limiting
+	const rateLimitCheck = await checkRateLimit(
+		RateLimitCategory.API,
+		ApiActions.POSTS,
+	);
+	if (!rateLimitCheck.success) {
+		return NextResponse.json({ error: rateLimitCheck.error }, { status: 429 });
+	}
+
 	try {
 		const user = await getCurrentUser();
 		if (!user) {

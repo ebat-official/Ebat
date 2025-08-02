@@ -9,6 +9,11 @@ import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { validateUser } from "./user";
+import {
+	rateLimit,
+	InteractionActions,
+	RateLimitCategory,
+} from "@/lib/rateLimit";
 
 const BookmarkValidator = z.object({
 	postId: z.string(),
@@ -18,6 +23,18 @@ const BookmarkValidator = z.object({
 export async function bookmarkAction(
 	data: z.infer<typeof BookmarkValidator>,
 ): Promise<GenerateActionReturnType<string>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.INTERACTIONS,
+		InteractionActions.BOOKMARK,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: "ERROR",
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	const validatedData = BookmarkValidator.safeParse(data);
 	if (!validatedData.success) return VALIDATION_ERROR;
 

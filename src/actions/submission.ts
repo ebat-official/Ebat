@@ -23,11 +23,24 @@ import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getCurrentUser, validateUser } from "./user";
+import { rateLimit, ContentActions, RateLimitCategory } from "@/lib/rateLimit";
 
 // Submit Challenge Solution
 export async function submitChallengeSolution(
 	data: z.infer<typeof ChallengeSubmissionValidator>,
 ): Promise<GenerateActionReturnType<string>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.CREATE_POST,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	const validation = ChallengeSubmissionValidator.safeParse(data);
 	if (!validation.success) return { status: ERROR, data: validation.error };
 
@@ -62,6 +75,18 @@ export async function submitChallengeSolution(
 export async function deleteChallengeSubmission(
 	submissionId: string,
 ): Promise<GenerateActionReturnType<string>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.DELETE_CONTENT,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	if (!submissionId) return ValidationErr("Submission ID is required");
 
 	const user = await validateUser();

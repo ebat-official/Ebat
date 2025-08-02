@@ -18,6 +18,7 @@ import { DatabaseJson, GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { validateUser } from "./user";
+import { rateLimit, ContentActions, RateLimitCategory } from "@/lib/rateLimit";
 
 const revalidatePostPath = (post: typeof posts.$inferSelect) => {
 	const path = generatePostPath({
@@ -35,6 +36,18 @@ export async function approvePostEdit(
 	postEditId: string,
 	isAutoApproval = false,
 ): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.EDIT_POST,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	try {
 		const user = await validateUser();
 		if (!user) return UNAUTHENTICATED_ERROR;
@@ -203,6 +216,17 @@ export async function rejectPostEdit(
 	postEditId: string,
 	reason?: string,
 ): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.EDIT_POST,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
 	try {
 		const user = await validateUser();
 		if (!user) return UNAUTHENTICATED_ERROR;

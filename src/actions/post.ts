@@ -33,6 +33,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { validateUser } from "./user";
+import { rateLimit, ContentActions, RateLimitCategory } from "@/lib/rateLimit";
 type PostReturnType = {
 	id: string;
 	slug: string | null;
@@ -190,6 +191,18 @@ export async function createDraftPost(
 export async function createPost(
 	data: z.infer<typeof PostValidator>,
 ): Promise<GenerateActionReturnType<PostReturnType>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.CREATE_POST,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	const validation = PostValidator.safeParse(data);
 	if (!validation.success) return { status: ERROR, data: validation.error };
 
@@ -301,6 +314,18 @@ export async function createPostEdit(
 	data: z.infer<typeof PostValidator>,
 	postStatus: PostStatusType = PostStatus.PUBLISHED,
 ): Promise<GenerateActionReturnType<PostReturnType>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.EDIT_POST,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	// Validate the input data
 	const validation = PostValidator.safeParse(data);
 	if (!validation.success) return { status: ERROR, data: validation.error };
@@ -424,6 +449,18 @@ export async function createPostEdit(
 export async function deletePost(
 	postId: string,
 ): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.DELETE_CONTENT,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	try {
 		const user = await validateUser();
 		if (!user) return UNAUTHENTICATED_ERROR;
@@ -489,6 +526,18 @@ export async function deletePost(
 export async function deletePostEdit(
 	postEditId: string,
 ): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.DELETE_CONTENT,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	try {
 		const user = await validateUser();
 		if (!user) return UNAUTHENTICATED_ERROR;

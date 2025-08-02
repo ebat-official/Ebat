@@ -8,6 +8,11 @@ import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getCurrentUser, validateUser } from "./user";
+import {
+	rateLimit,
+	InteractionActions,
+	RateLimitCategory,
+} from "@/lib/rateLimit";
 
 const VoteValidator = z.object({
 	postId: z.string(),
@@ -17,6 +22,18 @@ const VoteValidator = z.object({
 export async function voteAction(
 	data: z.infer<typeof VoteValidator>,
 ): Promise<GenerateActionReturnType<string>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.INTERACTIONS,
+		InteractionActions.VOTE,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: "ERROR",
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	const validatedData = VoteValidator.parse(data);
 
 	if (!validatedData) throw ValidationErr("Invalid vote data");

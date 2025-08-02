@@ -9,6 +9,11 @@ import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { validateUser } from "./user";
+import {
+	rateLimit,
+	InteractionActions,
+	RateLimitCategory,
+} from "@/lib/rateLimit";
 
 const CommentVoteValidator = z.object({
 	postId: z.string(),
@@ -19,6 +24,18 @@ const CommentVoteValidator = z.object({
 export async function CommentVoteAction(
 	data: z.infer<typeof CommentVoteValidator>,
 ): Promise<GenerateActionReturnType<string>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.INTERACTIONS,
+		InteractionActions.VOTE,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: "ERROR",
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	const validatedData = CommentVoteValidator.parse(data);
 
 	if (!validatedData) return VALIDATION_ERROR;

@@ -5,6 +5,7 @@ import { CompletionStatus } from "@/db/schema/zod-schemas";
 import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { validateUser } from "./user";
+import { rateLimit, ContentActions, RateLimitCategory } from "@/lib/rateLimit";
 
 // Validator for postId array
 const CompletionStatusPostIdsValidator = z.array(z.string());
@@ -33,6 +34,15 @@ export async function getCompletionStatusesForPosts(
 export async function createCompletionStatus(
 	postId: CompletionStatusPostId,
 ): Promise<CompletionStatus> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.CREATE_POST,
+	);
+	if (!rateLimitResult.success) {
+		throw new Error("Rate limit exceeded. Please try again later.");
+	}
+
 	const user = await validateUser();
 	if (!user) throw new Error("User not authenticated");
 
@@ -65,6 +75,15 @@ export async function createCompletionStatus(
 export async function deleteCompletionStatus(
 	postId: CompletionStatusPostId,
 ): Promise<void> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.DELETE_CONTENT,
+	);
+	if (!rateLimitResult.success) {
+		throw new Error("Rate limit exceeded. Please try again later.");
+	}
+
 	const user = await validateUser();
 	if (!user) throw new Error("User not authenticated");
 

@@ -8,6 +8,11 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { validateUser } from "./user";
 import { FollowAction } from "@/db/schema";
+import {
+	rateLimit,
+	InteractionActions,
+	RateLimitCategory,
+} from "@/lib/rateLimit";
 
 const FollowActionValidator = z.object({
 	followedUserId: z.string(),
@@ -17,6 +22,18 @@ const FollowActionValidator = z.object({
 export async function followAction(
 	data: z.infer<typeof FollowActionValidator>,
 ): Promise<GenerateActionReturnType<string>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.INTERACTIONS,
+		InteractionActions.FOLLOW,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: "ERROR",
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
 	const validatedData = FollowActionValidator.safeParse(data);
 	if (!validatedData.success) return VALIDATION_ERROR;
 	const user = await validateUser();
