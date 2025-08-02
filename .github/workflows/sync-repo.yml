@@ -52,13 +52,15 @@ jobs:
           fi
       
       - name: Add target repository as remote
+        env:
+          TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
         run: |
           # Test the connection first
           echo "Testing connection to target repository..."
           echo "Using token: ${{ secrets.TARGET_REPO_TOKEN != '' && 'SET' || 'NOT SET' }}"
           
-          # Create the remote URL with token directly
-          REMOTE_URL="https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git"
+          # Create the remote URL with token using environment variable
+          REMOTE_URL="https://x-access-token:$TOKEN@github.com/pranavmappoli/ebat.git"
           
           # Test with the target repository (empty repos return no output, which is OK)
           echo "Testing repository access..."
