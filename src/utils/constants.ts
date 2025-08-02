@@ -45,8 +45,18 @@ export const SUBMISSION_NOT_FOUND = "Submission Not Found";
 export const AUTH_ERROR = "Auth Error";
 export const INVALID_PAGE = "Invalid Page";
 export const INVALID_PAGE_SIZE = "Invalid Page Size";
-export const PASSWORD = "password";
+export const PASSWORD = "Password";
 export const TEXT = "text";
+
+// Validation message constants
+export const VALIDATION_MESSAGES = {
+	NAME_MIN_LENGTH: "Name must contain at least 2 character(s)",
+	EMAIL_INVALID: "Invalid email",
+	PASSWORD_SPECIAL_CHAR:
+		"Password must contain at least one special character (!@#$%^&*)",
+	PASSWORD_MIN_LENGTH: "Password must be at least 8 characters",
+} as const;
+
 export const POST_ACTIONS = {
 	EDIT: "edit",
 	CREATE: "create",
@@ -82,4 +92,26 @@ export const USERNAME_STATUS = {
 	AVAILABLE: "available",
 	UNAVAILABLE: "unavailable",
 	ERROR: "error",
+} as const;
+
+// Authentication Static Text constants
+export const AUTH_STATIC_TEXT = {
+	LOGIN: "Login",
+	SIGN_UP: "sign up",
+	SIGN_IN: "Sign in",
+	NAME: "Name",
+	EMAIL: "Email",
+	EMAIL_OR_USERNAME: "Email or Username",
+	VERIFY_EMAIL_ADDRESS: "Verify your email address",
+	VERIFICATION_EMAIL_SENT: "A verification email has been sent to your email",
+	EMAIL_ALREADY_EXISTS: "Email already exists",
+	CLOSE: "Close",
+	SUBMIT: "submit",
+	RESEND_VERIFICATION_EMAIL: "Resend Verification Email",
+	EMAIL_SENT_SUCCESSFULLY: "Email sent successfully",
+	WEAK_PASSWORD: "Weak password",
+	MEDIUM_PASSWORD: "Medium password",
+	STRONG_PASSWORD: "Strong password",
+	GOOGLE: "Google",
+	GITHUB: "GitHub",
 } as const;

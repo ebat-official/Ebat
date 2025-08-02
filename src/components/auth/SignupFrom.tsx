@@ -5,7 +5,12 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { PASSWORD, TEXT } from "@/utils/constants";
+import {
+	PASSWORD,
+	TEXT,
+	VALIDATION_MESSAGES,
+	AUTH_STATIC_TEXT,
+} from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { FC, useState, useMemo } from "react";
 import { Resolver, useForm } from "react-hook-form";
@@ -22,14 +27,13 @@ type FormValues = {
 };
 
 const schema = z.object({
-	name: z.string().min(2, "Name must contain at least 2 character(s)").max(25),
-	email: z.string().email(),
+	name: z.string().min(2, VALIDATION_MESSAGES.NAME_MIN_LENGTH).max(25),
+	email: z.string().email(VALIDATION_MESSAGES.EMAIL_INVALID),
 	password: z
 		.string()
 		.min(8)
 		.regex(/^(?=.*[!@#$%^&*])/, {
-			message:
-				"Password must contain at least one special character (!@#$%^&*)",
+			message: VALIDATION_MESSAGES.PASSWORD_SPECIAL_CHAR,
 		}),
 });
 
@@ -88,9 +92,9 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
 
 	const getStrengthText = (score: number) => {
 		if (score === 0) return "Enter a password";
-		if (score <= 2) return "Weak password";
-		if (score <= 3) return "Medium password";
-		return "Strong password";
+		if (score <= 2) return AUTH_STATIC_TEXT.WEAK_PASSWORD;
+		if (score <= 3) return AUTH_STATIC_TEXT.MEDIUM_PASSWORD;
+		return AUTH_STATIC_TEXT.STRONG_PASSWORD;
 	};
 
 	const onSubmit = handleSubmit(async (userData) => {
@@ -174,7 +178,7 @@ const SignupForm: FC<SignupFormProps> = ({ modelHandler }) => {
 				</div>
 				<div className="mb-4 relative">
 					<Input
-						{...register(PASSWORD)}
+						{...register("password")}
 						type={showPassword ? TEXT : PASSWORD}
 						className={cn("focus-visible:ring-0 focus-visible:outline-none", {
 							"border-red-500": errors?.password,

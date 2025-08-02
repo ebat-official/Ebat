@@ -174,7 +174,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 				<div className="mb-4 ">
 					<div className="relative">
 						<Input
-							{...register(PASSWORD)}
+							{...register("password")}
 							type={showPassword ? TEXT : PASSWORD}
 							name={PASSWORD}
 							className={cn("focus-visible:ring-0 focus-visible:outline-none", {

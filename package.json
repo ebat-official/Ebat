@@ -14,7 +14,18 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"studio": "drizzle-kit studio"
+		"studio": "drizzle-kit studio",
+		"test:e2e": "playwright test",
+		"test:e2e:headed": "playwright test --headed",
+		"test:e2e:debug": "playwright test --debug",
+		"test:e2e:ui": "playwright test --ui",
+		"test:e2e:watch": "playwright test --watch",
+		"test:e2e:auth": "playwright test auth/",
+		"test:e2e:auth:headed": "playwright test auth/ --headed",
+		"test:e2e:auth:debug": "playwright test auth/ --debug",
+		"test:e2e:report": "playwright test --reporter=html",
+		"test:e2e:show-report": "playwright show-report",
+		"test:e2e:install": "playwright install"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.2.7",
@@ -119,6 +130,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@playwright/test": "1.54.2",
 		"@tailwindcss/postcss": "^4.0.0",
 		"@types/lodash-es": "^4.17.12",
 		"@types/node": "^20",
