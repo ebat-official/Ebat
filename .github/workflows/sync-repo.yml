@@ -33,23 +33,34 @@ jobs:
       - name: Debug token
         run: |
           echo "🔍 Debugging token..."
-          if [ -z "${{ secrets.TARGET_REPO_TOKEN }}" ]; then
+          TOKEN="${{ secrets.TARGET_REPO_TOKEN }}"
+          if [ -z "$TOKEN" ]; then
             echo "❌ TARGET_REPO_TOKEN is empty or not set"
             echo "Available secrets:"
             echo "${{ toJSON(secrets) }}" | jq 'keys' || echo "No secrets available"
           else
             echo "✅ TARGET_REPO_TOKEN is set"
-            echo "Token length: ${#TARGET_REPO_TOKEN}"
-            echo "Token starts with: ${TARGET_REPO_TOKEN:0:4}..."
-            echo "Token ends with: ...${TARGET_REPO_TOKEN: -4}"
+            echo "Token length: ${#TOKEN}"
+            echo "Token starts with: ${TOKEN:0:4}..."
+            echo "Token ends with: ...${TOKEN: -4}"
+            
+            # Test the token with curl
+            echo "Testing token with GitHub API..."
+            curl -H "Authorization: token $TOKEN" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 "https://api.github.com/user" | head -5
           fi
       
       - name: Add target repository as remote
         run: |
           # Test the connection first
           echo "Testing connection to target repository..."
-          TOKEN="${{ secrets.TARGET_REPO_TOKEN }}"
-          if git ls-remote "https://x-access-token:$TOKEN@github.com/pranavmappoli/ebat.git"; then
+          echo "Using token: ${{ secrets.TARGET_REPO_TOKEN != '' && 'SET' || 'NOT SET' }}"
+          
+          # Create the remote URL with token
+          REMOTE_URL="https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git"
+          
+          if git ls-remote "$REMOTE_URL"; then
             echo "✅ Successfully connected to target repository"
           else
             echo "❌ Failed to access target repository"
@@ -60,7 +71,7 @@ jobs:
             exit 1
           fi
           
-          git remote add target "https://x-access-token:$TOKEN@github.com/pranavmappoli/ebat.git"
+          git remote add target "$REMOTE_URL"
       
       - name: Sync with target repository
         run: |
