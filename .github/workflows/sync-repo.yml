@@ -57,16 +57,15 @@ jobs:
           echo "Testing connection to target repository..."
           echo "Using token: ${{ secrets.TARGET_REPO_TOKEN != '' && 'SET' || 'NOT SET' }}"
           
-          # Set up git credentials
-          git config --global credential.helper store
-          echo "https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com" > ~/.git-credentials
+          # Create the remote URL with token directly
+          REMOTE_URL="https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git"
           
           # Test with the target repository (empty repos return no output, which is OK)
           echo "Testing repository access..."
-          git ls-remote "https://github.com/pranavmappoli/ebat.git" || echo "Repository is empty (this is OK)"
+          git ls-remote "$REMOTE_URL" || echo "Repository is empty (this is OK)"
           echo "✅ Successfully connected to target repository"
           
-          git remote add target "https://github.com/pranavmappoli/ebat.git"
+          git remote add target "$REMOTE_URL"
       
       - name: Sync with target repository
         run: |
