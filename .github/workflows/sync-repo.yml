@@ -30,6 +30,20 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
+      - name: Debug token
+        run: |
+          echo "🔍 Debugging token..."
+          if [ -z "${{ secrets.TARGET_REPO_TOKEN }}" ]; then
+            echo "❌ TARGET_REPO_TOKEN is empty or not set"
+            echo "Available secrets:"
+            echo "${{ toJSON(secrets) }}" | jq 'keys' || echo "No secrets available"
+          else
+            echo "✅ TARGET_REPO_TOKEN is set"
+            echo "Token length: ${#TARGET_REPO_TOKEN}"
+            echo "Token starts with: ${TARGET_REPO_TOKEN:0:4}..."
+            echo "Token ends with: ...${TARGET_REPO_TOKEN: -4}"
+          fi
+      
       - name: Add target repository as remote
         run: |
           # Test the connection first
