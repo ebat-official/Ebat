@@ -10,7 +10,11 @@ import {
 import { ChallengeSubmission } from "@/db/schema/zod-schemas";
 import { ChallengeSubmissionValidator } from "@/lib/validators/submission";
 import { ERROR, POST_ID_REQUIRED, SUCCESS } from "@/utils/constants";
-import { UNAUTHENTICATED_ERROR, ValidationErr } from "@/utils/errors";
+import {
+	UNAUTHENTICATED_ERROR,
+	ValidationErr,
+	RATE_LIMIT_ERROR,
+} from "@/utils/errors";
 import {
 	CHALLENGE_NOT_FOUND_ERROR,
 	FAILED_TO_DELETE_SUBMISSION_ERROR,
@@ -35,10 +39,7 @@ export async function submitChallengeSolution(
 		ContentActions.CREATE_POST,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	const validation = ChallengeSubmissionValidator.safeParse(data);
@@ -81,10 +82,7 @@ export async function deleteChallengeSubmission(
 		ContentActions.DELETE_CONTENT,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	if (!submissionId) return ValidationErr("Submission ID is required");

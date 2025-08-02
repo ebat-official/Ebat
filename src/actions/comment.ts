@@ -8,7 +8,11 @@ import { Comment } from "@/db/schema/zod-schemas";
 import { invalidateCommentsCache } from "@/lib/invalidateCache";
 import { compressContent, decompressContent } from "@/utils/compression";
 import { ERROR, SUCCESS } from "@/utils/constants";
-import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
+import {
+	UNAUTHENTICATED_ERROR,
+	VALIDATION_ERROR,
+	RATE_LIMIT_ERROR,
+} from "@/utils/errors";
 import { CommentWithVotes, GenerateActionReturnType } from "@/utils/types";
 import { and, count, eq } from "drizzle-orm";
 import { SerializedEditorState } from "lexical";
@@ -131,10 +135,7 @@ export async function createEditComment(
 		: ContentActions.CREATE_COMMENT;
 	const rateLimitResult = await rateLimit(RateLimitCategory.CONTENT, action);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	// Validate the input data
@@ -278,10 +279,7 @@ export async function deleteComment(
 		ContentActions.DELETE_CONTENT,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 	// Validate the user
 	const user = await validateUser();

@@ -6,7 +6,7 @@ import {
 	MAX_POSTS_VIDEO_SIZE,
 } from "@/config";
 import { SUCCESS } from "@/utils/constants";
-import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { UNAUTHENTICATED_ERROR, RATE_LIMIT_ERROR } from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -49,10 +49,7 @@ export async function getSignedURL({
 		: UploadActions.FILE_UPLOAD;
 	const rateLimitResult = await rateLimit(RateLimitCategory.UPLOADS, action);
 	if (!rateLimitResult.success) {
-		return {
-			status: "ERROR",
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	const user = await getCurrentUser();

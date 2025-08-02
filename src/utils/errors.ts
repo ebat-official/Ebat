@@ -168,6 +168,12 @@ export const SUBMISSION_NOT_FOUND_ERROR = {
 	data: { message: "Submission not found" },
 };
 
+export const RATE_LIMIT_ERROR = {
+	status: ERROR as ErrorType,
+	cause: UNKNOWN_ERROR_MESSAGE,
+	data: { message: "Rate limit exceeded. Please try again later." },
+};
+
 export const AUTH_ERROR_BASE = {
 	status: ERROR as ErrorType,
 	cause: AUTH_ERROR,

@@ -4,7 +4,11 @@ import { bookmarks } from "@/db/schema";
 import { posts } from "@/db/schema";
 import { user } from "@/db/schema/auth";
 import { SUCCESS, BOOKMARK_ACTIONS } from "@/utils/constants";
-import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
+import {
+	UNAUTHENTICATED_ERROR,
+	VALIDATION_ERROR,
+	RATE_LIMIT_ERROR,
+} from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -29,10 +33,7 @@ export async function bookmarkAction(
 		InteractionActions.BOOKMARK,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: "ERROR",
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	const validatedData = BookmarkValidator.safeParse(data);

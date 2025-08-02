@@ -2,7 +2,11 @@
 import { db } from "@/db";
 import { follows } from "@/db/schema/follows";
 import { SUCCESS } from "@/utils/constants";
-import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
+import {
+	UNAUTHENTICATED_ERROR,
+	VALIDATION_ERROR,
+	RATE_LIMIT_ERROR,
+} from "@/utils/errors";
 import { GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -28,10 +32,7 @@ export async function followAction(
 		InteractionActions.FOLLOW,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: "ERROR",
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	const validatedData = FollowActionValidator.safeParse(data);

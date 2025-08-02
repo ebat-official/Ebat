@@ -23,6 +23,7 @@ import {
 	UNAUTHENTICATED_ERROR,
 	UNAUTHORIZED_ERROR,
 	ValidationErr,
+	RATE_LIMIT_ERROR,
 } from "@/utils/errors";
 import { generatePostPath } from "@/utils/generatePostPath";
 import { generateTitleSlug } from "@/utils/generateTileSlug";
@@ -197,10 +198,7 @@ export async function createPost(
 		ContentActions.CREATE_POST,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	const validation = PostValidator.safeParse(data);
@@ -320,10 +318,7 @@ export async function createPostEdit(
 		ContentActions.EDIT_POST,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	// Validate the input data
@@ -455,10 +450,7 @@ export async function deletePost(
 		ContentActions.DELETE_CONTENT,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	try {
@@ -532,10 +524,7 @@ export async function deletePostEdit(
 		ContentActions.DELETE_CONTENT,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	try {

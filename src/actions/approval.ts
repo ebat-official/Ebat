@@ -12,7 +12,11 @@ import { PostApprovalStatus, PostStatus, UserRole } from "@/db/schema/enums";
 import { InsertPost } from "@/db/schema/zod-schemas";
 import { compressContent, decompressContent } from "@/utils/compression";
 import { ERROR, SUCCESS } from "@/utils/constants";
-import { UNAUTHENTICATED_ERROR, UNAUTHORIZED_ERROR } from "@/utils/errors";
+import {
+	UNAUTHENTICATED_ERROR,
+	UNAUTHORIZED_ERROR,
+	RATE_LIMIT_ERROR,
+} from "@/utils/errors";
 import { generatePostPath } from "@/utils/generatePostPath";
 import { DatabaseJson, GenerateActionReturnType } from "@/utils/types";
 import { and, eq } from "drizzle-orm";
@@ -42,10 +46,7 @@ export async function approvePostEdit(
 		ContentActions.EDIT_POST,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	try {
@@ -222,10 +223,7 @@ export async function rejectPostEdit(
 		ContentActions.EDIT_POST,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 	try {
 		const user = await validateUser();
@@ -301,10 +299,7 @@ export async function approvePost(
 		ContentActions.EDIT_POST,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	try {
@@ -378,10 +373,7 @@ export async function rejectPost(
 		ContentActions.EDIT_POST,
 	);
 	if (!rateLimitResult.success) {
-		return {
-			status: ERROR,
-			data: { message: "Rate limit exceeded. Please try again later." },
-		};
+		return RATE_LIMIT_ERROR;
 	}
 
 	try {
