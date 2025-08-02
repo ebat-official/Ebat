@@ -290,3 +290,160 @@ export async function rejectPostEdit(
 		};
 	}
 }
+
+// Approve New Post Action
+export async function approvePost(
+	postId: string,
+): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.EDIT_POST,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
+	try {
+		const user = await validateUser();
+		if (!user) return UNAUTHENTICATED_ERROR;
+
+		// Check if user has moderator access
+		if (!hasModeratorAccess(user.role as UserRole)) {
+			return UNAUTHORIZED_ERROR;
+		}
+
+		// Get post with all necessary data
+		const post = await db.query.posts.findFirst({
+			where: eq(posts.id, postId),
+			with: {
+				challengeTemplates: true,
+			},
+		});
+
+		if (!post) {
+			return {
+				status: ERROR,
+				data: { message: "Post not found" },
+			};
+		}
+
+		if (post.approvalStatus !== PostApprovalStatus.PENDING) {
+			return {
+				status: ERROR,
+				data: { message: "Post is not pending approval" },
+			};
+		}
+
+		if (post.status !== PostStatus.PUBLISHED) {
+			return {
+				status: ERROR,
+				data: { message: "Only published posts can be approved" },
+			};
+		}
+
+		// Update post approval status
+		await db
+			.update(posts)
+			.set({ approvalStatus: PostApprovalStatus.APPROVED })
+			.where(eq(posts.id, postId));
+
+		// Revalidate the post path for cache
+		revalidatePostPath(post);
+
+		return {
+			status: SUCCESS,
+			data: { success: true },
+		};
+	} catch (error) {
+		console.error("Error approving post:", error);
+		return {
+			status: ERROR,
+			data: { message: "Failed to approve post" },
+		};
+	}
+}
+
+// Reject New Post Action
+export async function rejectPost(
+	postId: string,
+	reason?: string,
+): Promise<GenerateActionReturnType<{ success: boolean }>> {
+	// Rate limiting
+	const rateLimitResult = await rateLimit(
+		RateLimitCategory.CONTENT,
+		ContentActions.EDIT_POST,
+	);
+	if (!rateLimitResult.success) {
+		return {
+			status: ERROR,
+			data: { message: "Rate limit exceeded. Please try again later." },
+		};
+	}
+
+	try {
+		const user = await validateUser();
+		if (!user) return UNAUTHENTICATED_ERROR;
+
+		// Check if user has moderator access
+		if (!hasModeratorAccess(user.role as UserRole)) {
+			return UNAUTHORIZED_ERROR;
+		}
+
+		// Get post
+		const post = await db.query.posts.findFirst({
+			where: eq(posts.id, postId),
+		});
+
+		if (!post) {
+			return {
+				status: ERROR,
+				data: { message: "Post not found" },
+			};
+		}
+
+		if (post.approvalStatus !== PostApprovalStatus.PENDING) {
+			return {
+				status: ERROR,
+				data: { message: "Post is not pending approval" },
+			};
+		}
+
+		if (post.status !== PostStatus.PUBLISHED) {
+			return {
+				status: ERROR,
+				data: { message: "Only published posts can be rejected" },
+			};
+		}
+
+		// Mark post as rejected with optional reason
+		const rejectionLog = {
+			action: "rejected",
+			reason: reason || "No reason provided",
+			rejectedBy: user.id,
+			rejectedAt: new Date().toISOString(),
+		};
+
+		await db
+			.update(posts)
+			.set({
+				approvalStatus: PostApprovalStatus.REJECTED,
+				logs: [rejectionLog, ...((post.logs as DatabaseJson[]) || [])],
+			})
+			.where(eq(posts.id, postId));
+
+		return {
+			status: SUCCESS,
+			data: { success: true },
+		};
+	} catch (error) {
+		console.error("Error rejecting post:", error);
+		return {
+			status: ERROR,
+			data: { message: "Failed to reject post" },
+		};
+	}
+}

@@ -45,7 +45,12 @@ import { generatePreviewUrl } from "@/utils/generatePreviewUrl";
 import { useSession } from "@/lib/auth-client";
 import { hasModeratorAccess } from "@/auth/roleUtils";
 import { UserRole } from "@/db/schema/enums";
-import { approvePostEdit, rejectPostEdit } from "@/actions/approval";
+import {
+	approvePostEdit,
+	rejectPostEdit,
+	approvePost,
+	rejectPost,
+} from "@/actions/approval";
 import { toast } from "sonner";
 
 export function ApprovalsPage() {
@@ -75,6 +80,7 @@ export function ApprovalsPage() {
 	const [rejectReasonDialogOpen, setRejectReasonDialogOpen] = useState(false);
 	const [rejectReason, setRejectReason] = useState("");
 	const [selectedEditId, setSelectedEditId] = useState<string | null>(null);
+	const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 	const [isProcessing, setIsProcessing] = useState(false);
 
 	// Separate queries for each tab
@@ -153,58 +159,88 @@ export function ApprovalsPage() {
 
 	// Approve/Reject handlers
 	const handleApprove = async () => {
-		if (!selectedEditId) return;
+		if (!selectedEditId && !selectedPostId) return;
 
 		setIsProcessing(true);
 		try {
-			const result = await approvePostEdit(selectedEditId);
-			if (result.status === "success") {
-				toast.success("Post edit approved successfully!");
-				// Refetch data instead of full page reload
-				await Promise.all([refetchPosts(), refetchEdits()]);
-			} else {
-				toast.error(result.data.message || "Failed to approve post edit");
+			if (selectedEditId) {
+				const result = await approvePostEdit(selectedEditId);
+				if (result.status === "success") {
+					toast.success("Post edit approved successfully!");
+				} else {
+					toast.error(result.data.message || "Failed to approve post edit");
+				}
+			} else if (selectedPostId) {
+				const result = await approvePost(selectedPostId);
+				if (result.status === "success") {
+					toast.success("Post approved successfully!");
+				} else {
+					toast.error(result.data.message || "Failed to approve post");
+				}
 			}
+
+			// Refetch data instead of full page reload
+			await Promise.all([refetchPosts(), refetchEdits()]);
 		} catch (error) {
-			toast.error("An error occurred while approving the post edit");
+			toast.error("An error occurred while approving");
 		} finally {
 			setIsProcessing(false);
 			setApproveDialogOpen(false);
 			setSelectedEditId(null);
+			setSelectedPostId(null);
 		}
 	};
 
 	const handleReject = async () => {
-		if (!selectedEditId) return;
+		if (!selectedEditId && !selectedPostId) return;
 
 		setIsProcessing(true);
 		try {
-			const result = await rejectPostEdit(selectedEditId, rejectReason);
-			if (result.status === "success") {
-				toast.success("Post edit rejected successfully!");
-				// Refetch data instead of full page reload
-				await Promise.all([refetchPosts(), refetchEdits()]);
-			} else {
-				toast.error(result.data.message || "Failed to reject post edit");
+			if (selectedEditId) {
+				const result = await rejectPostEdit(selectedEditId, rejectReason);
+				if (result.status === "success") {
+					toast.success("Post edit rejected successfully!");
+				} else {
+					toast.error(result.data.message || "Failed to reject post edit");
+				}
+			} else if (selectedPostId) {
+				const result = await rejectPost(selectedPostId, rejectReason);
+				if (result.status === "success") {
+					toast.success("Post rejected successfully!");
+				} else {
+					toast.error(result.data.message || "Failed to reject post");
+				}
 			}
+
+			// Refetch data instead of full page reload
+			await Promise.all([refetchPosts(), refetchEdits()]);
 		} catch (error) {
-			toast.error("An error occurred while rejecting the post edit");
+			toast.error("An error occurred while rejecting");
 		} finally {
 			setIsProcessing(false);
 			setRejectDialogOpen(false);
 			setRejectReasonDialogOpen(false);
 			setRejectReason("");
 			setSelectedEditId(null);
+			setSelectedPostId(null);
 		}
 	};
 
-	const openApproveDialog = (editId: string) => {
-		setSelectedEditId(editId);
+	const openApproveDialog = (id: string, isPost = false) => {
+		if (isPost) {
+			setSelectedPostId(id);
+		} else {
+			setSelectedEditId(id);
+		}
 		setApproveDialogOpen(true);
 	};
 
-	const openRejectDialog = (editId: string) => {
-		setSelectedEditId(editId);
+	const openRejectDialog = (id: string, isPost = false) => {
+		if (isPost) {
+			setSelectedPostId(id);
+		} else {
+			setSelectedEditId(id);
+		}
 		setRejectReasonDialogOpen(true);
 	};
 
@@ -226,19 +262,27 @@ export function ApprovalsPage() {
 				>
 					<Eye className="h-4 w-4" />
 				</Button>
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" size="sm">
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuItem>
-							<Edit className="mr-2 h-4 w-4" />
-							Edit
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				{canApproveReject && (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button size="sm" variant="outline">
+								<MoreHorizontal className="h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem
+								onClick={() => openApproveDialog(post.id, true)}
+							>
+								<Check className="h-4 w-4 mr-2" />
+								Approve
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => openRejectDialog(post.id, true)}>
+								<X className="h-4 w-4 mr-2" />
+								Reject
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)}
 			</div>
 		);
 	};
@@ -271,11 +315,15 @@ export function ApprovalsPage() {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => openApproveDialog(edit.id)}>
+							<DropdownMenuItem
+								onClick={() => openApproveDialog(edit.id, false)}
+							>
 								<Check className="h-4 w-4 mr-2" />
 								Approve
 							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => openRejectDialog(edit.id)}>
+							<DropdownMenuItem
+								onClick={() => openRejectDialog(edit.id, false)}
+							>
 								<X className="h-4 w-4 mr-2" />
 								Reject
 							</DropdownMenuItem>
@@ -387,11 +435,13 @@ export function ApprovalsPage() {
 			<AlertDialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Approve Post Edit</AlertDialogTitle>
+						<AlertDialogTitle>
+							{selectedPostId ? "Approve Post" : "Approve Post Edit"}
+						</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to approve this post edit? This will update
-							the original post with the edited content and add the edit author
-							as a contributor.
+							{selectedPostId
+								? "Are you sure you want to approve this post? This will make it visible to all users."
+								: "Are you sure you want to approve this post edit? This will update the original post with the edited content and add the edit author as a contributor."}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
@@ -413,10 +463,13 @@ export function ApprovalsPage() {
 			<AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Reject Post Edit</AlertDialogTitle>
+						<AlertDialogTitle>
+							{selectedPostId ? "Reject Post" : "Reject Post Edit"}
+						</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to reject this post edit? This action cannot
-							be undone.
+							Are you sure you want to reject this{" "}
+							{selectedPostId ? "post" : "post edit"}? This action cannot be
+							undone.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
@@ -441,10 +494,13 @@ export function ApprovalsPage() {
 			>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Reject Post Edit</DialogTitle>
+						<DialogTitle>
+							{selectedPostId ? "Reject Post" : "Reject Post Edit"}
+						</DialogTitle>
 						<DialogDescription>
-							Please provide a reason for rejecting this post edit. This will be
-							shown to the user for improving the edits and publishing again.
+							Please provide a reason for rejecting this{" "}
+							{selectedPostId ? "post" : "post edit"}. This will be shown to the
+							user for improving the content and publishing again.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="py-4">
