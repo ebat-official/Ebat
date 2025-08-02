@@ -32,6 +32,10 @@ jobs:
       
       - name: Add target repository as remote
         run: |
+          # Test the connection first
+          echo "Testing connection to target repository..."
+          git ls-remote https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git || echo "Warning: Could not access target repository"
+          
           git remote add target https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git
       
       - name: Sync with target repository
