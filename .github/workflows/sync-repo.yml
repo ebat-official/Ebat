@@ -1,0 +1,49 @@
+name: Sync Repository
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - master
+
+jobs:
+  sync-repository:
+    runs-on: ubuntu-latest
+    
+    # Only run if PR is merged (not just closed)
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Add target repository as remote
+        run: |
+          git remote add target https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git
+      
+      - name: Sync with target repository
+        run: |
+          # Get the current branch name
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          
+          # Fetch all branches and tags from target repository
+          git fetch target
+          
+          # Push all branches to target repository
+          git push target --all --force
+          
+          # Push all tags to target repository
+          git push target --tags --force 
