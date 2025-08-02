@@ -48,7 +48,8 @@ jobs:
         run: |
           # Test the connection first
           echo "Testing connection to target repository..."
-          if git ls-remote https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git; then
+          TOKEN="${{ secrets.TARGET_REPO_TOKEN }}"
+          if git ls-remote "https://x-access-token:$TOKEN@github.com/pranavmappoli/ebat.git"; then
             echo "✅ Successfully connected to target repository"
           else
             echo "❌ Failed to access target repository"
@@ -59,7 +60,7 @@ jobs:
             exit 1
           fi
           
-          git remote add target https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/pranavmappoli/ebat.git
+          git remote add target "https://x-access-token:$TOKEN@github.com/pranavmappoli/ebat.git"
       
       - name: Sync with target repository
         run: |
