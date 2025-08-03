@@ -1,9 +1,7 @@
 "use client";
 import { followAction, isFollowing } from "@/actions/follow";
-import { Button } from "@/components/ui/button";
 import { useServerAction } from "@/hooks/useServerAction";
 import { toast } from "@/hooks/use-toast";
-import { SlUserFollow, SlUserFollowing } from "react-icons/sl";
 import React, { useEffect, useState } from "react";
 import { FollowAction } from "@/db/schema";
 import {
@@ -13,6 +11,8 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAuthAction } from "@/hooks/useAuthAction";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { CiCirclePlus } from "react-icons/ci";
 
 interface FollowButtonProps {
 	authorId: string;
@@ -76,9 +76,9 @@ const FollowButton: React.FC<FollowButtonProps> = ({
 						className="cursor-pointer"
 					>
 						{isFollowingState ? (
-							<SlUserFollowing className="w-4 h-4 text-blue-500" />
+							<IoIosCheckmarkCircleOutline className="w-4 h-4 text-blue-400" />
 						) : (
-							<SlUserFollow className="w-4 h-4 text-gray-500" />
+							<CiCirclePlus className="w-4 h-4 text-violet-400" />
 						)}
 					</button>
 				</TooltipTrigger>
