@@ -70,8 +70,8 @@ export const RATE_LIMIT_CONFIGS = {
 
 	// API Endpoints
 	API: {
-		search: { requests: 50, window: "1 m" }, // 50 searches per minute
-		posts: { requests: 50, window: "1 m" }, // 50 post requests per minute
+		search: { requests: 500, window: "1 m" }, // 50 searches per minute
+		posts: { requests: 500, window: "1 m" }, // 50 post requests per minute
 		comments: { requests: 300, window: "1 m" }, // 300 comment requests per minute
 		user: { requests: 100, window: "1 m" }, // 100 user requests per minute
 	},

@@ -127,20 +127,19 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 								<span>{post.comments || 0}</span>
 							</Link>
 						</Button>
+						<span>
+							<FiCheckCircle
+								className={cn("text-gray-500", {
+									"text-green-500": completionStatuses[post.id],
+								})}
+								size={18}
+								strokeWidth={2}
+							/>
+						</span>
 						<Button className="rounded-full" variant="ghost" size="icon">
 							<LuShare2 size={18} />
 						</Button>
 					</div>
-
-					<span className="absolute right-2 top-2">
-						<FiCheckCircle
-							className={cn("text-gray-500", {
-								"text-green-500": completionStatuses[post.id],
-							})}
-							size={18}
-							strokeWidth={2}
-						/>
-					</span>
 				</CardContent>
 			</Card>
 		</li>

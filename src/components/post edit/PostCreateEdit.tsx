@@ -4,10 +4,12 @@ import LoginModal from "@/components/auth/LoginModal";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
 import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
+import PostPublishedModal from "@/components/shared/PostPublishedModal";
 import StatusDialog from "@/components/shared/StatusDialog";
 import { Button } from "@/components/ui/button";
 import {
 	PostApprovalStatus,
+	PostCategory,
 	PostStatusType,
 	PostType,
 	SubCategory,
@@ -54,7 +56,15 @@ function PostCreateEdit({
 	const [postId, setPostId] = useState<string>(initialPostId || "");
 	const currentPath = usePathname();
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
-	const [postPublished, setPostPublished] = useState<boolean | string>(false);
+	const [postPublished, setPostPublished] = useState<{
+		id: string;
+		slug: string;
+		approvalStatus: PostApprovalStatus;
+		title: string;
+		category: PostCategory;
+		subCategory: SubCategory;
+		postType: PostType;
+	} | null>(null);
 	const [blockUserAccess, setBlockUserAccess] = useState<{
 		message?: string;
 		title?: string;
@@ -161,8 +171,19 @@ function PostCreateEdit({
 			//thumbnail is required for blogs and system design
 		}
 		const result = await publish(data, postStatus);
-		if (result.data?.approvalStatus === PostApprovalStatus.APPROVED) {
-			setPostPublished(result.data.slug || true);
+		if (result.data) {
+			// Get title from postContent
+			const title =
+				postContent.post?.title || postContent.answer?.title || "Untitled";
+			setPostPublished({
+				id: result.data.id,
+				slug: result.data.slug || "",
+				approvalStatus: result.data.approvalStatus,
+				title,
+				category: category as PostCategory,
+				subCategory: subCategory as SubCategory,
+				postType,
+			});
 		}
 		return result;
 	};
@@ -190,27 +211,11 @@ function PostCreateEdit({
 	}
 	if (postPublished) {
 		return (
-			<StatusDialog>
-				<StatusDialog.Title>Post Published</StatusDialog.Title>
-				<StatusDialog.Content>
-					{action === POST_ACTIONS.CREATE
-						? "Your post has been published and sent for approval"
-						: "Your post edit has sent for approval"}
-				</StatusDialog.Content>
-				<StatusDialog.Footer>
-					<Button
-						className="w-[90%] blue-gradient text-white"
-						onClick={() => {
-							startTransition(async () => {
-								startProgress();
-								router.push("/");
-							});
-						}}
-					>
-						Go back to home
-					</Button>
-				</StatusDialog.Footer>
-			</StatusDialog>
+			<PostPublishedModal
+				postData={postPublished}
+				action={action}
+				category={category}
+			/>
 		);
 	}
 
