@@ -37,7 +37,7 @@ export async function createCompletionStatus(
 	// Rate limiting
 	const rateLimitResult = await rateLimit(
 		RateLimitCategory.CONTENT,
-		ContentActions.CREATE_POST,
+		ContentActions.TOGGLE_COMPLETION,
 	);
 	if (!rateLimitResult.success) {
 		throw new Error("Rate limit exceeded. Please try again later.");
@@ -78,7 +78,7 @@ export async function deleteCompletionStatus(
 	// Rate limiting
 	const rateLimitResult = await rateLimit(
 		RateLimitCategory.CONTENT,
-		ContentActions.DELETE_CONTENT,
+		ContentActions.TOGGLE_COMPLETION,
 	);
 	if (!rateLimitResult.success) {
 		throw new Error("Rate limit exceeded. Please try again later.");

@@ -4,18 +4,28 @@ import React from "react";
 import { Button } from "../ui/button";
 import { CheckIcon } from "lucide-react";
 import { useCompletionStatus } from "@/hooks/useCompletionStatus";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const CompletionButton = ({
 	postId,
 	className,
-}: { postId: string; className?: string }) => {
+	tooltipSide = "right",
+}: {
+	postId: string;
+	className?: string;
+	tooltipSide?: "left" | "right";
+}) => {
 	const { isCompleted, updateCompletionStatus, isLoading } =
 		useCompletionStatus([postId]);
 
 	const handleToggleCompletion = async () => {
-		if (isUpdating) return;
+		if (isLoading) return;
 		try {
-			// Use the current completed state to determine the new state
 			const currentlyCompleted = isCompleted(postId);
 			await updateCompletionStatus(postId, !currentlyCompleted);
 		} catch (error) {
@@ -25,23 +35,34 @@ export const CompletionButton = ({
 
 	const completed = isCompleted(postId);
 	const isUpdating = isLoading;
+
 	return (
-		<div className={cn(className)}>
-			{completed ? (
-				<Button
-					variant="outline"
-					className="text-green-600 border-green-600"
-					onClick={handleToggleCompletion}
-				>
-					<CheckIcon className="w-4 h-4" />
-					<span className="font-semibold">Completed</span>
-				</Button>
-			) : (
-				<Button onClick={handleToggleCompletion} variant="outline">
-					<CheckIcon className="w-4 h-4" />
-					<span>Mark Complete</span>
-				</Button>
-			)}
-		</div>
+		<TooltipProvider>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={handleToggleCompletion}
+						disabled={isUpdating}
+						className={cn(
+							"w-12 h-12 rounded-full p-0 bg-background border shadow-lg hover:bg-muted",
+							completed && "border-green-500",
+							className,
+						)}
+					>
+						<CheckIcon
+							className={cn(
+								"w-5 h-5 text-muted-foreground",
+								completed && "text-green-500",
+							)}
+						/>
+					</Button>
+				</TooltipTrigger>
+				<TooltipContent side={tooltipSide}>
+					{completed ? "Mark as incomplete" : "Mark as complete"}
+				</TooltipContent>
+			</Tooltip>
+		</TooltipProvider>
 	);
 };

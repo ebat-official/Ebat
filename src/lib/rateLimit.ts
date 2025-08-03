@@ -18,6 +18,7 @@ export enum ContentActions {
 	CREATE_COMMENT = "createComment",
 	EDIT_COMMENT = "editComment",
 	DELETE_CONTENT = "deleteContent",
+	TOGGLE_COMPLETION = "toggleCompletion",
 }
 
 export enum InteractionActions {
@@ -48,11 +49,12 @@ const redis = new Redis({
 export const RATE_LIMIT_CONFIGS = {
 	// Content Creation & Editing
 	CONTENT: {
-		createPost: { requests: 10, window: "1 h" }, // 10 posts per hour
-		editPost: { requests: 20, window: "1 h" }, // 20 edits per hour
-		createComment: { requests: 20, window: "1 h" }, // 20 comments per hour
-		editComment: { requests: 20, window: "1 h" }, // 20 comment edits per hour
+		createPost: { requests: 50, window: "1 h" }, // 50 posts per hour
+		editPost: { requests: 50, window: "1 h" }, // 50 edits per hour
+		createComment: { requests: 50, window: "1 h" }, // 50 comments per hour
+		editComment: { requests: 50, window: "1 h" }, // 50 comment edits per hour
 		deleteContent: { requests: 5, window: "1 h" }, // 5 deletions per hour
+		toggleCompletion: { requests: 20, window: "1 m" }, // 20 completions per minute
 	},
 
 	// Voting & Interactions
@@ -64,8 +66,8 @@ export const RATE_LIMIT_CONFIGS = {
 
 	// File Uploads
 	UPLOADS: {
-		fileUpload: { requests: 20, window: "1 h" }, // 20 file uploads per hour
-		imageUpload: { requests: 20, window: "1 h" }, // 20 image uploads per hour
+		fileUpload: { requests: 50, window: "1 h" }, // 20 file uploads per hour
+		imageUpload: { requests: 50, window: "1 h" }, // 20 image uploads per hour
 	},
 
 	// API Endpoints

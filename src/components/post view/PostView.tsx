@@ -11,7 +11,6 @@ import { QuestionAnswerRender } from "./QuestionAnswerRender";
 import PostDetailsAccordian from "./PostDetailsAccordian";
 import PostLikeButton from "./PostLikeButton";
 import { PostStatsBadge } from "./PostStatsBadge";
-import { CompletionButton } from "./CompletionButton";
 import { ContentRenderer } from "./ContentRenderer";
 import FloatingActionBar from "./FloatingActionBar";
 
@@ -44,7 +43,6 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 								/>
 							</div>
 							<Separator />
-							<CompletionButton postId={post.id} className="self-end" />
 							<ContentRenderer html={content.post} />
 							<QuestionAnswerRender answer={content.answer} />
 						</CardContent>

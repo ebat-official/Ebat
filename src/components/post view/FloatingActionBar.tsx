@@ -24,6 +24,7 @@ import {
 	FaEllipsisH,
 } from "react-icons/fa";
 import { BookmarkBadge } from "@/components/shared/BookmarkBadge";
+import { CompletionButton } from "./CompletionButton";
 import { toast } from "sonner";
 
 interface FloatingActionBarProps {
@@ -271,6 +272,9 @@ export default function FloatingActionBar({
 						onClick={(e) => e.stopPropagation()}
 						onKeyDown={(e) => e.stopPropagation()}
 					>
+						{/* Completion Button */}
+						<CompletionButton postId={post.id} tooltipSide="left" />
+
 						{/* Bookmark Button */}
 						<BookmarkBadge postId={post.id} className={buttonClassName} />
 
@@ -284,13 +288,13 @@ export default function FloatingActionBar({
 						/>
 
 						{/* Comments Button */}
-						<ActionButton
+						{/* <ActionButton
 							icon={<FaComments className="w-5 h-5 text-muted-foreground" />}
 							onClick={handleComments}
 							tooltip="View comments"
 							tooltipSide="left"
 							className={buttonClassName}
-						/>
+						/> */}
 
 						{/* Share Button with Radial Menu */}
 						<div className="relative share-radial-container">
@@ -316,6 +320,9 @@ export default function FloatingActionBar({
 			<div
 				className={`floating-action-container hidden md:flex flex-col gap-2 ${className}`}
 			>
+				{/* Completion Button */}
+				<CompletionButton postId={post.id} tooltipSide="right" />
+
 				{/* Bookmark Button */}
 				<BookmarkBadge postId={post.id} className={buttonClassName} />
 
@@ -329,13 +336,13 @@ export default function FloatingActionBar({
 				/>
 
 				{/* Comments Button */}
-				<ActionButton
+				{/* <ActionButton
 					icon={<FaComments className="w-5 h-5 text-muted-foreground" />}
 					onClick={handleComments}
 					tooltip="View comments"
 					tooltipSide="right"
 					className={buttonClassName}
-				/>
+				/> */}
 
 				{/* Share Button with Radial Menu */}
 				<div className="relative share-radial-container">
