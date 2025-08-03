@@ -13,6 +13,7 @@ import { PostStatsBadge } from "../post view/PostStatsBadge";
 import { Card, CardContent } from "../ui/card";
 import CodeViewer from "./components/editor/CodeViewer";
 import { CompletionButton } from "../post view/CompletionButton";
+import FloatingActionBar from "../post view/FloatingActionBar";
 
 type ChallengeQuestionViewProps = {
 	post: PostWithExtraDetails;
@@ -58,6 +59,10 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = async ({
 									</h1>
 									<PostStatsBadge post={post} />
 								</div>
+								<FloatingActionBar
+									className="absolute left-0 top-0 translate-y-full lg:translate-x-full 2xl:-translate-x-[150%]"
+									post={post}
+								/>
 							</div>
 							<Separator />
 							<CompletionButton postId={post.id} className="self-end" />

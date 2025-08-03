@@ -13,6 +13,7 @@ import PostLikeButton from "./PostLikeButton";
 import { PostStatsBadge } from "./PostStatsBadge";
 import { CompletionButton } from "./CompletionButton";
 import { ContentRenderer } from "./ContentRenderer";
+import FloatingActionBar from "./FloatingActionBar";
 
 type PostViewProps = {
 	post: PostWithExtraDetails;
@@ -28,7 +29,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel className="flex flex-col gap-2">
 					<Card className="relative items-center">
-						<CardContent className="flex flex-col h-full px-4 md:px-8 w-full gap-2 max-w-3xl">
+						<CardContent className="flex flex-col h-full px-4 md:px-8 w-full gap-2 max-w-3xl relative">
 							<div className="flex gap-6 -ml-12">
 								<PostLikeButton className="mt-2" postId={post.id} />
 								<div className="flex flex-col justify-center">
@@ -37,6 +38,10 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 									</h1>
 									<PostStatsBadge post={post} />
 								</div>
+								<FloatingActionBar
+									className="absolute left-0 top-0 translate-y-full lg:translate-x-full 2xl:-translate-x-[150%]"
+									post={post}
+								/>
 							</div>
 							<Separator />
 							<CompletionButton postId={post.id} className="self-end" />

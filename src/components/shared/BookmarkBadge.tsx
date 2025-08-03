@@ -59,13 +59,13 @@ export const BookmarkBadge: FC<BookmarkBadgeProps> = ({
 						disabled={isUpdating}
 					>
 						{isBookmarked ? (
-							<LuBookmarkMinus size={18} />
+							<LuBookmarkMinus size={22} />
 						) : (
-							<LuBookmarkPlus size={18} />
+							<LuBookmarkPlus size={22} />
 						)}
 					</Button>
 				</TooltipTrigger>
-				<TooltipContent>
+				<TooltipContent side="right">
 					<span>
 						{isBookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
 					</span>

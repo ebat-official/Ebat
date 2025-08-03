@@ -86,7 +86,9 @@ function PostLikeButton({
 					message={loginModalMessage}
 				/>
 			)}
-			<div className={cn("flex flex-col items-center gap-1 pl-4", className)}>
+			<div
+				className={cn("flex flex-col items-center gap-1 pl-4 ml-6", className)}
+			>
 				<Button
 					variant="outline"
 					className="p-0.5 text-xs w-7 h-7 "

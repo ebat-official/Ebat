@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { PostApprovalStatus } from "@/db/schema/enums";
 import { generatePostPath } from "@/utils/generatePostPath";
+import { shareToPlatform } from "@/utils/shareUtils";
 import { PostType, PostCategory, SubCategory } from "@/db/schema/enums";
 import { POST_ACTIONS } from "@/utils/constants";
 import { PostActions } from "@/utils/types";
@@ -81,30 +82,11 @@ const PostPublishedModal: React.FC<PostPublishedModalProps> = ({
 	const handleShare = (
 		platform: "twitter" | "linkedin" | "telegram" | "whatsapp" | "email",
 	) => {
-		const text = `Check out my ${postData.postType.toLowerCase()} on Ebat: ${postData.title}`;
-		const encodedText = encodeURIComponent(text);
-		const encodedUrl = encodeURIComponent(fullUrl);
-
-		let shareUrl = "";
-		switch (platform) {
-			case "twitter":
-				shareUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
-				break;
-			case "linkedin":
-				shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
-				break;
-			case "telegram":
-				shareUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
-				break;
-			case "whatsapp":
-				shareUrl = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
-				break;
-			case "email":
-				shareUrl = `mailto:?subject=${encodeURIComponent(`Check out my ${postData.postType.toLowerCase()} on Ebat`)}&body=${encodedText}%20${encodedUrl}`;
-				break;
-		}
-
-		window.open(shareUrl, "_blank", "width=600,height=400");
+		shareToPlatform(platform, {
+			title: postData.title,
+			url: fullUrl,
+			postType: postData.postType,
+		});
 	};
 
 	const handleClose = () => {

@@ -49,7 +49,6 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 				<CoinsBadge coins={post.coins || 0} />
 				<CompletionBadge completionCount={post.completionCount || 0} />
 				<ViewsBadge views={post?.views?.count || 0} />
-				<BookmarkBadge postId={post.id} />
 			</CardContent>
 		</Card>
 	);
