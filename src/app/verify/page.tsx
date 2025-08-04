@@ -25,6 +25,8 @@ import React, {
 } from "react";
 import { useProgress } from "react-transition-progress";
 import { MoonLoader } from "react-spinners";
+import { SUCCESS } from "@/utils/constants";
+import Link from "next/link";
 
 const UserVerification: FC = () => {
 	const [verificationStatus, setVerificationStatus] = useState<{
@@ -111,8 +113,22 @@ const UserVerification: FC = () => {
 					{verificationStatus.status === "error" && (
 						<FormError message={verificationStatus.message} />
 					)}
-					{verificationStatus.status === "success" && (
-						<FormSuccess message={verificationStatus.message} />
+					{verificationStatus.status === SUCCESS && (
+						<div className="text-center">
+							<h2 className="text-2xl font-bold text-green-600 mb-4">
+								Email Verified Successfully!
+							</h2>
+							<p className="text-gray-600 mb-6">
+								Your email has been verified. You can now access all features of
+								the platform.
+							</p>
+							<Link
+								href="/"
+								className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+							>
+								Go to Home
+							</Link>
+						</div>
 					)}
 				</CardContent>
 				<CardFooter className="grid items-center">

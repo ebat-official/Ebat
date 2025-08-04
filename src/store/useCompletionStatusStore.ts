@@ -5,6 +5,7 @@ import {
 	createCompletionStatus,
 	deleteCompletionStatus,
 } from "@/actions/completionStatus";
+import { SUCCESS } from "@/utils/constants";
 
 interface CompletionStatusState {
 	// Cache of completion statuses by postId
@@ -28,31 +29,31 @@ export const useCompletionStatusStore = create<CompletionStatusState>(
 		isLoading: new Set(),
 		pending: new Set(),
 
-		// Get a single completion status from cache
+		// Get completion status from cache
 		getCompletionStatus: (postId: string) => {
 			return get().statuses[postId] || null;
 		},
 
-		// Get multiple completion statuses from cache
+		// Get completion statuses for multiple posts from cache
 		getCompletionStatuses: (postIds: string[]) => {
 			const { statuses } = get();
 			return postIds
-				.map((postId) => statuses[postId])
-				.filter((status): status is CompletionStatus => status !== undefined);
+				.map((id) => statuses[id])
+				.filter((status): status is CompletionStatus => !!status);
 		},
 
-		// Fetch completion statuses for given postIds
+		// Fetch completion statuses from server
 		fetchCompletionStatuses: async (postIds: string[]) => {
 			const { statuses, isLoading, pending } = get();
 
 			// Filter out postIds that are already cached or being fetched
 			const uncachedIds = postIds.filter(
-				(id) => !statuses[id] && !isLoading.has(id),
+				(id) => !statuses[id] && !isLoading.has(id) && !pending.has(id),
 			);
 
 			if (uncachedIds.length === 0) return;
 
-			// Mark these IDs as being fetched
+			// Mark as loading and pending
 			set((state) => ({
 				isLoading: new Set([...state.isLoading, ...uncachedIds]),
 				pending: new Set([...state.pending, ...uncachedIds]),
@@ -62,13 +63,13 @@ export const useCompletionStatusStore = create<CompletionStatusState>(
 				const fetchedStatuses = await fetchCompletionStatuses(uncachedIds);
 
 				// Update cache with fetched statuses
-				const newStatuses = { ...statuses };
-				for (const status of fetchedStatuses) {
-					newStatuses[status.postId] = status;
-				}
-
 				set((state) => ({
-					statuses: newStatuses,
+					statuses: {
+						...state.statuses,
+						...Object.fromEntries(
+							fetchedStatuses.map((status) => [status.postId, status]),
+						),
+					},
 					isLoading: new Set(
 						Array.from(state.isLoading).filter(
 							(id) => !uncachedIds.includes(id),
@@ -79,7 +80,7 @@ export const useCompletionStatusStore = create<CompletionStatusState>(
 					),
 				}));
 			} catch (error) {
-				// Remove from loading on error
+				// Remove from loading and pending on error
 				set((state) => ({
 					isLoading: new Set(
 						Array.from(state.isLoading).filter(
@@ -128,13 +129,41 @@ export const useCompletionStatusStore = create<CompletionStatusState>(
 			try {
 				// Call server action
 				if (completed) {
-					const serverStatus = await createCompletionStatus(postId);
-					// Update with server response
-					set((state) => ({
-						statuses: { ...state.statuses, [postId]: serverStatus },
-					}));
+					const result = await createCompletionStatus(postId);
+					if (result.status === SUCCESS) {
+						// Update with server response
+						set((state) => ({
+							statuses: { ...state.statuses, [postId]: result.data },
+						}));
+					} else {
+						// Handle error - revert optimistic update
+						set((state) => {
+							const newStatuses = { ...state.statuses };
+							delete newStatuses[postId];
+							return { statuses: newStatuses };
+						});
+						const errorMessage =
+							typeof result.data === "object" && "message" in result.data
+								? result.data.message
+								: "Failed to create completion status";
+						throw new Error(errorMessage);
+					}
 				} else {
-					await deleteCompletionStatus(postId);
+					const result = await deleteCompletionStatus(postId);
+					if (result.status !== SUCCESS) {
+						// Handle error - revert optimistic update
+						const originalStatus = statuses[postId];
+						if (originalStatus) {
+							set((state) => ({
+								statuses: { ...state.statuses, [postId]: originalStatus },
+							}));
+						}
+						const errorMessage =
+							typeof result.data === "object" && "message" in result.data
+								? result.data.message
+								: "Failed to delete completion status";
+						throw new Error(errorMessage);
+					}
 				}
 
 				// Remove from loading on success

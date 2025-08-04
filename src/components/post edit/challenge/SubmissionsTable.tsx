@@ -51,6 +51,7 @@ import { LogIn } from "lucide-react";
 import { toast } from "sonner";
 import type { Template } from "../../playground/lib/types";
 import { useWebContainerStore } from "../../playground/store/webContainer";
+import { SUCCESS } from "@/utils/constants";
 
 interface SubmissionsTableProps {
 	postId: string;
@@ -99,7 +100,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 
 		try {
 			const result = await deleteSubmissionAction(submissionToDelete);
-			if (result.status === "success") {
+			if (result.status === SUCCESS) {
 				toast.success("Submission deleted successfully");
 				// Invalidate and refetch submissions
 				queryClient.invalidateQueries({ queryKey: ["submissions", postId] });

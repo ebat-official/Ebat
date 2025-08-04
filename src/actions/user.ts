@@ -8,6 +8,9 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 import { z } from "zod";
+import { UNAUTHENTICATED_ERROR, VALIDATION_ERROR } from "@/utils/errors";
+import { SUCCESS, ERROR } from "@/utils/constants";
+import { GenerateActionReturnType } from "@/utils/types";
 
 const ProfileFormSchema = z.object({
 	name: z.string().min(2).max(30).optional(),
@@ -112,15 +115,19 @@ export async function updateUserKarmaPoints(
 	}
 }
 
-export async function updateUserProfile(data: ProfileFormValues) {
+export async function updateUserProfile(
+	data: ProfileFormValues,
+): Promise<GenerateActionReturnType<User>> {
 	const userSession = await validateUser();
 	if (!userSession?.id) {
-		throw new Error("Not authenticated");
+		return UNAUTHENTICATED_ERROR;
 	}
+
 	const parsed = ProfileFormSchema.safeParse(data);
 	if (!parsed.success) {
-		throw parsed.error;
+		return VALIDATION_ERROR;
 	}
+
 	const { name, bio, urls, company, currentPosition, experience } = parsed.data;
 
 	// Normalize URLs by adding https:// protocol if missing
@@ -146,9 +153,24 @@ export async function updateUserProfile(data: ProfileFormValues) {
 				experience: experience,
 			})
 			.where(eq(user.id, userSession.id));
-		return await findUserById(userSession.id);
+
+		const updatedUser = await findUserById(userSession.id);
+		if (!updatedUser) {
+			return {
+				status: ERROR,
+				data: { message: "Failed to fetch updated user profile" },
+			};
+		}
+
+		return {
+			status: SUCCESS,
+			data: updatedUser,
+		};
 	} catch (error) {
 		console.error("Failed to update user profile:", error);
-		throw new Error("Failed to update user profile");
+		return {
+			status: ERROR,
+			data: { message: "Failed to update user profile" },
+		};
 	}
 }

@@ -6,6 +6,9 @@ import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { validateUser } from "./user";
 import { rateLimit, ContentActions, RateLimitCategory } from "@/lib/rateLimit";
+import { UNAUTHENTICATED_ERROR, RATE_LIMIT_ERROR } from "@/utils/errors";
+import { ERROR, SUCCESS } from "@/utils/constants";
+import { GenerateActionReturnType } from "@/utils/types";
 
 // Validator for postId array
 const CompletionStatusPostIdsValidator = z.array(z.string());
@@ -33,18 +36,18 @@ export async function getCompletionStatusesForPosts(
 // Create a completion status for a post
 export async function createCompletionStatus(
 	postId: CompletionStatusPostId,
-): Promise<CompletionStatus> {
+): Promise<GenerateActionReturnType<CompletionStatus>> {
 	// Rate limiting
 	const rateLimitResult = await rateLimit(
 		RateLimitCategory.CONTENT,
 		ContentActions.TOGGLE_COMPLETION,
 	);
 	if (!rateLimitResult.success) {
-		throw new Error("Rate limit exceeded. Please try again later.");
+		return RATE_LIMIT_ERROR;
 	}
 
 	const user = await validateUser();
-	if (!user) throw new Error("User not authenticated");
+	if (!user) return UNAUTHENTICATED_ERROR;
 
 	// Check if completion status already exists
 	const existing = await db.query.completionStatuses.findFirst({
@@ -55,44 +58,71 @@ export async function createCompletionStatus(
 	});
 
 	if (existing) {
-		return existing;
+		return {
+			status: SUCCESS,
+			data: existing,
+		};
 	}
 
-	// Create new completion status
-	const [newStatus] = await db
-		.insert(completionStatuses)
-		.values({
-			userId: user.id,
-			postId,
-			completedAt: new Date(),
-		})
-		.returning();
+	try {
+		// Create new completion status
+		const [newStatus] = await db
+			.insert(completionStatuses)
+			.values({
+				userId: user.id,
+				postId,
+				completedAt: new Date(),
+			})
+			.returning();
 
-	return newStatus;
+		return {
+			status: SUCCESS,
+			data: newStatus,
+		};
+	} catch (error) {
+		console.error("Failed to create completion status:", error);
+		return {
+			status: ERROR,
+			data: { message: "Failed to create completion status" },
+		};
+	}
 }
 
 // Delete a completion status for a post
 export async function deleteCompletionStatus(
 	postId: CompletionStatusPostId,
-): Promise<void> {
+): Promise<GenerateActionReturnType<{ success: boolean }>> {
 	// Rate limiting
 	const rateLimitResult = await rateLimit(
 		RateLimitCategory.CONTENT,
 		ContentActions.TOGGLE_COMPLETION,
 	);
 	if (!rateLimitResult.success) {
-		throw new Error("Rate limit exceeded. Please try again later.");
+		return RATE_LIMIT_ERROR;
 	}
 
 	const user = await validateUser();
-	if (!user) throw new Error("User not authenticated");
+	if (!user) return UNAUTHENTICATED_ERROR;
 
-	await db
-		.delete(completionStatuses)
-		.where(
-			and(
-				eq(completionStatuses.userId, user.id),
-				eq(completionStatuses.postId, postId),
-			),
-		);
+	try {
+		await db
+			.delete(completionStatuses)
+			.where(
+				and(
+					eq(completionStatuses.userId, user.id),
+					eq(completionStatuses.postId, postId),
+				),
+			);
+
+		return {
+			status: SUCCESS,
+			data: { success: true },
+		};
+	} catch (error) {
+		console.error("Failed to delete completion status:", error);
+		return {
+			status: ERROR,
+			data: { message: "Failed to delete completion status" },
+		};
+	}
 }

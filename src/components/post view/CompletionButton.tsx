@@ -4,6 +4,8 @@ import React from "react";
 import { Button } from "../ui/button";
 import { CheckIcon } from "lucide-react";
 import { useCompletionStatus } from "@/hooks/useCompletionStatus";
+import { useAuthAction } from "@/hooks/useAuthAction";
+import { toast } from "sonner";
 import {
 	Tooltip,
 	TooltipContent,
@@ -23,14 +25,25 @@ export const CompletionButton = ({
 	const { isCompleted, updateCompletionStatus, isLoading } =
 		useCompletionStatus([postId]);
 
+	const { executeAction, renderLoginModal } = useAuthAction({
+		requireAuth: true,
+		authMessage: "Please sign in to mark posts as complete",
+		onSuccess: () => {
+			// Success is handled by the store's optimistic updates
+		},
+		onError: (error) => {
+			console.error("Failed to update completion status:", error);
+			toast.error("Failed to update completion status");
+		},
+	});
+
 	const handleToggleCompletion = async () => {
 		if (isLoading) return;
-		try {
-			const currentlyCompleted = isCompleted(postId);
+
+		const currentlyCompleted = isCompleted(postId);
+		await executeAction(async () => {
 			await updateCompletionStatus(postId, !currentlyCompleted);
-		} catch (error) {
-			console.error("Failed to update completion status:", error);
-		}
+		});
 	};
 
 	const completed = isCompleted(postId);
@@ -63,6 +76,7 @@ export const CompletionButton = ({
 					{completed ? "Mark as incomplete" : "Mark as complete"}
 				</TooltipContent>
 			</Tooltip>
+			{renderLoginModal()}
 		</TooltipProvider>
 	);
 };

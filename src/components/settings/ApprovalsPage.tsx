@@ -52,6 +52,7 @@ import {
 	rejectPost,
 } from "@/actions/approval";
 import { toast } from "sonner";
+import { SUCCESS } from "@/utils/constants";
 
 export function ApprovalsPage() {
 	const { data: session } = useSession();
@@ -165,14 +166,14 @@ export function ApprovalsPage() {
 		try {
 			if (selectedEditId) {
 				const result = await approvePostEdit(selectedEditId);
-				if (result.status === "success") {
+				if (result.status === SUCCESS) {
 					toast.success("Post edit approved successfully!");
 				} else {
 					toast.error(result.data.message || "Failed to approve post edit");
 				}
 			} else if (selectedPostId) {
 				const result = await approvePost(selectedPostId);
-				if (result.status === "success") {
+				if (result.status === SUCCESS) {
 					toast.success("Post approved successfully!");
 				} else {
 					toast.error(result.data.message || "Failed to approve post");
@@ -198,14 +199,14 @@ export function ApprovalsPage() {
 		try {
 			if (selectedEditId) {
 				const result = await rejectPostEdit(selectedEditId, rejectReason);
-				if (result.status === "success") {
+				if (result.status === SUCCESS) {
 					toast.success("Post edit rejected successfully!");
 				} else {
 					toast.error(result.data.message || "Failed to reject post edit");
 				}
 			} else if (selectedPostId) {
 				const result = await rejectPost(selectedPostId, rejectReason);
-				if (result.status === "success") {
+				if (result.status === SUCCESS) {
 					toast.success("Post rejected successfully!");
 				} else {
 					toast.error(result.data.message || "Failed to reject post");

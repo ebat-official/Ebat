@@ -44,6 +44,7 @@ import {
 	PostApprovalStatus,
 	PostStatus,
 } from "@/db/schema/enums";
+import { SUCCESS } from "@/utils/constants";
 
 interface PostWithAuthor {
 	id: string;
@@ -204,8 +205,8 @@ export function PostsPage() {
 		setIsDeletingPost(true);
 		try {
 			const result = await deletePost(selectedPostId);
-			if (result.status === "success") {
-				toast.success("Post deleted successfully!");
+			if (result.status === SUCCESS) {
+				toast.success("Post deleted successfully");
 				// Refetch data instead of full page reload
 				await Promise.all([refetchPosts(), refetchEdits()]);
 			} else {
@@ -227,8 +228,8 @@ export function PostsPage() {
 		setIsDeletingEdit(true);
 		try {
 			const result = await deletePostEdit(selectedPostEditId);
-			if (result.status === "success") {
-				toast.success("Post edit deleted successfully!");
+			if (result.status === SUCCESS) {
+				toast.success("Post edit deleted successfully");
 				// Refetch data instead of full page reload
 				await Promise.all([refetchPosts(), refetchEdits()]);
 			} else {

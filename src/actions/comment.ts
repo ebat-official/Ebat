@@ -64,7 +64,7 @@ const checkCommentOwnership = async (
 	});
 
 	if (!existingComment) {
-		throw new Error("Comment not found.");
+		return false;
 	}
 
 	return existingComment.authorId === userId;
@@ -161,112 +161,120 @@ export async function createEditComment(
 		}
 	}
 
-	const result = await db.transaction(async (tx) => {
-		let comment: Awaited<
-			ReturnType<typeof tx.query.comments.findFirst>
-		> | null = null;
+	try {
+		const result = await db.transaction(async (tx) => {
+			let comment: Awaited<
+				ReturnType<typeof tx.query.comments.findFirst>
+			> | null = null;
 
-		if (data.id) {
-			// Update existing comment
-			const updatedComments = await tx
-				.update(comments)
-				.set({ content: commentData.content })
-				.where(eq(comments.id, data.id))
-				.returning();
+			if (data.id) {
+				// Update existing comment
+				const updatedComments = await tx
+					.update(comments)
+					.set({ content: commentData.content })
+					.where(eq(comments.id, data.id))
+					.returning();
 
-			// Get comment with relations
-			comment = await tx.query.comments.findFirst({
-				where: eq(comments.id, data.id),
-				with: {
-					author: {
-						columns: {
-							id: true,
-							username: true,
-							name: true,
-							image: true,
+				// Get comment with relations
+				comment = await tx.query.comments.findFirst({
+					where: eq(comments.id, data.id),
+					with: {
+						author: {
+							columns: {
+								id: true,
+								username: true,
+								name: true,
+								image: true,
+							},
+						},
+						votes: {
+							columns: {
+								type: true,
+							},
 						},
 					},
-					votes: {
-						columns: {
-							type: true,
+				});
+			} else {
+				// Create new comment
+				const newComments = await tx
+					.insert(comments)
+					.values(commentData)
+					.returning();
+
+				// Get comment with relations
+				comment = await tx.query.comments.findFirst({
+					where: eq(comments.id, newComments[0].id),
+					with: {
+						author: {
+							columns: {
+								id: true,
+								username: true,
+								name: true,
+								image: true,
+							},
+						},
+						votes: {
+							columns: {
+								type: true,
+							},
 						},
 					},
-				},
-			});
-		} else {
-			// Create new comment
-			const newComments = await tx
-				.insert(comments)
-				.values(commentData)
-				.returning();
-
-			// Get comment with relations
-			comment = await tx.query.comments.findFirst({
-				where: eq(comments.id, newComments[0].id),
-				with: {
-					author: {
-						columns: {
-							id: true,
-							username: true,
-							name: true,
-							image: true,
-						},
-					},
-					votes: {
-						columns: {
-							type: true,
-						},
-					},
-				},
-			});
-		}
-
-		if (!comment) {
-			throw new Error("Failed to create/update comment");
-		}
-
-		// Get counts using proper count queries
-		const [replyCountResult, voteCountResult] = await Promise.all([
-			tx
-				.select({ count: count() })
-				.from(comments)
-				.where(eq(comments.parentId, comment.id)),
-			tx
-				.select({ count: count() })
-				.from(commentVotes)
-				.where(eq(commentVotes.commentId, comment.id)),
-		]);
-
-		const commentWithCounts = {
-			...comment,
-			repliesCount: replyCountResult[0]?.count || 0,
-			votesCount: voteCountResult[0]?.count || 0,
-		} as CommentWithRelations;
-
-		// Handle mentions
-		const mentions = data.mentions || [];
-		if (mentions.length > 0) {
-			const mentionData = mentions
-				.map((mention) => mention?.data?.id)
-				.filter((userId): userId is string => !!userId)
-				.map((userId) => ({
-					userId,
-					commentId: comment.id,
-				}));
-
-			if (mentionData.length > 0) {
-				await tx
-					.insert(commentMentions)
-					.values(mentionData)
-					.onConflictDoNothing();
+				});
 			}
-		}
 
-		invalidateCommentsCache(data.postId);
-		return formatCommentWithVotes(commentWithCounts);
-	});
+			if (!comment) {
+				throw new Error("Failed to create/update comment");
+			}
 
-	return { status: SUCCESS, data: result };
+			// Get counts using proper count queries
+			const [replyCountResult, voteCountResult] = await Promise.all([
+				tx
+					.select({ count: count() })
+					.from(comments)
+					.where(eq(comments.parentId, comment.id)),
+				tx
+					.select({ count: count() })
+					.from(commentVotes)
+					.where(eq(commentVotes.commentId, comment.id)),
+			]);
+
+			const commentWithCounts = {
+				...comment,
+				repliesCount: replyCountResult[0]?.count || 0,
+				votesCount: voteCountResult[0]?.count || 0,
+			} as CommentWithRelations;
+
+			// Handle mentions
+			const mentions = data.mentions || [];
+			if (mentions.length > 0) {
+				const mentionData = mentions
+					.map((mention) => mention?.data?.id)
+					.filter((userId): userId is string => !!userId)
+					.map((userId) => ({
+						userId,
+						commentId: comment.id,
+					}));
+
+				if (mentionData.length > 0) {
+					await tx
+						.insert(commentMentions)
+						.values(mentionData)
+						.onConflictDoNothing();
+				}
+			}
+
+			invalidateCommentsCache(data.postId);
+			return formatCommentWithVotes(commentWithCounts);
+		});
+
+		return { status: SUCCESS, data: result };
+	} catch (error) {
+		console.error("Failed to create/update comment:", error);
+		return {
+			status: ERROR,
+			data: { message: "Failed to create/update comment" },
+		};
+	}
 }
 
 export async function deleteComment(
