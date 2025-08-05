@@ -1,4 +1,6 @@
 import { getCurrentUser } from "@/actions/user";
+import { hasModeratorAccess } from "@/auth/roleUtils";
+import { UserRole } from "@/db/schema/enums";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
 import {
@@ -53,6 +55,11 @@ export async function GET(request: NextRequest) {
 		const currentUser = await getCurrentUser();
 		if (!currentUser) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
+
+		// Check if user has moderator access
+		if (!hasModeratorAccess(currentUser.role as UserRole)) {
+			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 
 		const { searchParams } = new URL(request.url);

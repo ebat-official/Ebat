@@ -53,11 +53,59 @@ import {
 } from "@/actions/approval";
 import { toast } from "sonner";
 import { SUCCESS } from "@/utils/constants";
+import { ApprovalsLockedScreen } from "./ApprovalsLockedScreen";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Loading Skeleton Component
+function ApprovalsLoadingSkeleton() {
+	return (
+		<div className="space-y-4">
+			<div className="flex justify-between items-center">
+				<Skeleton className="h-8 w-48" />
+				<div className="flex gap-2">
+					<Skeleton className="h-6 w-24" />
+					<Skeleton className="h-6 w-24" />
+				</div>
+			</div>
+
+			<div className="space-y-4">
+				<Skeleton className="h-10 w-full" />
+				<div className="space-y-3">
+					{Array.from({ length: 5 }).map((_, i) => (
+						<div
+							key={i}
+							className="flex items-center justify-between p-4 border rounded-lg"
+						>
+							<div className="flex items-center gap-3">
+								<Skeleton className="h-4 w-4 rounded" />
+								<div className="space-y-2">
+									<Skeleton className="h-4 w-48" />
+									<Skeleton className="h-3 w-24" />
+								</div>
+							</div>
+							<Skeleton className="h-6 w-12 rounded" />
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
 
 export function ApprovalsPage() {
-	const { data: session } = useSession();
+	const { data: session, isPending } = useSession();
 	const canApproveReject =
 		session && hasModeratorAccess(session.user.role as UserRole);
+
+	// Show loading state while session is loading
+	if (isPending) {
+		return <ApprovalsLoadingSkeleton />;
+	}
+
+	// Show locked screen if user is not authenticated or doesn't have moderator access
+	if (!session || !canApproveReject) {
+		return <ApprovalsLockedScreen />;
+	}
 
 	// Separate state for posts tab
 	const [postsSearchQuery, setPostsSearchQuery] = useState("");
