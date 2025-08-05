@@ -45,31 +45,30 @@ export const showKarmaNotification = ({
 			break;
 		}
 		case KarmaAction.POST_VOTE: {
-			if (metadata.voteType === VoteType.UP) {
-				title = `Post Upvoted! +${karmaChange} karma`;
-				description = "Someone upvoted your post";
-			} else {
-				title = `Post Downvoted! ${karmaChange} karma`;
-				description = "Someone downvoted your post";
-			}
+			const postTitle = metadata.postTitle;
+			const voteType = metadata.voteType;
+			const actionText = voteType === VoteType.UP ? "upvoted" : "downvoted";
+			title = `Post ${voteType === VoteType.UP ? "Upvoted" : "Downvoted"}! ${karmaChange > 0 ? "+" : ""}${karmaChange} karma`;
+			description = `Someone ${actionText} your post "${postTitle || "unknown"}"`;
 			break;
 		}
 		case KarmaAction.COMMENT_VOTE: {
-			if (metadata.voteType === VoteType.UP) {
-				title = `Comment Upvoted! +${karmaChange} karma`;
-				description = "Someone upvoted your comment";
-			} else {
-				title = `Comment Downvoted! ${karmaChange} karma`;
-				description = "Someone downvoted your comment";
-			}
+			const voteType = metadata.voteType;
+			const actionText = voteType === VoteType.UP ? "upvoted" : "downvoted";
+			title = `Comment ${voteType === VoteType.UP ? "Upvoted" : "Downvoted"}! ${karmaChange > 0 ? "+" : ""}${karmaChange} karma`;
+			description = `Someone ${actionText} your comment`;
 			break;
 		}
-		case KarmaAction.POST_VOTE_REMOVAL:
-		case KarmaAction.COMMENT_VOTE_REMOVAL: {
-			title = `Vote Removed! ${karmaChange} karma`;
-			description = "A vote on your content was removed";
+		case KarmaAction.POST_VOTE_REMOVAL: {
+			const postTitle = metadata.postTitle;
+			title = `Vote Removed! ${karmaChange > 0 ? "+" : ""}${karmaChange} karma`;
+			description = `Someone removed their vote on your post "${postTitle || "unknown"}"`;
 			break;
 		}
+		case KarmaAction.COMMENT_VOTE_REMOVAL:
+			title = `Vote Removed! ${karmaChange > 0 ? "+" : ""}${karmaChange} karma`;
+			description = "Someone removed their vote on your comment";
+			break;
 		default:
 			title = `Karma ${isPositive ? "Gained" : "Lost"}! ${karmaChange}`;
 			description = "Your karma has changed";

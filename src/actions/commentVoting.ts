@@ -28,8 +28,8 @@ const CommentVoteValidator = z.object({
 		id: z.string(),
 		authorId: z.string(),
 		content: z.any().optional(),
-		createdAt: z.date().optional(),
-		updatedAt: z.date().optional(),
+		createdAt: z.union([z.string(), z.date()]).optional(), // Accept both string and Date
+		updatedAt: z.union([z.string(), z.date()]).optional(), // Accept both string and Date
 		postId: z.string().optional(),
 		parentId: z.string().nullable().optional(),
 	}), // Required comment object
@@ -89,6 +89,7 @@ export async function CommentVoteAction(
 				{
 					commentId: voteData.commentId,
 					voteType: voteData.previousVoteType,
+					postId: voteData.postId,
 				},
 			);
 		}
@@ -115,6 +116,7 @@ export async function CommentVoteAction(
 			await awardKarma(voteData.comment.authorId, KarmaAction.COMMENT_VOTE, 0, {
 				commentId: voteData.commentId,
 				voteType: voteData.type,
+				postId: voteData.postId,
 			});
 		}
 	}

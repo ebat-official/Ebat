@@ -6,22 +6,74 @@ import { KarmaAction, VoteType } from "@/db/schema/enums";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { KarmaLogEntry } from "@/types/karma";
 
-const getActionIcon = (action: string) => {
+const KarmaHistorySkeleton = () => (
+	<div className="space-y-4">
+		{Array.from({ length: 5 }).map((_, i) => (
+			<div
+				key={i}
+				className="flex items-center justify-between p-3 border rounded-lg"
+			>
+				<div className="flex items-center gap-3">
+					<Skeleton className="h-4 w-4 rounded" />
+					<div className="space-y-2">
+						<Skeleton className="h-4 w-48" />
+						<Skeleton className="h-3 w-24" />
+					</div>
+				</div>
+				<Skeleton className="h-6 w-12 rounded" />
+			</div>
+		))}
+	</div>
+);
+
+const getActionIcon = (action: string, karmaChange: number) => {
+	// Determine color based on karma change
+	const isPositive = karmaChange > 0;
+	const isNegative = karmaChange < 0;
+
 	switch (action) {
 		case KarmaAction.POST_APPROVAL:
 		case KarmaAction.POST_EDIT_APPROVAL:
-			return <span className="h-4 w-4 text-green-500">✓</span>;
+			return (
+				<span
+					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
+				>
+					✓
+				</span>
+			);
 		case KarmaAction.POST_VOTE:
-		case KarmaAction.COMMENT_VOTE:
-			return <span className="h-4 w-4 text-orange-500">▲</span>;
+		case KarmaAction.COMMENT_VOTE: {
+			const voteType = karmaChange > 0 ? "up" : "down";
+			const arrow = voteType === "up" ? "▲" : "▼";
+			return (
+				<span
+					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
+				>
+					{arrow}
+				</span>
+			);
+		}
 		case KarmaAction.POST_VOTE_REMOVAL:
 		case KarmaAction.COMMENT_VOTE_REMOVAL:
-			return <span className="h-4 w-4 text-red-500">▼</span>;
+			return (
+				<span
+					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
+				>
+					▼
+				</span>
+			);
 		default:
-			return <span className="h-4 w-4 text-gray-500">✏</span>;
+			return (
+				<span
+					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
+				>
+					✏
+				</span>
+			);
 	}
 };
 
@@ -49,16 +101,21 @@ const getActionLabel = (
 			const editPostTitle = metadata?.postTitle as string;
 			return `${username} approved your edit to "${editPostTitle || "a post"}"`;
 		}
-		case KarmaAction.POST_VOTE:
-			return metadata?.voteType === VoteType.UP
-				? `${username} upvoted your post`
-				: `${username} downvoted your post`;
-		case KarmaAction.COMMENT_VOTE:
-			return metadata?.voteType === VoteType.UP
-				? `${username} upvoted your comment`
-				: `${username} downvoted your comment`;
-		case KarmaAction.POST_VOTE_REMOVAL:
-			return `${username} removed their vote on your post`;
+		case KarmaAction.POST_VOTE: {
+			const postTitle = metadata?.postTitle as string;
+			const voteType = metadata?.voteType as string;
+			const actionText = voteType === VoteType.UP ? "upvoted" : "downvoted";
+			return `${username} ${actionText} your post "${postTitle || "unknown"}"`;
+		}
+		case KarmaAction.COMMENT_VOTE: {
+			const voteType = metadata?.voteType as string;
+			const actionText = voteType === VoteType.UP ? "upvoted" : "downvoted";
+			return `${username} ${actionText} your comment`;
+		}
+		case KarmaAction.POST_VOTE_REMOVAL: {
+			const postTitle = metadata?.postTitle as string;
+			return `${username} removed their vote on your post "${postTitle || "unknown"}"`;
+		}
 		case KarmaAction.COMMENT_VOTE_REMOVAL:
 			return `${username} removed their vote on your comment`;
 		default:
@@ -80,9 +137,7 @@ export const KarmaHistory = () => {
 					<CardTitle>Karma History</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<div className="flex items-center justify-center py-8">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500" />
-					</div>
+					<KarmaHistorySkeleton />
 				</CardContent>
 			</Card>
 		);
@@ -133,7 +188,7 @@ export const KarmaHistory = () => {
 							className="flex items-center justify-between p-3 border rounded-lg"
 						>
 							<div className="flex items-center gap-3">
-								{getActionIcon(log.action)}
+								{getActionIcon(log.action, log.karmaChange)}
 								<div>
 									<div className="font-medium">
 										{getActionLabel(log.action, log.metadata, log.fromUser)}

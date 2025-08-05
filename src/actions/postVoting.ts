@@ -90,6 +90,11 @@ export async function voteAction(
 				{
 					postId: voteData.postId,
 					voteType: voteData.previousVoteType,
+					postTitle: voteData.post.title,
+					category: voteData.post.category,
+					subCategory: voteData.post.subCategory,
+					slug: voteData.post.slug,
+					postType: voteData.post.type,
 				},
 			);
 		}
@@ -112,6 +117,11 @@ export async function voteAction(
 			await awardKarma(voteData.post.authorId, KarmaAction.POST_VOTE, 0, {
 				postId: voteData.postId,
 				voteType: voteData.type,
+				postTitle: voteData.post.title,
+				category: voteData.post.category,
+				subCategory: voteData.post.subCategory,
+				slug: voteData.post.slug,
+				postType: voteData.post.type,
 			});
 		}
 	}

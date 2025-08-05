@@ -1,9 +1,14 @@
 "use client";
 
+import { useSession } from "@/lib/auth-client";
 import { KarmaHistory } from "@/components/settings/KarmaHistory";
 import { KarmaDisplay } from "@/components/shared/KarmaDisplay";
 
 export default function KarmaPage() {
+	const { data: session } = useSession();
+	const userKarma =
+		(session?.user as { karmaPoints?: number })?.karmaPoints || 0;
+
 	return (
 		<div className="space-y-6">
 			<div>
@@ -21,7 +26,7 @@ export default function KarmaPage() {
 							Your total karma points earned through contributions
 						</p>
 					</div>
-					<KarmaDisplay karma={0} />
+					<KarmaDisplay karma={userKarma} />
 				</div>
 
 				<KarmaHistory />
