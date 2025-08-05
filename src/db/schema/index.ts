@@ -12,6 +12,7 @@ export * from "./reports";
 export * from "./completionStatuses";
 export * from "./challenges";
 export * from "./auth";
+export * from "./karmaLogs";
 
 // Export all relations
 export * from "../relations";
@@ -27,6 +28,7 @@ import { notifications } from "./notifications";
 import { postContributors, postEdits, postViews, posts } from "./posts";
 import { reports } from "./reports";
 import { votes } from "./votes";
+import { karmaLogs } from "./karmaLogs";
 
 // Rename BetterAuth user table to users for consistency
 export const users = user;
@@ -49,6 +51,7 @@ export const schema = {
 	completionStatuses,
 	challengeTemplates,
 	challengeSubmissions,
+	karmaLogs,
 	// BetterAuth tables
 	user,
 	session,

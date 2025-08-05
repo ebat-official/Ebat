@@ -47,12 +47,21 @@ function CommentLikeButton({
 			if (currentVoteType === type) {
 				setCurrentVoteType(null);
 				setVoteCount((prev) => (type === VoteType.UP ? prev - 1 : prev + 1));
-				const vote = await createVoteAction({ commentId, type: null, postId });
+				const vote = await createVoteAction({
+					type: null,
+					postId,
+					previousVoteType: currentVoteType, // Pass the vote type being removed
+					comment: comment, // Pass the full comment object
+				});
 				if (vote?.status === ERROR) throw ERROR;
 			} else {
 				setCurrentVoteType(type);
 				setVoteCount((prev) => (type === VoteType.UP ? prev + 1 : prev - 1));
-				const vote = await createVoteAction({ commentId, type, postId });
+				const vote = await createVoteAction({
+					type,
+					postId,
+					comment: comment, // Pass the full comment object
+				});
 				if (vote?.status === ERROR) throw ERROR;
 			}
 		} catch (error) {

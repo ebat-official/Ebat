@@ -66,6 +66,9 @@ export const commentVotes = pgTable(
 		commentId: uuid("comment_id")
 			.notNull()
 			.references(() => comments.id, { onDelete: "cascade" }),
+		postId: varchar("post_id", { length: 21 })
+			.notNull()
+			.references(() => posts.id, { onDelete: "cascade" }),
 		type: voteTypeEnum("type").notNull(),
 	},
 	(table) => [
@@ -74,6 +77,7 @@ export const commentVotes = pgTable(
 			table.commentId,
 		),
 		index("commentVote_commentId_type_idx").on(table.commentId, table.type),
+		index("commentVote_postId_idx").on(table.postId),
 	],
 );
 

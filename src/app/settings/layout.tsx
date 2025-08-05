@@ -43,6 +43,10 @@ async function SettingsLayout({ children }: SettingsLayoutProps) {
 			href: "/settings/notifications",
 		},
 		{
+			title: "Karma",
+			href: "/settings/karma",
+		},
+		{
 			title: "Approvals",
 			href: "/settings/approvals",
 		},

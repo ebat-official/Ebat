@@ -21,16 +21,23 @@ import {
 import LoginModal from "../auth/LoginModal";
 
 function PostLikeButton({
-	postId,
+	post,
 	className,
-}: { postId: string; className?: string }) {
+}: {
+	post: {
+		id: string;
+		authorId: string;
+		[key: string]: unknown;
+	}; // Full post object
+	className?: string;
+}) {
 	const [currentVoteType, setCurrentVoteType] = useState<VoteType | null>(null);
 	const [voteCount, setVoteCount] = useState(0);
 	const [createVoteAction, isLoading] = useServerAction(voteAction);
 	const [loginModalMessage, setLoginModalMessage] = useState<string>("");
 	const { data: session } = useSession();
 
-	const { data, isLoading: isFetching, isError } = useVotes(postId);
+	const { data, isLoading: isFetching, isError } = useVotes(post.id);
 
 	useEffect(() => {
 		const upVotes = data?.upVotes || 0;
@@ -55,12 +62,19 @@ function PostLikeButton({
 			if (currentVoteType === type) {
 				setCurrentVoteType(null);
 				setVoteCount((prev) => (type === VoteType.UP ? prev - 1 : prev + 1));
-				const vote = await createVoteAction({ postId, type: null });
+				const vote = await createVoteAction({
+					type: null,
+					previousVoteType: currentVoteType, // Pass the vote type being removed
+					post: post, // Pass the full post object
+				});
 				if (vote?.status === ERROR) throw ERROR;
 			} else {
 				setCurrentVoteType(type);
 				setVoteCount((prev) => (type === VoteType.UP ? prev + 1 : prev - 1));
-				const vote = await createVoteAction({ postId, type });
+				const vote = await createVoteAction({
+					type,
+					post: post, // Pass the full post object
+				});
 				if (vote?.status === ERROR) throw ERROR;
 			}
 		} catch (error) {

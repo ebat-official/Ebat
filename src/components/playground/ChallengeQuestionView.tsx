@@ -51,7 +51,7 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = async ({
 					<TabsContent value="description">
 						<CardContent className="flex flex-col h-full gap-4 w-full max-w-3xl">
 							<div className="flex gap-6 -ml-12">
-								<PostLikeButton postId={post.id} />
+								<PostLikeButton post={post} />
 								<div>
 									<h1 className="opacity-90 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none leading-relaxed">
 										{post.title}

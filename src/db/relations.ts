@@ -11,6 +11,7 @@ import { notifications } from "./schema/notifications";
 import { postContributors, postEdits, postViews, posts } from "./schema/posts";
 import { reports } from "./schema/reports";
 import { votes } from "./schema/votes";
+import { karmaLogs } from "./schema/karmaLogs";
 
 // ==================== USER RELATIONS ====================
 export const userRelations = relations(user, ({ many }) => ({
@@ -36,6 +37,10 @@ export const userRelations = relations(user, ({ many }) => ({
 	// Moderation
 	reports: many(reports),
 	notifications: many(notifications),
+
+	// Karma
+	karmaReceived: many(karmaLogs, { relationName: "KarmaReceived" }),
+	karmaGiven: many(karmaLogs, { relationName: "KarmaGiven" }),
 }));
 
 // ==================== FOLLOW RELATIONS ====================
@@ -251,3 +256,25 @@ export const challengeSubmissionsRelations = relations(
 		}),
 	}),
 );
+
+// ==================== KARMA LOG RELATIONS ====================
+export const karmaLogsRelations = relations(karmaLogs, ({ one }) => ({
+	user: one(user, {
+		fields: [karmaLogs.userId],
+		references: [user.id],
+		relationName: "KarmaReceived",
+	}),
+	fromUser: one(user, {
+		fields: [karmaLogs.fromUserId],
+		references: [user.id],
+		relationName: "KarmaGiven",
+	}),
+	post: one(posts, {
+		fields: [karmaLogs.postId],
+		references: [posts.id],
+	}),
+	comment: one(comments, {
+		fields: [karmaLogs.commentId],
+		references: [comments.id],
+	}),
+}));

@@ -18,11 +18,23 @@ import {
 	InteractionActions,
 	RateLimitCategory,
 } from "@/lib/rateLimit";
+import { awardKarma } from "@/utils/karmaUtils";
+import { KarmaAction } from "@/db/schema/enums";
+import { comments } from "@/db/schema";
 
 const CommentVoteValidator = z.object({
 	postId: z.string(),
-	commentId: z.string(),
+	comment: z.object({
+		id: z.string(),
+		authorId: z.string(),
+		content: z.any().optional(),
+		createdAt: z.date().optional(),
+		updatedAt: z.date().optional(),
+		postId: z.string().optional(),
+		parentId: z.string().nullable().optional(),
+	}), // Required comment object
 	type: z.nativeEnum(VoteType).nullable(),
+	previousVoteType: z.nativeEnum(VoteType).optional(), // For vote removal
 });
 
 export async function CommentVoteAction(
@@ -45,9 +57,12 @@ export async function CommentVoteAction(
 	if (!user) return UNAUTHENTICATED_ERROR;
 
 	const voteData = {
-		commentId: data.commentId,
+		commentId: data.comment.id, // Get commentId from comment object
+		postId: data.postId,
 		type: data.type,
 		userId: user.id,
+		previousVoteType: data.previousVoteType,
+		comment: data.comment, // Use comment from client
 	};
 
 	if (voteData.type === null) {
@@ -60,6 +75,23 @@ export async function CommentVoteAction(
 					eq(commentVotes.commentId, voteData.commentId),
 				),
 			);
+
+		// Use comment data from client instead of database query
+		if (
+			voteData.comment?.authorId &&
+			voteData.comment.authorId !== voteData.userId &&
+			voteData.previousVoteType
+		) {
+			await awardKarma(
+				voteData.comment.authorId,
+				KarmaAction.COMMENT_VOTE_REMOVAL,
+				0,
+				{
+					commentId: voteData.commentId,
+					voteType: voteData.previousVoteType,
+				},
+			);
+		}
 	} else {
 		// Upsert the vote if type is "up" or "down"
 		await db
@@ -67,12 +99,24 @@ export async function CommentVoteAction(
 			.values({
 				userId: voteData.userId,
 				commentId: voteData.commentId,
+				postId: voteData.postId,
 				type: voteData.type,
 			})
 			.onConflictDoUpdate({
 				target: [commentVotes.userId, commentVotes.commentId],
 				set: { type: voteData.type },
 			});
+
+		// Use comment data from client instead of database query
+		if (
+			voteData.comment?.authorId &&
+			voteData.comment.authorId !== voteData.userId
+		) {
+			await awardKarma(voteData.comment.authorId, KarmaAction.COMMENT_VOTE, 0, {
+				commentId: voteData.commentId,
+				voteType: voteData.type,
+			});
+		}
 	}
 	invalidateCommentsCache(data.postId);
 	return { status: SUCCESS, data: SUCCESS };

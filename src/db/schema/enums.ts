@@ -87,6 +87,15 @@ export enum FollowAction {
 	UNFOLLOW = "unfollow",
 }
 
+export enum KarmaAction {
+	POST_APPROVAL = "post_approval",
+	POST_EDIT_APPROVAL = "post_edit_approval",
+	POST_VOTE = "post_vote",
+	POST_VOTE_REMOVAL = "post_vote_removal",
+	COMMENT_VOTE = "comment_vote",
+	COMMENT_VOTE_REMOVAL = "comment_vote_removal",
+}
+
 // pgEnum definitions for database schema
 export const userRoleEnum = pgEnum("user_role", UserRole);
 export const subscriptionPlanEnum = pgEnum(
@@ -112,6 +121,8 @@ export const submissionStatusEnum = pgEnum(
 	"submission_status",
 	SubmissionStatus,
 );
+export const followActionEnum = pgEnum("follow_action", FollowAction);
+export const karmaActionEnum = pgEnum("karma_action", KarmaAction);
 
 // Type exports (these will now be the enum types directly)
 export type UserRoleType = UserRole;
@@ -126,3 +137,5 @@ export type PostApprovalStatusType = PostApprovalStatus;
 export type SubCategoryType = SubCategory;
 export type TemplateFrameworkType = TemplateFramework;
 export type SubmissionStatusType = SubmissionStatus;
+export type FollowActionType = FollowAction;
+export type KarmaActionType = KarmaAction;

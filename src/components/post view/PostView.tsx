@@ -30,7 +30,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 					<Card className="relative items-center">
 						<CardContent className="flex flex-col h-full px-4 md:px-8 w-full gap-2 max-w-3xl relative">
 							<div className="flex gap-6 -ml-12">
-								<PostLikeButton className="mt-2" postId={post.id} />
+								<PostLikeButton className="mt-2" post={post} />
 								<div className="flex flex-col justify-center">
 									<h1 className="opacity-90 w-full overflow-hidden text-lg md:text-2xl  lg:text-3xl font-bold bg-transparent appearance-none resize-none focus:outline-none leading-relaxed">
 										{post.title}

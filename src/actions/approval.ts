@@ -23,6 +23,8 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { validateUser } from "./user";
 import { rateLimit, ContentActions, RateLimitCategory } from "@/lib/rateLimit";
+import { KarmaAction } from "@/db/schema/enums";
+import { awardKarma, getKarmaAmount } from "@/utils/karmaUtils";
 
 const revalidatePostPath = (post: typeof posts.$inferSelect) => {
 	const path = generatePostPath({
@@ -193,6 +195,47 @@ export async function approvePostEdit(
 		// Revalidate the post path for cache
 		revalidatePostPath(result);
 
+		// Award karma to both edit author and approver in a single transaction
+		if (!isAutoApproval) {
+			const editKarmaAmount = getKarmaAmount(KarmaAction.POST_EDIT_APPROVAL, {
+				postType: originalPost.type,
+			});
+			const approverKarmaAmount = Math.ceil(editKarmaAmount / 2); // Half, rounded up
+
+			// Use Promise.all for concurrent execution
+			await Promise.all([
+				// Award karma to the edit author
+				awardKarma(
+					postEdit.authorId,
+					KarmaAction.POST_EDIT_APPROVAL,
+					0, // Will be calculated based on post type
+					{
+						postId: originalPost.id,
+						postType: originalPost.type,
+						postTitle: originalPost.title,
+						category: originalPost.category,
+						subCategory: originalPost.subCategory,
+						slug: originalPost.slug,
+					},
+				),
+				// Award karma to the approver
+				awardKarma(
+					user.id,
+					KarmaAction.POST_EDIT_APPROVAL,
+					approverKarmaAmount,
+					{
+						postId: originalPost.id,
+						postType: originalPost.type,
+						postTitle: originalPost.title,
+						category: originalPost.category,
+						subCategory: originalPost.subCategory,
+						slug: originalPost.slug,
+						isApprover: true,
+					},
+				),
+			]);
+		}
+
 		return {
 			status: SUCCESS,
 			data: { success: true },
@@ -344,6 +387,42 @@ export async function approvePost(
 			.update(posts)
 			.set({ approvalStatus: PostApprovalStatus.APPROVED })
 			.where(eq(posts.id, postId));
+
+		// Award karma to both author and approver in a single transaction
+		if (post.authorId) {
+			const postKarmaAmount = getKarmaAmount(KarmaAction.POST_APPROVAL, {
+				postType: post.type,
+			});
+			const approverKarmaAmount = Math.ceil(postKarmaAmount / 2); // Half, rounded up
+
+			// Use Promise.all for concurrent execution
+			await Promise.all([
+				// Award karma to the author
+				awardKarma(
+					post.authorId,
+					KarmaAction.POST_APPROVAL,
+					0, // Will be calculated based on post type
+					{
+						postId: post.id,
+						postType: post.type,
+						postTitle: post.title,
+						category: post.category,
+						subCategory: post.subCategory,
+						slug: post.slug,
+					},
+				),
+				// Award karma to the approver
+				awardKarma(user.id, KarmaAction.POST_APPROVAL, approverKarmaAmount, {
+					postId: post.id,
+					postType: post.type,
+					postTitle: post.title,
+					category: post.category,
+					subCategory: post.subCategory,
+					slug: post.slug,
+					isApprover: true,
+				}),
+			]);
+		}
 
 		// Revalidate the post path for cache
 		revalidatePostPath(post);
