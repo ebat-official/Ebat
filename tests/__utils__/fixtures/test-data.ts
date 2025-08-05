@@ -16,7 +16,6 @@ export interface TestPost {
 	topics: string[];
 	companies: string[];
 	completionDuration: number;
-	coins: number;
 }
 
 export interface TestChallenge {
@@ -49,7 +48,6 @@ export const testPosts: Record<string, TestPost> = {
 		topics: ["javascript", "debounce", "performance"],
 		companies: ["Google", "Facebook"],
 		completionDuration: 15,
-		coins: 50,
 	},
 
 	reactQuestion: {
@@ -63,7 +61,6 @@ export const testPosts: Record<string, TestPost> = {
 		topics: ["react", "hooks", "class-components"],
 		companies: ["Netflix", "Airbnb"],
 		completionDuration: 10,
-		coins: 30,
 	},
 
 	// Challenges
@@ -78,7 +75,6 @@ export const testPosts: Record<string, TestPost> = {
 		topics: ["javascript", "todo", "dom-manipulation"],
 		companies: ["Spotify", "Discord"],
 		completionDuration: 30,
-		coins: 100,
 	},
 
 	reactChallenge: {
@@ -92,7 +88,6 @@ export const testPosts: Record<string, TestPost> = {
 		topics: ["react", "api", "weather", "async"],
 		companies: ["Uber", "Lyft"],
 		completionDuration: 45,
-		coins: 150,
 	},
 
 	// Blogs
@@ -107,7 +102,6 @@ export const testPosts: Record<string, TestPost> = {
 		topics: ["javascript", "es6", "modern-features"],
 		companies: ["Microsoft", "Apple"],
 		completionDuration: 20,
-		coins: 75,
 	},
 
 	// System Design
@@ -122,7 +116,6 @@ export const testPosts: Record<string, TestPost> = {
 		topics: ["system-design", "scalability", "url-shortener"],
 		companies: ["Amazon", "Google"],
 		completionDuration: 60,
-		coins: 200,
 	},
 };
 

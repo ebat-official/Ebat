@@ -28,7 +28,7 @@ import {
 import { generatePostPath } from "@/utils/generatePostPath";
 import { generateTitleSlug } from "@/utils/generateTileSlug";
 import { getCompletionDuration } from "@/utils/getCompletionDuration";
-import { getDefaultCoins } from "@/utils/getDefaultCoins";
+
 import { DatabaseJson, GenerateActionReturnType } from "@/utils/types";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -221,7 +221,6 @@ export async function createPost(
 		...buildBasePostData(user, data),
 		title: data.title,
 		completionDuration: getCompletionDuration(data),
-		coins: getDefaultCoins(data),
 		approvalStatus:
 			data.type === PostType.BLOGS
 				? PostApprovalStatus.APPROVED

@@ -52,12 +52,7 @@ export const auth = betterAuth({
 				defaultValue: 0,
 				input: false, // don't allow user to set karma points
 			},
-			coins: {
-				type: "number",
-				required: false,
-				defaultValue: 0,
-				input: false, // don't allow user to set coins
-			},
+
 			subscriptionPlan: {
 				type: "string",
 				required: false,

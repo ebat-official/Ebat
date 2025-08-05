@@ -94,15 +94,6 @@ export async function getCurrentUser() {
 	return foundUser;
 }
 
-export async function updateUserCoins(userId: string, coins: number) {
-	try {
-		await db.update(user).set({ coins }).where(eq(user.id, userId));
-		return true;
-	} catch (error) {
-		return null;
-	}
-}
-
 export async function updateUserKarmaPoints(
 	userId: string,
 	karmaPoints: number,

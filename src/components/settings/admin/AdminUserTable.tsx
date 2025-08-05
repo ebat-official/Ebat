@@ -223,8 +223,7 @@ export function AdminUserTable({
 				return <Badge variant="outline">{user.accountStatus}</Badge>;
 			case "karmaPoints":
 				return user.karmaPoints || 0;
-			case "coins":
-				return user.coins || 0;
+
 			case "subscriptionPlan":
 				return <Badge variant="outline">{user.subscriptionPlan}</Badge>;
 			case "jobTitle":
@@ -263,7 +262,6 @@ export function AdminUserTable({
 			"updatedAt",
 			"accountStatus",
 			"karmaPoints",
-			"coins",
 			"subscriptionPlan",
 			"jobTitle",
 			"companyName",

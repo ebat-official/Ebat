@@ -57,12 +57,7 @@ export const columnConfig: Record<string, ColumnConfig> = {
 		description: "User's karma points",
 		category: "engagement",
 	},
-	coins: {
-		id: "coins",
-		label: "Coins",
-		description: "User's coin balance",
-		category: "engagement",
-	},
+
 	subscriptionPlan: {
 		id: "subscriptionPlan",
 		label: "Subscription",
@@ -98,7 +93,7 @@ export const columnConfig: Record<string, ColumnConfig> = {
 export const categoryColumns: CategoryColumns = {
 	basic: ["user", "role", "createdAt", "status"],
 	profile: ["username", "emailVerified", "updatedAt", "accountStatus"],
-	engagement: ["karmaPoints", "coins", "subscriptionPlan"],
+	engagement: ["karmaPoints", "subscriptionPlan"],
 	professional: ["jobTitle", "companyName", "location", "description"],
 };
 
@@ -143,7 +138,6 @@ export const SORT_FIELDS = {
 	ROLE: "role",
 	ACCOUNT_STATUS: "accountStatus",
 	KARMA_POINTS: "karmaPoints",
-	COINS: "coins",
 } as const;
 
 // Sort field values array for backward compatibility
@@ -156,7 +150,6 @@ export const SORT_FIELD_VALUES = [
 	SORT_FIELDS.ROLE,
 	SORT_FIELDS.ACCOUNT_STATUS,
 	SORT_FIELDS.KARMA_POINTS,
-	SORT_FIELDS.COINS,
 ] as const;
 
 // Search field constants using enum-like structure

@@ -51,7 +51,6 @@ export const POSTS_CONSTANTS = {
 	DEFAULTS: {
 		UNTITLED: "Untitled",
 		UNKNOWN_AUTHOR: "Unknown",
-		ZERO_COINS: "0 coins",
 	},
 
 	// Display limits
@@ -164,14 +163,7 @@ export const postsColumnConfig: ColumnConfig[] = [
 		sortable: false,
 		filterable: false,
 	},
-	{
-		id: "coins",
-		label: "Coins",
-		description: "Reward coins",
-		category: "details",
-		sortable: false,
-		filterable: false,
-	},
+
 	{
 		id: "createdAt",
 		label: "Created",
@@ -219,7 +211,7 @@ export const postsCategoryColumns: CategoryColumns = {
 		"status",
 		"approvalStatus",
 	],
-	details: ["companies", "topics", "completionDuration", "coins"],
+	details: ["companies", "topics", "completionDuration"],
 };
 
 export const postsDefaultColumns = [

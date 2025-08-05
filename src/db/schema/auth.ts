@@ -43,7 +43,6 @@ export const user = pgTable("user", {
 		.notNull()
 		.default(AccountStatus.ACTIVE),
 	karmaPoints: integer("karma_points").notNull().default(0),
-	coins: integer("coins").notNull().default(0),
 	jobTitle: text("job_title"),
 	description: text("description"),
 	companyName: text("company_name"),

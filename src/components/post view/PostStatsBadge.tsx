@@ -3,7 +3,7 @@ import { PostWithExtraDetails } from "@/utils/types";
 import { FC } from "react";
 import { BiTargetLock } from "react-icons/bi";
 import { FiCheckCircle } from "react-icons/fi";
-import { GiTwoCoins } from "react-icons/gi";
+
 import AuthorNudge from "./AuthorNudge";
 
 import {
@@ -20,10 +20,6 @@ import { BookmarkBadge } from "../shared/BookmarkBadge";
 // Interfaces
 interface PostStatsBadgeProps {
 	post: PostWithExtraDetails;
-}
-
-interface CoinsBadgeProps {
-	coins: number;
 }
 
 interface CompletionBadgeProps {
@@ -46,7 +42,6 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 					/>
 				)}
 				{post.difficulty && <DifficultyBadge difficulty={post.difficulty} />}
-				<CoinsBadge coins={post.coins || 0} />
 				<CompletionBadge completionCount={post.completionCount || 0} />
 				<ViewsBadge views={post?.views?.count || 0} />
 			</CardContent>
@@ -55,32 +50,6 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 };
 
 // Difficulty Badge Component
-
-// Coins Badge Component with Tooltip
-const CoinsBadge: FC<CoinsBadgeProps> = ({ coins }) => {
-	return (
-		<TooltipProvider>
-			<Tooltip>
-				<TooltipTrigger asChild>
-					<div className="flex items-center justify-center gap-1 cursor-pointer">
-						<GiTwoCoins
-							className="text-yellow-500"
-							size={25}
-							//   strokeWidth={1}
-						/>
-						<span className="font-medium text-sm capitalize flex gap-1">
-							{coins}
-							<span className="hidden sm:block">coins</span>
-						</span>
-					</div>
-				</TooltipTrigger>
-				<TooltipContent>
-					<span>Earn coins upon completion</span>
-				</TooltipContent>
-			</Tooltip>
-		</TooltipProvider>
-	);
-};
 
 // Completion Badge Component
 const CompletionBadge: FC<CompletionBadgeProps> = ({ completionCount }) => {

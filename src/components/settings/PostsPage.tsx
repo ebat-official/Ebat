@@ -58,7 +58,7 @@ interface PostWithAuthor {
 	companies: string[] | null;
 	completionDuration: number | null;
 	topics: string[] | null;
-	coins: number | null;
+
 	status: PostStatus;
 	approvalStatus: PostApprovalStatus;
 	createdAt: Date;
@@ -336,14 +336,7 @@ export function PostsPage() {
 							: POSTS_CONSTANTS.BADGE_LABELS.NOT_APPLICABLE}
 					</div>
 				);
-			case "coins":
-				return (
-					<div className="text-sm">
-						{post.coins
-							? `${post.coins} coins`
-							: POSTS_CONSTANTS.DEFAULTS.ZERO_COINS}
-					</div>
-				);
+
 			case "createdAt":
 				return (
 					<div className="text-sm text-muted-foreground">
@@ -448,12 +441,7 @@ export function PostsPage() {
 							: POSTS_CONSTANTS.BADGE_LABELS.NOT_APPLICABLE}
 					</div>
 				);
-			case "coins":
-				return (
-					<div className="text-sm">
-						{POSTS_CONSTANTS.BADGE_LABELS.NOT_APPLICABLE}
-					</div>
-				);
+
 			case "createdAt":
 				return (
 					<div className="text-sm text-muted-foreground">

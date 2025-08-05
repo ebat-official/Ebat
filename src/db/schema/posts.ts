@@ -51,7 +51,6 @@ export const posts = pgTable(
 		difficulty: difficultyEnum("difficulty"),
 		companies: varchar("companies", { length: 255 }).array().default([]),
 		completionDuration: integer("completion_duration"),
-		coins: integer("coins").default(0),
 		topics: varchar("topics", { length: 255 }).array().default([]),
 		category: postCategoryEnum("category").notNull(),
 		subCategory: subCategoryEnum("sub_category").notNull(),

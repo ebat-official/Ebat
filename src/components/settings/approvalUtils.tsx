@@ -183,13 +183,6 @@ export const renderCompletionDuration = (duration: number | null) => {
 };
 
 /**
- * Renders coins
- */
-export const renderCoins = (coins: number | null) => {
-	return coins ? `${coins} coins` : APPROVAL_CONSTANTS.DEFAULTS.ZERO_COINS;
-};
-
-/**
  * Renders formatted date
  */
 export const renderFormattedDate = (date: Date | string) => {
@@ -229,8 +222,7 @@ export const renderPostCell = (post: PostWithAuthor, columnId: string) => {
 			return renderTopics(post.topics);
 		case "completionDuration":
 			return renderCompletionDuration(post.completionDuration);
-		case "coins":
-			return renderCoins(post.coins);
+
 		case "createdAt":
 			return renderFormattedDate(post.createdAt);
 		case "updatedAt":
@@ -277,8 +269,7 @@ export const renderEditCell = (edit: PostEditWithAuthor, columnId: string) => {
 			return renderTopics(edit.topics);
 		case "completionDuration":
 			return renderCompletionDuration(edit.completionDuration);
-		case "coins":
-			return APPROVAL_CONSTANTS.BADGE_LABELS.NOT_APPLICABLE; // Post edits don't have coins
+
 		case "createdAt":
 			return renderFormattedDate(edit.createdAt);
 		case "updatedAt":

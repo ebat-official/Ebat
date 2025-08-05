@@ -132,9 +132,8 @@ export async function approvePostEdit(
 			thumbnail: postEdit.thumbnail || originalPost.thumbnail,
 			category: postEdit.category,
 			subCategory: postEdit.subCategory,
-			// Preserve original ID and coins
+			// Preserve original ID
 			id: originalPost.id,
-			coins: originalPost.coins,
 		};
 
 		// Execute all updates in a transaction

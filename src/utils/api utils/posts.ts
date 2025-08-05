@@ -207,7 +207,7 @@ export async function getPostEditFromId(
 			...postEdit,
 			id: postEdit.postId,
 			slug: originalPost.slug,
-			coins: originalPost.coins,
+
 			status: originalPost.status,
 			content: ContentHtml,
 			completionCount: 0,
