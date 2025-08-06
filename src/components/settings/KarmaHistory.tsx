@@ -16,15 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { KarmaLogEntry } from "@/types/karma";
 import { generatePostPath } from "@/utils/generatePostPath";
-import { Info, TrendingUp } from "lucide-react";
-import { KarmaEmptyState } from "./KarmaEmptyState";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+import { TrendingUp } from "lucide-react";
 
 const KarmaHistorySkeleton = () => (
 	<div className="space-y-4">
@@ -165,8 +157,7 @@ const getActionLabel = (
 
 export const KarmaHistory = () => {
 	const [currentPage, setCurrentPage] = useState(0);
-	const [showKarmaInfo, setShowKarmaInfo] = useState(false);
-	const limit = 20;
+	const limit = 10;
 	const offset = currentPage * limit;
 
 	const { data, isLoading, error } = useUserKarma({ limit, offset });
@@ -202,49 +193,22 @@ export const KarmaHistory = () => {
 	// If no karma logs, show the empty state
 	if (!data?.karmaLogs || data.karmaLogs.length === 0) {
 		return (
-			<>
-				<Card>
-					<CardHeader>
-						<div className="flex items-center justify-between">
-							<CardTitle>Karma History</CardTitle>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() => setShowKarmaInfo(true)}
-								className="flex items-center gap-2"
-							>
-								<Info className="h-4 w-4" />
-								Learn more about karma
-							</Button>
-						</div>
-					</CardHeader>
-					<CardContent>
-						<div className="text-center py-12">
-							<TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-							<h3 className="text-lg font-semibold text-foreground mb-2">
-								No Karma History Yet
-							</h3>
-							<p className="text-muted-foreground">
-								Start contributing to earn karma points and build your
-								reputation.
-							</p>
-						</div>
-					</CardContent>
-				</Card>
-
-				{/* Karma Info Modal */}
-				<Dialog open={showKarmaInfo} onOpenChange={setShowKarmaInfo}>
-					<DialogContent className="!max-w-[95vw] !w-[95vw] !h-[95vh] max-h-[95vh] overflow-y-auto">
-						<DialogHeader>
-							<DialogTitle>Learn About Karma</DialogTitle>
-							<DialogDescription>
-								Discover how to earn karma points and build your reputation.
-							</DialogDescription>
-						</DialogHeader>
-						<KarmaEmptyState isModal={true} />
-					</DialogContent>
-				</Dialog>
-			</>
+			<Card>
+				<CardHeader>
+					<CardTitle>Karma History</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<div className="text-center py-12">
+						<TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+						<h3 className="text-lg font-semibold text-foreground mb-2">
+							No Karma History Yet
+						</h3>
+						<p className="text-muted-foreground">
+							Start contributing to earn karma points and build your reputation.
+						</p>
+					</div>
+				</CardContent>
+			</Card>
 		);
 	}
 
@@ -253,18 +217,7 @@ export const KarmaHistory = () => {
 	return (
 		<Card>
 			<CardHeader>
-				<div className="flex items-center justify-between">
-					<CardTitle>Karma History</CardTitle>
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => setShowKarmaInfo(true)}
-						className="flex items-center gap-2"
-					>
-						<Info className="h-4 w-4" />
-						Learn more about karma
-					</Button>
-				</div>
+				<CardTitle>Karma History</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<div className="space-y-4">
@@ -321,19 +274,6 @@ export const KarmaHistory = () => {
 					</div>
 				)}
 			</CardContent>
-
-			{/* Karma Info Modal */}
-			<Dialog open={showKarmaInfo} onOpenChange={setShowKarmaInfo}>
-				<DialogContent className="!max-w-[95vw] !w-[95vw] !h-[95vh] max-h-[95vh] overflow-y-auto">
-					<DialogHeader>
-						<DialogTitle>Learn About Karma</DialogTitle>
-						<DialogDescription>
-							Discover how to earn karma points and build your reputation.
-						</DialogDescription>
-					</DialogHeader>
-					<KarmaEmptyState isModal={true} />
-				</DialogContent>
-			</Dialog>
 		</Card>
 	);
 };

@@ -43,7 +43,7 @@ import type { PostWithAuthor, PostEditWithAuthor } from "./types";
 import { renderPostCell, renderEditCell } from "./approvalUtils";
 import { generatePreviewUrl } from "@/utils/generatePreviewUrl";
 import { useSession } from "@/lib/auth-client";
-import { hasModeratorAccess } from "@/auth/roleUtils";
+import { hasEditorAccess, hasModeratorAccess } from "@/auth/roleUtils";
 import { UserRole } from "@/db/schema/enums";
 import {
 	approvePostEdit,
@@ -96,7 +96,7 @@ function ApprovalsLoadingSkeleton() {
 export function ApprovalsPage() {
 	const { data: session, isPending } = useSession();
 	const canApproveReject =
-		session && hasModeratorAccess(session.user.role as UserRole);
+		session && hasEditorAccess(session.user.role as UserRole);
 
 	// Separate state for posts tab
 	const [postsSearchQuery, setPostsSearchQuery] = useState("");

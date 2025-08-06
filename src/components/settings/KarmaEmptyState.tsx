@@ -6,18 +6,22 @@ import {
 	ThumbsUp,
 	MessageSquare,
 	Edit,
-	ArrowUp,
+	Star,
+	Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-transition-progress/next";
+import { getRoleMilestones } from "@/auth/roleUtils";
 
 interface KarmaEmptyStateProps {
 	isModal?: boolean;
 }
 
 export function KarmaEmptyState({ isModal = false }: KarmaEmptyStateProps) {
+	const milestones = getRoleMilestones();
+
 	return (
 		<div className={`w-full space-y-8 ${isModal ? "p-6" : ""}`}>
 			{/* Hero Section */}
@@ -97,6 +101,52 @@ export function KarmaEmptyState({ isModal = false }: KarmaEmptyStateProps) {
 					</CardContent>
 				</Card>
 			</div>
+
+			{/* Role Progression Section */}
+			<Card className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 border-yellow-200 dark:border-yellow-800">
+				<CardContent className="p-6">
+					<div className="text-center mb-6">
+						<h3 className="text-xl font-bold text-foreground mb-2">
+							Role Progression
+						</h3>
+						<p className="text-muted-foreground">
+							Earn karma to unlock new roles and privileges
+						</p>
+					</div>
+
+					<div className="space-y-4">
+						{milestones.map((milestone, index) => (
+							<div
+								key={milestone.role}
+								className="flex items-center justify-between p-4 rounded-lg bg-white/50 dark:bg-gray-900/50 border border-yellow-200 dark:border-yellow-800"
+							>
+								<div className="flex items-center gap-3">
+									<div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+										{index === 0 ? (
+											<Star className="h-5 w-5 text-white" />
+										) : (
+											<Shield className="h-5 w-5 text-white" />
+										)}
+									</div>
+									<div>
+										<div className="flex items-center gap-2">
+											<span className="font-semibold text-foreground">
+												{milestone.role === "editor" ? "Editor" : "Moderator"}
+											</span>
+											<Badge variant="secondary" className="text-xs">
+												{milestone.requiredKarma.toLocaleString()} karma
+											</Badge>
+										</div>
+										<p className="text-sm text-muted-foreground">
+											{milestone.description}
+										</p>
+									</div>
+								</div>
+							</div>
+						))}
+					</div>
+				</CardContent>
+			</Card>
 
 			{/* Action Section */}
 			<Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-blue-200 dark:border-blue-800">

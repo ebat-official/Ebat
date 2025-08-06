@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { user } from "@/db/schema/auth";
 import { User } from "@/db/schema/zod-schemas";
+import { shouldPromoteUser } from "@/auth/roleUtils";
+import { UserRole } from "@/db/schema/enums";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
@@ -163,5 +165,54 @@ export async function updateUserProfile(
 			status: ERROR,
 			data: { message: "Failed to update user profile" },
 		};
+	}
+}
+
+export async function promoteUserRole(userId: string, newRole: UserRole) {
+	try {
+		await db.update(user).set({ role: newRole }).where(eq(user.id, userId));
+		return true;
+	} catch (error) {
+		console.error("Error promoting user role:", error);
+		return false;
+	}
+}
+
+export async function updateUserKarmaPointsWithPromotion(
+	userId: string,
+	karmaPoints: number,
+) {
+	try {
+		// Get current user data
+		const currentUser = await findUserById(userId);
+		if (!currentUser) {
+			return { success: false, error: "User not found" };
+		}
+
+		// Check if user should be promoted
+		const { shouldPromote, newRole } = shouldPromoteUser(
+			karmaPoints,
+			currentUser.role,
+		);
+
+		// Use database transaction for atomic operations
+		await db.transaction(async (tx) => {
+			// Update karma points
+			await tx.update(user).set({ karmaPoints }).where(eq(user.id, userId));
+
+			// Promote role if eligible
+			if (shouldPromote && newRole) {
+				await tx.update(user).set({ role: newRole }).where(eq(user.id, userId));
+			}
+		});
+
+		return {
+			success: true,
+			promoted: shouldPromote,
+			newRole: shouldPromote ? newRole : null,
+		};
+	} catch (error) {
+		console.error("Error updating karma with promotion:", error);
+		return { success: false, error: "Failed to update karma" };
 	}
 }

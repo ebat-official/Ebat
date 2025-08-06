@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 		}
 
 		const { searchParams } = new URL(request.url);
-		const limit = Number.parseInt(searchParams.get("limit") || "20");
+		const limit = Number.parseInt(searchParams.get("limit") || "10");
 		const offset = Number.parseInt(searchParams.get("offset") || "0");
 
 		const { karmaLogs, total } = await getUserKarmaHistory(

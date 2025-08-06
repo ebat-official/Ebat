@@ -9,7 +9,7 @@ interface UseUserKarmaParams {
 export function useUserKarma(
 	params?: UseUserKarmaParams,
 ): UseQueryResult<KarmaHistoryResponse, Error> {
-	const { limit = 20, offset = 0 } = params || {};
+	const { limit = 10, offset = 0 } = params || {};
 
 	return useQuery<KarmaHistoryResponse, Error>({
 		queryKey: ["user-karma", limit, offset],

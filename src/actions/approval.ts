@@ -1,6 +1,6 @@
 "use server";
 
-import { hasModeratorAccess } from "@/auth/roleUtils";
+import { hasEditorAccess, hasModeratorAccess } from "@/auth/roleUtils";
 import { db } from "@/db";
 import {
 	challengeTemplates,
@@ -56,7 +56,7 @@ export async function approvePostEdit(
 		if (!user) return UNAUTHENTICATED_ERROR;
 
 		// For manual approval, check if user has edit-read permission (admin/moderator only)
-		if (!isAutoApproval && !hasModeratorAccess(user.role as UserRole)) {
+		if (!isAutoApproval && !hasEditorAccess(user.role as UserRole)) {
 			return UNAUTHORIZED_ERROR;
 		}
 
@@ -272,7 +272,7 @@ export async function rejectPostEdit(
 		if (!user) return UNAUTHENTICATED_ERROR;
 
 		// Check if user has edit-read permission (admin/moderator only)
-		if (!hasModeratorAccess(user.role as UserRole)) {
+		if (!hasEditorAccess(user.role as UserRole)) {
 			return UNAUTHORIZED_ERROR;
 		}
 

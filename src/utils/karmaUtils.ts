@@ -1,10 +1,14 @@
 import { db } from "@/db";
 import { karmaLogs, user } from "@/db/schema";
-import { KarmaAction, PostType, VoteType } from "@/db/schema/enums";
+import { KarmaAction, PostType, VoteType, UserRole } from "@/db/schema/enums";
 import { eq, and, desc, count } from "drizzle-orm";
 import { KarmaMetadata } from "@/types/karma";
-import { updateUserKarmaPoints, validateUser } from "@/actions/user";
-import { showKarmaNotification } from "@/components/shared/KarmaNotification";
+import {
+	updateUserKarmaPoints,
+	validateUser,
+	updateUserKarmaPointsWithPromotion,
+} from "@/actions/user";
+import { shouldPromoteUser } from "@/auth/roleUtils";
 
 // Karma calculation function
 export function getKarmaAmount(
@@ -57,13 +61,18 @@ export function getKarmaAmount(
 	}
 }
 
-// Main karma award function
+// Main karma award function with role promotion
 export async function awardKarma(
 	userId: string,
 	action: KarmaAction,
 	karmaChange: number,
 	metadata: KarmaMetadata = {},
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{
+	success: boolean;
+	error?: string;
+	promoted?: boolean;
+	newRole?: string;
+}> {
 	try {
 		// Get current user from session
 		const currentUser = await validateUser();
@@ -77,12 +86,15 @@ export async function awardKarma(
 			finalKarmaChange = getKarmaAmount(action, metadata);
 		}
 
+		let promotionResult: { shouldPromote: boolean; newRole: UserRole | null } =
+			{ shouldPromote: false, newRole: null };
+
 		// Use database transaction for atomic operations
 		await db.transaction(async (tx) => {
-			// Get target user karma
+			// Get target user karma and role
 			const targetUser = await tx.query.user.findFirst({
 				where: eq(user.id, userId),
-				columns: { karmaPoints: true },
+				columns: { karmaPoints: true, role: true },
 			});
 
 			if (!targetUser) {
@@ -97,11 +109,21 @@ export async function awardKarma(
 				throw new Error("Insufficient karma for operation");
 			}
 
-			// Update user karma
-			await tx
-				.update(user)
-				.set({ karmaPoints: newKarma })
-				.where(eq(user.id, userId));
+			// Check if user should be promoted
+			promotionResult = shouldPromoteUser(newKarma, targetUser.role);
+
+			// Update user karma and role if eligible
+			if (promotionResult.shouldPromote && promotionResult.newRole) {
+				await tx
+					.update(user)
+					.set({ karmaPoints: newKarma, role: promotionResult.newRole })
+					.where(eq(user.id, userId));
+			} else {
+				await tx
+					.update(user)
+					.set({ karmaPoints: newKarma })
+					.where(eq(user.id, userId));
+			}
 
 			// Log karma transaction
 			await tx.insert(karmaLogs).values({
@@ -115,16 +137,14 @@ export async function awardKarma(
 			});
 		});
 
-		// Show notification (will be implemented later)
-		if (finalKarmaChange !== 0) {
-			showKarmaNotification({
-				action,
-				karmaChange: finalKarmaChange,
-				metadata,
-			});
-		}
-
-		return { success: true };
+		return {
+			success: true,
+			promoted: promotionResult.shouldPromote,
+			newRole:
+				promotionResult.shouldPromote && promotionResult.newRole
+					? promotionResult.newRole
+					: undefined,
+		};
 	} catch (error) {
 		console.error("Error awarding karma:", error);
 		return { success: false, error: "Failed to award karma" };
@@ -134,7 +154,7 @@ export async function awardKarma(
 // Get user karma history
 export async function getUserKarmaHistory(
 	userId: string,
-	limit = 20,
+	limit = 10,
 	offset = 0,
 ): Promise<{ karmaLogs: unknown[]; total: number }> {
 	const [logs, totalResult] = await Promise.all([

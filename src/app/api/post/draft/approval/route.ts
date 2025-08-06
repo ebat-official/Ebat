@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/actions/user";
-import { hasModeratorAccess } from "@/auth/roleUtils";
+import { hasEditorAccess, hasModeratorAccess } from "@/auth/roleUtils";
 import { UserRole } from "@/db/schema/enums";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 		}
 
 		// Check if user has moderator access
-		if (!hasModeratorAccess(currentUser.role as UserRole)) {
+		if (!hasEditorAccess(currentUser.role as UserRole)) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 

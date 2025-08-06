@@ -18,6 +18,95 @@ export const MODERATOR_ACCESS_LEVEL = 2; // MODERATOR and above
 // Minimum hierarchy level required for editor access
 export const EDITOR_ACCESS_LEVEL = 1; // EDITOR and above
 
+// Karma-based role promotion configuration
+export const KARMA_ROLE_THRESHOLDS = {
+	[UserRole.EDITOR]: 100, // 100 karma points to become EDITOR
+	[UserRole.MODERATOR]: 2000, // 2000 karma points to become MODERATOR
+	// Note: ADMIN and SUPER_ADMIN cannot be achieved through karma
+} as const;
+
+// Get the next role milestone for a user
+export function getNextRoleMilestone(
+	currentKarma: number,
+	currentRole: UserRole,
+): {
+	nextRole: UserRole | null;
+	requiredKarma: number;
+	progress: number;
+} {
+	// Users cannot be promoted to ADMIN or SUPER_ADMIN through karma
+	const promotableRoles = [UserRole.EDITOR, UserRole.MODERATOR];
+
+	// Find the next role the user can achieve
+	for (const role of promotableRoles) {
+		const requiredKarma =
+			KARMA_ROLE_THRESHOLDS[role as keyof typeof KARMA_ROLE_THRESHOLDS];
+		const currentHierarchy = getRoleHierarchy(currentRole);
+		const targetHierarchy = getRoleHierarchy(role);
+
+		// Only promote to higher roles
+		if (targetHierarchy > currentHierarchy && currentKarma <= requiredKarma) {
+			const progress = Math.min((currentKarma / requiredKarma) * 100, 100);
+			return {
+				nextRole: role,
+				requiredKarma,
+				progress,
+			};
+		}
+	}
+
+	// User has reached maximum promotable role
+	return {
+		nextRole: null,
+		requiredKarma: 0,
+		progress: 100,
+	};
+}
+
+// Get all role milestones for display
+export function getRoleMilestones(): Array<{
+	role: UserRole;
+	requiredKarma: number;
+	description: string;
+}> {
+	return [
+		{
+			role: UserRole.EDITOR,
+			requiredKarma: KARMA_ROLE_THRESHOLDS[UserRole.EDITOR],
+			description: "Can view and approve post edits",
+		},
+		{
+			role: UserRole.MODERATOR,
+			requiredKarma: KARMA_ROLE_THRESHOLDS[UserRole.MODERATOR],
+			description: "Can delete comments, remove posts, and moderate content",
+		},
+	];
+}
+
+// Check if user should be promoted based on karma
+export function shouldPromoteUser(
+	currentKarma: number,
+	currentRole: UserRole,
+): {
+	shouldPromote: boolean;
+	newRole: UserRole | null;
+} {
+	const { nextRole } = getNextRoleMilestone(currentKarma, currentRole);
+
+	if (!nextRole) {
+		return { shouldPromote: false, newRole: null };
+	}
+
+	const requiredKarma =
+		KARMA_ROLE_THRESHOLDS[nextRole as keyof typeof KARMA_ROLE_THRESHOLDS];
+	const shouldPromote = currentKarma >= requiredKarma;
+
+	return {
+		shouldPromote,
+		newRole: shouldPromote ? nextRole : null,
+	};
+}
+
 /**
  * Get the hierarchy level for a given role
  */
