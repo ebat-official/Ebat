@@ -55,6 +55,7 @@ import { toast } from "sonner";
 import { SUCCESS } from "@/utils/constants";
 import { ApprovalsLockedScreen } from "./ApprovalsLockedScreen";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useServerAction } from "@/hooks/useServerAction";
 
 // Loading Skeleton Component
 function ApprovalsLoadingSkeleton() {
@@ -97,16 +98,6 @@ export function ApprovalsPage() {
 	const canApproveReject =
 		session && hasModeratorAccess(session.user.role as UserRole);
 
-	// Show loading state while session is loading
-	if (isPending) {
-		return <ApprovalsLoadingSkeleton />;
-	}
-
-	// Show locked screen if user is not authenticated or doesn't have moderator access
-	if (!session || !canApproveReject) {
-		return <ApprovalsLockedScreen />;
-	}
-
 	// Separate state for posts tab
 	const [postsSearchQuery, setPostsSearchQuery] = useState("");
 	const [postsSortField, setPostsSortField] = useState<string>("createdAt");
@@ -130,7 +121,15 @@ export function ApprovalsPage() {
 	const [rejectReason, setRejectReason] = useState("");
 	const [selectedEditId, setSelectedEditId] = useState<string | null>(null);
 	const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-	const [isProcessing, setIsProcessing] = useState(false);
+
+	// Server actions with loading states
+	const [approvePostAction, isApprovingPost] = useServerAction(approvePost);
+	const [approveEditAction, isApprovingEdit] = useServerAction(approvePostEdit);
+	const [rejectPostAction, isRejectingPost] = useServerAction(rejectPost);
+	const [rejectEditAction, isRejectingEdit] = useServerAction(rejectPostEdit);
+
+	const isApproving = isApprovingPost || isApprovingEdit;
+	const isRejecting = isRejectingPost || isRejectingEdit;
 
 	// Separate queries for each tab
 	const {
@@ -175,6 +174,16 @@ export function ApprovalsPage() {
 		pageSize: editsPageSize,
 	});
 
+	// Show loading state while session is loading
+	if (isPending) {
+		return <ApprovalsLoadingSkeleton />;
+	}
+
+	// Show locked screen if user is not authenticated or doesn't have moderator access
+	if (!session || !canApproveReject) {
+		return <ApprovalsLockedScreen />;
+	}
+
 	if (postsError) {
 		return (
 			<div className="flex items-center justify-center p-8 text-destructive">
@@ -207,20 +216,22 @@ export function ApprovalsPage() {
 	};
 
 	// Approve/Reject handlers
-	const handleApprove = async () => {
+	const handleApprove = async (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!selectedEditId && !selectedPostId) return;
 
-		setIsProcessing(true);
 		try {
 			if (selectedEditId) {
-				const result = await approvePostEdit(selectedEditId);
+				const result = await approveEditAction(selectedEditId);
 				if (result.status === SUCCESS) {
 					toast.success("Post edit approved successfully!");
 				} else {
 					toast.error(result.data.message || "Failed to approve post edit");
 				}
 			} else if (selectedPostId) {
-				const result = await approvePost(selectedPostId);
+				const result = await approvePostAction(selectedPostId);
 				if (result.status === SUCCESS) {
 					toast.success("Post approved successfully!");
 				} else {
@@ -230,30 +241,32 @@ export function ApprovalsPage() {
 
 			// Refetch data instead of full page reload
 			await Promise.all([refetchPosts(), refetchEdits()]);
-		} catch (error) {
-			toast.error("An error occurred while approving");
-		} finally {
-			setIsProcessing(false);
+
+			// Close dialog and reset state only after successful action
 			setApproveDialogOpen(false);
 			setSelectedEditId(null);
 			setSelectedPostId(null);
+		} catch (error) {
+			toast.error("An error occurred while approving");
 		}
 	};
 
-	const handleReject = async () => {
+	const handleReject = async (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!selectedEditId && !selectedPostId) return;
 
-		setIsProcessing(true);
 		try {
 			if (selectedEditId) {
-				const result = await rejectPostEdit(selectedEditId, rejectReason);
+				const result = await rejectEditAction(selectedEditId, rejectReason);
 				if (result.status === SUCCESS) {
 					toast.success("Post edit rejected successfully!");
 				} else {
 					toast.error(result.data.message || "Failed to reject post edit");
 				}
 			} else if (selectedPostId) {
-				const result = await rejectPost(selectedPostId, rejectReason);
+				const result = await rejectPostAction(selectedPostId, rejectReason);
 				if (result.status === SUCCESS) {
 					toast.success("Post rejected successfully!");
 				} else {
@@ -263,15 +276,15 @@ export function ApprovalsPage() {
 
 			// Refetch data instead of full page reload
 			await Promise.all([refetchPosts(), refetchEdits()]);
-		} catch (error) {
-			toast.error("An error occurred while rejecting");
-		} finally {
-			setIsProcessing(false);
+
+			// Close dialog and reset state only after successful action
 			setRejectDialogOpen(false);
 			setRejectReasonDialogOpen(false);
 			setRejectReason("");
 			setSelectedEditId(null);
 			setSelectedPostId(null);
+		} catch (error) {
+			toast.error("An error occurred while rejecting");
 		}
 	};
 
@@ -481,7 +494,14 @@ export function ApprovalsPage() {
 			</Tabs>
 
 			{/* Approve Confirmation Dialog */}
-			<AlertDialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
+			<AlertDialog
+				open={approveDialogOpen}
+				onOpenChange={(open) => {
+					if (!isApproving) {
+						setApproveDialogOpen(open);
+					}
+				}}
+			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>
@@ -494,22 +514,27 @@ export function ApprovalsPage() {
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isProcessing}>
-							Cancel
-						</AlertDialogCancel>
+						<AlertDialogCancel disabled={isApproving}>Cancel</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={handleApprove}
-							disabled={isProcessing}
+							disabled={isApproving}
 							className="bg-green-600 hover:bg-green-700"
 						>
-							{isProcessing ? "Approving..." : "Approve"}
+							{isApproving ? "Approving..." : "Approve"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
 
 			{/* Reject Confirmation Dialog */}
-			<AlertDialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+			<AlertDialog
+				open={rejectDialogOpen}
+				onOpenChange={(open) => {
+					if (!isRejecting) {
+						setRejectDialogOpen(open);
+					}
+				}}
+			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>
@@ -522,15 +547,13 @@ export function ApprovalsPage() {
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isProcessing}>
-							Cancel
-						</AlertDialogCancel>
+						<AlertDialogCancel disabled={isRejecting}>Cancel</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={handleReject}
-							disabled={isProcessing}
+							disabled={isRejecting}
 							className="bg-red-600 hover:bg-red-700"
 						>
-							{isProcessing ? "Rejecting..." : "Reject"}
+							{isRejecting ? "Rejecting..." : "Reject"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -539,7 +562,11 @@ export function ApprovalsPage() {
 			{/* Reject Reason Dialog */}
 			<Dialog
 				open={rejectReasonDialogOpen}
-				onOpenChange={setRejectReasonDialogOpen}
+				onOpenChange={(open) => {
+					if (!isRejecting) {
+						setRejectReasonDialogOpen(open);
+					}
+				}}
 			>
 				<DialogContent>
 					<DialogHeader>
@@ -574,16 +601,16 @@ export function ApprovalsPage() {
 								setRejectReasonDialogOpen(false);
 								setRejectReason("");
 							}}
-							disabled={isProcessing}
+							disabled={isRejecting}
 						>
 							Cancel
 						</Button>
 						<Button
 							variant="destructive"
 							onClick={handleReject}
-							disabled={isProcessing || rejectReason.length < 4}
+							disabled={isRejecting || rejectReason.length < 4}
 						>
-							{isProcessing ? "Rejecting..." : "Reject"}
+							{isRejecting ? "Rejecting..." : "Reject"}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

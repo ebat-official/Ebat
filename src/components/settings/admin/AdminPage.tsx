@@ -72,6 +72,7 @@ import { AdminUserTable } from "./AdminUserTable";
 import { BanUserForm } from "./BanUserForm";
 import { CreateUserForm } from "./CreateUserForm";
 import type { CreateUserFormValues } from "./CreateUserForm";
+import { useServerAction } from "@/hooks/useServerAction";
 
 export function AdminPage() {
 	const { data: session } = useSession();
@@ -98,6 +99,17 @@ export function AdminPage() {
 		userId: string;
 		role?: UserRole;
 	} | null>(null);
+
+	// Server actions with loading states
+	const [setRoleAction, isSettingRole] = useServerAction(
+		authClient.admin.setRole,
+	);
+	const [deleteUserAction, isDeletingUser] = useServerAction(
+		authClient.admin.removeUser,
+	);
+	const [unbanUserAction, isUnbanningUser] = useServerAction(
+		authClient.admin.unbanUser,
+	);
 
 	// Sorting states
 	const [userSortField, setUserSortField] = useState<keyof User>("createdAt");
@@ -171,11 +183,14 @@ export function AdminPage() {
 		setShowUnbanUser(true);
 	};
 
-	const confirmUnbanUser = async () => {
+	const confirmUnbanUser = async (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!selectedUser) return;
 
 		try {
-			await authClient.admin.unbanUser({ userId: selectedUser.id });
+			await unbanUserAction({ userId: selectedUser.id });
 			toast.success("User unbanned successfully");
 			setShowUnbanUser(false);
 			setSelectedUser(null);
@@ -191,11 +206,14 @@ export function AdminPage() {
 		setShowRoleChangeDialog(true);
 	};
 
-	const confirmSetRole = async () => {
+	const confirmSetRole = async (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!pendingAction || !pendingAction.role) return;
 
 		try {
-			await authClient.admin.setRole({
+			await setRoleAction({
 				userId: pendingAction.userId,
 				role: pendingAction.role,
 			});
@@ -214,11 +232,14 @@ export function AdminPage() {
 		setShowDeleteUserDialog(true);
 	};
 
-	const confirmDeleteUser = async () => {
+	const confirmDeleteUser = async (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
 		if (!pendingAction) return;
 
 		try {
-			await authClient.admin.removeUser({ userId: pendingAction.userId });
+			await deleteUserAction({ userId: pendingAction.userId });
 			toast.success("User deleted successfully");
 			setShowDeleteUserDialog(false);
 			setPendingAction(null);
@@ -506,10 +527,14 @@ export function AdminPage() {
 				</DialogContent>
 			</Dialog>
 
-			{/* Confirmation Dialogs */}
+			{/* Role Change Confirmation Dialog */}
 			<AlertDialog
 				open={showRoleChangeDialog}
-				onOpenChange={setShowRoleChangeDialog}
+				onOpenChange={(open) => {
+					if (!isSettingRole) {
+						setShowRoleChangeDialog(open);
+					}
+				}}
 			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
@@ -517,20 +542,21 @@ export function AdminPage() {
 						<AlertDialogDescription>
 							{(() => {
 								const user = users.find((u) => u.id === pendingAction?.userId);
-								const currentRole = user?.role;
 								const newRole = pendingAction?.role;
-
 								return (
-									<div className="space-y-2">
-										<p>
-											Are you sure you want to change{" "}
-											<strong>{user?.name}</strong>'s role?
-										</p>
-										<div className="flex items-center gap-2 text-sm">
-											<span>From:</span>
-											<Badge variant="secondary">{currentRole}</Badge>
-											<span>To:</span>
-											<Badge variant="default">{newRole}</Badge>
+									<div>
+										<div className="space-y-2">
+											<p>
+												Are you sure you want to change the role of{" "}
+												<span className="font-semibold">
+													{user?.name || user?.email}
+												</span>{" "}
+												from{" "}
+												<span className="font-semibold">
+													{user?.role || "unknown"}
+												</span>{" "}
+												to <span className="font-semibold">{newRole}</span>?
+											</p>
 										</div>
 										<p className="text-xs text-muted-foreground mt-2">
 											This will immediately update the user's permissions and
@@ -542,9 +568,14 @@ export function AdminPage() {
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction onClick={confirmSetRole}>
-							Confirm Role Change
+						<AlertDialogCancel disabled={isSettingRole}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={confirmSetRole}
+							disabled={isSettingRole}
+						>
+							{isSettingRole ? "Updating..." : "Confirm Role Change"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -552,7 +583,11 @@ export function AdminPage() {
 
 			<AlertDialog
 				open={showDeleteUserDialog}
-				onOpenChange={setShowDeleteUserDialog}
+				onOpenChange={(open) => {
+					if (!isDeletingUser) {
+						setShowDeleteUserDialog(open);
+					}
+				}}
 			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
@@ -563,15 +598,27 @@ export function AdminPage() {
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction onClick={confirmDeleteUser}>
-							Delete
+						<AlertDialogCancel disabled={isDeletingUser}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={confirmDeleteUser}
+							disabled={isDeletingUser}
+						>
+							{isDeletingUser ? "Deleting..." : "Delete"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
 
-			<AlertDialog open={showUnbanUser} onOpenChange={setShowUnbanUser}>
+			<AlertDialog
+				open={showUnbanUser}
+				onOpenChange={(open) => {
+					if (!isUnbanningUser) {
+						setShowUnbanUser(open);
+					}
+				}}
+			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>Unban User</AlertDialogTitle>
@@ -580,9 +627,14 @@ export function AdminPage() {
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction onClick={confirmUnbanUser}>
-							Unban
+						<AlertDialogCancel disabled={isUnbanningUser}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={confirmUnbanUser}
+							disabled={isUnbanningUser}
+						>
+							{isUnbanningUser ? "Unbanning..." : "Unban"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
