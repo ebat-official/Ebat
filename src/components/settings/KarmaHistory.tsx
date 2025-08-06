@@ -2,13 +2,29 @@
 
 import { useState } from "react";
 import { useUserKarma } from "@/hooks/query/useUserKarma";
-import { KarmaAction, VoteType } from "@/db/schema/enums";
+import {
+	KarmaAction,
+	VoteType,
+	PostCategory,
+	SubCategory,
+	PostType,
+} from "@/db/schema/enums";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import { KarmaLogEntry } from "@/types/karma";
+import { generatePostPath } from "@/utils/generatePostPath";
+import { Info, TrendingUp } from "lucide-react";
+import { KarmaEmptyState } from "./KarmaEmptyState";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 
 const KarmaHistorySkeleton = () => (
 	<div className="space-y-4">
@@ -35,46 +51,15 @@ const getActionIcon = (action: string, karmaChange: number) => {
 	const isPositive = karmaChange > 0;
 	const isNegative = karmaChange < 0;
 
-	switch (action) {
-		case KarmaAction.POST_APPROVAL:
-		case KarmaAction.POST_EDIT_APPROVAL:
-			return (
-				<span
-					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
-				>
-					✓
-				</span>
-			);
-		case KarmaAction.POST_VOTE:
-		case KarmaAction.COMMENT_VOTE: {
-			const voteType = karmaChange > 0 ? "up" : "down";
-			const arrow = voteType === "up" ? "▲" : "▼";
-			return (
-				<span
-					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
-				>
-					{arrow}
-				</span>
-			);
-		}
-		case KarmaAction.POST_VOTE_REMOVAL:
-		case KarmaAction.COMMENT_VOTE_REMOVAL:
-			return (
-				<span
-					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
-				>
-					▼
-				</span>
-			);
-		default:
-			return (
-				<span
-					className={`h-4 w-4 ${isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-gray-500"}`}
-				>
-					✏
-				</span>
-			);
-	}
+	// Use ▲ for all actions, pointing up for positive, down for negative
+	const arrow = isPositive ? "▲" : "▼";
+	const colorClass = isPositive
+		? "text-green-500"
+		: isNegative
+			? "text-red-500"
+			: "text-gray-500";
+
+	return <span className={`h-4 w-4 ${colorClass}`}>{arrow}</span>;
 };
 
 const getActionLabel = (
@@ -84,28 +69,78 @@ const getActionLabel = (
 ) => {
 	const username = fromUser?.displayUsername || fromUser?.username || "Someone";
 
+	// Generate post URL if we have the required metadata
+	let postUrl = "";
+	if (
+		metadata?.postId &&
+		metadata?.category &&
+		metadata?.subCategory &&
+		metadata?.slug &&
+		metadata?.postType
+	) {
+		postUrl = generatePostPath({
+			category: metadata.category as PostCategory,
+			subCategory: metadata.subCategory as SubCategory,
+			slug: metadata.slug as string,
+			id: metadata.postId as string,
+			postType: metadata.postType as PostType,
+		});
+	}
+
+	const renderPostTitle = (title: string) => {
+		if (postUrl) {
+			return (
+				<button
+					type="button"
+					onClick={() => window.open(postUrl, "_blank")}
+					className="underline cursor-pointer"
+				>
+					{title}
+				</button>
+			);
+		}
+		return title;
+	};
+
 	switch (action) {
 		case KarmaAction.POST_APPROVAL: {
 			if (metadata?.isApprover) {
 				const postTitle = metadata?.postTitle as string;
-				return `You approved "${postTitle || "a post"}"`;
+				return <>You approved {renderPostTitle(postTitle || "a post")}</>;
 			}
 			const postTitle = metadata?.postTitle as string;
-			return `${username} approved your post "${postTitle || "unknown"}"`;
+			return (
+				<>
+					{username} approved your post{" "}
+					{renderPostTitle(postTitle || "unknown")}
+				</>
+			);
 		}
 		case KarmaAction.POST_EDIT_APPROVAL: {
 			if (metadata?.isApprover) {
 				const postTitle = metadata?.postTitle as string;
-				return `You approved an edit to "${postTitle || "a post"}"`;
+				return (
+					<>You approved an edit to {renderPostTitle(postTitle || "a post")}</>
+				);
 			}
 			const editPostTitle = metadata?.postTitle as string;
-			return `${username} approved your edit to "${editPostTitle || "a post"}"`;
+			return (
+				<>
+					{username} approved your edit to{" "}
+					{renderPostTitle(editPostTitle || "a post")}
+				</>
+			);
 		}
 		case KarmaAction.POST_VOTE: {
 			const postTitle = metadata?.postTitle as string;
 			const voteType = metadata?.voteType as string;
 			const actionText = voteType === VoteType.UP ? "upvoted" : "downvoted";
-			return `${username} ${actionText} your post "${postTitle || "unknown"}"`;
+			return (
+				<>
+					{username} {actionText} your post{" "}
+					{renderPostTitle(postTitle || "unknown")}
+				</>
+			);
 		}
 		case KarmaAction.COMMENT_VOTE: {
 			const voteType = metadata?.voteType as string;
@@ -114,7 +149,12 @@ const getActionLabel = (
 		}
 		case KarmaAction.POST_VOTE_REMOVAL: {
 			const postTitle = metadata?.postTitle as string;
-			return `${username} removed their vote on your post "${postTitle || "unknown"}"`;
+			return (
+				<>
+					{username} removed their vote on your post{" "}
+					{renderPostTitle(postTitle || "unknown")}
+				</>
+			);
 		}
 		case KarmaAction.COMMENT_VOTE_REMOVAL:
 			return `${username} removed their vote on your comment`;
@@ -125,6 +165,7 @@ const getActionLabel = (
 
 export const KarmaHistory = () => {
 	const [currentPage, setCurrentPage] = useState(0);
+	const [showKarmaInfo, setShowKarmaInfo] = useState(false);
 	const limit = 20;
 	const offset = currentPage * limit;
 
@@ -158,18 +199,52 @@ export const KarmaHistory = () => {
 		);
 	}
 
+	// If no karma logs, show the empty state
 	if (!data?.karmaLogs || data.karmaLogs.length === 0) {
 		return (
-			<Card>
-				<CardHeader>
-					<CardTitle>Karma History</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="text-center py-8 text-muted-foreground">
-						No karma history yet
-					</div>
-				</CardContent>
-			</Card>
+			<>
+				<Card>
+					<CardHeader>
+						<div className="flex items-center justify-between">
+							<CardTitle>Karma History</CardTitle>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setShowKarmaInfo(true)}
+								className="flex items-center gap-2"
+							>
+								<Info className="h-4 w-4" />
+								Learn more about karma
+							</Button>
+						</div>
+					</CardHeader>
+					<CardContent>
+						<div className="text-center py-12">
+							<TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+							<h3 className="text-lg font-semibold text-foreground mb-2">
+								No Karma History Yet
+							</h3>
+							<p className="text-muted-foreground">
+								Start contributing to earn karma points and build your
+								reputation.
+							</p>
+						</div>
+					</CardContent>
+				</Card>
+
+				{/* Karma Info Modal */}
+				<Dialog open={showKarmaInfo} onOpenChange={setShowKarmaInfo}>
+					<DialogContent className="!max-w-[95vw] !w-[95vw] !h-[95vh] max-h-[95vh] overflow-y-auto">
+						<DialogHeader>
+							<DialogTitle>Learn About Karma</DialogTitle>
+							<DialogDescription>
+								Discover how to earn karma points and build your reputation.
+							</DialogDescription>
+						</DialogHeader>
+						<KarmaEmptyState isModal={true} />
+					</DialogContent>
+				</Dialog>
+			</>
 		);
 	}
 
@@ -178,7 +253,18 @@ export const KarmaHistory = () => {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Karma History</CardTitle>
+				<div className="flex items-center justify-between">
+					<CardTitle>Karma History</CardTitle>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => setShowKarmaInfo(true)}
+						className="flex items-center gap-2"
+					>
+						<Info className="h-4 w-4" />
+						Learn more about karma
+					</Button>
+				</div>
 			</CardHeader>
 			<CardContent>
 				<div className="space-y-4">
@@ -235,6 +321,19 @@ export const KarmaHistory = () => {
 					</div>
 				)}
 			</CardContent>
+
+			{/* Karma Info Modal */}
+			<Dialog open={showKarmaInfo} onOpenChange={setShowKarmaInfo}>
+				<DialogContent className="!max-w-[95vw] !w-[95vw] !h-[95vh] max-h-[95vh] overflow-y-auto">
+					<DialogHeader>
+						<DialogTitle>Learn About Karma</DialogTitle>
+						<DialogDescription>
+							Discover how to earn karma points and build your reputation.
+						</DialogDescription>
+					</DialogHeader>
+					<KarmaEmptyState isModal={true} />
+				</DialogContent>
+			</Dialog>
 		</Card>
 	);
 };

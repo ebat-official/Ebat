@@ -1,6 +1,13 @@
 import { toast } from "sonner";
-import { KarmaAction, PostType, VoteType } from "@/db/schema/enums";
+import {
+	KarmaAction,
+	PostType,
+	VoteType,
+	PostCategory,
+	SubCategory,
+} from "@/db/schema/enums";
 import { KarmaMetadata } from "@/types/karma";
+import { generatePostPath } from "@/utils/generatePostPath";
 
 interface KarmaNotificationProps {
 	action: KarmaAction;
@@ -18,6 +25,24 @@ export const showKarmaNotification = ({
 
 	let title = "";
 	let description = "";
+	let postUrl = "";
+
+	// Generate post URL if we have the required metadata
+	if (
+		metadata.postId &&
+		metadata.category &&
+		metadata.subCategory &&
+		metadata.slug &&
+		metadata.postType
+	) {
+		postUrl = generatePostPath({
+			category: metadata.category as PostCategory,
+			subCategory: metadata.subCategory as SubCategory,
+			slug: metadata.slug,
+			id: metadata.postId,
+			postType: metadata.postType as PostType,
+		});
+	}
 
 	switch (action) {
 		case KarmaAction.POST_APPROVAL: {
@@ -25,10 +50,10 @@ export const showKarmaNotification = ({
 			const isApprover = metadata.isApprover;
 			if (isApprover) {
 				title = `Post Approval! +${karmaChange} karma`;
-				description = `You approved "${postTitle || "a post"}"`;
+				description = `You approved ${postTitle || "a post"}`;
 			} else {
 				title = `Post Approved! +${karmaChange} karma`;
-				description = `Your post "${postTitle || "unknown"}" was approved`;
+				description = `Your post ${postTitle || "unknown"} was approved`;
 			}
 			break;
 		}
@@ -37,10 +62,10 @@ export const showKarmaNotification = ({
 			const isApprover = metadata.isApprover;
 			if (isApprover) {
 				title = `Edit Approval! +${karmaChange} karma`;
-				description = `You approved an edit to "${postTitle || "a post"}"`;
+				description = `You approved an edit to ${postTitle || "a post"}`;
 			} else {
 				title = `Edit Approved! +${karmaChange} karma`;
-				description = `Your edit to "${postTitle || "a post"}" was approved`;
+				description = `Your edit to ${postTitle || "a post"} was approved`;
 			}
 			break;
 		}
@@ -49,7 +74,7 @@ export const showKarmaNotification = ({
 			const voteType = metadata.voteType;
 			const actionText = voteType === VoteType.UP ? "upvoted" : "downvoted";
 			title = `Post ${voteType === VoteType.UP ? "Upvoted" : "Downvoted"}! ${karmaChange > 0 ? "+" : ""}${karmaChange} karma`;
-			description = `Someone ${actionText} your post "${postTitle || "unknown"}"`;
+			description = `Someone ${actionText} your post ${postTitle || "unknown"}`;
 			break;
 		}
 		case KarmaAction.COMMENT_VOTE: {
@@ -62,7 +87,7 @@ export const showKarmaNotification = ({
 		case KarmaAction.POST_VOTE_REMOVAL: {
 			const postTitle = metadata.postTitle;
 			title = `Vote Removed! ${karmaChange > 0 ? "+" : ""}${karmaChange} karma`;
-			description = `Someone removed their vote on your post "${postTitle || "unknown"}"`;
+			description = `Someone removed their vote on your post ${postTitle || "unknown"}`;
 			break;
 		}
 		case KarmaAction.COMMENT_VOTE_REMOVAL:
@@ -74,15 +99,42 @@ export const showKarmaNotification = ({
 			description = "Your karma has changed";
 	}
 
+	// Create action buttons
+	const actions = [];
+
+	// Add "View Post" action if we have a post URL
+	if (postUrl) {
+		actions.push({
+			label: "View Post",
+			onClick: () => {
+				window.open(postUrl, "_blank");
+			},
+		});
+	}
+
+	// Add "View History" action
+	actions.push({
+		label: "View History",
+		onClick: () => {
+			window.location.href = "/settings/karma";
+		},
+	});
+
 	toast(title, {
 		description,
-		action: {
-			label: "View History",
-			onClick: () => {
-				// Navigate to karma history page
-				window.location.href = "/settings/karma";
-			},
-		},
+		action:
+			actions.length === 1
+				? actions[0]
+				: {
+						label: "Actions",
+						onClick: () => {
+							// For multiple actions, show the post first, then history
+							if (postUrl) {
+								window.open(postUrl, "_blank");
+							}
+							window.location.href = "/settings/karma";
+						},
+					},
 		className: isPositive
 			? "border-green-500"
 			: isNegative

@@ -1,4 +1,9 @@
-import { PostType, VoteType } from "@/db/schema/enums";
+import {
+	PostType,
+	VoteType,
+	PostCategory,
+	SubCategory,
+} from "@/db/schema/enums";
 
 export interface KarmaMetadata {
 	postId?: string;
@@ -7,8 +12,8 @@ export interface KarmaMetadata {
 	voteType?: VoteType;
 	baseAmount?: number;
 	postTitle?: string | null;
-	category?: string | null;
-	subCategory?: string | null;
+	category?: PostCategory | null;
+	subCategory?: SubCategory | null;
 	slug?: string | null;
 	isApprover?: boolean;
 	[key: string]: unknown;
