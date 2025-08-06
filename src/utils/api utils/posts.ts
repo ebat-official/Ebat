@@ -536,7 +536,8 @@ export interface PostSearchQueryParams {
 	page?: number;
 	pageSize?: number;
 	sortOrder?: PostSortOrder;
-	[key: string]: string | number | PostSortOrder | undefined;
+	type?: PostType;
+	[key: string]: string | number | PostSortOrder | PostType | undefined;
 }
 
 export async function fetchPostSearch(

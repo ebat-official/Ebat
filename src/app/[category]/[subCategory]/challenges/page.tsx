@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: PageProps }) {
 		page: 1,
 		pageSize: 10,
 		sortOrder: PostSortOrder.Latest,
-		type: PostType.QUESTION,
+		type: PostType.CHALLENGE,
 	};
 
 	const data = await fetchPostSearch(queryParams);

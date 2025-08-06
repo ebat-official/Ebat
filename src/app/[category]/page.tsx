@@ -1,6 +1,6 @@
 import { Feed } from "@/components/feed/Feed";
 import { FeedProvider } from "@/components/feed/FeedContext";
-import { PostCategory, SubCategory } from "@/db/schema/enums";
+import { PostCategory, SubCategory, PostType } from "@/db/schema/enums";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 import { generateCategoryMetadata } from "@/utils/categoryMetadata";
 import { EndpointMap } from "@/utils/constants";
@@ -83,6 +83,7 @@ export default async function Page({ params }: { params: PageProps }) {
 		page: 1,
 		pageSize: 10,
 		sortOrder: PostSortOrder.Latest,
+		type: PostType.BLOGS,
 	};
 
 	const data = await fetchPostSearch(queryParams);

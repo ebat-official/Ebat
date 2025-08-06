@@ -5,6 +5,7 @@ import {
 	PostCategoryType,
 	SubCategory,
 	SubCategoryType,
+	PostType,
 } from "@/db/schema/enums";
 import { fetchPostSearch } from "@/utils/api utils/posts";
 import { generateCategoryMetadata } from "@/utils/categoryMetadata";
@@ -92,6 +93,10 @@ export default async function Page({ params }: { params: PageProps }) {
 		page: 1,
 		pageSize: 10,
 		sortOrder: PostSortOrder.Latest,
+		type:
+			awaitedParams.subCategory.toLowerCase() === SubCategory.SYSTEMDESIGN
+				? PostType.SYSTEMDESIGN
+				: PostType.BLOGS,
 	};
 
 	const data = await fetchPostSearch(queryParams);

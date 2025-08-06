@@ -1,18 +1,14 @@
 "use client";
 import { usePostSearch } from "@/hooks/query/usePostSearch";
 import { useCompletionStatus } from "@/hooks/useCompletionStatus";
+import { useUrlPriorityParams } from "@/hooks/useUrlPriorityParams";
 import {
 	PostSearchContext,
 	PostSearchResponse,
 	PostSortOrder,
 } from "@/utils/types";
-import React, {
-	createContext,
-	useContext,
-	useState,
-	useEffect,
-	use,
-} from "react";
+import { PostType } from "@/db/schema/enums";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 // Types for the context value
 export interface FeedContextType {
@@ -32,6 +28,8 @@ export interface FeedContextType {
 	setSubCategory: React.Dispatch<React.SetStateAction<string | undefined>>;
 	companies: string[] | undefined;
 	setCompanies: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+	type: PostType | undefined;
+	setType: React.Dispatch<React.SetStateAction<PostType | undefined>>;
 	page: number;
 	setPage: React.Dispatch<React.SetStateAction<number>>;
 	pageSize: number;
@@ -64,6 +62,7 @@ interface FeedProviderProps {
 		page?: number;
 		pageSize?: number;
 		sortOrder?: PostSortOrder;
+		type?: PostType;
 		enabled?: boolean;
 	};
 	children: React.ReactNode;
@@ -75,31 +74,40 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 	queryParams,
 	children,
 }) => {
+	// Get URL-priority parameters
+	const urlPriorityParams = useUrlPriorityParams(queryParams);
+
+	// Initialize state with URL-priority parameters
 	const [searchQuery, setSearchQuery] = useState<string | undefined>(
-		queryParams.searchQuery,
+		urlPriorityParams.searchQuery,
 	);
 	const [difficulty, setDifficulty] = useState<string[] | undefined>(
-		queryParams.difficulty,
+		urlPriorityParams.difficulty,
 	);
 	const [topics, setTopics] = useState<string[] | undefined>(
-		queryParams.topics,
+		urlPriorityParams.topics,
 	);
 	const [category, setCategory] = useState<string | undefined>(
-		queryParams.category,
+		urlPriorityParams.category,
 	);
 	const [subCategory, setSubCategory] = useState<string | undefined>(
-		queryParams.subCategory,
+		urlPriorityParams.subCategory,
 	);
 	const [companies, setCompanies] = useState<string[] | undefined>(
-		queryParams.companies,
+		urlPriorityParams.companies,
+	);
+	const [type, setType] = useState<PostType | undefined>(
+		urlPriorityParams.type,
 	);
 	const [completionStatuses, setCompletionStatuses] = useState<
 		Record<string, boolean>
 	>({});
-	const [page, setPage] = useState<number>(queryParams.page ?? 1);
-	const [pageSize, setPageSize] = useState<number>(queryParams.pageSize ?? 10);
+	const [page, setPage] = useState<number>(urlPriorityParams.page ?? 1);
+	const [pageSize, setPageSize] = useState<number>(
+		urlPriorityParams.pageSize ?? 10,
+	);
 	const [sortOrder, setSortOrder] = useState<PostSortOrder>(
-		queryParams.sortOrder || PostSortOrder.Latest,
+		urlPriorityParams.sortOrder,
 	);
 
 	// NEW: Accumulated posts state
@@ -114,6 +122,7 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 			category,
 			subCategory,
 			companies,
+			type,
 			page,
 			pageSize,
 			sortOrder,
@@ -139,6 +148,7 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 		category,
 		subCategory,
 		companies,
+		type,
 		sortOrder,
 	]);
 
@@ -185,6 +195,8 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 				setSubCategory,
 				companies,
 				setCompanies,
+				type,
+				setType,
 				page,
 				setPage,
 				pageSize,

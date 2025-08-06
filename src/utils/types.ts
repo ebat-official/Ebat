@@ -330,6 +330,7 @@ export interface UsePostSearchOptions {
 	page?: number;
 	pageSize?: number;
 	sortOrder?: string;
+	type?: PostType;
 	initialPosts?: FeedPost[];
 	initialContext?: PostSearchContext;
 	enabled?: boolean;

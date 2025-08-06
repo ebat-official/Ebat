@@ -5,6 +5,7 @@ import {
 	PostSearchResponse,
 	UsePostSearchOptions,
 } from "@/utils/types";
+import { PostType } from "@/db/schema/enums";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 // Import the API response type directly from the endpoint if exported
 // If not, you can define it here or use zod/yup inference if available
@@ -28,6 +29,7 @@ export function usePostSearch(
 			queryParams.category,
 			queryParams.subCategory,
 			JSON.stringify(queryParams.companies || []),
+			queryParams.type,
 			queryParams.page,
 			queryParams.pageSize,
 			queryParams.sortOrder,
@@ -36,15 +38,25 @@ export function usePostSearch(
 			const params = new URLSearchParams();
 			if (queryParams.searchQuery)
 				params.append("searchQuery", queryParams.searchQuery);
-			if (queryParams.difficulty)
-				queryParams.difficulty.forEach((d) => params.append("difficulty", d));
-			if (queryParams.topics)
-				queryParams.topics.forEach((t) => params.append("topics", t));
+			if (queryParams.difficulty) {
+				for (const d of queryParams.difficulty) {
+					params.append("difficulty", d);
+				}
+			}
+			if (queryParams.topics) {
+				for (const t of queryParams.topics) {
+					params.append("topics", t);
+				}
+			}
 			if (queryParams.category) params.append("category", queryParams.category);
 			if (queryParams.subCategory)
 				params.append("subCategory", queryParams.subCategory);
-			if (queryParams.companies)
-				queryParams.companies.forEach((c) => params.append("companies", c));
+			if (queryParams.companies) {
+				for (const c of queryParams.companies) {
+					params.append("companies", c);
+				}
+			}
+			if (queryParams.type) params.append("type", queryParams.type);
 			if (queryParams.page) params.append("page", String(queryParams.page));
 			if (queryParams.pageSize)
 				params.append("pageSize", String(queryParams.pageSize));
