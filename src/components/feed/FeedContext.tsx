@@ -145,14 +145,15 @@ export const FeedProvider: React.FC<FeedProviderProps> = ({
 	useEffect(() => {
 		if (!data?.posts) return;
 
+		// Use the current page state instead of data.context.page to avoid stale data issues
 		// If page is 1, replace posts (new search/filter)
 		// If page > 1, append posts (pagination)
-		if (data.context.page === 1) {
+		if (page === 1) {
 			setAccumulatedPosts(data.posts);
 		} else {
 			setAccumulatedPosts((prev) => [...prev, ...data.posts]);
 		}
-	}, [data?.posts, data?.context?.page]);
+	}, [data?.posts, page]);
 
 	const postIds = data?.posts?.map((post) => post.id);
 	const { statuses } = useCompletionStatus(postIds);
