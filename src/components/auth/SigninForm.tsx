@@ -176,7 +176,7 @@ const SigninForm: FC<SigninFormProps> = ({ modelHandler }) => {
 						<Input
 							{...register("password")}
 							type={showPassword ? TEXT : PASSWORD}
-							name={PASSWORD}
+							name="password"
 							className={cn("focus-visible:ring-0 focus-visible:outline-none", {
 								"border-red-500": errors?.password,
 							})}
