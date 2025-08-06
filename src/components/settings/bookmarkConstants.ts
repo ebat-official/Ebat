@@ -90,7 +90,8 @@ export const bookmarkColumnConfig: ColumnConfig[] = [
 			{ value: PostType.QUESTION, label: "Question" },
 			{ value: PostType.CHALLENGE, label: "Challenge" },
 			{ value: PostType.BLOGS, label: "Blog" },
-			{ value: PostType.SYSTEMDESIGN, label: "System Design" },
+			{ value: PostType.HLD, label: "System Design (HLD)" },
+			{ value: PostType.LLD, label: "System Design (LLD)" },
 		],
 	},
 	{

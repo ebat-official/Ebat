@@ -28,7 +28,8 @@ export enum PostType {
 	BLOGS = "blogs",
 	QUESTION = "question",
 	CHALLENGE = "challenge",
-	SYSTEMDESIGN = "systemdesign",
+	HLD = "hld",
+	LLD = "lld",
 }
 
 export enum Difficulty {

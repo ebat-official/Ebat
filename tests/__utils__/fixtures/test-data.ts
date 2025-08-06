@@ -109,7 +109,7 @@ export const testPosts: Record<string, TestPost> = {
 		title: "Designing a URL Shortener Service",
 		content:
 			"Learn how to design a scalable URL shortening service like bit.ly.",
-		type: PostType.SYSTEMDESIGN,
+		type: PostType.HLD,
 		difficulty: Difficulty.HARD,
 		category: PostCategory.BACKEND,
 		subCategory: SubCategory.SYSTEMDESIGN,

@@ -31,7 +31,8 @@ export const getCompletionDuration = (
 			}
 		case PostType.BLOGS:
 			return 20;
-		case PostType.SYSTEMDESIGN:
+		case PostType.HLD:
+		case PostType.LLD:
 			return 20;
 		default:
 			return 15;

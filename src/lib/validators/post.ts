@@ -163,9 +163,11 @@ const BasePostValidator = z
 			}
 		}
 
-		// Ensure thumbnail is required for BLOGS and SYSTEMDESIGN
+		// Ensure thumbnail is required for BLOGS, HLD, and LLD
 		if (
-			(data.type === PostType.BLOGS || data.type === PostType.SYSTEMDESIGN) &&
+			(data.type === PostType.BLOGS ||
+				data.type === PostType.HLD ||
+				data.type === PostType.LLD) &&
 			!data.thumbnail
 		) {
 			ctx.addIssue({

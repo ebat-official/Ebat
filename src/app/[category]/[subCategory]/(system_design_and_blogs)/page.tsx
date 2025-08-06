@@ -95,7 +95,7 @@ export default async function Page({ params }: { params: PageProps }) {
 		sortOrder: PostSortOrder.Latest,
 		type:
 			awaitedParams.subCategory.toLowerCase() === SubCategory.SYSTEMDESIGN
-				? PostType.SYSTEMDESIGN
+				? PostType.HLD // Default to HLD for system design
 				: PostType.BLOGS,
 	};
 

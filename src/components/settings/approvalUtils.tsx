@@ -41,8 +41,10 @@ export const getTypeBadge = (type: PostType) => {
 			return <Badge variant="outline">Challenge</Badge>;
 		case PostType.BLOGS:
 			return <Badge variant="outline">Blog</Badge>;
-		case PostType.SYSTEMDESIGN:
-			return <Badge variant="outline">System Design</Badge>;
+		case PostType.HLD:
+			return <Badge variant="outline">System Design (HLD)</Badge>;
+		case PostType.LLD:
+			return <Badge variant="outline">System Design (LLD)</Badge>;
 		default:
 			return (
 				<Badge variant="outline">

@@ -45,13 +45,15 @@ const PostDetailsAccordian: FC<PostDetailsAccordianProps> = ({ post }) => {
 					type="multiple"
 				>
 					{(post.type === PostType.BLOGS ||
-						post.type === PostType.SYSTEMDESIGN) &&
+						post.type === PostType.HLD ||
+						post.type === PostType.LLD) &&
 						post.tableOfContent &&
 						post.tableOfContent?.length > 0 && (
 							<TableOfContentAccordion tableOfContent={post.tableOfContent} />
 						)}
 					{((post.type !== PostType.BLOGS &&
-						post.type !== PostType.SYSTEMDESIGN) ||
+						post.type !== PostType.HLD &&
+						post.type !== PostType.LLD) ||
 						(post.companies && post.companies.length > 0)) && (
 						<CompaniesAccordion companies={post.companies || []} />
 					)}

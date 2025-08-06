@@ -29,6 +29,7 @@ import {
 	PostActions,
 	PostWithContent,
 	SubCategoryType,
+	QuestionSidebarData,
 } from "@/utils/types";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState, startTransition } from "react";
@@ -50,7 +51,7 @@ function PostCreateEdit({
 	action,
 	postType,
 }: PostCreateEditProps) {
-	const [sidebarData, setSidebarData] = useState({});
+	const [sidebarData, setSidebarData] = useState<QuestionSidebarData>({});
 	const router = useRouter();
 	const startProgress = useProgress();
 	const [postId, setPostId] = useState<string>(initialPostId || "");
@@ -134,6 +135,16 @@ function PostCreateEdit({
 
 	const getPostData = (postContent: ContentType) => {
 		const { thumbnail, challengeTemplates, ...content } = postContent;
+
+		// Update postType based on sidebar data for system design types
+		let finalPostType = postType;
+		if (
+			sidebarData.systemDesignType &&
+			(postType === PostType.HLD || postType === PostType.LLD)
+		) {
+			finalPostType = sidebarData.systemDesignType;
+		}
+
 		return {
 			postId,
 			category,
@@ -142,7 +153,7 @@ function PostCreateEdit({
 			thumbnail: thumbnail || postData?.thumbnail,
 			challengeTemplates,
 			sidebarData,
-			type: postType,
+			type: finalPostType,
 		};
 	};
 
@@ -165,7 +176,9 @@ function PostCreateEdit({
 	) => {
 		const data = getPostData(postContent);
 		if (
-			(postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) &&
+			(postType === PostType.BLOGS ||
+				postType === PostType.HLD ||
+				postType === PostType.LLD) &&
 			!data.thumbnail
 		) {
 			//thumbnail is required for blogs and system design

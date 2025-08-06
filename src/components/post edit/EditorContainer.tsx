@@ -142,7 +142,11 @@ function EditorContainer({
 	const handlePublish = async () => {
 		const payload = getPayload();
 		// If thumbnail is required and not set, show the thumbnail upload
-		if (postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) {
+		if (
+			postType === PostType.BLOGS ||
+			postType === PostType.HLD ||
+			postType === PostType.LLD
+		) {
 			setShowThumbnailUpload(true);
 			return;
 		}
@@ -273,7 +277,8 @@ function EditorContainer({
 			case PostType.CHALLENGE:
 				return "Question";
 			case PostType.BLOGS:
-			case PostType.SYSTEMDESIGN:
+			case PostType.HLD:
+			case PostType.LLD:
 				return "Title";
 			default:
 				return "Title";
@@ -287,7 +292,8 @@ function EditorContainer({
 				return "Add more info to clarify (optional)...";
 			case PostType.BLOGS:
 				return "Type your blog here...";
-			case PostType.SYSTEMDESIGN:
+			case PostType.HLD:
+			case PostType.LLD:
 				return "Design your system here...";
 			default:
 				return "Type your content here...";

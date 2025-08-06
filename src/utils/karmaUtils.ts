@@ -23,7 +23,8 @@ export function getKarmaAmount(
 					return 5;
 				case PostType.CHALLENGE:
 					return 20;
-				case PostType.SYSTEMDESIGN:
+				case PostType.HLD:
+				case PostType.LLD:
 					return 20;
 				case PostType.BLOGS:
 					return 10;
@@ -38,7 +39,8 @@ export function getKarmaAmount(
 					return 3; // Half of 5, rounded up
 				case PostType.CHALLENGE:
 					return 10; // Half of 20
-				case PostType.SYSTEMDESIGN:
+				case PostType.HLD:
+				case PostType.LLD:
 					return 10; // Half of 20
 				case PostType.BLOGS:
 					return 5; // Half of 10

@@ -17,7 +17,7 @@ function Page() {
 	const category = (
 		Array.isArray(categoryRoute) ? categoryRoute[0] : categoryRoute
 	)?.toLowerCase();
-	const postType = (
+	const subCategory = (
 		Array.isArray(subCategoryRoute) ? subCategoryRoute[0] : subCategoryRoute
 	)?.toLowerCase();
 
@@ -26,8 +26,11 @@ function Page() {
 	// Validate dynamic parameters
 	if (
 		!category ||
-		!postType ||
-		!(postType === PostType.BLOGS || postType === PostType.SYSTEMDESIGN) ||
+		!subCategory ||
+		!(
+			subCategory === SubCategory.BLOGS ||
+			subCategory === SubCategory.SYSTEMDESIGN
+		) ||
 		!isValidCategory(category)
 	) {
 		notFound();
@@ -36,14 +39,12 @@ function Page() {
 	return (
 		<PostCreateEdit
 			category={category}
-			subCategory={
-				postType === PostType.BLOGS
-					? SubCategory.BLOGS
-					: SubCategory.SYSTEMDESIGN
-			}
+			subCategory={subCategory}
 			postId={postId}
 			action={POST_ACTIONS.CREATE}
-			postType={postType}
+			postType={
+				subCategory === SubCategory.BLOGS ? PostType.BLOGS : PostType.HLD
+			}
 		/>
 	);
 }

@@ -13,6 +13,7 @@ import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import { convertFromMinutes, convertToMinutes } from "@/utils/converToMinutes";
 import { QuestionSidebarData, TopicCategory } from "@/utils/types";
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AiOutlineTag } from "react-icons/ai";
 import { CiCircleList } from "react-icons/ci";
 import { IoMdTime } from "react-icons/io";
@@ -53,6 +54,7 @@ function QuestionSidebar({
 	const { companies, searchCompanies } = useCompanies();
 	const { topics, searchTopics } = useTopics(topicCategory);
 
+	const searchParams = useSearchParams();
 	const [selectedCompanies, setSelectedCompanies] = useState<InternalOption[]>(
 		[],
 	);
@@ -60,13 +62,26 @@ function QuestionSidebar({
 	const [difficulty, setDifficulty] = useState("");
 	const [completionDuration, setCompletionDuration] =
 		useState(INITIAL_DURATION);
+	const [systemDesignType, setSystemDesignType] = useState<PostType>(
+		searchParams.get("type") === "LLD" ? PostType.LLD : PostType.HLD,
+	);
+
+	const handleSystemDesignTypeChange = (value: string) => {
+		setSystemDesignType(value as PostType);
+	};
 
 	useEffect(() => {
 		if (!postId || dataLoading) return;
 		const data = consolidateData();
 		getSidebarData(data);
 		setLocalStorage(`sidebar-${postId}`, data);
-	}, [selectedCompanies, selectedTopics, difficulty, completionDuration]);
+	}, [
+		selectedCompanies,
+		selectedTopics,
+		difficulty,
+		completionDuration,
+		systemDesignType,
+	]);
 
 	useEffect(() => {
 		if (!postId || dataLoading) return;
@@ -100,6 +115,8 @@ function QuestionSidebar({
 		if (initialData.completionDuration)
 			setCompletionDuration(convertFromMinutes(initialData.completionDuration));
 		if (initialData.difficulty) setDifficulty(initialData.difficulty);
+		if (initialData.systemDesignType)
+			setSystemDesignType(initialData.systemDesignType);
 	}
 
 	function consolidateData(): QuestionSidebarData {
@@ -117,6 +134,11 @@ function QuestionSidebar({
 			data.completionDuration = convertToMinutes(completionDuration);
 		}
 
+		// Add system design type for HLD/LLD posts (HLD is default)
+		if (postType === PostType.HLD || postType === PostType.LLD) {
+			data.systemDesignType = systemDesignType;
+		}
+
 		return data;
 	}
 
@@ -124,7 +146,11 @@ function QuestionSidebar({
 		<Card>
 			<CardContent>
 				<Accordion
-					defaultValue={["difficulty", "table of contents"]}
+					defaultValue={
+						postType === PostType.HLD || postType === PostType.LLD
+							? ["difficulty", "system design type", "table of contents"]
+							: ["difficulty", "table of contents"]
+					}
 					type="multiple"
 					className="w-full"
 				>
@@ -144,6 +170,25 @@ function QuestionSidebar({
 							/>
 						</AccordionContent>
 					</AccordionItem>
+					{(postType === PostType.HLD || postType === PostType.LLD) && (
+						<AccordionItem value="system design type">
+							<AccordionTrigger>
+								<TooltipAccordianTrigger
+									label="System Design Type"
+									icon={<MdOutlineGpsFixed size={16} />}
+								/>
+							</AccordionTrigger>
+							<AccordionContent>
+								<RadioGroupGrid
+									selectedOption={systemDesignType}
+									options={[PostType.HLD, PostType.LLD]} // HLD first as default
+									getSelectedOption={handleSystemDesignTypeChange}
+									disabled={dataLoading}
+									labelClassName="uppercase"
+								/>
+							</AccordionContent>
+						</AccordionItem>
+					)}
 					<AccordionItem value="companies">
 						<AccordionTrigger>
 							<TooltipAccordianTrigger
@@ -196,7 +241,8 @@ function QuestionSidebar({
 						</AccordionContent>
 					</AccordionItem>
 					{(postType === PostType.BLOGS ||
-						postType === PostType.SYSTEMDESIGN) && (
+						postType === PostType.HLD ||
+						postType === PostType.LLD) && (
 						<AccordionItem value="table of contents">
 							<AccordionTrigger>
 								<TooltipAccordianTrigger

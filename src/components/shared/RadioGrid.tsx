@@ -15,6 +15,7 @@ interface RadioGridProps {
 	selectedOption?: string | undefined; // New prop for selected option
 	className?: string;
 	disabled?: boolean;
+	labelClassName?: string;
 }
 
 const normalizeOptions = (options: OptionInput[]): InternalOption[] =>
@@ -26,6 +27,7 @@ const RadioGrid: React.FC<RadioGridProps> = ({
 	selectedOption, // Prop for the selected option
 	className,
 	disabled,
+	labelClassName,
 }) => {
 	const [options] = useState<InternalOption[]>(() =>
 		normalizeOptions(initialOptions),
@@ -55,7 +57,10 @@ const RadioGrid: React.FC<RadioGridProps> = ({
 					className="flex gap-2 items-center justify-center"
 				>
 					<RadioGroupItem value={option.label} id={option.label} />
-					<Label className="capitalize" htmlFor={option.label}>
+					<Label
+						className={cn("capitalize", labelClassName)}
+						htmlFor={option.label}
+					>
 						{option.label.toLowerCase()}
 					</Label>
 				</div>

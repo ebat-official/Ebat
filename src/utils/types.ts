@@ -64,6 +64,7 @@ export type QuestionSidebarData = {
 	topics?: string[];
 	difficulty?: string;
 	completionDuration?: number;
+	systemDesignType?: PostType;
 };
 export type CustomErrorType = {
 	status?: string;
@@ -91,7 +92,7 @@ export type postCreateOptions = Partial<
 };
 
 export type PostActions = (typeof POST_ACTIONS)[keyof typeof POST_ACTIONS];
-export type DesignBlogType = Extract<PostTypeType, "BLOGS" | "SYSTEMDESIGN">;
+export type DesignBlogType = Extract<PostTypeType, "BLOGS" | "HLD" | "LLD">;
 export type PostRouteType =
 	(typeof POST_ROUTE_TYPE)[keyof typeof POST_ROUTE_TYPE];
 
