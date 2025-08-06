@@ -143,7 +143,10 @@ export function KarmaProgress({ karma, currentRole }: KarmaProgressProps) {
 					</div>
 
 					{/* Progress Bar */}
-					<Progress value={totalProgress} className="h-3" />
+					<Progress
+						value={totalProgress}
+						className="h-3 bg-blue-500/20 [&_[data-slot=progress-indicator]]:blue-gradient"
+					/>
 
 					{/* Role Path Visualization */}
 					<div className="grid grid-cols-3 gap-4 mt-6">
