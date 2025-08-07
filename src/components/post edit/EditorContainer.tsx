@@ -15,7 +15,6 @@ import {
 } from "@/db/schema/enums";
 import { getLocalStorage, setLocalStorage } from "@/lib/localStorage";
 import { POST_ACTIONS } from "@/utils/constants";
-import { generatePreviewUrl } from "@/utils/generatePreviewUrl";
 import {
 	CategoryType,
 	ChallengeTemplate,
@@ -24,6 +23,17 @@ import {
 	PostActions,
 	SubCategoryType,
 } from "@/utils/types";
+import {
+	getTitlePlaceholder,
+	getContentPlaceholder,
+	getAnswerPlaceholder,
+} from "./utils/placeholderUtils";
+import { createPayload } from "./utils/editorUtils";
+import {
+	getLocalStorageKey,
+	getChallengeTemplatesKey,
+} from "./utils/storageUtils";
+import { generatePreviewUrlForAction } from "./utils/previewUtils";
 import { Code, FileCode2, Loader2 } from "lucide-react";
 import React, {
 	useEffect,
@@ -87,8 +97,8 @@ function EditorContainer({
 	>([]);
 	const [editingTemplate, setEditingTemplate] =
 		useState<ChallengeTemplate | null>(null);
-	const localStorageKey = `editor-${action}_${postId}`;
-	const challengeTemplatesKey = `challenge-templates-${action}_${postId}`;
+	const localStorageKey = getLocalStorageKey(action, postId);
+	const challengeTemplatesKey = getChallengeTemplatesKey(action, postId);
 
 	// Memoize savedData to prevent unnecessary re-renders
 	const savedData = useMemo(() => {
@@ -104,12 +114,7 @@ function EditorContainer({
 
 	// Memoize the payload getter
 	const getPayload = () => {
-		const thumbnailsArr = getImageUrls();
-		return {
-			...content,
-			thumbnail: thumbnail || thumbnailsArr[0],
-			challengeTemplates,
-		};
+		return createPayload(content, challengeTemplates, thumbnail, getImageUrls);
 	};
 
 	// Memoize callback functions to prevent child re-renders
@@ -123,19 +128,6 @@ function EditorContainer({
 		},
 		[localStorageKey],
 	);
-
-	const handleInsertMedia = async (file: { url: string; alt: string }) => {
-		const payload = getPayload();
-		await publishHandler({
-			...payload,
-			thumbnail: file.url || payload.thumbnail,
-		});
-		// Clear localStorage after successful publish
-		setLocalStorage(localStorageKey, undefined);
-		if (postType === PostType.CHALLENGE) {
-			setLocalStorage(challengeTemplatesKey, undefined);
-		}
-	};
 
 	const handlePublish = async () => {
 		const payload = getPayload();
@@ -163,12 +155,12 @@ function EditorContainer({
 			const res = await publishHandler(getPayload(), PostStatus.DRAFT);
 			// Open preview URL in new window
 			if (res.data) {
-				const previewUrl = generatePreviewUrl({
+				const previewUrl = generatePreviewUrlForAction({
 					category,
 					subCategory,
 					postType,
 					postId,
-					edited: true,
+					action,
 				});
 				window.open(previewUrl, "_blank");
 			}
@@ -177,11 +169,12 @@ function EditorContainer({
 			await saveHandler(payload);
 			const res = await saveHandler(getPayload());
 			if (res.data) {
-				const previewUrl = generatePreviewUrl({
+				const previewUrl = generatePreviewUrlForAction({
 					category,
 					subCategory,
 					postType,
 					postId,
+					action,
 				});
 				window.open(previewUrl, "_blank");
 			}
@@ -256,34 +249,8 @@ function EditorContainer({
 		}
 	}, [challengeTemplates, postType, challengeTemplatesKey]);
 
-	const getTitlePlaceHolder = () => {
-		switch (postType) {
-			case PostType.QUESTION:
-			case PostType.CHALLENGE:
-				return "Question";
-			case PostType.BLOGS:
-			case PostType.HLD:
-			case PostType.LLD:
-				return "Title";
-			default:
-				return "Title";
-		}
-	};
-
-	const getContentPlaceHolder = () => {
-		switch (postType) {
-			case PostType.QUESTION:
-			case PostType.CHALLENGE:
-				return "Add more info to clarify (optional)...";
-			case PostType.BLOGS:
-				return "Type your blog here...";
-			case PostType.HLD:
-			case PostType.LLD:
-				return "Design your system here...";
-			default:
-				return "Type your content here...";
-		}
-	};
+	const getTitlePlaceHolder = () => getTitlePlaceholder(postType);
+	const getContentPlaceHolder = () => getContentPlaceholder(postType);
 	return (
 		<div className="flex flex-col gap-4">
 			<Card className="relative items-center">
@@ -366,7 +333,7 @@ function EditorContainer({
 								? (data: EditorContent) => updateContent({ answer: data })
 								: undefined
 						}
-						answerPlaceHolder="Provide a clear and helpful answer (required)..."
+						answerPlaceHolder={getAnswerPlaceholder()}
 					/>
 				</CardContent>
 			</Card>
