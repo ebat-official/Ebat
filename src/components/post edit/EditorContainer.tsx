@@ -82,7 +82,6 @@ function EditorContainer({
 }: EditorContainerProps) {
 	const [content, setContent] = useState<ContentType>({});
 	const [thumbnail, setThumbnail] = useState<string | undefined>();
-	const [showThumbnailUpload, setShowThumbnailUpload] = useState(false);
 	const [challengeTemplates, setChallengeTemplates] = useState<
 		ChallengeTemplate[]
 	>([]);
@@ -127,7 +126,6 @@ function EditorContainer({
 
 	const handleInsertMedia = async (file: { url: string; alt: string }) => {
 		const payload = getPayload();
-		setShowThumbnailUpload(false);
 		await publishHandler({
 			...payload,
 			thumbnail: file.url || payload.thumbnail,
@@ -141,15 +139,6 @@ function EditorContainer({
 
 	const handlePublish = async () => {
 		const payload = getPayload();
-		// If thumbnail is required and not set, show the thumbnail upload
-		if (
-			postType === PostType.BLOGS ||
-			postType === PostType.HLD ||
-			postType === PostType.LLD
-		) {
-			setShowThumbnailUpload(true);
-			return;
-		}
 		await publishHandler(payload);
 		// Clear localStorage after successful publish
 		setLocalStorage(localStorageKey, undefined);
@@ -157,10 +146,6 @@ function EditorContainer({
 			setLocalStorage(challengeTemplatesKey, undefined);
 		}
 	};
-
-	const closeThumbnailUpload = useCallback(() => {
-		setShowThumbnailUpload(false);
-	}, []);
 
 	const handleSave = async () => {
 		const payload = getPayload();
@@ -304,17 +289,7 @@ function EditorContainer({
 			<Card className="relative items-center">
 				<CardContent className="flex h-full justify-center px-4 md:px-8 w-full max-w-3xl ">
 					{/* Show ThumbnailUpload modal/dialog if needed */}
-					{showThumbnailUpload && (
-						<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-							<div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 max-w-lg w-full">
-								<ThumbnailUpload
-									images={getImageUrls()}
-									insertMedia={handleInsertMedia}
-									closeHandler={closeThumbnailUpload}
-								/>
-							</div>
-						</div>
-					)}
+					{/* Removed ThumbnailUpload component */}
 
 					<div className="btn-container flex gap-4 -mt-2 mr-8 justify-end absolute top-0 z-50 right-0 -translate-y-full ">
 						<TooltipProvider>

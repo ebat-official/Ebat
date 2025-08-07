@@ -14,7 +14,7 @@ import { usePostFetchManager } from "@/hooks/query/usePostFetchManager";
 import { usePostPublishManager } from "@/hooks/query/usePostPublishManager";
 import { toast } from "@/hooks/use-toast";
 import { generateNanoId } from "@/lib/generateNanoid";
-import { POST_ACTIONS } from "@/utils/constants";
+import { POST_ACTIONS, THUMBNAIL_REQUIRED } from "@/utils/constants";
 import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
 import {
 	CategoryType,
@@ -24,7 +24,7 @@ import {
 	QuestionSidebarData,
 } from "@/utils/types";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import EditorContainer from "./EditorContainer";
 import {
 	validateDraftData,
@@ -38,6 +38,14 @@ import {
 import PostErrorDialog from "./components/PostErrorDialog";
 import PostPublishedModal from "@/components/shared/PostPublishedModal";
 import { handleError } from "@/utils/handleError";
+import { ThumbnailUpload } from "./ThumbnailUpload";
+import { useEditorStore } from "@/store/useEditorStore";
+
+type HandlerReturnType = {
+	data?: unknown;
+	error?: unknown;
+	isLoading?: boolean;
+};
 
 interface PostCreateEditProps {
 	category: CategoryType;
@@ -71,6 +79,13 @@ function PostCreateEdit({
 		message?: string;
 		title?: string;
 	} | null>();
+
+	// Thumbnail upload state
+	const [showThumbnailUpload, setShowThumbnailUpload] = useState(false);
+	const { getImageUrls } = useEditorStore();
+
+	// Store current content for thumbnail insertion
+	const [currentContent, setCurrentContent] = useState<ContentType>({});
 
 	const isEditMode = useRef<boolean>(!!postId);
 	const isApprovedPostEdit = action === POST_ACTIONS.EDIT;
@@ -129,6 +144,9 @@ function PostCreateEdit({
 	};
 
 	const saveHandler = async (postContent: ContentType) => {
+		// Store current content for thumbnail insertion
+		setCurrentContent(postContent);
+
 		const data = getPostDataForValidation(postContent);
 		const validated = validateDraftData(data);
 		if (validated.error) {
@@ -155,32 +173,86 @@ function PostCreateEdit({
 		postContent: ContentType,
 		postStatus?: PostStatusType,
 	) => {
+		// Store current content for thumbnail insertion
+		setCurrentContent(postContent);
+
 		const data = getPostDataForValidation(postContent);
 		const validated = validateData(data);
 		if (validated.error) {
 			const message = handleError(validated.error, postType);
-			toast({
-				description: message,
-				variant: "destructive",
-			});
-			return { error: validated.error, isLoading: false };
+			if (message !== THUMBNAIL_REQUIRED) {
+				toast({
+					description: message,
+					variant: "destructive",
+				});
+				return { error: validated.error, isLoading: false };
+			}
+		}
+
+		// Check if thumbnail is required and not set, show the thumbnail upload
+		if (
+			postType === PostType.BLOGS ||
+			postType === PostType.HLD ||
+			postType === PostType.LLD
+		) {
+			setShowThumbnailUpload(true);
+			return { data: null, isLoading: false };
+		}
+
+		if (!validated.data) {
+			return { error: "Validation failed", isLoading: false };
 		}
 		const result = await publish(validated.data, postStatus);
-		if (result.data) {
-			// Get title from postContent
-			const title =
-				postContent.post?.title || postContent.answer?.title || "Untitled";
-			setPostPublished({
-				id: result.data.id,
-				slug: result.data.slug || "",
-				approvalStatus: result.data.approvalStatus,
-				title,
-				category: category as PostCategory,
-				subCategory: subCategory as SubCategory,
-				postType,
-			});
+		return handlePublishSuccess(result, postContent);
+	};
+
+	const closeThumbnailUpload = useCallback(() => {
+		setShowThumbnailUpload(false);
+	}, []);
+
+	const handlePublishSuccess = useCallback(
+		(result: HandlerReturnType, postContent: ContentType) => {
+			if (result.data) {
+				// Get title from postContent
+				const title =
+					postContent.post?.title || postContent.answer?.title || "Untitled";
+				const data = result.data as {
+					id: string;
+					slug?: string;
+					approvalStatus: PostApprovalStatus;
+				};
+				setPostPublished({
+					id: data.id,
+					slug: data.slug || "",
+					approvalStatus: data.approvalStatus,
+					title,
+					category: category as PostCategory,
+					subCategory: subCategory as SubCategory,
+					postType,
+				});
+			}
+			return result;
+		},
+		[category, subCategory, postType],
+	);
+
+	const handleThumbnailInsert = async (file: { url: string; alt: string }) => {
+		// Close the modal first
+		closeThumbnailUpload();
+
+		// Publish with the thumbnail using the stored content
+		const contentWithThumbnail = {
+			...currentContent,
+			thumbnail: file.url,
+		};
+
+		const data = getPostDataForValidation(contentWithThumbnail);
+		const validated = validateData(data);
+		if (!validated.data) {
+			return { error: "Validation failed", isLoading: false };
 		}
-		return result;
+		const result = await publish(validated.data);
+		handlePublishSuccess(result, contentWithThumbnail);
 	};
 
 	if (blockUserAccess) {
@@ -204,6 +276,20 @@ function PostCreateEdit({
 					message={loginModalMessage}
 				/>
 			)}
+
+			{/* Thumbnail Upload Modal */}
+			{showThumbnailUpload && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+					<div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 max-w-lg w-full">
+						<ThumbnailUpload
+							images={getImageUrls()}
+							insertMedia={handleThumbnailInsert}
+							closeHandler={closeThumbnailUpload}
+						/>
+					</div>
+				</div>
+			)}
+
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel>
 					<EditorContainer
