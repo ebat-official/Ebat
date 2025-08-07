@@ -23,6 +23,7 @@ export const INVALID_POST_ID = "Invalid post ID format";
 export const POST_ID_REQUIRED = "Post ID is required";
 export const TITLE_MIN_LENGTH = "Title must be at least 3 characters";
 export const ANSWER_REQUIRED = "Answer content is required for questions";
+export const THUMBNAIL_REQUIRED = "Thumbnail is required";
 export const POST_REQUIRED = "Post content is required";
 export const TOPICS_REQUIRED = "Please select at least one topic";
 export const INVALID_CREDENTIALS = "Invalid Credential";

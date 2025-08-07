@@ -14,6 +14,7 @@ import {
 	INVALID_POST_TYPE,
 	INVALID_SUBCATEGORY,
 	POST_REQUIRED,
+	THUMBNAIL_REQUIRED,
 	TITLE_MIN_LENGTH,
 	TOPICS_REQUIRED,
 } from "@/utils/constants";
@@ -172,7 +173,7 @@ const BasePostValidator = z
 		) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: "Thumbnail is required for post",
+				message: THUMBNAIL_REQUIRED,
 				path: ["thumbnail"],
 			});
 		}
