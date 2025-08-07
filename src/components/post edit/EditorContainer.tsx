@@ -35,7 +35,7 @@ import React, {
 import { CiSaveDown2 } from "react-icons/ci";
 import { MdOutlinePublish } from "react-icons/md";
 import { emptyEditorState } from "../shared/Lexical Editor/constants";
-import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 import { LexicalEditorWrapper } from "./Editor";
 import { ThumbnailUpload } from "./ThumbnailUpload";
 import { SavedTemplatesList } from "./challenge/SavedTemplatesList";
@@ -101,7 +101,7 @@ function EditorContainer({
 		return getLocalStorage<ChallengeTemplate[]>(challengeTemplatesKey);
 	}, [challengeTemplatesKey]);
 
-	const { getImageUrls } = useEditorContext();
+	const { getImageUrls } = useEditorStore();
 
 	// Memoize the payload getter
 	const getPayload = () => {

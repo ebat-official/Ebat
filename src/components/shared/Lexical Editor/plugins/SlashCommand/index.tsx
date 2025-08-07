@@ -69,7 +69,7 @@ import {
 	INSERT_STEPPER_COMMAND,
 	initialEditorState,
 } from "../../nodes/Stepper";
-import { useEditorContext } from "../../providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 import useModal from "../../ui/models/use-model";
 import { AutoEmbedDialog, YoutubeEmbedConfig } from "../AutoEmbedPlugin";
 import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
@@ -447,7 +447,7 @@ export default function SlashCommand(): React.JSX.Element {
 		minLength: 0,
 	});
 
-	const { pluginConfig } = useEditorContext();
+	const { pluginConfig } = useEditorStore();
 
 	const options = useMemo(() => {
 		const baseOptions = getBaseOptions(

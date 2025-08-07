@@ -39,7 +39,7 @@ import TabFocusPlugin from "./plugins/TabFocusPlugin";
 import TableCellResizerPlugin from "./plugins/TableCellResizer";
 import TableOfContentsPlugin from "./plugins/TableOfContentsPlugin";
 import YouTubePlugin from "./plugins/YouTubePlugin";
-import { useEditorContext } from "./providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 
 const ExcalidrawPlugin = dynamic(() => import("./plugins/ExcalidrawPlugin"), {
 	ssr: false,
@@ -90,7 +90,7 @@ export default function Core({
 	const [floatingAnchorElem, setFloatingAnchorElem] =
 		useState<HTMLDivElement | null>(null);
 	const [editor] = useLexicalComposerContext();
-	const { pluginConfig, minHeight, setEditor } = useEditorContext(); // Access setEditor from context
+	const { pluginConfig, minHeight, setEditor } = useEditorStore(); // Access setEditor from store
 
 	const [activeEditor, setActiveEditor] = useState(editor);
 	const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);

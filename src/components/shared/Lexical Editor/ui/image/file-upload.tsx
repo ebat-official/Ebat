@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Image, Loader2, Upload, UploadCloudIcon, X } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { useEditorContext } from "../../providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 import { zones } from "./constants";
 
 interface FileUploadZoneProps {
@@ -27,7 +27,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 	const [uploading, setUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const { uploadFile, progress } = useFileUpload();
-	const { id: postId } = useEditorContext();
+	const { id: postId } = useEditorStore();
 
 	const handleDragEnter = (index: number) => (e: React.DragEvent) => {
 		e.preventDefault();

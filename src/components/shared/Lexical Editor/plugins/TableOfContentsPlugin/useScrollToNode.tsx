@@ -1,11 +1,11 @@
 import type { NodeKey } from "lexical";
 import { useEffect, useRef, useState } from "react";
-import { useEditorContext } from "../../providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 
 export function useScrollToNode() {
 	const [selectedKey, setSelectedKey] = useState<NodeKey | null>(null);
 	const selectedIndex = useRef<number>(0);
-	const { editor, setSelectedContentKey } = useEditorContext();
+	const { editor, setSelectedContentKey } = useEditorStore();
 
 	useEffect(() => {
 		setSelectedContentKey(selectedKey);

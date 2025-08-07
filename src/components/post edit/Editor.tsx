@@ -14,7 +14,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { RiQuestionAnswerLine } from "react-icons/ri";
 import TextareaAutosize from "react-textarea-autosize";
 import { z } from "zod";
-import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 import PostContentSkeleton from "./PostContentSkelton";
 
 // Dynamically import the Lexical Editor with SSR disabled
@@ -48,7 +48,7 @@ export const LexicalEditorWrapper = <T extends z.ZodType<EditorContent>>({
 	answerHandler,
 	answerPlaceHolder = "",
 }: EditorProps<T>) => {
-	const { setMinHeight } = useEditorContext();
+	const { setMinHeight } = useEditorStore();
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [uploadError, setUploadError] = useState<string | null | undefined>(

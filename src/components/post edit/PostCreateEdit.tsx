@@ -2,7 +2,7 @@
 
 import LoginModal from "@/components/auth/LoginModal";
 import QuestionSidebar from "@/components/rightSidebar/QuestionSidebar";
-import { EditorProvider } from "@/components/shared/Lexical Editor/providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 import RightPanelLayout from "@/components/shared/RightPanelLayout";
 import PostPublishedModal from "@/components/shared/PostPublishedModal";
 import StatusDialog from "@/components/shared/StatusDialog";
@@ -240,36 +240,34 @@ function PostCreateEdit({
 					message={loginModalMessage}
 				/>
 			)}
-			<EditorProvider>
-				<RightPanelLayout className="mt-8 min-h-[75vh]">
-					<RightPanelLayout.MainPanel>
-						<EditorContainer
-							postId={postId}
-							postType={postType}
-							saveHandler={saveHandler}
-							publishHandler={publishHandler}
-							dataLoading={isLoading}
-							actionDraftLoading={isDrafting}
-							actionPublishLoading={isPublishing}
-							defaultContent={postData?.content}
-							action={action}
-							challengeTemplates={postData?.challengeTemplates}
-							category={category}
-							subCategory={subCategory}
-						/>
-					</RightPanelLayout.MainPanel>
-					<RightPanelLayout.SidePanel className="sticky">
-						<QuestionSidebar
-							postType={postType}
-							postId={postId}
-							topicCategory={subCategory || SubCategory.JAVASCRIPT}
-							getSidebarData={setSidebarData}
-							defaultContent={formatSidebarDefaultData(postData)}
-							dataLoading={isLoading}
-						/>
-					</RightPanelLayout.SidePanel>
-				</RightPanelLayout>
-			</EditorProvider>
+			<RightPanelLayout className="mt-8 min-h-[75vh]">
+				<RightPanelLayout.MainPanel>
+					<EditorContainer
+						postId={postId}
+						postType={postType}
+						saveHandler={saveHandler}
+						publishHandler={publishHandler}
+						dataLoading={isLoading}
+						actionDraftLoading={isDrafting}
+						actionPublishLoading={isPublishing}
+						defaultContent={postData?.content}
+						action={action}
+						challengeTemplates={postData?.challengeTemplates}
+						category={category}
+						subCategory={subCategory}
+					/>
+				</RightPanelLayout.MainPanel>
+				<RightPanelLayout.SidePanel className="sticky">
+					<QuestionSidebar
+						postType={postType}
+						postId={postId}
+						topicCategory={subCategory || SubCategory.JAVASCRIPT}
+						getSidebarData={setSidebarData}
+						defaultContent={formatSidebarDefaultData(postData)}
+						dataLoading={isLoading}
+					/>
+				</RightPanelLayout.SidePanel>
+			</RightPanelLayout>
 		</>
 	);
 }

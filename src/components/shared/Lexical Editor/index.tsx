@@ -7,7 +7,7 @@ import { SerializedEditorState } from "lexical";
 import { useEffect } from "react";
 import Core from "./Core";
 import nodes from "./nodes";
-import { useEditorContext } from "./providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 import theme from "./themes/editor-theme";
 
 interface EditorProps {
@@ -28,7 +28,7 @@ export default function Editor({
 	autoFocus = false,
 	onChangeHandler,
 }: EditorProps) {
-	const { setId } = useEditorContext();
+	const { setId } = useEditorStore();
 	useEffect(() => {
 		setId(id);
 	}, [id]);

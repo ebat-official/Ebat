@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
 import { RiQuestionAnswerLine } from "react-icons/ri";
 import { z } from "zod";
-import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 
 // Dynamically import the Lexical Editor with SSR disabled
 const Editor = dynamic(() => import("@/components/shared/Lexical Editor"), {
@@ -28,7 +28,7 @@ export const LexicalViewer = <T extends z.ZodType<EditorContent>>({
 	postId,
 	dataLoading = false,
 }: EditorProps<T>) => {
-	const { setMinHeight } = useEditorContext();
+	const { setMinHeight } = useEditorStore();
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [uploadError, setUploadError] = useState<string | null | undefined>(

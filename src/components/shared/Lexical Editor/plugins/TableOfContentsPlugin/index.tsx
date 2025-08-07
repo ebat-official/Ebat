@@ -9,7 +9,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from "@lexical/react/LexicalTableOfContentsPlugin";
 import { useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { useEditorContext } from "../../providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 import { useScrollToNode } from "./useScrollToNode";
 
 const MARGIN_ABOVE_EDITOR = 624;
@@ -164,6 +164,7 @@ function TableOfContentsList({
 			>
 				{tableOfContents.map(([key, text, tag], index) => (
 					<button
+						type="button"
 						key={key}
 						onClick={() => scrollToNode(key, index)}
 						className={cn(
@@ -185,7 +186,7 @@ function TableOfContentsList({
 }
 
 export default function TableOfContentsPlugin() {
-	const { setTableOfContent } = useEditorContext();
+	const { setTableOfContent } = useEditorStore();
 
 	return (
 		<LexicalTableOfContentsPlugin>

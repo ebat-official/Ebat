@@ -16,7 +16,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Image, Loader2, Upload, X } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 
 // Utility to convert image URL to File
 async function urlToFile(
@@ -58,7 +58,7 @@ export const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
 	const [uploading, setUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const { uploadFile, progress } = useFileUpload();
-	const { id: postId } = useEditorContext();
+	const { id: postId } = useEditorStore();
 
 	// Convert URLs to File objects on mount
 	useEffect(() => {

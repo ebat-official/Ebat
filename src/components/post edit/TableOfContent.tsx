@@ -7,12 +7,12 @@ import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { LuBadgeInfo } from "react-icons/lu";
 import { useScrollToNode } from "../shared/Lexical Editor/plugins/TableOfContentsPlugin/useScrollToNode";
-import { useEditorContext } from "../shared/Lexical Editor/providers/EditorContext";
+import { useEditorStore } from "@/store/useEditorStore";
 
-type TableOfContentProps = {};
+type TableOfContentProps = Record<string, never>;
 
 export const TableOfContent: FC<TableOfContentProps> = () => {
-	const { tableOfContent, selectedContentKey } = useEditorContext();
+	const { tableOfContent, selectedContentKey } = useEditorStore();
 	const { scrollToNode } = useScrollToNode();
 	if (!tableOfContent?.length) {
 		return (
@@ -41,6 +41,7 @@ export const TableOfContent: FC<TableOfContentProps> = () => {
 							{tag === "h3" && <div className="w-2 h-2" />}
 						</div>
 						<button
+							type="button"
 							onClick={() => scrollToNode(key, index)}
 							className={cn(
 								"hover:underline text-ellipsis overflow-hidden sm:whitespace-nowrap capitalize",
