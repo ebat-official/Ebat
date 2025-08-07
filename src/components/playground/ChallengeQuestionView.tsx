@@ -62,7 +62,7 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = async ({
 							<Separator />
 							<div className="flex">
 								<FloatingActionBar
-									className="relative -translate-x-full mt-12"
+									className="relative -translate-x-1/2 2xl:-translate-x-full mt-12"
 									post={post}
 								/>
 								<ContentRenderer html={content.post} />
