@@ -1,6 +1,6 @@
 import { PostType } from "@/db/schema/enums";
 import { ZodError } from "zod";
-import { INVALID_DIFFICULTY } from "./constants";
+import { INVALID_DIFFICULTY, TOPICS_REQUIRED } from "./constants";
 import { CustomErrorType, GenerateActionReturnType } from "./types";
 
 export const sanitizeErrorMessage = (
@@ -25,6 +25,11 @@ export const handleError = (error: unknown, postType?: PostType): string => {
 
 		let errorMessage = firstError.message;
 
+		// Handle topics validation error first
+		if (errorMessage === TOPICS_REQUIRED) {
+			errorMessage = "Please select at least one topic";
+		}
+		// Handle difficulty validation error
 		if (errorMessage === INVALID_DIFFICULTY) {
 			errorMessage = "Please select a difficulty level";
 		}
