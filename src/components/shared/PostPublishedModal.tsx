@@ -7,6 +7,7 @@ import { PostType, PostCategory, SubCategory } from "@/db/schema/enums";
 import { POST_ACTIONS } from "@/utils/constants";
 import { PostActions } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-transition-progress/next";
 import {
 	FaCheck,
 	FaCopy,
@@ -90,8 +91,17 @@ const PostPublishedModal: React.FC<PostPublishedModalProps> = ({
 	};
 
 	const handleClose = () => {
-		// Redirect to category page instead of home
-		window.location.href = `/${category}`;
+		// Close modal - navigation will be handled by Link component
+		if (onClose) {
+			onClose();
+		}
+	};
+
+	const handleViewStatus = () => {
+		// Close modal - navigation will be handled by Link component
+		if (onClose) {
+			onClose();
+		}
 	};
 
 	// If not approved, show the simple status dialog
@@ -123,13 +133,23 @@ const PostPublishedModal: React.FC<PostPublishedModalProps> = ({
 								? "Your post has been published and sent for approval"
 								: "Your post edit has been sent for approval"}
 						</p>
-						<div className="flex justify-center mt-4">
-							<Button
-								className="w-[90%] blue-gradient text-white"
-								onClick={handleClose}
-							>
-								Go back to home
-							</Button>
+						<div className="flex gap-3 mt-4">
+							<Link href={`/${category}`} className="flex-1">
+								<Button
+									className="w-full bg-gray-600 hover:bg-gray-700 text-white"
+									onClick={handleClose}
+								>
+									Go back to home
+								</Button>
+							</Link>
+							<Link href="/settings/posts" className="flex-1">
+								<Button
+									className="w-full blue-gradient text-white"
+									onClick={handleViewStatus}
+								>
+									View Status
+								</Button>
+							</Link>
 						</div>
 					</div>
 				</DialogContent>
@@ -150,14 +170,16 @@ const PostPublishedModal: React.FC<PostPublishedModalProps> = ({
 				{/* Header */}
 				<div className="flex items-center justify-between p-4 border-b">
 					<h2 className="text-lg font-semibold">Share with</h2>
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={handleClose}
-						className="h-auto p-0"
-					>
-						<FaTimes className="w-5 h-5" />
-					</Button>
+					<Link href={`/${category}`}>
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={handleClose}
+							className="h-auto p-0"
+						>
+							<FaTimes className="w-5 h-5" />
+						</Button>
+					</Link>
 				</div>
 
 				{/* Share via Apps */}
@@ -250,6 +272,18 @@ const PostPublishedModal: React.FC<PostPublishedModalProps> = ({
 								<FaCopy className="w-5 h-5" />
 							</Button>
 						</div>
+					</div>
+
+					{/* View Status Button */}
+					<div className="mt-6">
+						<Link href="/settings/posts" className="w-full">
+							<Button
+								className="w-full blue-gradient text-white"
+								onClick={handleViewStatus}
+							>
+								View Status
+							</Button>
+						</Link>
 					</div>
 				</div>
 			</DialogContent>
