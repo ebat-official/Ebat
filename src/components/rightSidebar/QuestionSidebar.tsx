@@ -59,7 +59,7 @@ function QuestionSidebar({
 		[],
 	);
 	const [selectedTopics, setSelectedTopics] = useState<InternalOption[]>([]);
-	const [difficulty, setDifficulty] = useState("");
+	const [difficulty, setDifficulty] = useState<string>(Difficulty.MEDIUM);
 	const [completionDuration, setCompletionDuration] =
 		useState(INITIAL_DURATION);
 	const [systemDesignType, setSystemDesignType] = useState<PostType>(
