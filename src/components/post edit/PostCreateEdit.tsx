@@ -18,6 +18,8 @@ import { usePostFetchManager } from "@/hooks/query/usePostFetchManager";
 import { usePostPublishManager } from "@/hooks/query/usePostPublishManager";
 import { toast } from "@/hooks/use-toast";
 import { generateNanoId } from "@/lib/generateNanoid";
+import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
+import consolidatePostData from "@/utils/consolidatePostData";
 import { POST_ACTIONS } from "@/utils/constants";
 import { POST_NOT_EXIST_ERROR, UNAUTHENTICATED_ERROR } from "@/utils/errors";
 import formatSidebarDefaultData from "@/utils/formatSidebarDefaultData";
@@ -157,9 +159,58 @@ function PostCreateEdit({
 		};
 	};
 
+	/**
+	 * Validates draft post data
+	 */
+	const validateDraftData = (params: {
+		postId: string;
+		category: CategoryType;
+		sidebarData: Record<string, unknown>;
+		postContent: ContentType;
+		type: PostType;
+		thumbnail?: string | null;
+	}) => {
+		const consolidated = consolidatePostData(params);
+		const result = PostDraftValidator.safeParse(consolidated);
+		if (!result.success) {
+			return { error: result.error };
+		}
+		return { data: result.data };
+	};
+
+	/**
+	 * Validates post data before publishing
+	 */
+	const validateData = (params: {
+		postId: string;
+		category: CategoryType;
+		sidebarData: Record<string, unknown>;
+		postContent: ContentType;
+		type: PostType;
+		thumbnail?: string | null;
+	}) => {
+		const consolidated = consolidatePostData(params);
+		const result = PostValidator.safeParse(consolidated);
+
+		if (!result.success) {
+			return { error: result.error };
+		}
+		return { data: result.data };
+	};
+
 	const saveHandler = async (postContent: ContentType) => {
 		const data = getPostData(postContent);
-		const result = await saveDraft(data);
+		const validated = validateDraftData(data);
+		if (validated.error) {
+			const message = handleError(validated.error, postType);
+			toast({
+				description: message,
+				variant: "destructive",
+			});
+			return { error: validated.error, isLoading: false };
+		}
+
+		const result = await saveDraft(validated.data);
 		if (result.data) {
 			toast({
 				title: "Draft Saved",
@@ -175,6 +226,16 @@ function PostCreateEdit({
 		postStatus?: PostStatusType,
 	) => {
 		const data = getPostData(postContent);
+		const validated = validateData(data);
+		if (validated.error) {
+			const message = handleError(validated.error, postType);
+			toast({
+				description: message,
+				variant: "destructive",
+			});
+			return { error: validated.error, isLoading: false };
+		}
+
 		if (
 			(postType === PostType.BLOGS ||
 				postType === PostType.HLD ||
@@ -183,7 +244,7 @@ function PostCreateEdit({
 		) {
 			//thumbnail is required for blogs and system design
 		}
-		const result = await publish(data, postStatus);
+		const result = await publish(validated.data, postStatus);
 		if (result.data) {
 			// Get title from postContent
 			const title =

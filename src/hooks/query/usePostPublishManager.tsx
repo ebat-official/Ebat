@@ -2,24 +2,12 @@ import { createDraftPost, createPost, createPostEdit } from "@/actions/post";
 import { PostStatusType, PostType, SubCategory } from "@/db/schema/enums";
 import { useServerAction } from "@/hooks/useServerAction";
 import { PostDraftValidator, PostValidator } from "@/lib/validators/post";
-import consolidatePostData from "@/utils/consolidatePostData";
 import { ERROR, POST_ACTIONS } from "@/utils/constants";
-import {
-	CategoryType,
-	ContentType,
-	PostActions,
-	SubCategoryType,
-} from "@/utils/types";
+import { PostActions, SubCategoryType } from "@/utils/types";
 import { useState } from "react";
 
-type PostParams = {
-	postId: string;
-	category: CategoryType;
-	sidebarData: Record<string, unknown>;
-	postContent: ContentType;
-	type: PostType;
-	thumbnail?: string | null;
-};
+type ValidatedDraftData = ReturnType<typeof PostDraftValidator.parse>;
+type ValidatedPostData = ReturnType<typeof PostValidator.parse>;
 
 export const usePostPublishManager = (
 	subCategory: SubCategoryType,
@@ -34,45 +22,11 @@ export const usePostPublishManager = (
 	const [error, setError] = useState<unknown | null>(null);
 
 	/**
-	 * Validates draft post data
-	 */
-	const validateDraftData = (params: PostParams) => {
-		const consolidated = consolidatePostData(params);
-		const result = PostDraftValidator.safeParse(consolidated);
-		if (!result.success) {
-			setError(result.error);
-			return { error: result.error };
-		}
-
-		setError(null);
-		return { data: result.data };
-	};
-
-	/**
-	 * Validates post data before publishing
-	 */
-	const validateData = (params: PostParams) => {
-		const consolidated = consolidatePostData(params);
-		const result = PostValidator.safeParse(consolidated);
-
-		if (!result.success) {
-			setError(result.error);
-			return { error: result.error };
-		}
-
-		setError(null);
-		return { data: result.data };
-	};
-
-	/**
 	 * Handles saving a draft.
 	 */
-	const saveDraft = async (params: PostParams) => {
-		const validated = validateDraftData(params);
-		if (validated.error) return { error: validated.error, isLoading: false };
-
+	const saveDraft = async (validatedData: ValidatedDraftData) => {
 		try {
-			const data = await createDraft(validated.data);
+			const data = await createDraft(validatedData);
 			if (data.status === ERROR) {
 				throw data;
 			}
@@ -87,12 +41,12 @@ export const usePostPublishManager = (
 	/**
 	 * Handles publishing a post.
 	 */
-	const publish = async (params: PostParams, postStatus?: PostStatusType) => {
-		const validated = validateData(params);
-		if (validated.error) return { error: validated.error, isLoading: false };
-
+	const publish = async (
+		validatedData: ValidatedPostData,
+		postStatus?: PostStatusType,
+	) => {
 		try {
-			const data = await publishPost(validated.data, postStatus);
+			const data = await publishPost(validatedData, postStatus);
 			if (data.status === ERROR) throw data;
 			setError(null);
 			return { data: data.data, error: null, isLoading: false };
