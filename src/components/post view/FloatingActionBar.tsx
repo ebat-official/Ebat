@@ -250,7 +250,7 @@ export default function FloatingActionBar({
 	return (
 		<>
 			{/* Mobile: Single expandable button */}
-			<div className="mobile-floating-action md:hidden fixed bottom-4 right-4 z-50">
+			<div className="mobile-floating-action lg:hidden fixed bottom-4 right-4 z-50">
 				<div
 					className={`relative transition-all duration-300 ${isExpanded ? "scale-100" : "scale-100"}`}
 				>
@@ -318,7 +318,7 @@ export default function FloatingActionBar({
 
 			{/* Desktop: Original layout */}
 			<div
-				className={`floating-action-container hidden md:flex flex-col gap-2 ${className}`}
+				className={`floating-action-container hidden lg:flex flex-col gap-2 ${className}`}
 			>
 				{/* Completion Button */}
 				<CompletionButton postId={post.id} tooltipSide="right" />

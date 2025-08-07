@@ -58,13 +58,15 @@ const ChallengeQuestionView: React.FC<ChallengeQuestionViewProps> = async ({
 									</h1>
 									<PostStatsBadge post={post} />
 								</div>
-								<FloatingActionBar
-									className="absolute left-0 top-0 translate-y-full lg:translate-x-full 2xl:-translate-x-[150%]"
-									post={post}
-								/>
 							</div>
 							<Separator />
-							<ContentRenderer html={content.post} />
+							<div className="flex">
+								<FloatingActionBar
+									className="relative -translate-x-full mt-12"
+									post={post}
+								/>
+								<ContentRenderer html={content.post} />
+							</div>
 
 							<Separator />
 							<PostDetailsAccordian post={post} />

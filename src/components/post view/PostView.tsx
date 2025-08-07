@@ -28,7 +28,7 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel className="flex flex-col gap-2">
 					<Card className="relative items-center">
-						<CardContent className="flex flex-col h-full px-4 md:px-8 w-full gap-2 max-w-3xl relative">
+						<CardContent className="flex flex-col h-full px-4 md:px-8 w-full gap-4 max-w-3xl relative">
 							<div className="flex gap-6 -ml-12">
 								<PostLikeButton className="mt-2" post={post} />
 								<div className="flex flex-col justify-center">
@@ -37,13 +37,15 @@ const PostView: FC<PostViewProps> = ({ post }) => {
 									</h1>
 									<PostStatsBadge post={post} />
 								</div>
-								<FloatingActionBar
-									className="absolute left-0 top-0 translate-y-full lg:translate-x-full 2xl:-translate-x-[150%]"
-									post={post}
-								/>
 							</div>
 							<Separator />
-							<ContentRenderer html={content.post} />
+							<div className="flex">
+								<FloatingActionBar
+									className="relative -translate-x-full mt-12"
+									post={post}
+								/>
+								<ContentRenderer html={content.post} />
+							</div>
 							<QuestionAnswerRender answer={content.answer} />
 						</CardContent>
 						<CardContent className="w-full px-4 md:px-8 max-w-4xl gap-8 flex flex-col ">
