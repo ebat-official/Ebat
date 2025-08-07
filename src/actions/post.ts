@@ -72,7 +72,9 @@ const revalidatePostPath = (post: typeof posts.$inferSelect) => {
 		id: post.id,
 		postType: post.type,
 	});
-	revalidatePath(path);
+	setTimeout(() => {
+		revalidatePath(path);
+	}, 100);
 };
 
 const buildBasePostData = (
