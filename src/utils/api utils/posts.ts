@@ -12,6 +12,7 @@ import {
 	posts,
 	votes,
 	comments,
+	user,
 } from "@/db/schema";
 import {
 	Difficulty,
@@ -451,7 +452,6 @@ export async function searchPosts({
 	companies?: string[];
 	type?: PostType;
 }) {
-	console.log(sortOrder, "soooooo");
 	// Input validation
 	if (page < 1) throw new Error(INVALID_PAGE);
 	if (pageSize < 1) throw new Error(INVALID_PAGE_SIZE);
@@ -513,27 +513,35 @@ export async function searchPosts({
 					companies: posts.companies,
 					type: posts.type,
 					topics: posts.topics,
+					authorId: posts.authorId,
+					author: {
+						id: user.id,
+						name: user.name,
+						image: user.image,
+						companyName: user.companyName,
+					},
 					votes: sql<number>`COALESCE((
-					SELECT COUNT(*) 
-					FROM ${votes} 
-					WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.UP}
-				) - (
-					SELECT COUNT(*) 
-					FROM ${votes} 
-					WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.DOWN}
-				), 0)`,
+				SELECT COUNT(*) 
+				FROM ${votes} 
+				WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.UP}
+			) - (
+				SELECT COUNT(*) 
+				FROM ${votes} 
+				WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.DOWN}
+			), 0)`,
 					comments: sql<number>`COALESCE((
-					SELECT COUNT(*) 
-					FROM ${comments} 
-					WHERE ${comments.postId} = "post"."id"
-				), 0)`,
+				SELECT COUNT(*) 
+				FROM ${comments} 
+				WHERE ${comments.postId} = "post"."id"
+			), 0)`,
 					views: sql<number>`COALESCE((
-					SELECT ${postViews.count} 
-					FROM ${postViews} 
-					WHERE ${postViews.postId} = "post"."id"
-				), 0)`,
+				SELECT ${postViews.count} 
+				FROM ${postViews} 
+				WHERE ${postViews.postId} = "post"."id"
+			), 0)`,
 				})
 				.from(posts)
+				.innerJoin(user, eq(posts.authorId, user.id))
 				.where(whereCondition)
 				.orderBy(orderByDirection)
 				.limit(pageSize + 1)
