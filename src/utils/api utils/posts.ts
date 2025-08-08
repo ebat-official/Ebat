@@ -11,6 +11,7 @@ import {
 	postViews,
 	posts,
 	votes,
+	comments,
 } from "@/db/schema";
 import {
 	Difficulty,
@@ -19,6 +20,7 @@ import {
 	PostStatus,
 	PostType,
 	SubCategory,
+	VoteType,
 } from "@/db/schema/enums";
 import {
 	and,
@@ -489,17 +491,17 @@ export async function searchPosts({
 				? desc(sql`COALESCE((
 					SELECT COUNT(*) 
 					FROM ${votes} 
-					WHERE ${votes.postId} = ${posts.id} AND ${votes.type} = 'up'
+					WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.UP}
 				) - (
 					SELECT COUNT(*) 
 					FROM ${votes} 
-					WHERE ${votes.postId} = ${posts.id} AND ${votes.type} = 'down'
+					WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.DOWN}
 				), 0)`)
 				: desc(posts.createdAt);
 
 	try {
 		const [postsResult, totalCountResult] = await Promise.all([
-			// Main posts query using core query syntax
+			// Main posts query using core query syntax with vote counts, comment counts, and views
 			db
 				.select({
 					id: posts.id,
@@ -511,6 +513,25 @@ export async function searchPosts({
 					companies: posts.companies,
 					type: posts.type,
 					topics: posts.topics,
+					votes: sql<number>`COALESCE((
+					SELECT COUNT(*) 
+					FROM ${votes} 
+					WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.UP}
+				) - (
+					SELECT COUNT(*) 
+					FROM ${votes} 
+					WHERE ${votes.postId} = "post"."id" AND ${votes.type} = ${VoteType.DOWN}
+				), 0)`,
+					comments: sql<number>`COALESCE((
+					SELECT COUNT(*) 
+					FROM ${comments} 
+					WHERE ${comments.postId} = "post"."id"
+				), 0)`,
+					views: sql<number>`COALESCE((
+					SELECT ${postViews.count} 
+					FROM ${postViews} 
+					WHERE ${postViews.postId} = "post"."id"
+				), 0)`,
 				})
 				.from(posts)
 				.where(whereCondition)

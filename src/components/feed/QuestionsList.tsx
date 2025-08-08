@@ -72,7 +72,7 @@ const QuestionsList: FC = () => {
 										<DifficultyBadge
 											difficulty={post.difficulty || Difficulty.EASY}
 										/>
-										<ViewsBadge views={post?.views?.count || 0} />
+										<ViewsBadge views={post?.views || 0} />
 									</div>
 								</CardContent>
 							</Card>

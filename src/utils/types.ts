@@ -308,7 +308,7 @@ export interface PostSearchContext {
 export type FeedPost = Post & {
 	votes?: number;
 	comments?: number;
-	views?: { count: number; updatedAt: Date };
+	views?: number;
 	author: {
 		id: string;
 		username: string;

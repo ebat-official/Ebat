@@ -117,7 +117,7 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 					<div className="flex justify-between items-center">
 						{/* <DifficultyBadge difficulty={post.difficulty || Difficulty.EASY} /> */}
 						<PostLikeDummyButton count={post.votes || 0} />
-						<ViewsBadge views={post?.views?.count || 0} />
+						<ViewsBadge views={post.views || 0} />
 						<Button className="rounded-full" variant="ghost">
 							<Link
 								href={`${getUrl(post)}#comments`}
