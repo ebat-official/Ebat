@@ -512,12 +512,10 @@ const SidebarConfig = {
 						{
 							href: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/how-to-prepare`,
 							label: "How to Prepare",
-							createHref: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/how-to-prepare/create`,
 						},
 						{
 							href: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/radio-framework`,
 							label: "Radio Framework",
-							createHref: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/radio-framework/create`,
 						},
 						{
 							href: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/questions`,
@@ -534,12 +532,10 @@ const SidebarConfig = {
 						{
 							href: `/${PostCategory.FRONTEND}/systemdesign/hld/how-to-prepare`,
 							label: "How to Prepare",
-							createHref: `/${PostCategory.FRONTEND}/systemdesign/hld/how-to-prepare/create`,
 						},
 						{
 							href: `/${PostCategory.FRONTEND}/systemdesign/hld/framework`,
 							label: "Framework",
-							createHref: `/${PostCategory.FRONTEND}/systemdesign/hld/framework/create`,
 						},
 						{
 							href: `/${PostCategory.FRONTEND}/systemdesign/hld/questions`,
@@ -556,12 +552,10 @@ const SidebarConfig = {
 						{
 							href: `/${PostCategory.FRONTEND}/systemdesign/lld/how-to-prepare`,
 							label: "How to Prepare",
-							createHref: `/${PostCategory.FRONTEND}/systemdesign/lld/how-to-prepare/create`,
 						},
 						{
 							href: `/${PostCategory.FRONTEND}/systemdesign/lld/framework`,
 							label: "Framework",
-							createHref: `/${PostCategory.FRONTEND}/systemdesign/lld/framework/create`,
 						},
 						{
 							href: `/${PostCategory.FRONTEND}/systemdesign/lld/questions`,

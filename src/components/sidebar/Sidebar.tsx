@@ -9,6 +9,7 @@ import { CategorySwitcher } from "./CategorySwitcher";
 import { Menu } from "./menu";
 import { SidebarToggle } from "./sidebar-toggle";
 import { Navigation } from "./Navigation";
+import { DiscordButton } from "../shared/DiscordButton";
 
 export function Sidebar() {
 	const sidebar = useSidebar();
@@ -48,6 +49,10 @@ export function Sidebar() {
 				<CategorySwitcher />
 				<Navigation isOpen={getOpenState()} />
 				<Menu isOpen={getOpenState()} />
+				<DiscordButton
+					size="lg"
+					className="justify-center sticky bottom-0 w-full z-50"
+				/>
 			</div>
 		</aside>
 	);

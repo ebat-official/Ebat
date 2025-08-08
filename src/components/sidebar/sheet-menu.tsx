@@ -31,7 +31,10 @@ export function SheetMenu() {
 					<MenuIcon size={20} />
 				</Button>
 			</SheetTrigger>
-			<SheetContent className="sm:w-72  px-3 h-full flex flex-col" side="left">
+			<SheetContent
+				className="sm:w-72  px-3 h-full flex flex-col overflow-y-auto"
+				side="left"
+			>
 				<SheetHeader className="mt-4">
 					<CategorySwitcher />
 				</SheetHeader>
