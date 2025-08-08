@@ -13,15 +13,22 @@ import {
 import { useAuthAction } from "@/hooks/useAuthAction";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { CiCirclePlus } from "react-icons/ci";
+import { cn } from "@/lib/utils";
 
 interface FollowButtonProps {
 	authorId: string;
 	currentUserId?: string;
+	className?: string;
+	iconClassName?: string;
+	showTooltip?: boolean;
 }
 
 const FollowButton: React.FC<FollowButtonProps> = ({
 	authorId,
 	currentUserId,
+	className,
+	iconClassName,
+	showTooltip = true,
 }) => {
 	const [isFollowingState, setIsFollowingState] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
@@ -64,24 +71,39 @@ const FollowButton: React.FC<FollowButtonProps> = ({
 		});
 	};
 
+	const buttonContent = (
+		<button
+			type="button"
+			onClick={handleClick}
+			disabled={loading}
+			aria-label={isFollowingState ? "Unfollow" : "Follow"}
+			className={cn("cursor-pointer", className)}
+		>
+			{isFollowingState ? (
+				<IoIosCheckmarkCircleOutline
+					className={cn("w-4 h-4 text-blue-400", iconClassName)}
+				/>
+			) : (
+				<CiCirclePlus
+					className={cn("w-4 h-4 text-violet-400", iconClassName)}
+				/>
+			)}
+		</button>
+	);
+
+	if (!showTooltip) {
+		return (
+			<>
+				{buttonContent}
+				{renderLoginModal()}
+			</>
+		);
+	}
+
 	return (
 		<TooltipProvider>
 			<Tooltip>
-				<TooltipTrigger asChild>
-					<button
-						type="button"
-						onClick={handleClick}
-						disabled={loading}
-						aria-label={isFollowingState ? "Unfollow" : "Follow"}
-						className="cursor-pointer"
-					>
-						{isFollowingState ? (
-							<IoIosCheckmarkCircleOutline className="w-4 h-4 text-blue-400" />
-						) : (
-							<CiCirclePlus className="w-4 h-4 text-violet-400" />
-						)}
-					</button>
-				</TooltipTrigger>
+				<TooltipTrigger asChild>{buttonContent}</TooltipTrigger>
 				<TooltipContent side="top">
 					{isFollowingState ? "Following" : "Follow"}
 				</TooltipContent>

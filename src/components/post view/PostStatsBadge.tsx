@@ -38,6 +38,12 @@ export const PostStatsBadge: FC<PostStatsBadgeProps> = ({ post }) => {
 							name: post.author.name,
 							image: post.author.image,
 							companyName: post.author.companyName,
+							username: post.author.username,
+							karmaPoints: post.author.karmaPoints,
+							description: post.author.description,
+							role: post.author.role,
+							jobTitle: post.author.jobTitle,
+							externalLinks: post.author.externalLinks,
 						}}
 					/>
 				)}

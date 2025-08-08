@@ -68,19 +68,26 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 		>
 			<Card className="relative pb-2">
 				<CardContent className="flex flex-col gap-4 h-92 justify-between ">
-					<p className="font-semibold overflow-hidden text-ellipsis capitalize line-clamp-3">
-						{post.title}
-					</p>
 					{post.author?.name && (
 						<AuthorNudge
+							onlyAvatar
 							author={{
 								id: post.author.id,
 								name: post.author.name,
 								image: post.author.image,
 								companyName: post.author.companyName,
+								username: post.author.username,
+								karmaPoints: post.author.karmaPoints,
+								description: post.author.description,
+								role: post.author.role,
+								jobTitle: post.author.jobTitle,
+								externalLinks: post.author.externalLinks,
 							}}
 						/>
 					)}
+					<p className="font-semibold overflow-hidden text-ellipsis capitalize line-clamp-3">
+						{post.title}
+					</p>
 					<div className="flex">
 						{post.topics && post.topics.length > 0 && (
 							<>

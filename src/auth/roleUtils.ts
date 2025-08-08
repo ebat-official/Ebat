@@ -9,6 +9,9 @@ export const ROLE_HIERARCHY = {
 	[UserRole.SUPER_ADMIN]: 4,
 } as const;
 
+// Maximum promotion role that users can see (MODERATOR = 2)
+export const MAX_PROMOTION_ROLE_LEVEL = 2;
+
 // Minimum hierarchy level required for admin access
 export const ADMIN_ACCESS_LEVEL = 3; // ADMIN and above
 
@@ -105,6 +108,20 @@ export function shouldPromoteUser(
 		shouldPromote,
 		newRole: shouldPromote ? nextRole : null,
 	};
+}
+
+/**
+ * Get the public-facing role that should be shown to users
+ * Any role higher than MAX_PROMOTION_ROLE_LEVEL will be shown as MODERATOR
+ */
+export function getPublicRole(role: UserRole): UserRole {
+	const hierarchy = getRoleHierarchy(role);
+
+	if (hierarchy > MAX_PROMOTION_ROLE_LEVEL) {
+		return UserRole.MODERATOR;
+	}
+
+	return role;
 }
 
 /**

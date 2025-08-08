@@ -4,6 +4,7 @@ import { extractTOCAndEnhanceHTML } from "@/components/shared/Lexical Editor/uti
 import { getHtml } from "@/components/shared/Lexical Editor/utils/SSR/jsonToHTML";
 import { POST_ID_LENGTH } from "@/config";
 import { db } from "@/db";
+import { getPublicRole } from "@/auth/roleUtils";
 import {
 	challengeTemplates,
 	completionStatuses,
@@ -112,6 +113,11 @@ export async function getPostEditFromId(
 						name: true,
 						image: true,
 						companyName: true,
+						karmaPoints: true,
+						description: true,
+						role: true,
+						jobTitle: true,
+						externalLinks: true,
 					},
 				},
 				challengeTemplates: true,
@@ -144,6 +150,11 @@ export async function getPostEditFromId(
 						name: true,
 						image: true,
 						companyName: true,
+						karmaPoints: true,
+						description: true,
+						role: true,
+						jobTitle: true,
+						externalLinks: true,
 					},
 				},
 				contributors: {
@@ -224,6 +235,13 @@ export async function getPostEditFromId(
 				name: originalPost.author?.name || null,
 				image: originalPost.author?.image || null,
 				companyName: originalPost.author?.companyName || null,
+				karmaPoints: originalPost.author?.karmaPoints || 0,
+				description: originalPost.author?.description || null,
+				role: originalPost.author?.role
+					? getPublicRole(originalPost.author.role)
+					: null,
+				jobTitle: originalPost.author?.jobTitle || null,
+				externalLinks: originalPost.author?.externalLinks || null,
 			},
 			contributors,
 		};
@@ -275,6 +293,11 @@ export async function getPostFromURL(
 						name: true,
 						image: true,
 						companyName: true,
+						karmaPoints: true,
+						description: true,
+						role: true,
+						jobTitle: true,
+						externalLinks: true,
 					},
 				},
 				challengeTemplates: true,
@@ -365,6 +388,11 @@ export async function getPostFromURL(
 				name: post.author?.name || null,
 				image: post.author?.image || null,
 				companyName: post.author?.companyName || null,
+				karmaPoints: post.author?.karmaPoints || 0,
+				description: post.author?.description || null,
+				role: post.author?.role ? getPublicRole(post.author.role) : null,
+				jobTitle: post.author?.jobTitle || null,
+				externalLinks: post.author?.externalLinks || null,
 			},
 			contributors:
 				post.contributors?.map((contributor) => ({
@@ -513,12 +541,17 @@ export async function searchPosts({
 					companies: posts.companies,
 					type: posts.type,
 					topics: posts.topics,
-					authorId: posts.authorId,
 					author: {
 						id: user.id,
+						username: user.username,
 						name: user.name,
 						image: user.image,
 						companyName: user.companyName,
+						karmaPoints: user.karmaPoints,
+						description: user.description,
+						role: user.role,
+						jobTitle: user.jobTitle,
+						externalLinks: user.externalLinks,
 					},
 					votes: sql<number>`COALESCE((
 				SELECT COUNT(*) 
@@ -558,10 +591,20 @@ export async function searchPosts({
 		const totalCount = totalCountResult;
 		const hasMore = postsResult.length > pageSize;
 		const resultPosts = hasMore ? postsResult.slice(0, pageSize) : postsResult;
+
+		// Apply getPublicRole to all author roles
+		const processedPosts = resultPosts.map((post) => ({
+			...post,
+			author: {
+				...post.author,
+				role: post.author.role ? getPublicRole(post.author.role) : null,
+			},
+		}));
+
 		const totalPages = Math.ceil(totalCount / pageSize);
 
 		return {
-			posts: resultPosts,
+			posts: processedPosts,
 			hasMore,
 			totalPages,
 		};

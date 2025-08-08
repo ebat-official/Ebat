@@ -11,7 +11,6 @@ type FeedProps = {};
 export const FeedList: FC<FeedProps> = ({}) => {
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="analytics h-[50px] "></div>
 			<RightPanelLayout className="mt-8 min-h-[75vh]">
 				<RightPanelLayout.MainPanel className="flex flex-col gap-2">
 					<QuestionsList />

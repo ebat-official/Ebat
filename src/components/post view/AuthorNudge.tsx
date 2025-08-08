@@ -9,31 +9,57 @@ import { SlUserFollow } from "react-icons/sl";
 import { SlUserFollowing } from "react-icons/sl";
 import FollowButton from "./FollowButton";
 import { useSession } from "@/lib/auth-client";
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from "../ui/hover-card";
+import AuthorProfileCard from "./AuthorProfileCard";
 
 interface AuthorNudgeProps {
-	author: Pick<User, "id" | "name" | "companyName" | "image">;
+	author: Pick<
+		User,
+		| "id"
+		| "name"
+		| "companyName"
+		| "image"
+		| "username"
+		| "karmaPoints"
+		| "description"
+		| "role"
+		| "jobTitle"
+		| "externalLinks"
+	>;
 	onlyAvatar?: boolean;
 }
 
 const AuthorNudge = ({ author, onlyAvatar = false }: AuthorNudgeProps) => {
 	const { data: user } = useSession();
+
 	return (
 		<div className="flex items-center gap-2">
-			{/* Avatar Section */}
-			<Avatar className="flex-shrink-0">
-				<AvatarImage
-					src={author?.image || undefined}
-					alt="avatar"
-					referrerPolicy="no-referrer"
-				/>
-				<AvatarFallback>
-					<Image
-						className="rounded-full outline-hidden"
-						src={fallbackImg}
-						alt="author"
-					/>
-				</AvatarFallback>
-			</Avatar>
+			{/* Avatar Section with Hover Card */}
+			<HoverCard>
+				<HoverCardTrigger asChild>
+					<Avatar className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+						<AvatarImage
+							src={author?.image || undefined}
+							alt="avatar"
+							referrerPolicy="no-referrer"
+						/>
+						<AvatarFallback>
+							<Image
+								className="rounded-full outline-hidden"
+								src={fallbackImg}
+								alt="author"
+							/>
+						</AvatarFallback>
+					</Avatar>
+				</HoverCardTrigger>
+				<HoverCardContent className="w-auto p-0" align="start" sideOffset={8}>
+					<AuthorProfileCard author={author} />
+				</HoverCardContent>
+			</HoverCard>
 
 			{/* Info Section */}
 			{!onlyAvatar && (
@@ -42,9 +68,6 @@ const AuthorNudge = ({ author, onlyAvatar = false }: AuthorNudgeProps) => {
 						<span className="text-sm font-bold capitalize line-clamp-1 text-ellipsis">
 							{author.name?.toLowerCase() || "Anonymous Author"}
 						</span>
-						{user?.user?.id !== author.id && (
-							<FollowButton authorId={author.id} />
-						)}
 					</div>
 					<span className="hidden sm:block text-sm opacity-80 font-medium capitalize text-ellipsis overflow-hidden text-nowrap">
 						{author.companyName?.toLowerCase()}

@@ -13,6 +13,7 @@ import {
 	type SubmissionStatusType,
 	TemplateFramework,
 	type TemplateFrameworkType,
+	UserRole,
 	VoteType,
 	type VoteTypeType,
 } from "@/db/schema/enums";
@@ -107,7 +108,19 @@ export type PostWithExtraDetails = Omit<Post, "content"> & {
 	tableOfContent?: TableOfContent;
 	challengeTemplates?: ChallengeTemplate[];
 	contributors: Array<Pick<User, "id" | "username" | "name" | "image">>;
-	author: Pick<User, "id" | "username" | "name" | "image" | "companyName">;
+	author: Pick<
+		User,
+		| "id"
+		| "username"
+		| "name"
+		| "image"
+		| "companyName"
+		| "karmaPoints"
+		| "description"
+		| "role"
+		| "jobTitle"
+		| "externalLinks"
+	>;
 	views?: {
 		count: number;
 		updatedAt: Date;
@@ -315,6 +328,14 @@ export type FeedPost = Post & {
 		name: string | null;
 		image: string | null;
 		companyName: string | null;
+		karmaPoints: number;
+		description: string | null;
+		role: UserRole;
+		jobTitle: string | null;
+		externalLinks:
+			| Array<{ type: string; value: string }>
+			| Record<string, unknown>
+			| null;
 	};
 };
 export interface PostSearchResponse {
