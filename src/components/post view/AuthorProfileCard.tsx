@@ -32,6 +32,7 @@ import {
 	UserIcon,
 	Building2,
 	Briefcase,
+	Zap,
 } from "lucide-react";
 import {
 	Tooltip,

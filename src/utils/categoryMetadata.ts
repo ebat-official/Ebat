@@ -100,6 +100,18 @@ export function generateCategoryMetadata(
 			"design principles",
 			"architectural patterns",
 		],
+		[SubCategory.BEHAVIORAL]: [
+			"behavioral",
+			"interview questions",
+			"soft skills",
+			"communication",
+			"leadership",
+			"teamwork",
+			"problem solving",
+			"scenario based",
+			"workplace situations",
+			"professional development",
+		],
 		// Default cases for other subcategories
 		[SubCategory.JAVASCRIPT]: [],
 		[SubCategory.HTML]: [],
