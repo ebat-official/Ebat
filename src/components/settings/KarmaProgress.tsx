@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, Star, Shield, Crown, Target } from "lucide-react";
+import { TrendingUp, Shield, Crown, Target } from "lucide-react";
+import { FaYinYang } from "react-icons/fa";
 
 interface KarmaProgressProps {
 	karma: number;
@@ -17,7 +18,7 @@ interface KarmaProgressProps {
 const getRoleIcon = (role: UserRole) => {
 	switch (role) {
 		case UserRole.EDITOR:
-			return <Star className="h-4 w-4" />;
+			return <FaYinYang className="h-4 w-4" />;
 		case UserRole.MODERATOR:
 			return <Shield className="h-4 w-4" />;
 		case UserRole.ADMIN:
@@ -179,7 +180,7 @@ export function KarmaProgress({ karma, currentRole }: KarmaProgressProps) {
 									karma >= 100 ? "bg-blue-500" : "bg-muted"
 								}`}
 							>
-								<Star className="h-6 w-6 text-white" />
+								<FaYinYang className="h-6 w-6 text-white" />
 							</div>
 							<div className="text-sm font-medium text-foreground">Editor</div>
 							<div className="text-xs text-muted-foreground">100 karma</div>

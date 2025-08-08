@@ -6,6 +6,7 @@ import {
 	LayoutGrid,
 	LucideIcon,
 	Settings,
+	Star,
 	Users,
 } from "lucide-react";
 import { IconType } from "react-icons";
@@ -23,6 +24,7 @@ import { ImHtmlFive2 } from "react-icons/im";
 import { IoLogoJavascript } from "react-icons/io";
 import { SiNextdotjs, SiSvelte } from "react-icons/si";
 import { PostCategory, SubCategory } from "@/db/schema/enums";
+import { USER_MENU_LINKS } from "@/config";
 
 /**
  * Helper functions for URL generation
@@ -570,22 +572,22 @@ const SidebarConfig = {
 			groupLabel: "Settings",
 			menus: [
 				{
-					href: "/settings/posts",
+					href: USER_MENU_LINKS.POSTS,
 					label: "My Posts",
 					icon: FileText,
 				},
 				{
-					href: "/settings/bookmarks",
+					href: USER_MENU_LINKS.BOOKMARKS,
 					label: "Bookmarks",
 					icon: Bookmark,
 				},
 				{
-					href: "/settings/account",
+					href: USER_MENU_LINKS.ACCOUNT,
 					label: "Account",
 					icon: Settings,
 				},
 			],
-			hide: true, // Hide the entire settings group
+			hide: true, // Hide the settings group as it was originally
 		},
 	],
 };

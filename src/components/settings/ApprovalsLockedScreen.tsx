@@ -1,6 +1,7 @@
 "use client";
 
-import { Lock, Shield, Star, TrendingUp, Users } from "lucide-react";
+import { Lock, Shield, TrendingUp, Users } from "lucide-react";
+import { FaYinYang } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +36,7 @@ export function ApprovalsLockedScreen() {
 					<CardContent className="p-6">
 						<div className="flex items-center gap-3 mb-4">
 							<div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-								<Star className="h-4 w-4 text-white" />
+								<FaYinYang className="h-4 w-4 text-white" />
 							</div>
 							<h3 className="font-semibold text-foreground">
 								How to Become a Moderator

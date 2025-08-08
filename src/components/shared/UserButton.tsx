@@ -3,6 +3,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { type Session, signOut } from "@/lib/auth-client";
 import Image from "next/image";
 import React, { FC } from "react";
+import { USER_MENU_LINKS } from "@/config";
+import { FaYinYang } from "react-icons/fa";
+import { useProgress } from "react-transition-progress";
+import { useRouter } from "next/navigation";
+import { startTransition } from "react";
 
 interface UserButtonProps {
 	session: Session | null;
@@ -10,8 +15,13 @@ interface UserButtonProps {
 
 import {
 	LogOut,
-	// UserPlus,
-	// Users,
+	User,
+	Bookmark,
+	FileText,
+	Settings,
+	Star,
+	Users,
+	Keyboard,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,9 +42,18 @@ import {
 
 const UserButton: FC<UserButtonProps> = ({ session }) => {
 	const userFirstLetter = session?.user?.name?.charAt(0).toUpperCase();
+	const startProgress = useProgress();
+	const router = useRouter();
 
 	const handleSignOut = async () => {
 		await signOut();
+	};
+
+	const handleNavigation = (href: string) => {
+		startTransition(async () => {
+			startProgress();
+			router.push(href);
+		});
 	};
 
 	return (
@@ -42,7 +61,7 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button
-						className="rounded-full select-none focus-visible:ring-0 w-9 h-9"
+						className="rounded-full select-none focus-visible:ring-0 w-9 h-9 relative"
 						variant="ghost"
 						size="icon"
 					>
@@ -66,89 +85,51 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
 						</Avatar>
 					</Button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent className="w-56">
-					<DropdownMenuLabel>My Account</DropdownMenuLabel>
+				<DropdownMenuContent className="w-56" align="start">
+					{/* Karma Display - Not clickable */}
+					<div className="px-2 py-1.5 text-sm">
+						<div className="flex items-center justify-between px-2 py-1.5 rounded-md bg-muted/50">
+							<div className="flex items-center gap-2">
+								<FaYinYang className="w-4 h-4 text-muted-foreground" />
+								<span className="text-muted-foreground">Karma</span>
+							</div>
+							<span className="font-semibold text-foreground">
+								{(session?.user as { karmaPoints?: number })?.karmaPoints || 0}
+							</span>
+						</div>
+					</div>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
-						{/* <DropdownMenuItem>
-              <User className="w-4 h-4 mr-2" />
-              <span>Profile</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <CreditCard className="w-4 h-4 mr-2" />
-              <span>Billing</span>
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="w-4 h-4 mr-2" />
-              <span>Settings</span>
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <LifeBuoy className="w-4 h-4 mr-2" />
-              <span>Support</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator /> */}
-						<DropdownMenuItem onClick={handleSignOut}>
-							<LogOut className="w-4 h-4 mr-2" />
-							<Button className="h-0" variant="ghost">
-								Log out
-							</Button>
-							<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+						<DropdownMenuItem
+							onClick={() => handleNavigation(USER_MENU_LINKS.ACCOUNT)}
+						>
+							<User className="w-4 h-4 mr-2" />
+							<span>Profile</span>
 						</DropdownMenuItem>
-
-						{/* <DropdownMenuItem>
-              <Keyboard className="w-4 h-4 mr-2" />
-              <span>Keyboard shortcuts</span>
-              <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-            </DropdownMenuItem> */}
+						<DropdownMenuItem
+							onClick={() => handleNavigation(USER_MENU_LINKS.POSTS)}
+						>
+							<FileText className="w-4 h-4 mr-2" />
+							<span>My Posts</span>
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => handleNavigation(USER_MENU_LINKS.BOOKMARKS)}
+						>
+							<Bookmark className="w-4 h-4 mr-2" />
+							<span>Bookmarks</span>
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => handleNavigation(USER_MENU_LINKS.APPROVALS)}
+						>
+							<Users className="w-4 h-4 mr-2" />
+							<span>Approvals</span>
+						</DropdownMenuItem>
 					</DropdownMenuGroup>
-					{/* <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Users className="w-4 h-4 mr-2" />
-              <span>Team</span>
-            </DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <UserPlus className="w-4 h-4 mr-2" />
-                <span>Invite users</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>
-                    <Mail className="w-4 h-4 mr-2" />
-                    <span>Email</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    <span>Message</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    <span>More...</span>
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-            <DropdownMenuItem>
-              <Plus className="w-4 h-4 mr-2" />
-              <span>New Team</span>
-              <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Github className="w-4 h-4 mr-2" />
-            <span>GitHub</span>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem disabled>
-            <Cloud className="w-4 h-4 mr-2" />
-            <span>API</span>
-          </DropdownMenuItem> */}
+					<DropdownMenuSeparator />
+					<DropdownMenuItem onClick={handleSignOut}>
+						<LogOut className="w-4 h-4 mr-2" />
+						<span>Log out</span>
+					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</>

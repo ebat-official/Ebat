@@ -13,3 +13,11 @@ export const SOCIAL_LINKS = {
 	DISCORD: "https://discord.gg/UKNCtK7Y5x",
 	GITHUB: "https://github.com/ebat-official/Ebat",
 } as const;
+
+export const USER_MENU_LINKS = {
+	ACCOUNT: "/settings/account",
+	KARMA: "/settings/karma",
+	POSTS: "/settings/posts",
+	BOOKMARKS: "/settings/bookmarks",
+	APPROVALS: "/settings/approvals",
+} as const;

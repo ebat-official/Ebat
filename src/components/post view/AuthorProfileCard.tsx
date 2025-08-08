@@ -14,11 +14,16 @@ import { toast } from "@/hooks/use-toast";
 import React, { useEffect, useState } from "react";
 import { FollowAction } from "@/db/schema";
 import { useAuthAction } from "@/hooks/useAuthAction";
-import { FaLinkedin, FaGithub, FaTwitter, FaGlobe } from "react-icons/fa";
+import {
+	FaLinkedin,
+	FaGithub,
+	FaTwitter,
+	FaGlobe,
+	FaYinYang,
+} from "react-icons/fa";
 import { SiLinkedin, SiGithub } from "react-icons/si";
 import { UserRole } from "@/db/schema/enums";
 import {
-	Zap,
 	UserPlus,
 	UserCheck,
 	Crown,
@@ -266,7 +271,7 @@ const AuthorProfileCard = ({ author }: AuthorProfileCardProps) => {
 				{/* Karma Points with Role */}
 				<div className="flex items-center gap-3">
 					<div className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-md text-sm font-medium">
-						<Zap className="w-3 h-3 text-muted-foreground" />
+						<FaYinYang className="w-3 h-3 text-muted-foreground" />
 						<span className="text-muted-foreground">
 							{formatNumInK(author.karmaPoints || 0)} Karma
 						</span>
