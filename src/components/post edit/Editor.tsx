@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PostType } from "@/db/schema/enums";
-import useFileUpload from "@/hooks/useFileUpload";
 import { cn } from "@/lib/utils";
 import { UNAUTHENTICATED } from "@/utils/constants";
 import { ContentType, EditorContent } from "@/utils/types";

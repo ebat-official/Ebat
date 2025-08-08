@@ -12,6 +12,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useEditorStore } from "@/store/useEditorStore";
 import { zones } from "./constants";
+import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { ERROR } from "@/utils/constants";
 
 interface FileUploadZoneProps {
 	InsertMedia: (files: { url: string; alt: string }[]) => void;
@@ -71,7 +73,14 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 			const compressedImage = await compressImage(file);
 			try {
 				const { status, data } = await uploadFile(compressedImage, { postId });
-				if (status === "error") throw new Error(data.message);
+				if (status === ERROR) {
+					if (data.message === UNAUTHENTICATED_ERROR.data.message) {
+						toast.error("Please sign in to upload images.");
+						closeHandler();
+						return;
+					}
+					throw new Error(data.message);
+				}
 				uploadedFiles.push({
 					url: data.url || "",
 					alt: file.name,

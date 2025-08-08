@@ -17,6 +17,8 @@ import { Image, Loader2, Upload, X } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useEditorStore } from "@/store/useEditorStore";
+import { UNAUTHENTICATED_ERROR } from "@/utils/errors";
+import { ERROR } from "@/utils/constants";
 
 // Utility to convert image URL to File
 async function urlToFile(
@@ -150,7 +152,12 @@ export const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
 		});
 		const { status, data } = await uploadFile(compressedImage, { postId });
 		setUploading(false);
-		if (status === "error") {
+		if (status === ERROR) {
+			if (data.message === UNAUTHENTICATED_ERROR.data.message) {
+				toast.error("Please sign in to upload images.");
+				closeHandler();
+				return;
+			}
 			toast.error(data.message);
 			return;
 		}
@@ -229,7 +236,8 @@ export const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
 
 				<div className="flex flex-wrap gap-2 mt-6 justify-center">
 					{allImages.map((img, idx) => (
-						<div
+						<button
+							type="button"
 							key={img.url}
 							onClick={() => setSelectedIndex(idx)}
 							className={`cursor-pointer relative border-2 rounded-lg p-1 transition-colors group ${
@@ -254,7 +262,7 @@ export const ThumbnailUpload: React.FC<ThumbnailUploadProps> = ({
 							>
 								<X className="w-4 h-4" />
 							</Button>
-						</div>
+						</button>
 					))}
 				</div>
 
