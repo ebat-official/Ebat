@@ -541,6 +541,8 @@ export async function searchPosts({
 					companies: posts.companies,
 					type: posts.type,
 					topics: posts.topics,
+					category: posts.category,
+					subCategory: posts.subCategory,
 					author: {
 						id: user.id,
 						username: user.username,

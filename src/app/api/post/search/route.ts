@@ -44,24 +44,24 @@ export async function GET(request: NextRequest) {
 		// Build a unique cache key for all query params
 		const cacheKey = `posts:search:${searchQuery}:difficulty:${difficulty.join(",")}:topics:${topics.join(",")}:category:${category ?? "none"}:subCategory:${subCategory ?? "none"}:type:${type ?? "none"}:companies:${companies.join(",")}:page:${page}:pageSize:${pageSize}:sortOrder:${sortOrder ?? "latest"}`;
 
-		const CACHE_SECONDS = 60 * 60 * 12;
+		const CACHE_SECONDS = 60 * 60 * 12; // 12 hours
 
 		// Try cache for all queries
-		// try {
-		// 	const cached = await redis.get(cacheKey);
-		// 	if (cached) {
-		// 		return NextResponse.json(cached, {
-		// 			status: 200,
-		// 			headers: {
-		// 				"X-Cache": "HIT",
-		// 				"Cache-Control": `public, max-age=${CACHE_SECONDS}`,
-		// 				"Content-Type": "application/json",
-		// 			},
-		// 		});
-		// 	}
-		// } catch (err) {
-		// 	console.error("Redis cache error, falling back to DB:", err);
-		// }
+		try {
+			const cached = await redis.get(cacheKey);
+			if (cached) {
+				return NextResponse.json(cached, {
+					status: 200,
+					headers: {
+						"X-Cache": "HIT",
+						"Cache-Control": `public, max-age=${CACHE_SECONDS}`,
+						"Content-Type": "application/json",
+					},
+				});
+			}
+		} catch (err) {
+			console.error("Redis cache error, falling back to DB:", err);
+		}
 
 		// Perform search using the custom search function
 		const searchParamsObj = {

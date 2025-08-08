@@ -8,24 +8,13 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { generateEditPath } from "@/utils/generateEditPath";
-import { generatePostPath } from "@/utils/generatePostPath";
-import { shareToPlatform, type ShareData } from "@/utils/shareUtils";
 import { PostWithExtraDetails } from "@/utils/types";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import {
-	FaEdit,
-	FaComments,
-	FaShareAlt,
-	FaLinkedin,
-	FaTwitter,
-	FaWhatsapp,
-	FaCopy,
-	FaEllipsisH,
-} from "react-icons/fa";
+import { FaEdit, FaComments, FaEllipsisH } from "react-icons/fa";
 import { BookmarkBadge } from "@/components/shared/BookmarkBadge";
 import { CompletionButton } from "./CompletionButton";
-import { toast } from "sonner";
+import { ShareButton } from "@/components/shared/ShareButton";
 
 interface FloatingActionBarProps {
 	post: PostWithExtraDetails;
@@ -65,74 +54,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 	</TooltipProvider>
 );
 
-// Radial share menu component
-interface RadialShareMenuProps {
-	isVisible: boolean;
-	onShare: (platform: "linkedin" | "twitter" | "whatsapp") => void;
-	onCopyUrl: () => void;
-}
-
-const RadialShareMenu: React.FC<RadialShareMenuProps> = ({
-	isVisible,
-	onShare,
-	onCopyUrl,
-}) => {
-	if (!isVisible) return null;
-
-	return (
-		<div className="absolute left-0 top-[20px] rotate-[160deg] w-24 h-24 translate-x-1/2 -translate-y-full">
-			{/* LinkedIn - Top Left */}
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={() => onShare("linkedin")}
-				className="absolute top-1/2 left-1/2 w-10 h-10 rounded-full p-0 bg-blue-500 hover:bg-blue-600 text-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 rotate-[calc((120deg/4)*0)]"
-				style={{ transformOrigin: "300% center" }}
-			>
-				<FaLinkedin className="w-4 h-4 rotate-270" />
-			</Button>
-
-			{/* Twitter - Top Right */}
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={() => onShare("twitter")}
-				className="absolute top-1/2 left-1/2 w-10 h-10 rounded-full p-0 bg-blue-400 hover:bg-blue-500 text-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 rotate-[calc((120deg/4)*1)]"
-				style={{ transformOrigin: "300% center" }}
-			>
-				<FaTwitter className="w-4 h-4" />
-			</Button>
-
-			{/* WhatsApp - Bottom Left */}
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={() => onShare("whatsapp")}
-				className="absolute top-1/2 left-1/2 w-10 h-10 rounded-full p-0 bg-green-500 hover:bg-green-600 text-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 rotate-[calc((120deg/4)*2)]"
-				style={{ transformOrigin: "300% center" }}
-			>
-				<FaWhatsapp className="w-4 h-4 rotate-270" />
-			</Button>
-
-			{/* Copy - Bottom Right */}
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={onCopyUrl}
-				className="absolute top-1/2 left-1/2 w-10 h-10 rounded-full p-0 bg-gray-500 hover:bg-gray-600 text-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 rotate-[calc((120deg/4)*3)]"
-				style={{ transformOrigin: "300% center" }}
-			>
-				<FaCopy className="w-4 h-4 rotate-180" />
-			</Button>
-		</div>
-	);
-};
-
 export default function FloatingActionBar({
 	post,
 	className,
 }: FloatingActionBarProps) {
-	const [showShareRadial, setShowShareRadial] = useState(false);
 	const [showComments, setShowComments] = useState(false);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const router = useRouter();
@@ -144,15 +69,10 @@ export default function FloatingActionBar({
 		}
 	}, []);
 
-	// Unified click outside handler
+	// Click outside handler for mobile expanded menu
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			const target = event.target as Element;
-
-			// Handle share radial menu
-			if (showShareRadial && !target.closest(".share-radial-container")) {
-				setShowShareRadial(false);
-			}
 
 			// Handle mobile expanded menu
 			if (isExpanded) {
@@ -167,7 +87,7 @@ export default function FloatingActionBar({
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [showShareRadial, isExpanded]);
+	}, [isExpanded]);
 
 	const handleEdit = useCallback(() => {
 		const editPath = generateEditPath({
@@ -187,59 +107,9 @@ export default function FloatingActionBar({
 		}
 	}, []);
 
-	const handleShare = useCallback(
-		(platform: "linkedin" | "twitter" | "whatsapp") => {
-			const postUrl = generatePostPath({
-				category: post.category,
-				subCategory: post.subCategory,
-				slug: post.slug || "",
-				id: post.id,
-				postType: post.type,
-			});
-
-			const fullUrl = `${window.location.origin}${postUrl}`;
-
-			shareToPlatform(platform, {
-				title: post.title,
-				url: fullUrl,
-				postType: post.type,
-			});
-
-			setShowShareRadial(false);
-		},
-		[post],
-	);
-
-	const handleCopyUrl = useCallback(async () => {
-		const postUrl = generatePostPath({
-			category: post.category,
-			subCategory: post.subCategory,
-			slug: post.slug || "",
-			id: post.id,
-			postType: post.type,
-		});
-
-		const fullUrl = `${window.location.origin}${postUrl}`;
-
-		try {
-			await navigator.clipboard.writeText(fullUrl);
-			toast.success("URL copied to clipboard!");
-		} catch (error) {
-			toast.error("Failed to copy URL");
-		}
-		setShowShareRadial(false);
-	}, [post]);
-
 	const handleToggleExpanded = useCallback(() => {
 		setIsExpanded(!isExpanded);
-		if (showShareRadial) {
-			setShowShareRadial(false);
-		}
-	}, [isExpanded, showShareRadial]);
-
-	const handleToggleShareRadial = useCallback(() => {
-		setShowShareRadial(!showShareRadial);
-	}, [showShareRadial]);
+	}, [isExpanded]);
 
 	// Common button styles
 	const buttonClassName =
@@ -250,7 +120,7 @@ export default function FloatingActionBar({
 	return (
 		<>
 			{/* Mobile: Single expandable button */}
-			<div className="mobile-floating-action lg:hidden fixed bottom-4 right-4 z-50">
+			<div className="mobile-floating-action lg:hidden fixed bottom-8 left-4 z-50">
 				<div
 					className={`relative transition-all duration-300 ${isExpanded ? "scale-100" : "scale-100"}`}
 				>
@@ -296,22 +166,12 @@ export default function FloatingActionBar({
 							className={buttonClassName}
 						/> */}
 
-						{/* Share Button with Radial Menu */}
-						<div className="relative share-radial-container">
-							<ActionButton
-								icon={<FaShareAlt className="w-5 h-5 text-muted-foreground" />}
-								onClick={handleToggleShareRadial}
-								tooltip="Share post"
-								tooltipSide="left"
-								className={buttonClassName}
-							/>
-
-							<RadialShareMenu
-								isVisible={showShareRadial}
-								onShare={handleShare}
-								onCopyUrl={handleCopyUrl}
-							/>
-						</div>
+						{/* Share Button */}
+						<ShareButton
+							post={post}
+							className={buttonClassName}
+							tooltipSide="left"
+						/>
 					</div>
 				</div>
 			</div>
@@ -344,22 +204,12 @@ export default function FloatingActionBar({
 					className={buttonClassName}
 				/> */}
 
-				{/* Share Button with Radial Menu */}
-				<div className="relative share-radial-container">
-					<ActionButton
-						icon={<FaShareAlt className="w-5 h-5 text-muted-foreground" />}
-						onClick={handleToggleShareRadial}
-						tooltip="Share post"
-						tooltipSide="right"
-						className={buttonClassName}
-					/>
-
-					<RadialShareMenu
-						isVisible={showShareRadial}
-						onShare={handleShare}
-						onCopyUrl={handleCopyUrl}
-					/>
-				</div>
+				{/* Share Button */}
+				<ShareButton
+					post={post}
+					className={buttonClassName}
+					tooltipSide="right"
+				/>
 			</div>
 		</>
 	);

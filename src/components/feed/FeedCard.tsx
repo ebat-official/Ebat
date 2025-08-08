@@ -31,9 +31,7 @@ import { ViewsBadge } from "../shared/viewsBadge";
 import { Button } from "../ui/button";
 import { useFeedContext } from "./FeedContext";
 import { PostLikeDummyButton } from "./PostLikeButton";
-import { generatePostPath } from "@/utils/generatePostPath";
-import { shareToPlatform, type ShareData } from "@/utils/shareUtils";
-import { toast } from "sonner";
+import { ShareButton } from "../shared/ShareButton";
 
 interface FeedCardProps {
 	post: FeedPost;
@@ -45,7 +43,6 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 	const router = useRouter();
 	const startProgress = useProgress();
 	const params = useParams();
-	const [showShareRadial, setShowShareRadial] = useState(false);
 
 	// Get subcategory from params, default to 'blogs' if not present
 	const subCategory = params.subCategory || SubCategory.BLOGS;
@@ -67,87 +64,13 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 		});
 	};
 
-	const handleKeyDown = (event: React.KeyboardEvent) => {
-		if (event.key === "Enter" || event.key === " ") {
-			event.preventDefault();
-			handleCardClick();
-		}
-	};
-
-	// Click outside handler for share radial menu
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			const target = event.target as Element;
-			if (showShareRadial && !target.closest(".share-radial-container")) {
-				setShowShareRadial(false);
-			}
-		};
-
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [showShareRadial]);
-
-	const handleShare = useCallback(
-		(platform: "linkedin" | "twitter" | "whatsapp") => {
-			const postUrl = generatePostPath({
-				category: post.category,
-				subCategory: post.subCategory,
-				slug: post.slug || "",
-				id: post.id,
-				postType: post.type,
-			});
-
-			const fullUrl = `${window.location.origin}${postUrl}`;
-
-			shareToPlatform(platform, {
-				title: post.title,
-				url: fullUrl,
-				postType: post.type,
-			});
-
-			setShowShareRadial(false);
-		},
-		[post],
-	);
-
-	const handleCopyUrl = useCallback(async () => {
-		const postUrl = generatePostPath({
-			category: post.category,
-			subCategory: post.subCategory,
-			slug: post.slug || "",
-			id: post.id,
-			postType: post.type,
-		});
-
-		const fullUrl = `${window.location.origin}${postUrl}`;
-
-		try {
-			await navigator.clipboard.writeText(fullUrl);
-			toast.success("URL copied to clipboard!");
-		} catch (error) {
-			toast.error("Failed to copy URL");
-		}
-		setShowShareRadial(false);
-	}, [post]);
-
-	const handleToggleShareRadial = useCallback(
-		(e: React.MouseEvent) => {
-			e.stopPropagation();
-			setShowShareRadial(!showShareRadial);
-		},
-		[showShareRadial],
-	);
-
 	return (
-		<li key={post.id} className="cursor-pointer block overflow-hidden">
-			<Card
-				className="relative pb-2"
-				onClick={handleCardClick}
-				onKeyDown={handleKeyDown}
-			>
-				<CardContent className="flex flex-col gap-4 h-80 justify-between ">
+		<li key={post.id} className="cursor-pointer block">
+			<Card className="relative pb-2">
+				<CardContent
+					className="flex flex-col gap-4 h-80 justify-between"
+					onClick={handleCardClick}
+				>
 					{post.author?.name && (
 						<AuthorNudge
 							onlyAvatar
@@ -224,7 +147,8 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 							strokeWidth={2}
 						/>
 					</span>
-					{/* Share Button with Radial Menu */}
+					{/* Share Button */}
+					<ShareButton post={post} className="rounded-full" tooltipSide="top" />
 				</CardFooter>
 			</Card>
 		</li>
