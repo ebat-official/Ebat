@@ -7,6 +7,7 @@ import { SheetMenu } from "../sidebar/sheet-menu";
 import Background from "./Background";
 import ThemeSwitcher from "./ThemeSwitcher";
 import UserButton from "./UserButton";
+import { SocialLinks } from "./SocialLinks";
 
 export default function NavBar({ session }: { session: Session | null }) {
 	const scrolled = useScroll(50);
@@ -27,6 +28,7 @@ export default function NavBar({ session }: { session: Session | null }) {
 						<SheetMenu />
 					</div>
 					<div className="flex gap-4 absolute right-16">
+						<SocialLinks />
 						<ThemeSwitcher />
 						{session ? (
 							<UserButton session={session} />

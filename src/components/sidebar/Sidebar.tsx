@@ -52,6 +52,7 @@ export function Sidebar() {
 				<DiscordButton
 					size="lg"
 					className="justify-center sticky bottom-0 w-full z-50"
+					isOpen={getOpenState()}
 				/>
 			</div>
 		</aside>
