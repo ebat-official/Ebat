@@ -82,7 +82,7 @@ export default async function Page({ params }: { params: PageProps }) {
 		subCategory: SubCategory.BLOGS,
 		page: 1,
 		pageSize: 10,
-		sortOrder: PostSortOrder.Latest,
+		sortOrder: PostSortOrder.MostVotes,
 		type: PostType.BLOGS,
 	};
 

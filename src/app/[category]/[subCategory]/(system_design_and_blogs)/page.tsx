@@ -92,7 +92,7 @@ export default async function Page({ params }: { params: PageProps }) {
 		subCategory: awaitedParams.subCategory,
 		page: 1,
 		pageSize: 10,
-		sortOrder: PostSortOrder.Latest,
+		sortOrder: PostSortOrder.MostVotes,
 		type:
 			awaitedParams.subCategory.toLowerCase() === SubCategory.SYSTEMDESIGN
 				? PostType.HLD // Default to HLD for system design

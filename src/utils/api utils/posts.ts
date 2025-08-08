@@ -10,6 +10,7 @@ import {
 	postEdits,
 	postViews,
 	posts,
+	votes,
 } from "@/db/schema";
 import {
 	Difficulty,
@@ -448,6 +449,7 @@ export async function searchPosts({
 	companies?: string[];
 	type?: PostType;
 }) {
+	console.log(sortOrder, "soooooo");
 	// Input validation
 	if (page < 1) throw new Error(INVALID_PAGE);
 	if (pageSize < 1) throw new Error(INVALID_PAGE_SIZE);
@@ -483,7 +485,17 @@ export async function searchPosts({
 	)`)
 		: sortOrder === PostSortOrder.Oldest
 			? asc(posts.createdAt)
-			: desc(posts.createdAt);
+			: sortOrder === PostSortOrder.MostVotes
+				? desc(sql`COALESCE((
+					SELECT COUNT(*) 
+					FROM ${votes} 
+					WHERE ${votes.postId} = ${posts.id} AND ${votes.type} = 'up'
+				) - (
+					SELECT COUNT(*) 
+					FROM ${votes} 
+					WHERE ${votes.postId} = ${posts.id} AND ${votes.type} = 'down'
+				), 0)`)
+				: desc(posts.createdAt);
 
 	try {
 		const [postsResult, totalCountResult] = await Promise.all([

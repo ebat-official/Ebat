@@ -28,7 +28,7 @@ export default async function Page({ params }: { params: PageProps }) {
 		subCategory: awaitedParams.subCategory,
 		page: 1,
 		pageSize: 10,
-		sortOrder: PostSortOrder.Latest,
+		sortOrder: PostSortOrder.MostVotes,
 		type: PostType.CHALLENGE,
 	};
 
