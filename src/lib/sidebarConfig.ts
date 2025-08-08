@@ -505,16 +505,70 @@ const SidebarConfig = {
 			groupLabel: "Common",
 			menus: [
 				{
-					href: `/${PostCategory.FRONTEND}/systemdesign?type=hld`,
-					label: "System Design (HLD)",
-					icon: FaSitemap,
-					submenus: [], // Direct link, no submenus
+					href: "",
+					label: "Behavioral",
+					icon: Users,
+					submenus: [
+						{
+							href: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/how-to-prepare`,
+							label: "How to Prepare",
+							createHref: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/how-to-prepare/create`,
+						},
+						{
+							href: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/radio-framework`,
+							label: "Radio Framework",
+							createHref: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/radio-framework/create`,
+						},
+						{
+							href: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/questions`,
+							label: "Questions",
+							createHref: `/${PostCategory.FRONTEND}/${SubCategory.BEHAVIORAL}/questions/create`,
+						},
+					],
 				},
 				{
-					href: `/${PostCategory.FRONTEND}/systemdesign?type=lld`,
+					href: "",
+					label: "System Design (HLD)",
+					icon: FaSitemap,
+					submenus: [
+						{
+							href: `/${PostCategory.FRONTEND}/systemdesign/hld/how-to-prepare`,
+							label: "How to Prepare",
+							createHref: `/${PostCategory.FRONTEND}/systemdesign/hld/how-to-prepare/create`,
+						},
+						{
+							href: `/${PostCategory.FRONTEND}/systemdesign/hld/framework`,
+							label: "Framework",
+							createHref: `/${PostCategory.FRONTEND}/systemdesign/hld/framework/create`,
+						},
+						{
+							href: `/${PostCategory.FRONTEND}/systemdesign/hld/questions`,
+							label: "Questions",
+							createHref: `/${PostCategory.FRONTEND}/systemdesign/hld/questions/create`,
+						},
+					],
+				},
+				{
+					href: "",
 					label: "System Design (LLD)",
 					icon: FaProjectDiagram,
-					submenus: [], // Direct link, no submenus
+					submenus: [
+						{
+							href: `/${PostCategory.FRONTEND}/systemdesign/lld/how-to-prepare`,
+							label: "How to Prepare",
+							createHref: `/${PostCategory.FRONTEND}/systemdesign/lld/how-to-prepare/create`,
+						},
+						{
+							href: `/${PostCategory.FRONTEND}/systemdesign/lld/framework`,
+							label: "Framework",
+							createHref: `/${PostCategory.FRONTEND}/systemdesign/lld/framework/create`,
+						},
+						{
+							href: `/${PostCategory.FRONTEND}/systemdesign/lld/questions`,
+							label: "Questions",
+							createHref: `/${PostCategory.FRONTEND}/systemdesign/lld/questions/create`,
+						},
+					],
 				},
 			],
 		},

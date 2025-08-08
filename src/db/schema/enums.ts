@@ -67,6 +67,7 @@ export enum SubCategory {
 	SVELTEKIT = "sveltekit",
 	VANILLAJS = "vanillajs",
 	NEXTJS = "nextjs",
+	BEHAVIORAL = "behavioral",
 }
 
 export enum TemplateFramework {

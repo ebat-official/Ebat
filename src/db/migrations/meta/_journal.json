@@ -169,6 +169,13 @@
 			"when": 1754500948961,
 			"tag": "0023_cooing_warbound",
 			"breakpoints": true
+		},
+		{
+			"idx": 24,
+			"version": "7",
+			"when": 1754658664810,
+			"tag": "0024_parallel_darkstar",
+			"breakpoints": true
 		}
 	]
 }

@@ -1,0 +1,1 @@
+ALTER TYPE "public"."sub_category" ADD VALUE 'behavioral';

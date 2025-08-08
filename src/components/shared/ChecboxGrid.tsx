@@ -119,10 +119,10 @@ export const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 					))}
 			</div>
 
-			{((offset < options.length && !searchHandler) || //if search not enabled, show view more until offset < options.length
-				(offset < options.length &&
-					offset === itemOffset && //if search enabled, show only if its first page and offset < options.length
-					searchHandler)) && (
+			{(offset < options.length && !searchHandler) || //if search not enabled, show view more until offset < options.length
+			(offset < options.length &&
+				offset === itemOffset && //if search enabled, show only if its first page and offset < options.length
+				searchHandler) ? (
 				<Button
 					onClick={() => setOffset((prev) => prev + itemOffset)}
 					variant="link"
@@ -131,9 +131,7 @@ export const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 					<span>View More</span>
 					<MdOutlineExpandMore className="animate-bounce" />
 				</Button>
-			)}
-
-			{searchHandler && offset > itemOffset && (
+			) : (
 				<div className="flex gap-2 mt-4">
 					<Input
 						type="search"
@@ -143,7 +141,7 @@ export const CheckboxGrid: React.FC<CheckboxGridProps> = ({
 						onChange={(e) => {
 							const str = e.target.value;
 							searchStr.current = str;
-							searchHandler(str);
+							searchHandler?.(str);
 						}}
 					/>
 					<TooltipProvider>
