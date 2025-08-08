@@ -1,13 +1,24 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Link } from "react-transition-progress/next";
 import { Difficulty, SubCategory } from "@/db/schema/enums";
 import { cn } from "@/lib/utils";
 import { FeedPost } from "@/utils/types";
 import Image from "next/image";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import React, { useState, startTransition } from "react";
+import React, {
+	useState,
+	startTransition,
+	useCallback,
+	useEffect,
+} from "react";
 import { BsBookmarkHeart } from "react-icons/bs";
 import { FaRegCommentDots } from "react-icons/fa";
 import { FiCheckCircle } from "react-icons/fi";
@@ -20,6 +31,9 @@ import { ViewsBadge } from "../shared/viewsBadge";
 import { Button } from "../ui/button";
 import { useFeedContext } from "./FeedContext";
 import { PostLikeDummyButton } from "./PostLikeButton";
+import { generatePostPath } from "@/utils/generatePostPath";
+import { shareToPlatform, type ShareData } from "@/utils/shareUtils";
+import { toast } from "sonner";
 
 interface FeedCardProps {
 	post: FeedPost;
@@ -31,6 +45,7 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 	const router = useRouter();
 	const startProgress = useProgress();
 	const params = useParams();
+	const [showShareRadial, setShowShareRadial] = useState(false);
 
 	// Get subcategory from params, default to 'blogs' if not present
 	const subCategory = params.subCategory || SubCategory.BLOGS;
@@ -59,15 +74,80 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 		}
 	};
 
+	// Click outside handler for share radial menu
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			const target = event.target as Element;
+			if (showShareRadial && !target.closest(".share-radial-container")) {
+				setShowShareRadial(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [showShareRadial]);
+
+	const handleShare = useCallback(
+		(platform: "linkedin" | "twitter" | "whatsapp") => {
+			const postUrl = generatePostPath({
+				category: post.category,
+				subCategory: post.subCategory,
+				slug: post.slug || "",
+				id: post.id,
+				postType: post.type,
+			});
+
+			const fullUrl = `${window.location.origin}${postUrl}`;
+
+			shareToPlatform(platform, {
+				title: post.title,
+				url: fullUrl,
+				postType: post.type,
+			});
+
+			setShowShareRadial(false);
+		},
+		[post],
+	);
+
+	const handleCopyUrl = useCallback(async () => {
+		const postUrl = generatePostPath({
+			category: post.category,
+			subCategory: post.subCategory,
+			slug: post.slug || "",
+			id: post.id,
+			postType: post.type,
+		});
+
+		const fullUrl = `${window.location.origin}${postUrl}`;
+
+		try {
+			await navigator.clipboard.writeText(fullUrl);
+			toast.success("URL copied to clipboard!");
+		} catch (error) {
+			toast.error("Failed to copy URL");
+		}
+		setShowShareRadial(false);
+	}, [post]);
+
+	const handleToggleShareRadial = useCallback(
+		(e: React.MouseEvent) => {
+			e.stopPropagation();
+			setShowShareRadial(!showShareRadial);
+		},
+		[showShareRadial],
+	);
+
 	return (
-		<li
-			key={post.id}
-			onClick={handleCardClick}
-			onKeyDown={handleKeyDown}
-			className="cursor-pointer block overflow-hidden"
-		>
-			<Card className="relative pb-2">
-				<CardContent className="flex flex-col gap-4 h-92 justify-between ">
+		<li key={post.id} className="cursor-pointer block overflow-hidden">
+			<Card
+				className="relative pb-2"
+				onClick={handleCardClick}
+				onKeyDown={handleKeyDown}
+			>
+				<CardContent className="flex flex-col gap-4 h-80 justify-between ">
 					{post.author?.name && (
 						<AuthorNudge
 							onlyAvatar
@@ -121,33 +201,31 @@ export const FeedCard: React.FC<FeedCardProps> = ({ post }) => {
 							loading="lazy"
 						/>
 					)}
-					<div className="flex justify-between items-center">
-						{/* <DifficultyBadge difficulty={post.difficulty || Difficulty.EASY} /> */}
-						<PostLikeDummyButton count={post.votes || 0} />
-						<ViewsBadge views={post.views || 0} />
-						<Button className="rounded-full" variant="ghost">
-							<Link
-								href={`${getUrl(post)}#comments`}
-								className="flex items-center gap-2 rounded-full"
-							>
-								<FaRegCommentDots />
-								<span>{post.comments || 0}</span>
-							</Link>
-						</Button>
-						<span>
-							<FiCheckCircle
-								className={cn("text-gray-500", {
-									"text-green-500": completionStatuses[post.id],
-								})}
-								size={18}
-								strokeWidth={2}
-							/>
-						</span>
-						<Button className="rounded-full" variant="ghost" size="icon">
-							<LuShare2 size={18} />
-						</Button>
-					</div>
 				</CardContent>
+				<CardFooter className="flex justify-between items-center">
+					{/* <DifficultyBadge difficulty={post.difficulty || Difficulty.EASY} /> */}
+					<PostLikeDummyButton count={post.votes || 0} />
+					<ViewsBadge views={post.views || 0} />
+					<Button className="rounded-full" variant="ghost">
+						<Link
+							href={`${getUrl(post)}#comments`}
+							className="flex items-center gap-2 rounded-full"
+						>
+							<FaRegCommentDots />
+							<span>{post.comments || 0}</span>
+						</Link>
+					</Button>
+					<span>
+						<FiCheckCircle
+							className={cn("text-gray-500", {
+								"text-green-500": completionStatuses[post.id],
+							})}
+							size={18}
+							strokeWidth={2}
+						/>
+					</span>
+					{/* Share Button with Radial Menu */}
+				</CardFooter>
 			</Card>
 		</li>
 	);
