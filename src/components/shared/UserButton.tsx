@@ -8,6 +8,7 @@ import { FaYinYang } from "react-icons/fa";
 import { useProgress } from "react-transition-progress";
 import { useRouter } from "next/navigation";
 import { startTransition } from "react";
+import { formatNumInK } from "@/utils/formatNumInK";
 
 interface UserButtonProps {
 	session: Session | null;
@@ -89,12 +90,14 @@ const UserButton: FC<UserButtonProps> = ({ session }) => {
 					{/* Karma Display - Not clickable */}
 					<div className="px-2 py-1.5 text-sm">
 						<div className="flex items-center justify-between px-2 py-1.5 rounded-md bg-muted/50">
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-2 py-1">
 								<FaYinYang className="w-4 h-4 text-muted-foreground" />
 								<span className="text-muted-foreground">Karma</span>
 							</div>
 							<span className="font-semibold text-foreground">
-								{(session?.user as { karmaPoints?: number })?.karmaPoints || 0}
+								{formatNumInK(
+									(session?.user as { karmaPoints?: number })?.karmaPoints || 0,
+								)}
 							</span>
 						</div>
 					</div>
