@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# Calculator Component - Low Level Design
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React Calculator component built using **custom expression evaluator** and **reusable Button components** for maximum flexibility and reusability.
 
-## Available Scripts
+## 🚀 Quick Start
 
-In the project directory, you can run:
+```bash
+npm install
+npm start
+```
 
-### `npm start`
+## 📖 Overview
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This calculator component demonstrates advanced React patterns:
+- **Custom Expression Evaluator** for safe mathematical operations without `eval()`
+- **Reusable Button Component** with flexible styling and consistent behavior
+- **React Hooks** for clean state management and lifecycle handling
+- **Modern Design** with professional styling and smooth animations
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🎯 Key Features
 
-### `npm test`
+- ✅ **Safe Evaluation** - Custom parser without `eval()` security risks
+- ✅ **Reusable Components** - Flexible Button component for consistent styling
+- ✅ **Smooth Animations** - CSS transition-based interactions
+- ✅ **Accessible** - Built with keyboard support and focus management
+- ✅ **Modern Design** - Professional styling with Tailwind CSS
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 💻 Usage
 
-### `npm run build`
+```jsx
+import Calculator from './components/Calculator'
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+function App() {
+  return (
+    <div className="flex items-center justify-center min-h-screen w-full p-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <Calculator />
+    </div>
+  )
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🏗️ Architecture
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Component Structure
+```
+Calculator (Main Component)
+├── Display (Input/Output)
+└── Button Grid
+    ├── Number Buttons (0-9, .)
+    ├── Operator Buttons (+, -, ×, ÷)
+    └── Function Buttons (Clear, =)
+```
 
-### `npm run eject`
+### Design Patterns Used
+- **Custom Expression Evaluator** - Safe mathematical parsing
+- **Reusable Button Component** - Consistent styling and behavior
+- **State Management** - React hooks for clean state handling
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🔧 Technical Implementation
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **State Management**: React useState + useRef
+- **Evaluation**: Custom parser with operator precedence
+- **Styling**: Tailwind CSS with modern design
+- **Accessibility**: Keyboard support and focus management
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📚 Deep Dive
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+For a comprehensive technical breakdown including:
+- Step-by-step implementation details
+- Custom expression evaluator approach
+- Reusable component patterns
+- Testing strategies
+- Common pitfalls and solutions
 
-## Learn More
+👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/design-and-building-a-calculator-FgBfHWxg4tgzY4WlBFBD7)**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🛠️ Development
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+# Install dependencies
+npm install
 
-### Code Splitting
+# Start development server
+npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# Run tests
+npm test
 
-### Analyzing the Bundle Size
+# Build for production
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📝 License
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT License - feel free to use in your projects!
