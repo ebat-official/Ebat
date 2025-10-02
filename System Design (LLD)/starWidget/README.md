@@ -1,3 +1,5 @@
+👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/reusable-star-rating-component-TQAIVWqTTK7yi4WEbxoAi)**
+
 # Star Rating Component - Low Level Design
 
 A React Star Rating component built using the **Context API** and **custom SVG graphics** for maximum flexibility and reusability.
@@ -69,8 +71,6 @@ For a comprehensive technical breakdown including:
 - Custom SVG graphics approach
 - Testing strategies
 - Common pitfalls and solutions
-
-👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/reusable-star-rating-component-TQAIVWqTTK7yi4WEbxoAi)**
 
 ## 🛠️ Development
 

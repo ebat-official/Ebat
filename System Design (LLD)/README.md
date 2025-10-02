@@ -1,3 +1,5 @@
+👉 **[Read the complete guide: How to Prepare for a Frontend LLD Interview](https://www.ebat.dev/frontend/blogs/how-to-prepare-for-a-frontend-low-level-design-lld-interview-in-react-iD-9sKfPltF7ReOKx66Mg)**
+
 # Frontend Low-Level Design (LLD)
 
 *Mastering component design patterns for scalable React applications*
@@ -45,8 +47,6 @@ For comprehensive technical breakdown including:
 - Testing strategies
 - Common pitfalls and solutions
 - Interview preparation strategies
-
-👉 **[Read the complete guide: How to Prepare for a Frontend LLD Interview](https://www.ebat.dev/frontend/blogs/how-to-prepare-for-a-frontend-low-level-design-lld-interview-in-react-iD-9sKfPltF7ReOKx66Mg)**
 
 ---
 

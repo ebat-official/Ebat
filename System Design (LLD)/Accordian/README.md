@@ -1,3 +1,5 @@
+👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/hld/create-a5QkuWw3HYp9YyYUYTRXM)**
+
 # Accordion Component - Low Level Design
 
 A React Accordion component built using the **Compound Component Pattern** and **Context API** for maximum flexibility and reusability.
@@ -73,8 +75,6 @@ For a comprehensive technical breakdown including:
 - Performance optimizations
 - Testing strategies
 - Common pitfalls and solutions
-
-👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/hld/create-a5QkuWw3HYp9YyYUYTRXM)**
 
 ## 🛠️ Development
 

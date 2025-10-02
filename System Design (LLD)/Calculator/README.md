@@ -1,3 +1,5 @@
+👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/design-and-building-a-calculator-FgBfHWxg4tgzY4WlBFBD7)**
+
 # Calculator Component - Low Level Design
 
 A React Calculator component built using **custom expression evaluator** and **reusable Button components** for maximum flexibility and reusability.
@@ -71,8 +73,6 @@ For a comprehensive technical breakdown including:
 - Reusable component patterns
 - Testing strategies
 - Common pitfalls and solutions
-
-👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/design-and-building-a-calculator-FgBfHWxg4tgzY4WlBFBD7)**
 
 ## 🛠️ Development
 
