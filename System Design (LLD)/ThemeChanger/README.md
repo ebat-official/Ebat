@@ -1,70 +1,158 @@
-# Getting Started with Create React App
+👉 **[Read the full post](https://www.ebat.dev/frontend/systemdesign/lld/build-theme-changer-component-in-react-yFfaZAhQBCpPkdfEqs2Lf)**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Theme Changer Component - Low Level Design
 
-## Available Scripts
+A React Theme Changer component built using the **Context API** and **Tailwind CSS** for seamless light/dark mode switching with persistence and system preference detection.
 
-In the project directory, you can run:
+## 🚀 Quick Start
 
-### `npm start`
+```bash
+npm install
+npm start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 📖 Overview
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This theme changer component demonstrates advanced React patterns:
+- **Context API** for global theme state management
+- **localStorage Integration** for persistent user preferences
+- **System Preference Detection** using `prefers-color-scheme` media query
+- **Smooth Theme Transitions** with Tailwind CSS animations
+- **TypeScript Support** for type safety and better developer experience
 
-### `npm test`
+## 🎯 Key Features
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- ✅ **Persistent Themes** - Remembers user preference across sessions
+- ✅ **System Integration** - Automatically detects user's system preference
+- ✅ **Smooth Transitions** - CSS animations for professional feel
+- ✅ **TypeScript Safety** - Full type safety with proper interfaces
+- ✅ **Accessibility** - Built with ARIA labels and keyboard support
+- ✅ **Extensible** - Easy to add new themes and customize
 
-### `npm run build`
+## 💻 Usage
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```jsx
+import { ThemeProvider } from './ThemeContext'
+import ThemeChanger from './ThemeChanger'
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+function App() {
+  return (
+    <ThemeProvider>
+      <div className="bg-blue-100 dark:bg-gray-900">
+        <ThemeChanger />
+      </div>
+    </ThemeProvider>
+  )
+}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🏗️ Architecture
 
-### `npm run eject`
+### Component Structure
+```
+ThemeProvider (Context Provider)
+└── ThemeChanger (Consumer)
+    ├── Light Button
+    └── Dark Button
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Design Patterns Used
+- **Context API Pattern** - Global theme state management
+- **Custom Hook Pattern** - Clean API with `useTheme()`
+- **Persistence Pattern** - localStorage integration
+- **System Integration** - Media query detection
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔧 Technical Implementation
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- **State Management**: React Context + useState + useEffect
+- **Persistence**: localStorage with fallback to system preference
+- **Styling**: Tailwind CSS with `darkMode: 'class'` configuration
+- **TypeScript**: Full type safety with interfaces and error handling
+- **Accessibility**: ARIA labels and keyboard support
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🎨 Theme System
 
-## Learn More
+### Supported Themes
+- **Light Mode** - Clean, bright interface
+- **Dark Mode** - Easy on the eyes for low-light usage
+- **System Preference** - Automatically follows user's OS setting
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Configuration
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: 'class',  // Essential for theme switching
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🚨 Common Issues & Solutions
 
-### Code Splitting
+**Issue**: Theme switching doesn't work visually
+**Solution**: Ensure `darkMode: 'class'` is in `tailwind.config.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+**Issue**: TypeScript errors with `useTheme`
+**Solution**: Add proper `ThemeContextType` interface and error handling
 
-### Analyzing the Bundle Size
+**Issue**: Import errors with `.tsx` files
+**Solution**: Use explicit file extensions: `import { useTheme } from './ThemeContext.tsx'`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📚 Deep Dive
 
-### Making a Progressive Web App
+For a comprehensive technical breakdown including:
+- Step-by-step implementation details
+- Context API pattern explanations
+- Tailwind CSS dark mode configuration
+- TypeScript type safety implementation
+- Testing strategies
+- Common pitfalls and solutions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+👉 **[Read the full technical blog post](https://www.ebat.dev/frontend/systemdesign/lld/build-theme-changer-component-in-react-yFfaZAhQBCpPkdfEqs2Lf)**
 
-### Advanced Configuration
+## 🛠️ Development
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+# Install dependencies
+npm install
 
-### Deployment
+# Start development server
+npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# Run tests
+npm test
 
-### `npm run build` fails to minify
+# Build for production
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🎯 Interview LLD Focus
+
+This component demonstrates key concepts for frontend LLD interviews:
+
+### React Patterns
+- **Context API** for global state management
+- **Custom Hooks** for clean component APIs
+- **useEffect** for side effects and lifecycle management
+
+### UX Considerations
+- **Persistence** for better user experience
+- **System Integration** for accessibility
+- **Smooth Transitions** for professional feel
+
+### Production Readiness
+- **TypeScript** for type safety
+- **Error Handling** with proper boundaries
+- **Accessibility** with ARIA support
+- **Performance** with optimized re-renders
+
+## 📝 License
+
+MIT License - feel free to use in your projects!
+
+---
+
+**Built with ❤️ for frontend LLD interviews**
