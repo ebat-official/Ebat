@@ -102,36 +102,112 @@ Master React from fundamentals to advanced patterns:
 ## 🌐 Web Technologies
 
 ### 📝 HTML & CSS
+Master modern web development fundamentals:
+
+#### 📖 Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **❓ Interview Questions** | 100+ HTML & CSS interview questions with detailed answers | [View Questions](https://www.ebat.dev/frontend/html/questions) |
+| **💻 Coding Challenges** | Hands-on HTML & CSS coding challenges | [View Challenges](https://www.ebat.dev/frontend/html/challenges) |
+
+#### 🎯 HTML & CSS Topics Covered
+
 - **Semantic HTML5** - Modern markup and accessibility
 - **CSS Grid & Flexbox** - Advanced layout techniques
 - **Responsive Design** - Mobile-first approach
 - **CSS Animations** - Smooth transitions and micro-interactions
 
+---
+
 ### 🟨 JavaScript
+Master JavaScript from fundamentals to advanced concepts:
+
+#### 📖 Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **❓ Interview Questions** | 200+ JavaScript interview questions with detailed answers | [View Questions](https://www.ebat.dev/frontend/javascript/questions) |
+| **💻 Coding Challenges** | Hands-on JavaScript coding challenges | [View Challenges](https://www.ebat.dev/frontend/javascript/challenges) |
+
+#### 🎯 JavaScript Topics Covered
+
 - **ES6+ Features** - Arrow functions, destructuring, modules
 - **Async Programming** - Promises, async/await, generators
 - **DOM Manipulation** - Event handling, performance optimization
 - **Functional Programming** - Pure functions, immutability
 
+---
+
 ### 🅰️ Angular
+Master Angular from basics to advanced patterns:
+
+#### 📖 Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **❓ Interview Questions** | 150+ Angular interview questions with detailed answers | [View Questions](https://www.ebat.dev/frontend/angular/questions) |
+| **💻 Coding Challenges** | Hands-on Angular coding challenges | [View Challenges](https://www.ebat.dev/frontend/angular/challenges) |
+
+#### 🎯 Angular Topics Covered
+
 - **Component Architecture** - Services, dependency injection
 - **RxJS** - Reactive programming and observables
 - **Routing** - Navigation and lazy loading
 - **Testing** - Unit and integration testing
 
+---
+
 ### 💚 Vue.js
+Master Vue.js from fundamentals to advanced patterns:
+
+#### 📖 Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **❓ Interview Questions** | 120+ Vue.js interview questions with detailed answers | [View Questions](https://www.ebat.dev/frontend/vue/questions) |
+| **💻 Coding Challenges** | Hands-on Vue.js coding challenges | [View Challenges](https://www.ebat.dev/frontend/vue/challenges) |
+
+#### 🎯 Vue.js Topics Covered
+
 - **Composition API** - Modern Vue 3 patterns
 - **State Management** - Pinia, Vuex
 - **Component Communication** - Props, events, provide/inject
 - **Performance** - Virtual DOM optimization
 
+---
+
 ### ⚡ Next.js
+Master Next.js from fundamentals to production deployment:
+
+#### 📖 Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **❓ Interview Questions** | 100+ Next.js interview questions with detailed answers | [View Questions](https://www.ebat.dev/frontend/nextjs/questions) |
+| **💻 Coding Challenges** | Hands-on Next.js coding challenges | [View Challenges](https://www.ebat.dev/frontend/nextjs/challenges) |
+
+#### 🎯 Next.js Topics Covered
+
 - **Server-Side Rendering** - SSR and SSG strategies
 - **API Routes** - Full-stack development
 - **Performance** - Image optimization, bundle analysis
 - **Deployment** - Vercel, Docker, CI/CD
 
+---
+
 ### 🍦 Vanilla JS
+Master pure JavaScript without framework dependencies:
+
+#### 📖 Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **❓ Interview Questions** | 180+ Vanilla JS interview questions with detailed answers | [View Questions](https://www.ebat.dev/frontend/vanillajs/questions) |
+| **💻 Coding Challenges** | Hands-on Vanilla JS coding challenges | [View Challenges](https://www.ebat.dev/frontend/vanillajs/challenges) |
+
+#### 🎯 Vanilla JS Topics Covered
+
 - **Pure JavaScript** - No framework dependencies
 - **Performance** - Optimized vanilla implementations
 - **Browser APIs** - Web APIs and modern JavaScript
